@@ -1,4 +1,5 @@
 import About from "@/components/About";
+import Aeropuerto from "@/components/Aeropuerto";
 import Hero from "@/components/Hero";
 import Image from "next/image";
 import { Fragment } from "react";
@@ -9,6 +10,7 @@ export default function Home() {
     <Fragment>
       <Hero />
       <About />
+      <Aeropuerto/>
     </Fragment>
   );
 }
