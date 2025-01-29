@@ -4,7 +4,7 @@ import { FaBus, FaClock, FaFacebook, FaInstagram, FaTiktok, FaTripadvisor, FaTru
 
 function About() {
   return (
-    <div className="relative bg-cover bg-center h-[700px] md:h-[800px]" style={{ backgroundImage: 'url(/assets/images/about.png)' }}>
+    <div className="relative bg-cover bg-center h-[700px] md:h-[600px]" style={{ backgroundImage: 'url(/assets/images/about.png)' }}>
       <div className="absolute inset-0 bg-black bg-opacity-40"></div>
       <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 py-10 text-white">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 ">

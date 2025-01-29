@@ -10,7 +10,7 @@ const Hero = () => {
     },
     {
       image: '/assets/images/sprinter.png',
-      title: 'Llegadas y salidas con puntualidad y comodidad ',
+      title: 'Llegadas y salidas con puntualidad y comodidad',
       description: 'Disfruta de un traslado cómodo y seguro a los principales aeropuertos. Viaja sin preocupaciones, siempre a tiempo y con atención personalizada.'
     },
     {
@@ -32,43 +32,47 @@ const Hero = () => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
     }, 5000);
     return () => clearInterval(interval);
-  }, [slides.length]);
+  }, []);
 
   return (
     <div className="relative w-full h-screen overflow-hidden">
-      <AnimatePresence>
-        {slides.map((slide, index) => (
-          index === currentSlide && (
-            <motion.div
-              key={index}
-              className="absolute inset-0 flex items-center justify-start bg-cover bg-center"
-              style={{ backgroundImage: `url(${slide.image})` }}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 1 }}
-            >
-              <div className=" text-white p-8 rounded-lg max-w-2xl text-center lg:text-left">
-                <h1 className="text-[40px] leading-[40px] md:text-5xl font-bold mb-4">{slide.title}</h1>
-                <p className="text-lg md:text-xl">{slide.description}</p>
-                <div className="mt-6 flex justify-center lg:justify-start space-x-4">
-                  <button className="px-4 py-2 bg-white/50 hover:bg-gray-700  rounded-lg">Cotizar</button>
-                  <button className="px-4 py-2 border-2 border-white/50 hover:bg-blue-500 rounded-lg">Reservar</button>
-                </div>
-              </div>
-            </motion.div>
-          )
-        ))}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={currentSlide}
+          className="absolute inset-0 flex items-center justify-start bg-cover bg-center"
+          style={{ backgroundImage: `url(${slides[currentSlide].image})` }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 1 }}
+        >
+          <div className="text-white p-8 rounded-lg max-w-2xl text-center md:text-left">
+            <h1 className="text-[40px] leading-[40px] md:text-5xl font-bold mb-4">
+              {slides[currentSlide].title}
+            </h1>
+            <p className="text-lg md:text-xl">{slides[currentSlide].description}</p>
+            <div className="mt-6 flex justify-center md:justify-start space-x-4">
+              <button className="px-4 py-2 bg-white/50 hover:bg-gray-700 rounded-lg transition">
+                Cotizar
+              </button>
+              <button className="px-4 py-2 border-2 border-white/50 hover:bg-blue-500 rounded-lg transition">
+                Reservar
+              </button>
+            </div>
+          </div>
+        </motion.div>
       </AnimatePresence>
 
+      {/* Indicadores de slide */}
       <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
         {slides.map((_, index) => (
           <button
             key={index}
             onClick={() => setCurrentSlide(index)}
-            className={`w-3 h-3 rounded-full ${
+            className={`w-3 h-3 rounded-full transition ${
               currentSlide === index ? 'bg-white' : 'bg-gray-400'
             }`}
+            aria-label={`Slide ${index + 1}`}
           ></button>
         ))}
       </div>
