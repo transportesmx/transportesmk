@@ -5,7 +5,7 @@ export default function Footer() {
   return (
     <footer className="bg-black text-white py-12">
       <div className="max-w-screen-xl mx-auto px-4 sm:px-6">
-        <div className="flex flex-col md:flex-row justify-between items-center">
+        <div className="flex flex-col md:flex-row justify-between items-center space-y-8 md:space-y-0">
           {/* Logo y slogan */}
           <div className="flex flex-col items-center md:items-start text-center md:text-left">
             <img src="/assets/logo.png" alt="Logo" className="h-16 mb-4" /> {/* Asegúrate de poner el path correcto */}
@@ -14,10 +14,10 @@ export default function Footer() {
           </div>
 
           {/* Sección de servicios */}
-          <div className="flex flex-col md:flex-row md:space-x-12 mb-6 md:mb-0">
+          <div className="flex flex-col md:flex-row md:space-x-12 mb-6 md:mb-0 space-y-6 md:space-y-0">
             <div>
-              <h3 className="font-bold text-lg mb-4">Servicios</h3>
-              <ul className="space-y-2">
+              <h3 className="font-bold text-lg mb-4 text-center md:text-left">Servicios</h3>
+              <ul className="space-y-2 text-center md:text-left">
                 <li><Link href="/traslados-a-aeropuerto"><span className="hover:text-blue-500">Traslados a Aeropuerto</span></Link></li>
                 <li><Link href="/transporte-para-bodas"><span className="hover:text-blue-500">Transporte para bodas</span></Link></li>
                 <li><Link href="/transporte-turistico"><span className="hover:text-blue-500">Transporte Turístico</span></Link></li>
@@ -27,9 +27,9 @@ export default function Footer() {
             </div>
 
             {/* Sección de links */}
-            <div className="mt-6 md:mt-0">
-              <h3 className="font-bold text-lg mb-4">Inicio</h3>
-              <ul className="space-y-2">
+            <div>
+              <h3 className="font-bold text-lg mb-4 text-center md:text-left">Inicio</h3>
+              <ul className="space-y-2 text-center md:text-left">
                 <li><Link href="/acerca"><span className="hover:text-blue-500">Acerca</span></Link></li>
                 <li><Link href="/servicios"><span className="hover:text-blue-500">Servicios</span></Link></li>
                 <li><Link href="/tours"><span className="hover:text-blue-500">Tours</span></Link></li>
@@ -39,28 +39,25 @@ export default function Footer() {
           </div>
 
           {/* Redes sociales */}
-          <div className="flex-col justify-center items-center space-y-6">
-            <Link class href="https://www.facebook.com">
-              <span target="_blank" className="text-[24px] hover:text-blue-500 flex items-center gap-2 ">
+          <div className="flex flex-col items-center md:items-start space-y-6">
+            <Link href="https://www.facebook.com">
+              <span target="_blank" className="text-[24px] hover:text-blue-500 flex items-center gap-2">
                 <FaFacebookF /> Facebook
               </span>
             </Link>
-            <Link class href="https://www.tripadvisor.com">
+            <Link href="https://www.tripadvisor.com">
               <span target="_blank" className="text-[24px] hover:text-blue-500 flex items-center gap-2">
-                <FaTripadvisor />
-                Tripadvisor
+                <FaTripadvisor /> Tripadvisor
               </span>
             </Link>
-            <Link class href="https://www.instagram.com">
+            <Link href="https://www.instagram.com">
               <span target="_blank" className="text-[24px] hover:text-blue-500 flex items-center gap-2">
-                <FaInstagram />
-              Instagram
+                <FaInstagram /> Instagram
               </span>
             </Link>
-            <Link class href="https://www.tiktok.com">
+            <Link href="https://www.tiktok.com">
               <span target="_blank" className="text-[24px] hover:text-blue-500 flex items-center gap-2">
-                <FaTiktok />
-                Tiktok
+                <FaTiktok /> Tiktok
               </span>
             </Link>
           </div>
