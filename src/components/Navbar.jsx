@@ -38,9 +38,12 @@ const Navbar = () => {
           <a href="#" className="hover:text-blue-500 transition">Cotiza</a>
 
           <div className="flex items-center space-x-2">
-            <img src="/mx-flag.png" alt="Mexican Flag" className="h-5" />
+            <img src="/assets/icons/mexico.png" alt="Mexican Flag" className="h-5" />
             <a href="#" className="hover:text-blue-500 transition">ESP</a>
+            <span className="text-white ">{"/"}</span>
+
             <a href="#" className="hover:text-blue-500 transition">EN</a>
+            <img src="/assets/icons/eu.png" alt="Mexican Flag" className="h-5" />
           </div>
 
           <div className="flex items-center space-x-4">
@@ -84,8 +87,9 @@ const Navbar = () => {
 
           <div className="px-4 py-2 flex items-center space-x-2">
             <img src="/mx-flag.png" alt="Mexican Flag" className="h-5" />
-            <a href="#" className="hover:text-blue-500">ESP</a>
-            <a href="#" className="hover:text-blue-500">EN</a>
+            <span className="hover:text-blue-500">ESP</span>
+            <span className="text-white ">{"/"}</span>
+            <span className="hover:text-blue-500">EN</span>
           </div>
 
           <div className="px-4 py-2 flex items-center space-x-4">
