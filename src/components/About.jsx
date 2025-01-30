@@ -6,8 +6,8 @@ function About() {
   return (
     <div className="relative bg-cover bg-center h-[700px] md:h-[600px]" style={{ backgroundImage: 'url(/assets/images/about.png)' }}>
       <div className="absolute inset-0 bg-black bg-opacity-40"></div>
-      <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 py-10 text-white">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 ">
+      <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 py-10 text-white ">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8  ">
           {/* Left Section */}
           <div className=''>
             <h1 className="text-[32px] md:text-[30px] leading-[34px] md:leading-[30px] md:text-4xl lg:text-5xl font-bold text-center md:text-left mb-12">
@@ -39,7 +39,7 @@ function About() {
 
           {/* Right Section */}
           <div className='hidden md:block'>
-            <div className="mb-8">
+          <div className="mb-8">
               <h2 className="text-2xl md:text-3xl font-bold mb-2">Misión:</h2>
               <p className="text-sm sm:text-base md:text-lg">
                 Ofrecer servicios de transporte de calidad, garantizando la mejor experiencia para

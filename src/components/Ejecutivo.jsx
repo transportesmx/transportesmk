@@ -11,24 +11,24 @@ function Ejecutivo() {
           {/* Left Section */}
           <div className=''>
             <h1 className="text-[40px] lg:text-[50px] leading-[34px] md:leading-[30px] md:text-4xl lg:text-5xl font-bold text-center md:text-left mb-8 md:mb-12">
-            Traslado para Bodas
+            Traslado Ejecutivo y Corporativo
             </h1>
             <p className='text-center md:text-left text-[20px] md:text-[24px] mb-8'>
-            En Transportes MK entendemos la importancia de un día tan especial como tu boda. Nuestro servicio de traslado para bodas está diseñado para garantizar que los novios e invitados lleguen cómodos, puntuales y con estilo. Nos encargamos de cada detalle para que tú solo te preocupes por disfrutar.
+            Nuestro servicio de traslado ejecutivo y corporativo está diseñado para satisfacer las necesidades de profesionales y empresas que buscan comodidad, puntualidad y un servicio premium. Ya sea para reuniones de trabajo, eventos empresariales o traslados al aeropuerto, garantizamos una experiencia eficiente y sin contratiempos.
             </p>
             <ul className=" space-y-4 text-sm sm:text-base md:text-lg md:hidden">
               <li className="flex flex-col md:flex-row items-center text-[20px] gap-4  text-center md:text-left">
                 <Image src="/assets/icons/clock.png" width={38} height={38} alt="Clock"  />
-                Coordinación precisa para cada traslado, desde el lugar de la ceremonia hasta la recepción.
+                Puntualidad garantizada.
               </li>
               <li className="flex flex-col md:flex-row items-center text-[20px] gap-4 text-center md:text-left">
               <Image src="/assets/icons/driver.png" width={38} height={38} alt="Clock" />                Conductores uniformados, amables y conocedores de las rutas más eficientes.
               </li>
               <li className="flex flex-col md:flex-row items-center text-[20px] gap-4 text-center md:text-left">
-              <Image src="/assets/icons/bus.png" width={38} height={38} alt="Clock" />                Transporte para grupos pequeños o grupos grandes de hasta más de 600 personas
+              <Image src="/assets/icons/bus.png" width={38} height={38} alt="Clock" />                Amplia flota que incluye sedanes, SUVs, y vans en perfectas condiciones.
               </li>
               <li className="flex flex-col md:flex-row items-center text-[20px] gap-4 text-center md:text-left">
-              <Image src="/assets/icons/24.png" width={38} height={38} alt="Clock" />Ajustamos horarios, rutas y paradas según las necesidades de tu evento
+              <Image src="/assets/icons/24.png" width={38} height={38} alt="Clock" /> Horarios y rutas adaptados a tus necesidades empresariales
               </li>
               
             </ul>
