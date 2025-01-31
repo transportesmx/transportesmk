@@ -36,6 +36,8 @@ const Navbar = () => {
 
           <a href="#" className="hover:text-blue-500 transition">Tours</a>
           <a href="#" className="hover:text-blue-500 transition">Cotiza</a>
+          </nav>
+          <div className="flex items-center space-x-8">
 
           <div className="flex items-center space-x-2">
             <img src="/assets/icons/mexico.png" alt="Mexican Flag" className="h-5" />
@@ -46,13 +48,14 @@ const Navbar = () => {
             <img src="/assets/icons/eu.png" alt="Mexican Flag" className="h-5" />
           </div>
 
-          <div className="flex items-center space-x-4">
+          <div className=" items-center space-x-4 hidden lg:flex">
             <FaFacebookF className="hover:text-blue-500 cursor-pointer" />
             <FaInstagram className="hover:text-pink-500 cursor-pointer" />
             <FaTiktok className="hover:text-black cursor-pointer" />
             <FaTripadvisor className="hover:text-green-500 cursor-pointer" />
           </div>
-        </nav>
+          </div>
+       
 
         <div className="md:hidden flex items-center">
           <button onClick={() => setIsMenuOpen(!isMenuOpen)}>
