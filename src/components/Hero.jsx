@@ -35,7 +35,7 @@ const Hero = () => {
   }, []);
 
   return (
-    <div className="relative w-full h-[90vh] overflow-hidden">
+    <div className="relative w-full h-[90vh] overflow-hidden ">
       <AnimatePresence mode="wait">
         <motion.div
           key={currentSlide}
@@ -46,7 +46,7 @@ const Hero = () => {
           exit={{ opacity: 0 }}
           transition={{ duration: 1 }}
         >
-          <div className="text-white p-8 rounded-lg max-w-2xl text-center md:text-left">
+          <div className="text-white p-8 md:px-12 rounded-lg max-w-2xl text-center md:text-left">
             <h1 className="text-[40px] leading-[40px] md:text-5xl font-bold mb-4">
               {slides[currentSlide].title}
             </h1>

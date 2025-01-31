@@ -3,6 +3,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from 'swiper/modules';
 import "swiper/css";
 import "swiper/css/navigation";
+import Image from "next/image";
 
 const tours = [
   {
@@ -49,13 +50,13 @@ const Tours = () => {
         navigation
         breakpoints={{
           640: {
-            slidesPerView: 2,
+            slidesPerView: 2.5,
           },
           768: {
-            slidesPerView: 3,
+            slidesPerView: 2.7,
           },
           1024: {
-            slidesPerView: 3,
+            slidesPerView: 2.8,
           },
         }}
         modules={[Navigation]}
@@ -71,8 +72,21 @@ const Tours = () => {
               />
               <div className="p-4 absolute bottom-0 z-30">
                 <h3 className="text-[30px] leading-[30px] font-bold mb-2">{tour.title}</h3>
-                <p className="text-white text-[12px] leading-[12px] font-bold mb-4">{tour.description}</p>                 <span className="text-sm text-white">{tour.duration}</span>
-
+                <p className="text-white text-[12px] leading-[12px] font-bold mb-4">{tour.description}</p> 
+                <ul className="space-y-4 text-sm sm:text-base md:text-lg">
+                <li className="flex flex-row items-center  gap-2">
+                                <Image src="/assets/icons/clock.png" width={22} height={22} alt="Clock" />
+                                {tour.duration}
+                              </li>  
+                              <li className="flex flex-row items-center  gap-2">
+                                <Image src="/assets/icons/clock.png" width={22} height={22} alt="Clock" />
+                                {tour.duration}
+                              </li>  
+                              <li className="flex flex-row items-center  gap-2">
+                                <Image src="/assets/icons/clock.png" width={22} height={22} alt="Clock" />
+                                {tour.duration}
+                              </li>                
+</ul>
                 <div className="flex justify-end items-center">
                   <span className="text-lg font-bold text-white ">{tour.price}</span>
                 </div>
