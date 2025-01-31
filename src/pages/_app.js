@@ -9,7 +9,7 @@ export default function App({ Component, pageProps }) {
     <Navbar />
   <Component {...pageProps} />
   <Footer />
-  <a href="https://wa.me/+525541033132?text=Hola!%20me%20podrías%20dar%20mas%20información?" 
+  <a href="https://wa.me/+524151393219?text=Hola!%20me%20podrías%20dar%20mas%20información?" 
         className='animate-pulse transition-all duration-700 hover:animate-none hover:scale-110 '
           style={{position: 'fixed', bottom: '25px', right: '25px', padding: '10px', backgroundColor: '#25D366', color: 'white', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '80px', height: '80px', textDecoration: 'none'}}
           >
