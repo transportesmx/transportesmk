@@ -45,7 +45,7 @@ const Tours = () => {
       <h2 className="text-3xl font-bold mb-4 text-black text-center">Tours</h2>
       <Swiper
         spaceBetween={20}
-        slidesPerView={1.7}
+        slidesPerView={1.4}
         navigation
         breakpoints={{
           640: {
