@@ -70,11 +70,11 @@ const Tours = () => {
                 className="w-full h-full object-cover "
               />
               <div className="p-4 absolute bottom-0 z-30">
-                <h3 className="text-[30px] font-bold mb-2">{tour.title}</h3>
-                <p className="text-white text-[12px] font-bold mb-4">{tour.description}</p>
-                <div className="flex justify-between items-center">
-                  <span className="text-lg font-bold text-white">{tour.price}</span>
-                  <span className="text-sm text-white">{tour.duration}</span>
+                <h3 className="text-[30px] leading-[30px] font-bold mb-2">{tour.title}</h3>
+                <p className="text-white text-[12px] leading-[12px] font-bold mb-4">{tour.description}</p>                 <span className="text-sm text-white">{tour.duration}</span>
+
+                <div className="flex justify-end items-center">
+                  <span className="text-lg font-bold text-white ">{tour.price}</span>
                 </div>
               </div>
             </div>
