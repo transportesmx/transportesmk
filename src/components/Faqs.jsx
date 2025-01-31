@@ -33,7 +33,7 @@ export default function Faqs() {
   };
 
   return (
-    <div className="relative bg-cover bg-center h-[900px] md:h-[750px] px-6 sm:px-10 lg:px-16 py-10 flex flex-col justify-center" style={{ backgroundImage: 'url(/assets/images/faqs.png)' }}>
+    <div className="relative bg-cover bg-center h-[1100px] md:h-[750px] px-6 sm:px-10 lg:px-16 py-10 flex flex-col justify-center" style={{ backgroundImage: 'url(/assets/images/faqs.png)' }}>
       <h2 className="text-4xl font-bold text-center lg:text-left text-white mb-10">Preguntas Frecuentes</h2>
       <div className='flex items-center justify-around gap-4'>
 {/* izquierda */}
