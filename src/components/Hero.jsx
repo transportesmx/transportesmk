@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import HeroCotiza from './HeroCotiza';
 
 const Hero = () => {
   const slides = [
@@ -15,14 +16,16 @@ const Hero = () => {
     },
     {
       image: '/assets/images/odissey.png',
-      title: 'Comodidad y seguridad garantizadas',
+      title: 'Movilidad para cada compromiso',
       description: 'Maximiza tu tiempo con un transporte exclusivo y seguro. Perfecto para reuniones de trabajo, eventos empresariales y traslados VIP.'
     },
-    {
-      image: '/assets/images/chofer.png',
-      title: 'Comodidad y seguridad garantizadas',
-      description: 'Nos aseguramos de que cada viaje sea una experiencia tranquila, cómoda y completamente segura.'
-    }
+    
+      {
+        image: '/assets/images/chofer.png',
+        title: 'Tu ruta, tu tiempo, nuestro compromiso',
+        description: 'Disfruta de la flexibilidad de un servicio privado con chofer exclusivo. Ideal para recorridos dentro y fuera de la ciudad, con la comodidad que mereces.',
+      }
+    
   ];
 
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -39,14 +42,14 @@ const Hero = () => {
       <AnimatePresence mode="wait">
         <motion.div
           key={currentSlide}
-          className="absolute inset-0 flex items-center justify-start bg-cover bg-center"
+          className="absolute inset-0 flex items-center lg:items-start justify-start bg-cover bg-center "
           style={{ backgroundImage: `url(${slides[currentSlide].image})` }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 1 }}
         >
-          <div className="text-white p-8 md:px-12 rounded-lg max-w-2xl text-center md:text-left">
+          <div className="text-white p-8 md:px-12 rounded-lg max-w-2xl lg:max-w-2xl text-center md:text-left lg:mt-16">
             <h1 className="text-[40px] leading-[40px] md:text-5xl font-bold mb-4">
               {slides[currentSlide].title}
             </h1>
@@ -59,9 +62,14 @@ const Hero = () => {
                 Reservar
               </button>
             </div>
+            
           </div>
         </motion.div>
       </AnimatePresence>
+
+      <div className='hidden lg:block mt-14 absolute bottom-[150px] left-[35px] transform space-x-2'>
+              <HeroCotiza/>
+            </div>
 
       {/* Indicadores de slide */}
       <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
