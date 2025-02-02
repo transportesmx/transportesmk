@@ -3,7 +3,7 @@ import React from 'react';
 export default function Formulario() {
   return (
     <div className="flex items-center justify-center  ">
-      <div className="w-full max-w-md p-6 bg-white/10 backdrop-blur-lg rounded-2xl shadow-lg">
+      <div className="w-full max-w-md p-6 bg-white/10 backdrop-blur-sm rounded-2xl shadow-lg">
         <h2 className="text-center text-2xl font-semibold text-white mb-4">Cotizar</h2>
         <form className="space-y-4">
           <input
