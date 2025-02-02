@@ -44,10 +44,11 @@ export default function Formulario() {
           />
           <button
             type="submit"
-            className="w-full p-3 mt-4 font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-3 mt-4 font-semibold text-white bg-white/40 backdrop-blur-sm hover:bg-gray-700 rounded-lg transition shadow-lg"
           >
             Cotizar
           </button>
+          
           <p className="text-center text-xs text-white mt-2">
             *Atención personalizada 24/7.
           </p>

@@ -39,7 +39,7 @@ const Navbar = () => {
           </nav>
           <div className="flex items-center space-x-8">
 
-          <div className="flex items-center space-x-2">
+          <div className="hidden lg:flex items-center space-x-2">
             <img src="/assets/icons/mexico.png" alt="Mexican Flag" className="h-5" />
             <a href="#" className="hover:text-blue-500 transition">ESP</a>
             <span className="text-white ">{"/"}</span>
@@ -89,11 +89,14 @@ const Navbar = () => {
           <a href="#" className="block px-4 py-2 hover:bg-gray-600">Cotiza</a>
 
           <div className="px-4 py-2 flex items-center space-x-2">
-            <img src="/mx-flag.png" alt="Mexican Flag" className="h-5" />
+          <img src="/assets/icons/mexico.png" alt="Mexican Flag" className="h-5" />
             <span className="hover:text-blue-500">ESP</span>
             <span className="text-white ">{"/"}</span>
             <span className="hover:text-blue-500">EN</span>
+            <img src="/assets/icons/eu.png" alt="Mexican Flag" className="h-5" />
           </div>
+
+       
 
           <div className="px-4 py-2 flex items-center space-x-4">
             <FaFacebookF className="hover:text-blue-500 cursor-pointer" />
