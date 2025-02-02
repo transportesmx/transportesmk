@@ -67,7 +67,7 @@ const Hero = () => {
         </motion.div>
       </AnimatePresence>
 
-      <div className='hidden lg:block mt-14 absolute bottom-[150px] left-[35px] transform space-x-2'>
+      <div className='hidden lg:block mt-14 absolute bottom-[170px] left-[35px] transform space-x-2'>
               <HeroCotiza/>
             </div>
 
