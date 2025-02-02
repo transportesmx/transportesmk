@@ -38,11 +38,11 @@ const Hero = () => {
   }, []);
 
   return (
-    <div className="relative w-full h-[90vh] overflow-hidden ">
+    <div className="relative w-full h-[90vh] max-h-[730px] overflow-hidden  ">
       <AnimatePresence mode="wait">
         <motion.div
           key={currentSlide}
-          className="absolute inset-0 flex items-center lg:items-start justify-start bg-cover bg-center "
+          className="absolute inset-0 flex items-center lg:items-start justify-start bg-cover bg-center px-20 "
           style={{ backgroundImage: `url(${slides[currentSlide].image})` }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -67,7 +67,7 @@ const Hero = () => {
         </motion.div>
       </AnimatePresence>
 
-      <div className='hidden lg:block mt-14 absolute bottom-[170px] left-[35px] transform space-x-2'>
+      <div className='hidden lg:block mt-14 absolute bottom-[170px] pl-32 transform space-x-2'>
               <HeroCotiza/>
             </div>
 
