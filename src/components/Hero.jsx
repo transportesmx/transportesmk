@@ -49,11 +49,11 @@ const Hero = () => {
           exit={{ opacity: 0 }}
           transition={{ duration: 1 }}
         >
-          <div className="text-white md:px-12 rounded-lg max-w-2xl  text-center md:text-left lg:mt-16">
+          <div className="text-white lg:px-4 rounded-lg max-w-2xl  text-center md:text-left lg:mt-16">
             <h1 className="text-[32px] lg:text-[40px] leading-[40px] md:text-5xl font-bold mb-4">
               {slides[currentSlide].title}
             </h1>
-            <p className="text-lg md:text-xl">{slides[currentSlide].description}</p>
+            <p className="text-lg md:text-xl md:max-w-[550px]">{slides[currentSlide].description}</p>
             <div className="mt-6 flex justify-center md:justify-start space-x-4">
               <button className="px-4 py-2 bg-white/15 backdrop-blur-sm hover:bg-gray-700 rounded-lg transition shadow-lg w-[150px] h-[50px]">
                 Cotizar

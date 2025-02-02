@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FaFacebookF, FaInstagram, FaTiktok, FaTripadvisor } from "react-icons/fa";
+import { FaFacebookF, FaInstagram, FaTiktok, FaTripadvisor, FaWhatsapp } from "react-icons/fa";
 import { IoMdArrowDropdown } from "react-icons/io";
 import { HiMenu, HiX } from "react-icons/hi";
 
@@ -98,11 +98,12 @@ const Navbar = () => {
 
        
 
-          <div className="px-4 py-2 flex items-center space-x-4">
+          <div className="px-4 py-2 flex items-center justify-center space-x-8 text-[30px]">
             <FaFacebookF className="hover:text-blue-500 cursor-pointer" />
             <FaInstagram className="hover:text-pink-500 cursor-pointer" />
             <FaTiktok className="hover:text-black cursor-pointer" />
             <FaTripadvisor className="hover:text-green-500 cursor-pointer" />
+            <FaWhatsapp className="hover:text-green-500 cursor-pointer" />
           </div>
         </div>
       )}
