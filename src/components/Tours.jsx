@@ -46,7 +46,7 @@ const Tours = () => {
       <h2 className="text-3xl font-bold mb-4 text-black text-center">Tours</h2>
       <Swiper
         spaceBetween={20}
-        slidesPerView={1.4}
+        slidesPerView={1.3}
         navigation
         breakpoints={{
           640: {
@@ -55,8 +55,14 @@ const Tours = () => {
           768: {
             slidesPerView: 2.7,
           },
+          980:{
+            slidesPerView: 3,
+          },
           1024: {
-            slidesPerView: 2.8,
+            slidesPerView: 3,
+          },
+          1350: {
+            slidesPerView: 4,
           },
         }}
         modules={[Navigation]}
@@ -64,7 +70,7 @@ const Tours = () => {
       >
         {tours.map((tour, index) => (
           <SwiperSlide key={index}>
-            <div className="bg-gray-100 rounded-lg shadow-lg overflow-hidden h-[426px] lg:h-[726px] w-[271px] lg:w-[421px] relative">
+            <div className="bg-gray-100 rounded-lg shadow-lg overflow-hidden h-[426px] lg:h-[630px] w-[271px] lg:w-[321px] relative">
               <img
                 src={tour.image}
                 alt={tour.title}

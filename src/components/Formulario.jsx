@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function Formulario() {
   return (
-    <div className="flex items-center justify-center">
+    <div className="flex items-center justify-center  ">
       <div className="w-full max-w-md p-6 bg-white/10 backdrop-blur-lg rounded-2xl shadow-lg">
         <h2 className="text-center text-2xl font-semibold text-white mb-4">Cotizar</h2>
         <form className="space-y-4">
@@ -21,7 +21,7 @@ export default function Formulario() {
             placeholder="Correo Electrónico"
             className="w-full p-3 rounded-lg bg-white/20 placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          <div className="flex space-x-4">
+          <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
             <input
               type="date"
               className="flex-1 p-3 rounded-lg bg-white/20 placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
