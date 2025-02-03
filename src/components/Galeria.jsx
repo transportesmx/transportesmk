@@ -114,7 +114,7 @@ const Galeria = () => {
                     slidesPerView: 1,
                   },
                   768: {
-                    slidesPerView: 2,
+                    slidesPerView: 2.2,
                   },
                   1024: {
                     slidesPerView: 3,
