@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { FaFacebookF, FaInstagram, FaTiktok, FaTripadvisor, FaWhatsapp } from "react-icons/fa";
 import { IoMdArrowDropdown } from "react-icons/io";
 import { HiMenu, HiX } from "react-icons/hi";
+import Link from "next/link";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -27,9 +28,9 @@ const Navbar = () => {
             </button>
             {isDropdownOpen && (
               <div className="absolute top-8 left-0 bg-black shadow-md rounded-lg w-40 py-2">
-                <a href="#" className="block px-4 py-2 hover:bg-gray-100">Aeropuerto</a>
-                <a href="#" className="block px-4 py-2 hover:bg-gray-100">Bodas</a>
-                <a href="#" className="block px-4 py-2 hover:bg-gray-100">Privado</a>
+                <a href="#" className="block px-4 py-2 ">Aeropuerto</a>
+                <a href="#" className="block px-4 py-2 ">Bodas</a>
+                <a href="#" className="block px-4 py-2 ">Privado</a>
               </div>
             )}
           </div>
@@ -78,9 +79,9 @@ const Navbar = () => {
             </button>
             {isDropdownOpen && (
               <div className="bg-white shadow-md rounded-lg w-full">
-                <a href="#" className="block px-4 py-2 hover:bg-gray-600">Aeropuerto</a>
-                <a href="#" className="block px-4 py-2 hover:bg-gray-600">Bodas</a>
-                <a href="#" className="block px-4 py-2 hover:bg-gray-600">Privado</a>
+                <Link href="#" className="block px-4 py-2 hover:bg-gray-600">Aeropuerto</Link>
+                <Link href="#" className="block px-4 py-2 hover:bg-gray-600">Bodas</Link>
+                <Link href="#" className="block px-4 py-2 hover:bg-gray-600">Privado</Link>
               </div>
             )}
           </div>
