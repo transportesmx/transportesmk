@@ -13,14 +13,14 @@ const HeroCotiza = () => {
     <div className="flex items-center justify-between bg-white/15 bg-opacity-80 rounded-2xl px-6 py-8 shadow-lg w-[700px] mx-auto gap-4">
       {/* Dropdown: Desde */}
       <div className="relative">
-        <label className="block text-white font-bold text-sm">Desde</label>
+        <label className="block  text-white font-bold text-sm">Desde</label>
         <select
           value={from}
           onChange={(e) => setFrom(e.target.value)}
           className="mt-1 bg-white/30 text-white rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           {locations.map((location) => (
-            <option key={location} value={location}>
+            <option key={location} value={location} className="text-black focus:ring-white/15">
               {location}
             </option>
           ))}
@@ -36,7 +36,7 @@ const HeroCotiza = () => {
           className="mt-1 bg-white/30 text-white rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           {destinations.map((destination) => (
-            <option key={destination} value={destination}>
+            <option key={destination} value={destination} className="text-black">
               {destination}
             </option>
           ))}
