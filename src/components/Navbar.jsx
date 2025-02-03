@@ -14,7 +14,7 @@ const Navbar = () => {
           <img src="/assets/logo.png" alt="MK Logo" className="h-8 mr-4" />
         </div>
 
-        <nav className="hidden md:flex items-center space-x-4">
+        <nav className="hidden lg:flex items-center space-x-4">
           <a href="#" className="hover:text-blue-500 transition">Inicio</a>
           <a href="#" className="hover:text-blue-500 transition">Acerca</a>
 
@@ -57,7 +57,7 @@ const Navbar = () => {
           </div>
        
 
-        <div className="md:hidden flex items-center">
+        <div className="lg:hidden flex items-center">
           <button onClick={() => setIsMenuOpen(!isMenuOpen)}>
             {isMenuOpen ? <HiX size={24} /> : <HiMenu size={24} />}
           </button>
@@ -65,7 +65,7 @@ const Navbar = () => {
       </div>
 
       {isMenuOpen && (
-        <div className="md:hidden bg-black shadow-md">
+        <div className="lg:hidden bg-black shadow-md">
           <a href="#" className="block px-4 py-2 hover:bg-gray-600">Inicio</a>
           <a href="#" className="block px-4 py-2 hover:bg-gray-600">Acerca</a>
 

@@ -46,8 +46,8 @@ export default function Faqs() {
             transition={{ duration: 0.5, delay: index * 0.2 }}
             className="bg-gray-100/15 p-5 mb-4 rounded-lg shadow-lg"
           >
-            <div className="flex justify-between items-center cursor-pointer gap-6" onClick={() => toggleFaq(index)}>
-              <h3 className="text-[22px] font-semibold text-white">{faq.question}</h3>
+            <div className="flex justify-between items-center  cursor-pointer" onClick={() => toggleFaq(index)}>
+              <h3 className="text-[22px] font-semibold text-white pr-10 ">{faq.question}</h3>
               <span className="text-white text-[22px]">{selectedFaq === index ? '-' : '+'}</span>
             </div>
             {selectedFaq === index && (
@@ -76,7 +76,7 @@ export default function Faqs() {
             <h3 className='text-white text-[22px] font-semibold text-center mt-4'>
             ¿Tienes mas preguntas?
             </h3>
-            <p className='text-[16px] text-center mt-4'>Estamos para apoyarte en todo momento por favor da click en el boton para comenzar a chatear.</p>
+            <p className='text-[16px] text-center mt-4'>Estamos para apoyarte en todo momento por favor da click en el boton para comenzar a chatear. </p>
             <button className='px-24 py-2  bg-white/50 hover:bg-gray-700 rounded-lg transition mt-8 font-bold'>
               Chatear
             </button>
