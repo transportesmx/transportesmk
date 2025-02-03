@@ -3,6 +3,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from 'swiper/modules';
 import "swiper/css";
 import "swiper/css/navigation";
+import Image from "next/image";
 
 const galleryData = [
   {
@@ -153,12 +154,14 @@ const Galeria = () => {
           >
             {currentImages.map((image, idx) => (
               <SwiperSlide key={idx}>
-                <img
-                  src={image}
-                  alt={`Slide ${idx + 1}`}
-                  className="w-full h-full object-contain"
-                />
-              </SwiperSlide>
+              <Image 
+                src={image}
+                alt={`Slide ${idx + 1}`}
+                layout="fill"
+                objectFit="contain"
+                className="w-full h-full"
+              />
+            </SwiperSlide>
             ))}
           </Swiper>
           <button
