@@ -39,24 +39,24 @@ export default function Footer() {
           </div>
 
           {/* Redes sociales */}
-          <div className="flex flex-col items-center md:items-start space-y-6">
+          <div className="flex flex-col items-center md:items-start space-y-6 ">
             <Link href="https://www.facebook.com">
-              <span target="_blank" className="text-[24px] hover:text-blue-500 flex items-center gap-2">
+              <span target="_blank" className=" hover:text-blue-500 flex items-center text-[15px] gap-2">
                 <FaFacebookF /> Facebook
               </span>
             </Link>
             <Link href="https://www.tripadvisor.com">
-              <span target="_blank" className="text-[24px] hover:text-blue-500 flex items-center gap-2">
+              <span target="_blank" className="text-[15px] hover:text-blue-500 flex items-center gap-2">
                 <FaTripadvisor /> Tripadvisor
               </span>
             </Link>
             <Link href="https://www.instagram.com">
-              <span target="_blank" className="text-[24px] hover:text-blue-500 flex items-center gap-2">
+              <span target="_blank" className="text-[15px] hover:text-blue-500 flex items-center gap-2">
                 <FaInstagram /> Instagram
               </span>
             </Link>
             <Link href="https://www.tiktok.com">
-              <span target="_blank" className="text-[24px] hover:text-blue-500 flex items-center gap-2">
+              <span target="_blank" className="text-[15px] hover:text-blue-500 flex items-center gap-2">
                 <FaTiktok /> Tiktok
               </span>
             </Link>
