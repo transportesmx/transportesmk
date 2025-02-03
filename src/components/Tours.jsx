@@ -70,23 +70,28 @@ const Tours = () => {
       >
         {tours.map((tour, index) => (
           <SwiperSlide key={index}>
-            <div className="bg-gray-100 rounded-lg shadow-lg overflow-hidden h-[426px] lg:h-[630px] w-[271px] lg:w-[321px] relative">
+            <div className="bg-gray-100 rounded-lg shadow-lg overflow-hidden h-[550px] lg:h-[630px] w-[271px] lg:w-[321px] relative">
               <img
                 src={tour.image}
                 alt={tour.title}
                 className="w-full h-full object-cover "
               />
+              <img
+                src="/assets/images/fade.png"
+                alt={tour.title}
+                className="w-full h-full object-cover absolute top-0 left-0"
+              />
               <div className="p-4 absolute bottom-0 z-30">
-                <h3 className="text-[30px] leading-[30px] font-bold mb-2">{tour.title}</h3>
-                <p className="text-white text-[12px] leading-[12px] font-bold mb-4">{tour.description}</p> 
-                <ul className="space-y-4 text-sm sm:text-base md:text-lg">
-                <li className="flex flex-row items-center  gap-2">
-                                <Image src="/assets/icons/clock.png" width={22} height={22} alt="Clock" />
-                                {tour.duration}
+                <h3 className="text-[30px] leading-[30px] font-bold mb-2 drop-shadow-xl">{tour.title}</h3>
+                <p className="text-white text-[14px] leading-[18px] font-bold mb-4 drop-shadow-2xl ">{tour.description}</p> 
+                <ul className="space-y-1 text-[11px] sm:text-base md:text-lg">
+                <li className="flex flex-row items-center  gap-2 ">
+                                <Image src="/assets/icons/bus.png" width={22} height={22} alt="Clock" />
+                                Sedán, SUV y Van con aire acondicionado
                               </li>  
                               <li className="flex flex-row items-center  gap-2">
-                                <Image src="/assets/icons/clock.png" width={22} height={22} alt="Clock" />
-                                {tour.duration}
+                                <Image src="/assets/icons/driver.png" width={22} height={22} alt="Clock" />
+                                Chofer Bilingüe
                               </li>  
                               <li className="flex flex-row items-center  gap-2">
                                 <Image src="/assets/icons/clock.png" width={22} height={22} alt="Clock" />

@@ -2,7 +2,7 @@ import Image from 'next/image';
 import React from 'react'
 import { FaBus, FaClock, FaFacebook, FaInstagram, FaTiktok, FaTripadvisor, FaTruck, FaWhatsapp } from 'react-icons/fa';
 
-function Boda() {
+function Boda() { 
   return (
     <div className="relative bg-cover bg-center h-[1100px] md:h-[750px]" style={{ backgroundImage: 'url(/assets/images/bodas.png)' }}>
       <div className="absolute inset-0 bg-black bg-opacity-40"></div>

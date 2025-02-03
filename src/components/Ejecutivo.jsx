@@ -2,7 +2,7 @@ import Image from 'next/image';
 import React from 'react'
 import { FaBus, FaClock, FaFacebook, FaInstagram, FaTiktok, FaTripadvisor, FaTruck, FaWhatsapp } from 'react-icons/fa';
 
-function Ejecutivo() {
+function Ejecutivo() { 
   return (
     <div className="relative bg-cover bg-center h-[1200px] md:h-[750px]" style={{ backgroundImage: 'url(/assets/images/ejecutivo.png)' }}>
       <div className="absolute inset-0 bg-black bg-opacity-40"></div>
@@ -10,7 +10,7 @@ function Ejecutivo() {
         <div className="h-full place-content-center grid grid-cols-1 md:grid-cols-2 md:gap-12 lg:gap-12  xl:gap-24">
           {/* Left Section */}
           <div className=''>
-            <h1 className="text-[40px] lg:text-[50px] leading-[34px] md:leading-[30px] md:text-4xl lg:text-5xl font-bold text-center md:text-left mb-8 md:mb-12">
+            <h1 className="text-[40px] lg:text-[50px]  leading-[45px] md:leading-[30px] md:text-4xl lg:text-5xl font-bold text-center md:text-left mb-8 md:mb-12">
             Traslado Ejecutivo y Corporativo
             </h1>
             <p className='text-center md:text-left text-[20px] md:text-[24px] mb-8'>
