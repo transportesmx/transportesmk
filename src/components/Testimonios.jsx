@@ -151,6 +151,9 @@ const Testimonios = () => {
           1024: {
             slidesPerView: 3,
           },
+          1350: {
+            slidesPerView: 4,
+          },
         }}
         modules={[Navigation]}
         className="w-full h-full"
