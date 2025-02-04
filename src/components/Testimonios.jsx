@@ -157,7 +157,7 @@ const Testimonios = () => {
       >
         {testimonios.map((tour, index) => (
           <SwiperSlide key={index}>
-            <div className="w-[353px] h-[621px] flex flex-col justify-center items-center">
+            <div className="w-[353px] h-[380px] flex flex-col justify-center items-center">
               
             <div className="bg-white/15 rounded-lg shadow-lg  rounded-tl-[8px] rounded-tr-[48px] rounded-br-[8px] rounded-bl-[48px] h-[268px] w-[274px] relative">
 
