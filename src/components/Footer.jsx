@@ -36,9 +36,7 @@ export default function Footer() {
                 <li><Link href="/cotiza"><span className="hover:text-blue-500">Cotiza</span></Link></li>
               </ul>
             </div>
-          </div>
-
-          {/* Redes sociales */}
+                {/* Redes sociales */}
           <div className="flex flex-col items-center lg:items-start space-y-6 ">
             <Link href="https://www.facebook.com">
               <span target="_blank" className=" hover:text-blue-500 flex items-center text-[15px] gap-2">
@@ -61,6 +59,9 @@ export default function Footer() {
               </span>
             </Link>
           </div>
+          </div>
+
+      
         </div>
 
         {/* Enlaces a términos y condiciones */}

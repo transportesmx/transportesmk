@@ -22,3 +22,12 @@ body {
   background: var(--background);
   font-family: 'Roboto', Arial, Helvetica, sans-serif;
 }
+
+.swiper-button-next { 
+  color: white !important;
+  filter: drop-shadow(2px 2px 5px rgba(0,0,0,0.7));
+}
+.swiper-button-prev { 
+  color: white !important;
+  filter: drop-shadow(2px 2px 5px rgba(0,0,0,0.7));
+}

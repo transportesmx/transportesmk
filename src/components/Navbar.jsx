@@ -50,10 +50,18 @@ const Navbar = () => {
           </div>
 
           <div className=" items-center space-x-4 hidden lg:flex">
+          <Link href="https://www.facebook.com/TransportesTMX/" target="_blank">
             <FaFacebookF className="hover:text-blue-500 cursor-pointer" />
+            </Link>
+            <Link href="https://www.instagram.com/trans_portesmx" target="_blank">
             <FaInstagram className="hover:text-pink-500 cursor-pointer" />
+            </Link>
+            <Link href="https://www.tiktok.com/@transportes.mx2" target="_blank">
             <FaTiktok className="hover:text-black cursor-pointer" />
+            </Link>
+            <Link href="https://www.tripadvisor.com.mx/Attraction_Review-g151932-d25402392-Reviews-Transportes_MX-San_Miguel_de_Allende_Central_Mexico_and_Gulf_Coast.html" target="_blank">
             <FaTripadvisor className="hover:text-green-500 cursor-pointer" />
+            </Link>
           </div>
           </div>
        
@@ -100,12 +108,23 @@ const Navbar = () => {
        
 
           <div className="px-4 py-2 flex items-center justify-center space-x-8 text-[30px]">
+          <Link href="https://www.facebook.com/TransportesTMX/" target="_blank">
             <FaFacebookF className="hover:text-blue-500 cursor-pointer" />
+            </Link>
+            <Link href="https://www.instagram.com/trans_portesmx" target="_blank">
             <FaInstagram className="hover:text-pink-500 cursor-pointer" />
+            </Link>
+            <Link href="https://www.tiktok.com/@transportes.mx2" target="_blank">
             <FaTiktok className="hover:text-black cursor-pointer" />
+            </Link>
+            <Link href="https://www.tripadvisor.com.mx/Attraction_Review-g151932-d25402392-Reviews-Transportes_MX-San_Miguel_de_Allende_Central_Mexico_and_Gulf_Coast.html" target="_blank">
             <FaTripadvisor className="hover:text-green-500 cursor-pointer" />
+            </Link>
+            <Link href="https://wa.me/524151393219" target="_blank">
             <FaWhatsapp className="hover:text-green-500 cursor-pointer" />
+            </Link>
           </div>
+         
         </div>
       )}
     </header>
