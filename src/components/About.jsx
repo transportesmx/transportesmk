@@ -28,12 +28,13 @@ function About() {
               <Image src="/assets/icons/24.png" width={38} height={38} alt="Clock" />                Atención personalizada 24/7.
               </li>
             </ul>
-            <div className="flex justify-center md:justify-start space-x-4 mt-8 text-xl md:text-2xl">
-              <a href="#" aria-label="Facebook" className="hover:opacity-75 text-[36px]"><FaFacebook/></a>
-              <a href="#" aria-label="Instagram" className="hover:opacity-75 text-[36px] "><FaInstagram/></a>
-              <a href="#" aria-label="TikTok" className="hover:opacity-75 text-[36px]"><FaTiktok/></a>
-              <a href="#" aria-label="TripAdvisor" className="hover:opacity-75 text-[36px]"><FaTripadvisor/></a>
-              <a href="#" aria-label="WhatsApp" className="hover:opacity-75 text-[36px]"><FaWhatsapp/></a>
+              
+            <div className="flex lg:hidden justify-center md:justify-start space-x-4 mt-8 text-xl md:text-2xl">
+              <a href="#" aria-label="Facebook" className="hover:text-blue-500 text-[36px]"><FaFacebook/></a>
+              <a href="#" aria-label="Instagram" className="hover:text-pink-500 text-[36px] "><FaInstagram/></a>
+              <a href="#" aria-label="TikTok" className="hover:text-black  text-[36px]"><FaTiktok/></a>
+              <a href="#" aria-label="TripAdvisor" className="hover:text-green-500  text-[36px]"><FaTripadvisor/></a>
+              <a href="#" aria-label="WhatsApp" className="hover:text-green-500 text-[36px]"><FaWhatsapp/></a>
             </div>
           </div>
 
@@ -53,6 +54,15 @@ function About() {
                 excelencia y profesionalismo.
               </p>
             </div>
+
+            <div className="hidden lg:flex justify-center md:justify-start space-x-4 mt-8 text-xl md:text-2xl">
+              <a href="#" aria-label="Facebook" className="hover:text-blue-500 text-[36px]"><FaFacebook/></a>
+              <a href="#" aria-label="Instagram" className="hover:text-pink-500 text-[36px] "><FaInstagram/></a>
+              <a href="#" aria-label="TikTok" className="hover:text-black  text-[36px]"><FaTiktok/></a>
+              <a href="#" aria-label="TripAdvisor" className="hover:text-green-500  text-[36px]"><FaTripadvisor/></a>
+              <a href="#" aria-label="WhatsApp" className="hover:text-green-500 text-[36px]"><FaWhatsapp/></a>
+            </div>
+
           </div>
         </div>
       </div>
