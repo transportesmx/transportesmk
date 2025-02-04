@@ -169,7 +169,7 @@ const Testimonios = () => {
               <div className="p-4 text-center">
               <h3 className="text-[16px] font-bold mt-6">{tour.nombre}</h3>
               <h3 className="text-[10px]  mb-2">{tour.servicio}</h3>
-                <p className=" text-[14px] mb-4">{tour.description}</p>
+                <p className=" text-[14px] mb-4 h-[100px]">{tour.description}</p>
                 {[...Array(5)].map((_, i) => (
                   <img key={i} src="/assets/icons/star.png" alt="star" className="w-4 h-4 inline-block" />
                 ))}                
