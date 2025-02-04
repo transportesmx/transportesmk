@@ -87,9 +87,9 @@ const Navbar = () => {
             </button>
             {isDropdownOpen && (
               <div className="bg-white shadow-md rounded-lg w-full">
-                <Link href="#" className="block px-4 py-2 hover:bg-gray-600">Aeropuerto</Link>
-                <Link href="#" className="block px-4 py-2 hover:bg-gray-600">Bodas</Link>
-                <Link href="#" className="block px-4 py-2 hover:bg-gray-600">Privado</Link>
+                <Link href="#" className="block bg-black px-4 py-2 hover:bg-gray-600">Aeropuerto</Link>
+                <Link href="#" className="block bg-black px-4 py-2 hover:bg-gray-600">Bodas</Link>
+                <Link href="#" className="block bg-black px-4 py-2 hover:bg-gray-600">Chofer Privado</Link>
               </div>
             )}
           </div>
