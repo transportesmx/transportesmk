@@ -38,7 +38,16 @@ const tours = [
     duration: "5 hrs aprox.",
     image: "/path-to-queretaro-image.jpg",
   },
-];
+]; 
+
+const handleCotizar = (tour) => {
+  const phoneNumber = "524151393219"; // Reemplaza con el número de WhatsApp incluyendo el código de país (52 para México).
+  const message = `Hola, me gustaría reservar el tour de ${tour.title}`;
+  const encodedMessage = encodeURIComponent(message);
+  const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+  
+  window.open(whatsappURL, "_blank");
+};
 
 const Tours = () => {
   return (
@@ -74,7 +83,9 @@ const Tours = () => {
       >
         {tours.map((tour, index) => (
           <SwiperSlide key={index}>
-            <div className="bg-gray-100 rounded-lg shadow-lg overflow-hidden h-[550px] lg:h-[630px] w-[271px] lg:w-[321px] relative">
+            <div className="bg-gray-100 rounded-lg shadow-lg overflow-hidden h-[550px] lg:h-[630px] w-[271px] lg:w-[321px] relative"
+            onClick={() => handleCotizar(tour)}
+            >
               <img
                 src={tour.image}
                 alt={tour.title}

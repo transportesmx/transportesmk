@@ -43,7 +43,9 @@ function Boda() {
               
             </ul>
             <div className="flex justify-center md:justify-start space-x-4 mt-8 text-xl md:text-2xl">
-            <button className='px-32 py-2 bg-white/50 hover:bg-gray-700 rounded-lg transition mt-8 md:hidden'>
+            <button className='px-32 py-2 bg-white/50 hover:bg-gray-700 rounded-lg transition mt-8 md:hidden'
+            onClick={handleCotizar}
+            >
               Cotizar
             </button>
             </div>

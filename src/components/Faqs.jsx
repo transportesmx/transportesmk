@@ -25,6 +25,15 @@ const faqData = [
   },
 ];
 
+const handlePreguntar = (tour) => {
+  const phoneNumber = "524151393219"; // Reemplaza con el número de WhatsApp incluyendo el código de país (52 para México).
+  const message = `Hola, tengo una duda`;
+  const encodedMessage = encodeURIComponent(message);
+  const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+  
+  window.open(whatsappURL, "_blank");
+};
+
 export default function Faqs() {
   const [selectedFaq, setSelectedFaq] = useState(null);
 
@@ -77,7 +86,9 @@ export default function Faqs() {
             ¿Tienes mas preguntas?
             </h3>
             <p className='text-[16px] text-center mt-4'>Estamos para apoyarte en todo momento por favor da click en el boton para comenzar a chatear. </p>
-            <button className='px-24 py-2  bg-white/50 hover:bg-gray-700 rounded-lg transition mt-8 font-bold'>
+            <button className='px-24 py-2  bg-white/50 hover:bg-gray-700 rounded-lg transition mt-8 font-bold'
+            onClick={handlePreguntar}
+            >
               Chatear
             </button>
 
