@@ -1,6 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 export default function Formulario() {
+  
+  const [startDate, setStartDate] = useState(new Date());
+
+
   return (
     <div className="flex items-center justify-center  ">
       <div className="w-full max-w-md p-6 bg-white/10 backdrop-blur-sm rounded-2xl shadow-lg">
@@ -22,10 +28,12 @@ export default function Formulario() {
             className="w-full p-3 rounded-lg bg-white/20 placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-            <input
-              type="date"
-              className="flex-1 p-3 rounded-lg bg-white/20 placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+          <DatePicker
+        selected={startDate}
+        onChange={(date) => setStartDate(date)}
+        className="w-full flex-1 p-3 rounded-lg bg-white/20 placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+        placeholderText="Select a date"
+      />
             <input
               type="number"
               placeholder="Número de pasajeros"
