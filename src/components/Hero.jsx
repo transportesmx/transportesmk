@@ -28,6 +28,15 @@ const Hero = () => {
     
   ];
 
+  const handleWhatsAppClick = () => {
+    const phoneNumber = "524151393219"; // Reemplaza con el número de WhatsApp incluyendo el código de país (52 para México).
+    const message = "Hola, me gustaría cotizar un servicio";
+    const encodedMessage = encodeURIComponent(message);
+    const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+    
+    window.open(whatsappURL, "_blank");
+  };
+
   const [currentSlide, setCurrentSlide] = useState(0);
 
   useEffect(() => {
@@ -55,7 +64,9 @@ const Hero = () => {
             </h1>
             <p className="text-lg md:text-xl md:max-w-[550px]">{slides[currentSlide].description}</p>
             <div className="mt-6 flex justify-center md:justify-start space-x-4">
-              <button className="px-4 py-2 bg-white/15 backdrop-blur-sm hover:bg-gray-700 rounded-lg transition shadow-lg w-[150px] h-[50px]">
+              <button className="px-4 py-2 bg-white/15 backdrop-blur-sm hover:bg-gray-700 rounded-lg transition shadow-lg w-[150px] h-[50px]"
+              onClick={handleWhatsAppClick}
+              >
                 Cotizar
               </button>
               <button className="px-4 py-2 border-2 border-white/15 hover:border-white shadow-lg w-[150px] h-[50px] rounded-lg transition">
