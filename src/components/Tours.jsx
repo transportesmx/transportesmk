@@ -36,7 +36,7 @@ const tours = [
       "Explora el Acueducto de Querétaro, recorre el Centro Histórico y disfruta de las casonas coloniales. Prueba la deliciosa gastronomía y conoce los viñedos y queserías cercanos.",
     price: "$2,300 x persona",
     duration: "5 hrs aprox.",
-    image: "/path-to-queretaro-image.jpg",
+    image: "/assets/images/queretaro.jpg",
   },
 ]; 
 
