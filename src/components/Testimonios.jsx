@@ -160,7 +160,7 @@ const Testimonios = () => {
       >
         {testimonios.map((tour, index) => (
           <SwiperSlide key={index}>
-            <div className="w-[353px] h-[380px] flex flex-col justify-center items-center">
+            <div className="w-full h-[380px] flex flex-col justify-center items-center">
               
             <div className="bg-white/15 rounded-lg shadow-lg  rounded-tl-[8px] rounded-tr-[48px] rounded-br-[8px] rounded-bl-[48px] h-[268px] w-[274px] relative">
 
@@ -169,7 +169,7 @@ const Testimonios = () => {
               <div className="p-4 text-center">
               <h3 className="text-[16px] font-bold mt-6">{tour.nombre}</h3>
               <h3 className="text-[10px]  mb-2">{tour.servicio}</h3>
-                <p className=" text-[14px] mb-4 h-[100px]">{tour.description}</p>
+                <p className=" text-[14px] mb-4 h-[120px]">{tour.description}</p>
                 {[...Array(5)].map((_, i) => (
                   <img key={i} src="/assets/icons/star.png" alt="star" className="w-4 h-4 inline-block" />
                 ))}                
