@@ -42,7 +42,11 @@ const tours = [
 
 const Tours = () => {
   return (
-    <div className="px-4 py-8 bg-white">
+    <div className="w-full h-full px-4 py-8 bg-white relative">
+
+    <Image src={"/assets/images/toursflores.png"} width={100} height={100} alt="Tours" className="right-0 top-0 absolute" />
+    <Image src={"/assets/images/lele.png"} width={100} height={100} alt="Tours" className="left-0 bottom-0 absolute" />
+
       <h2 className="text-3xl font-bold mb-4 text-black text-center">Tours</h2>
       <Swiper
         spaceBetween={20}
