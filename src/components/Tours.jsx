@@ -83,7 +83,7 @@ const Tours = () => {
       >
         {tours.map((tour, index) => (
           <SwiperSlide key={index}>
-            <div className="bg-gray-100 rounded-lg shadow-lg overflow-hidden h-[550px] lg:h-[630px] w-[271px] lg:w-[321px] relative"
+            <div className="bg-gray-100 rounded-lg shadow-lg overflow-hidden h-[550px] lg:h-[630px] w-[271px] lg:w-[321px] cursor-pointer relative"
             onClick={() => handleCotizar(tour)}
             >
               <img
