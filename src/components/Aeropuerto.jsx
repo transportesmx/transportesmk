@@ -10,7 +10,7 @@ function Aeropuerto() {
 
       <h1 className='text-[40px] lg:text-[50px] leading-[45px] lg:leading-[50px] font-bold mb-2 text-center'>Traslado a Aeropuerto</h1>
       <p className='text-lg lg:text-xl text-center px- mb-6'>Servicio personalizado, rápido y confiable.</p>
-      <div className='w-full px-4 flex flex-col justify-center items-center lg:items-start'>
+      <div className='w-full px-4 lg:px-0 flex flex-col justify-center items-center lg:items-start'>
       <Formulario/>
       </div>
       </div>

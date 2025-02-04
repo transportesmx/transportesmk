@@ -67,7 +67,7 @@ const Hero = () => {
           transition={{ duration: 1 }}
         >
           <div className="text-white lg:px-4 rounded-lg max-w-2xl  text-center md:text-left lg:mt-16">
-            <h1 className="text-[32px] lg:text-[40px] leading-[40px] md:text-5xl font-bold mb-4">
+            <h1 className="text-[32px] lg:text-[40px] xl:text-[60px] leading-[40px] md:text-5xl font-bold mb-4">
               {slides[currentSlide].title}
             </h1>
             <p className="text-lg md:text-xl md:max-w-[550px]">{slides[currentSlide].description}</p>

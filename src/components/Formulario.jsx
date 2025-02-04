@@ -34,7 +34,7 @@ export default function Formulario() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen px-4 sm:px-6 lg:px-8">
+    <div className="w-full flex items-center justify-center lg:justify-start  px-4 sm:px-6 lg:px-0 ">
       <div className="w-full max-w-md p-6 bg-white/10 backdrop-blur-sm rounded-2xl shadow-lg">
         <h2 className="text-center text-2xl font-semibold text-white mb-4">Cotizar</h2>
         <form className="space-y-4" onSubmit={handleSubmit}>
