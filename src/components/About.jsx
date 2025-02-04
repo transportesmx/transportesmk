@@ -29,7 +29,7 @@ function About() {
               </li>
             </ul>
               
-            <div className="flex lg:hidden justify-center md:justify-start space-x-4 mt-8 text-xl md:text-2xl">
+            <div className="flex md:hidden justify-center md:justify-start space-x-4 mt-8 text-xl md:text-2xl">
               <a href="#" aria-label="Facebook" className="hover:text-blue-500 text-[36px]"><FaFacebook/></a>
               <a href="#" aria-label="Instagram" className="hover:text-pink-500 text-[36px] "><FaInstagram/></a>
               <a href="#" aria-label="TikTok" className="hover:text-black  text-[36px]"><FaTiktok/></a>
@@ -55,7 +55,7 @@ function About() {
               </p>
             </div>
 
-            <div className="hidden lg:flex justify-center md:justify-start space-x-4 mt-8 text-xl md:text-2xl">
+            <div className="hidden md:flex justify-center md:justify-start space-x-4 mt-8 text-xl md:text-2xl">
               <a href="#" aria-label="Facebook" className="hover:text-blue-500 text-[36px]"><FaFacebook/></a>
               <a href="#" aria-label="Instagram" className="hover:text-pink-500 text-[36px] "><FaInstagram/></a>
               <a href="#" aria-label="TikTok" className="hover:text-black  text-[36px]"><FaTiktok/></a>
