@@ -102,6 +102,8 @@ const Galeria = () => {
   };
 
   return (
+    <div className="w-full h-full bg-white">
+
     <div className="container mx-auto px-4 py-8 bg-white">
       <h2 className="text-2xl font-bold text-center mb-6 text-black">Galería Visual</h2>
       <div className="flex gap-4">
@@ -122,18 +124,18 @@ const Galeria = () => {
                 }}
                 modules={[Navigation]}
                 className="w-full h-full"
-              >
+                >
         {galleryData.map((category, index) => (
           <SwiperSlide key={index}>
           <div
             className="relative group cursor-pointer overflow-hidden rounded-lg shadow-lg w-[300px] h-[550px]"
             onClick={() => openSwiper(category.categoryImages, 0)}
-          >
+            >
             <img
               src={category.image}
               alt={category.title}
               className=" object-cover transition-transform duration-300 group-hover:scale-110 w-[300px] h-[550px] "
-            />
+              />
             <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center ">
               <p className=" font-bold text-[40px] text-center px-4 ">{category.title}</p>
             </div>
@@ -151,7 +153,7 @@ const Galeria = () => {
             initialSlide={swiperIndex}
             className="w-11/12 h-3/4"
             onSlideChange={(swiper) => setSwiperIndex(swiper.activeIndex)}
-          >
+            >
             {currentImages.map((image, idx) => (
               <SwiperSlide key={idx}>
               <Image 
@@ -160,19 +162,20 @@ const Galeria = () => {
                 layout="fill"
                 objectFit="contain"
                 className="w-full h-full"
-              />
+                />
             </SwiperSlide>
             ))}
           </Swiper>
           <button
             className="absolute top-4 right-4 text-white text-2xl font-bold"
             onClick={() => setIsSwiperOpen(false)}
-          >
+            >
             ✕
           </button>
         </div>
       )}
     </div>
+      </div>
   );
 };
 
