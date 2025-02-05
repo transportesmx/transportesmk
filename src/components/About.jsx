@@ -11,6 +11,7 @@ const variants = {
 function About() {
   return (
     <motion.div
+    id="About"
       className="relative bg-cover bg-center h-[700px] md:h-[600px] w-full flex justify-center items-center"
       style={{ backgroundImage: 'url(/assets/images/about.png)' }}
       initial="hidden"

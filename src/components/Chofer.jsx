@@ -27,6 +27,7 @@ function Chofer() {
 
   return (
     <motion.div
+    id="Chofer"
       className="relative bg-cover bg-center h-[1200px] md:h-[750px]"
       style={{ backgroundImage: 'url(/assets/images/chofer2.png)' }}
       initial="hidden"

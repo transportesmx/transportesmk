@@ -66,6 +66,7 @@ const Tours = () => {
 
   return (
     <motion.div
+    id="Tours"
       className="w-full h-full px-4 py-8 bg-white relative"
       initial="hidden"
       whileInView="visible"

@@ -24,6 +24,7 @@ function Boda() {
 
   return (
     <motion.div
+    id="Bodas"
       className="relative bg-cover bg-center h-[1100px] md:h-[750px]"
       style={{ backgroundImage: 'url(/assets/images/bodas.png)' }}
       initial="hidden"

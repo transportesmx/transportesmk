@@ -10,6 +10,7 @@ const variants = {
 function Aeropuerto() {
   return (
     <motion.div
+    id="Aeropuerto"
       className='h-[950px]'
       style={{ backgroundImage: 'url(/assets/images/aeropuerto.png)', backgroundSize: 'cover', backgroundPosition: 'center' }}
       initial="hidden"

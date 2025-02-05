@@ -8,6 +8,14 @@ const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
+  const handleCotizar = () => {
+    const phoneNumber = "524151393219"; // Reemplaza con el número de WhatsApp incluyendo el código de país (52 para México).
+    const message = "Hola, me gustaría cotizar un servicio";
+    const encodedMessage = encodeURIComponent(message);
+    const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+    window.open(whatsappURL, "_blank");
+  };
+
   return (
     <header className="bg-black shadow-md sticky top-0 z-50">
       <div className="container mx-auto flex justify-between items-center px-4 py-2">
@@ -16,8 +24,8 @@ const Navbar = () => {
         </div>
 
         <nav className="hidden lg:flex items-center space-x-4">
-          <a href="#" className="hover:text-blue-500 transition">Inicio</a>
-          <a href="#" className="hover:text-blue-500 transition">Acerca</a>
+          <a href="/#Hero" className="hover:text-blue-500 transition">Inicio</a>
+          <a href="/#About" className="hover:text-blue-500 transition">Acerca</a>
 
           <div className="relative">
             <button
@@ -28,15 +36,15 @@ const Navbar = () => {
             </button>
             {isDropdownOpen && (
               <div className="absolute top-8 left-0 bg-black shadow-md rounded-lg w-40 py-2">
-                <a href="#" className="block px-4 py-2 ">Aeropuerto</a>
-                <a href="#" className="block px-4 py-2 ">Bodas</a>
-                <a href="#" className="block px-4 py-2 ">Privado</a>
+                <a href="/#Aeropuerto" className="block px-4 py-2 ">Aeropuerto</a>
+                <a href="/#Bodas" className="block px-4 py-2 ">Bodas</a>
+                <a href="/#Chofer" className="block px-4 py-2 ">Privado</a>
               </div>
             )}
           </div>
 
-          <a href="#" className="hover:text-blue-500 transition">Tours</a>
-          <a href="#" className="hover:text-blue-500 transition">Cotiza</a>
+          <a href="/#Tours" className="hover:text-blue-500 transition">Tours</a>
+          <span onClick={handleCotizar} className="hover:text-blue-500 transition cursor-pointer">Cotiza</span>
           </nav>
           <div className="flex items-center space-x-8">
 
@@ -75,8 +83,8 @@ const Navbar = () => {
 
       {isMenuOpen && (
         <div className="lg:hidden bg-black shadow-md">
-          <a href="#" className="block px-4 py-2 hover:bg-gray-600">Inicio</a>
-          <a href="#" className="block px-4 py-2 hover:bg-gray-600">Acerca</a>
+          <a href="/#Hero" className="block px-4 py-2 hover:bg-gray-600">Inicio</a>
+          <a href="/#About" className="block px-4 py-2 hover:bg-gray-600">Acerca</a>
 
           <div className="relative">
             <button
@@ -87,15 +95,15 @@ const Navbar = () => {
             </button>
             {isDropdownOpen && (
               <div className="bg-white shadow-md rounded-lg w-full">
-                <Link href="#" className="block bg-black px-4 py-2 hover:bg-gray-600">Aeropuerto</Link>
-                <Link href="#" className="block bg-black px-4 py-2 hover:bg-gray-600">Bodas</Link>
-                <Link href="#" className="block bg-black px-4 py-2 hover:bg-gray-600">Chofer Privado</Link>
+                <Link href="/#Aeropuerto" className="block bg-black px-4 py-2 hover:bg-gray-600">Aeropuerto</Link>
+                <Link href="/#Bodas" className="block bg-black px-4 py-2 hover:bg-gray-600">Bodas</Link>
+                <Link href="/#Chofer" className="block bg-black px-4 py-2 hover:bg-gray-600">Chofer Privado</Link>
               </div>
             )}
           </div>
 
-          <a href="#" className="block px-4 py-2 hover:bg-gray-600">Tours</a>
-          <a href="#" className="block px-4 py-2 hover:bg-gray-600">Cotiza</a>
+          <a href="/#Tours" className="block px-4 py-2 hover:bg-gray-600">Tours</a>
+          <span onClick={handleCotizar} className="block px-4 py-2 hover:bg-gray-600">Cotiza</span>
 
           <div className="px-4 py-2 flex items-center space-x-2">
           <img src="/assets/icons/mexico.png" alt="Mexican Flag" className="h-5" />

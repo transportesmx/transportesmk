@@ -5,7 +5,7 @@ export default function Footer() {
   return (
     <footer className="bg-black text-white py-12">
       <div className="max-w-screen-xl mx-auto px-4 sm:px-6">
-        <div className="flex flex-col lg:flex-row justify-between items-center space-y-8 lg:space-y-0">
+        <div className="flex flex-col lg:flex-row justify-between items-center space-y-8 lg:space-y-0 lg:px-16">
           {/* Logo y slogan */}
           <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
             <img src="/assets/logo.png" alt="Logo" className="h-16 mb-4" /> {/* Asegúrate de poner el path correcto */}
