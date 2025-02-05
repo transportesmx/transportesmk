@@ -57,11 +57,11 @@ export default function Footer() {
 
         {/* Enlaces a términos y condiciones */}
         <div className="mt-8 text-center">
-          <Link href="/terminos-y-condiciones">
+          <Link href="/Terminos">
             <span className="text-sm text-gray-400 hover:text-blue-500">Términos y condiciones</span>
           </Link>
           <span className="mx-2">|</span>
-          <Link href="/politica-de-privacidad">
+          <Link href="/Privacidad">
             <span className="text-sm text-gray-400 hover:text-blue-500">Política de Privacidad</span>
           </Link>
         </div>
