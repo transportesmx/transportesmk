@@ -56,14 +56,20 @@ export default function Footer() {
         </div>
 
         {/* Enlaces a términos y condiciones */}
-        <div className="mt-8 text-center">
+        <div className="mt-8 text-center flex flex-col lg:flex-row  lg:justify-center items-center">
           <Link href="/Terminos">
             <span className="text-sm text-gray-400 hover:text-blue-500">Términos y condiciones</span>
           </Link>
-          <span className="mx-2">|</span>
+          <div className="mx-8 cursor-pointer hidden lg:block" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+            <img src="/assets/icons/arriba.png" alt="Flecha arriba" className="h-6 inline transform -translate-y-2" />
+          </div>
           <Link href="/Privacidad">
             <span className="text-sm text-gray-400 hover:text-blue-500">Política de Privacidad</span>
           </Link>
+          <div className="mx-8 cursor-pointer  lg:hidden" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+            <img src="/assets/icons/arriba.png" alt="Flecha arriba" className="h-6 inline transform translate-y-4" />
+          </div>                 
+          
         </div>
       </div>
     </footer>
