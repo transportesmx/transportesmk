@@ -19,6 +19,7 @@ function Ejecutivo() {
 
   return (
     <motion.div
+    id="Ejecutivo"
       className="relative bg-cover bg-center h-[1200px] md:h-[750px]"
       style={{ backgroundImage: 'url(/assets/images/ejecutivo.png)' }}
       initial="hidden"

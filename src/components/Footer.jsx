@@ -18,24 +18,15 @@ export default function Footer() {
             <div>
               <h3 className="font-bold text-lg mb-4 text-center lg:text-left">Servicios</h3>
               <ul className="space-y-2 text-center lg:text-left">
-                <li><Link href="/traslados-a-aeropuerto"><span className="hover:text-blue-500">Traslados a Aeropuerto</span></Link></li>
-                <li><Link href="/transporte-para-bodas"><span className="hover:text-blue-500">Transporte para bodas</span></Link></li>
-                <li><Link href="/transporte-turistico"><span className="hover:text-blue-500">Transporte Turístico</span></Link></li>
-                <li><Link href="/chofer-privado"><span className="hover:text-blue-500">Chofer Privado</span></Link></li>
-                <li><Link href="/transporte-ejecutivo"><span className="hover:text-blue-500">Transporte Ejecutivo</span></Link></li>
+                <li><Link href="/#Aeropuerto"><span className="hover:text-blue-500">Traslados a Aeropuerto</span></Link></li>
+                <li><Link href="/#Bodas"><span className="hover:text-blue-500">Transporte para bodas</span></Link></li>
+              
+                <li><Link href="/#Chofer"><span className="hover:text-blue-500">Chofer Privado</span></Link></li>
+                <li><Link href="/#Ejecutivo"><span className="hover:text-blue-500">Transporte Ejecutivo</span></Link></li>
               </ul>
             </div>
 
-            {/* Sección de links */}
-            <div>
-              <h3 className="font-bold text-lg mb-4 text-center lg:text-left">Inicio</h3>
-              <ul className="space-y-2 text-center lg:text-left">
-                <li><Link href="/acerca"><span className="hover:text-blue-500">Acerca</span></Link></li>
-                <li><Link href="/servicios"><span className="hover:text-blue-500">Servicios</span></Link></li>
-                <li><Link href="/tours"><span className="hover:text-blue-500">Tours</span></Link></li>
-                <li><Link href="/cotiza"><span className="hover:text-blue-500">Cotiza</span></Link></li>
-              </ul>
-            </div>
+          
                 {/* Redes sociales */}
           <div className="flex flex-col items-center lg:items-start space-y-6 ">
             <Link href="https://www.facebook.com">
