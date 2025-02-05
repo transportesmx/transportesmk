@@ -196,7 +196,7 @@ const Testimonios = () => {
           variants={itemVariants}
         >
           <motion.div
-            className="bg-white/15 rounded-lg shadow-lg rounded-tl-[8px] rounded-tr-[48px] rounded-br-[8px] rounded-bl-[48px] h-[268px] w-[274px] relative"
+            className="bg-white text-black rounded-lg shadow-lg rounded-tl-[8px] rounded-tr-[48px] rounded-br-[8px] rounded-bl-[48px] h-[268px] w-[274px] relative"
             whileHover={{ scale: 1.05 }}
             transition={{ duration: 0.3 }}
           >

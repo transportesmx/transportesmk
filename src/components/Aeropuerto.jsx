@@ -24,7 +24,7 @@ function Aeropuerto() {
           variants={variants}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
-          Traslado a Aeropuerto
+          Traslado Aeropuerto
         </motion.h1>
         <motion.p
           className='text-lg lg:text-xl text-center px- mb-6'
