@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FaMailBulk } from "react-icons/fa";
+import { FaMailBulk, FaWhatsapp } from "react-icons/fa";
 
 const HeroCotiza = () => {
   const [from, setFrom] = useState("Aeropuerto Benito");
@@ -8,6 +8,13 @@ const HeroCotiza = () => {
 
   const locations = ["Aeropuerto Benito", "Aeropuerto CDMX", "Aeropuerto GDL"];
   const destinations = ["Querétaro", "San Miguel de Allende", "León", "Guanajuato"];
+
+  const handleCotizar = () => {
+    const message = `Hola, me gustaría cotizar un traslado de ${from} a ${to} para el día ${date}.`;
+    const url = `https://wa.me/524151393219?text=${encodeURIComponent(message)}`;
+
+    window.open(url, "_blank");
+  }
 
   return (
     <div className="flex items-center justify-between bg-white/15 bg-opacity-80 rounded-2xl px-6 py-8 shadow-lg w-[700px] mx-auto gap-4">
@@ -55,8 +62,10 @@ const HeroCotiza = () => {
       </div>
 
       {/* Submit Button */}
-      <button className="ml-4 bg-[#0057A9] hover:bg-blue-700 text-white font-bold rounded-lg p-3 transition shadow-lg">
-        <img src="/assets/icons/email.png" className="inline-block mr-2" />
+      <button className="ml-4 bg-[#0057A9] hover:bg-blue-700 text-white font-bold rounded-lg p-3 transition shadow-lg"
+      onClick={handleCotizar}
+      >
+        <FaWhatsapp className="inline-block text-[30px]" />
       
       </button>
     </div>
