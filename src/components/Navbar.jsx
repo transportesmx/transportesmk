@@ -83,8 +83,12 @@ const Navbar = () => {
 
       {isMenuOpen && (
         <div className="lg:hidden bg-black shadow-md">
-          <a href="/#Hero" className="block px-4 py-2 hover:bg-gray-600">Inicio</a>
-          <a href="/#About" className="block px-4 py-2 hover:bg-gray-600">Acerca</a>
+          <a href="/#Hero" className="block px-4 py-2 hover:bg-gray-600"
+          onClick={() => setIsMenuOpen(false)}
+          >Inicio</a>
+          <a href="/#About"
+          onClick={() => setIsMenuOpen(false)}
+          className="block px-4 py-2 hover:bg-gray-600">Acerca</a>
 
           <div className="relative">
             <button
@@ -95,15 +99,28 @@ const Navbar = () => {
             </button>
             {isDropdownOpen && (
               <div className="bg-white shadow-md rounded-lg w-full">
-                <Link href="/#Aeropuerto" className="block bg-black px-4 py-2 hover:bg-gray-600">Aeropuerto</Link>
-                <Link href="/#Bodas" className="block bg-black px-4 py-2 hover:bg-gray-600">Bodas</Link>
-                <Link href="/#Chofer" className="block bg-black px-4 py-2 hover:bg-gray-600">Chofer Privado</Link>
+                <Link href="/#Aeropuerto" className="block bg-black px-4 py-2 hover:bg-gray-600"
+                onClick={() => setIsMenuOpen(false)}
+                >Aeropuerto</Link>
+                <Link href="/#Bodas" className="block bg-black px-4 py-2 hover:bg-gray-600"
+                onClick={() => setIsMenuOpen(false)}
+                >Bodas</Link>
+                <Link href="/#Chofer" className="block bg-black px-4 py-2 hover:bg-gray-600"
+                onClick={() => setIsMenuOpen(false)}
+                >Chofer Privado</Link>
               </div>
             )}
           </div>
 
-          <a href="/#Tours" className="block px-4 py-2 hover:bg-gray-600">Tours</a>
-          <span onClick={handleCotizar} className="block px-4 py-2 hover:bg-gray-600">Cotiza</span>
+          <a href="/#Tours" className="block px-4 py-2 hover:bg-gray-600"
+          onClick={() => setIsMenuOpen(false)}
+          >Tours</a>
+          <span className="block px-4 py-2 hover:bg-gray-600"
+          onClick={() => {
+            setIsMenuOpen(false)
+            handleCotizar()
+          }}
+          >Cotiza</span>
 
           <div className="px-4 py-2 flex items-center space-x-2">
           <img src="/assets/icons/mexico.png" alt="Mexican Flag" className="h-5" />
