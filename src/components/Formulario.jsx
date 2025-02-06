@@ -1,6 +1,12 @@
 import React, { useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import Select from 'react-select';
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
+import countryList from 'react-select-country-list';
+
+const vehicleTypes = ['Sedán', 'SUV', 'Minivan', 'Autobús'];
 
 export default function Formulario() {
   const [startDate, setStartDate] = useState(new Date());
@@ -10,8 +16,14 @@ export default function Formulario() {
     email: '',
     pasajeros: '',
     origen: '',
-    destino: ''
+    destino: '',
+    vehicleType: '',
   });
+
+  const countryOptions = countryList().getData().map((country) => ({
+    label: `${country.label} ${country.value}`,
+    value: country.value,
+  }));
 
   const handleChange = (e) => {
     setFormData({
@@ -20,12 +32,26 @@ export default function Formulario() {
     });
   };
 
+  const handleCountryChange = (selectedOption) => {
+    setFormData({
+      ...formData,
+      pais: selectedOption.value,
+    });
+  };
+
+  const handlePhoneChange = (value) => {
+    setFormData({
+      ...formData,
+      telefono: value,
+    });
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    const { nombre, telefono, email, pasajeros, origen, destino } = formData;
-    if (nombre && telefono && email && pasajeros && origen && destino) {
+    const { nombre, telefono, lada,  email, pasajeros, origen, destino, vehicleType } = formData;
+    if (nombre && telefono && lada && email && pasajeros && origen && destino && vehicleType) {
       const formattedDate = startDate.toLocaleDateString('es-ES');
-      const message = `Hola! Soy ${nombre}. mi correo es ${email}, necesito un traslado para el aeropuerto el dia ${formattedDate}, somos ${pasajeros} personas\nOrigen: ${origen}\nDestino: ${destino}`;
+      const message = `Hola! Soy ${nombre}. mi correo es ${email}, mi telefono es ${lada}${telefono} necesito un traslado para el aeropuerto el dia ${formattedDate}, somos ${pasajeros} personas\nOrigen: ${origen}\nDestino: ${destino}\nTipo de vehículo: ${vehicleType}`;
       const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
       window.open(whatsappUrl, '_blank');
     } else {
@@ -34,7 +60,7 @@ export default function Formulario() {
   };
 
   return (
-    <div className="w-full flex items-center justify-center lg:justify-start  px-4 sm:px-6 lg:px-0 ">
+    <div className="w-full flex items-center justify-center lg:justify-start px-4 sm:px-6 lg:px-0">
       <div className="w-full max-w-md p-6 bg-white/10 backdrop-blur-sm rounded-2xl shadow-lg">
         <h2 className="text-center text-2xl font-semibold text-white mb-4">Cotizar</h2>
         <form className="space-y-4" onSubmit={handleSubmit}>
@@ -46,15 +72,26 @@ export default function Formulario() {
             onChange={handleChange}
             className="w-full p-3 rounded-lg bg-white/20 placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          
-          <input
-            type="text"
-            name="telefono"
-            placeholder="Teléfono (Whatsapp)"
-            value={formData.telefono}
+          <div className="flex gap-2 w-full">
+            <input
+               type="text"
+               name="lada"
+               placeholder="Lada"
+               value={formData.lada}
             onChange={handleChange}
-            className="w-full p-3 rounded-lg bg-white/20 placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+              className="w-1/3  p-3 rounded-lg bg-white/20 placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            
+            />
+            <input
+             type="text"
+             name="telefono"
+             placeholder="Telefono"
+             value={formData.telefono}
+            onChange={handleChange}
+              className="w-2/3 p-3 rounded-lg bg-white/20 placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+        
+            />
+          </div>
           <input
             type="email"
             name="email"
@@ -78,6 +115,19 @@ export default function Formulario() {
               onChange={handleChange}
               className="flex-1 p-3 rounded-lg bg-white/20 placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
+          </div>
+          <div className="relative w-full">
+            
+            <select
+              name="vehicleType"
+              value={formData.vehicleType}
+              onChange={handleChange}
+              className="mt-1 bg-white/30 text-white rounded-lg py-2 px-3 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              {vehicleTypes.map((type) => (
+                <option key={type} value={type} className="text-black">{type}</option>
+              ))}
+            </select>
           </div>
           <input
             type="text"
