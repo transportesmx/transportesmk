@@ -27,6 +27,16 @@ const faqData = [
     answer:
       "Te recomendamos reservar al menos 48 horas antes de tu viaje para asegurar disponibilidad.",
   },
+  {
+    question: "¿Qué métodos de pago se aceptan?",
+    answer:
+      "Aceptamos pagos con tarjeta de crédito y débito, transferencias bancarias y pagos en efectivo.",
+  },
+  {
+    question: "¿Emiten factura?",
+    answer:
+      "Sí, emitimos factura. Solo proporciona tus datos fiscales al momento de la reserva.",
+  },
 ];
 
 const handlePreguntar = () => {

@@ -46,6 +46,7 @@ export default function Formulario() {
             onChange={handleChange}
             className="w-full p-3 rounded-lg bg-white/20 placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
+          
           <input
             type="text"
             name="telefono"

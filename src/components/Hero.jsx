@@ -66,7 +66,7 @@ const Hero = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 1 }}
+          transition={{ duration: 0.2 }}
         >
           <div className="text-white lg:px-4 rounded-lg max-w-2xl  text-center md:text-left lg:mt-16">
             <h1 className="text-[32px] lg:text-[40px] xl:text-[60px] leading-[40px] md:text-5xl font-bold mb-4">
