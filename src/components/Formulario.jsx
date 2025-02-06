@@ -50,8 +50,10 @@ export default function Formulario() {
     e.preventDefault();
     const { nombre, telefono, lada,  email, pasajeros, origen, destino, vehicleType } = formData;
     if (nombre && telefono && lada && email && pasajeros && origen && destino && vehicleType) {
+      console.log(startDate)
       const formattedDate = startDate.toLocaleDateString('es-ES');
-      const message = `Hola! Soy ${nombre}. mi correo es ${email}, mi telefono es ${lada}${telefono} necesito un traslado para el aeropuerto el dia ${formattedDate}, somos ${pasajeros} personas\nOrigen: ${origen}\nDestino: ${destino}\nTipo de vehículo: ${vehicleType}`;
+      const hora = startDate.toLocaleTimeString('es-ES');
+      const message = `Hola! Soy ${nombre}. mi correo es ${email}, mi telefono es ${lada}${telefono} necesito un traslado para el aeropuerto el dia ${formattedDate} a las ${hora}, somos ${pasajeros} personas\nOrigen: ${origen}\nDestino: ${destino}\nTipo de vehículo: ${vehicleType}`;
       const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
       window.open(whatsappUrl, '_blank');
     } else {
@@ -104,9 +106,14 @@ export default function Formulario() {
             <DatePicker
               selected={startDate}
               onChange={(date) => setStartDate(date)}
+              showTimeSelect
+              timeFormat="HH:mm"
+              timeIntervals={15}
+              dateFormat="Pp"
               className="w-full flex-1 p-3 rounded-lg bg-white/20 placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholderText="Select a date"
             />
+          
             <input
               type="number"
               name="pasajeros"
