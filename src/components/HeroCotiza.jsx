@@ -9,8 +9,8 @@ const HeroCotiza = () => {
   const [passengerCount, setPassengerCount] = useState(1);
   const [time, setTime] = useState("12:00");
 
-  const locations = ["Aeropuerto AICM", "Aeropuerto AIFA", "Aeropuerto BJX", "Aeropuerto AIQ", "Aeropuerto GDL"];
-  const destinations = ["Querétaro", "San Miguel de Allende", "León", "Guanajuato"];
+  const locations = ["Aeropuerto AICM", "Aeropuerto AIFA", "Aeropuerto BJX", "Aeropuerto AIQ", "Aeropuerto GDL","Querétaro", "San Miguel de Allende", ];
+  const destinations = ["Querétaro", "San Miguel de Allende","Aeropuerto AICM", "Aeropuerto AIFA", "Aeropuerto BJX", "Aeropuerto AIQ", "Aeropuerto GDL",];
   const vehicleTypes = ["Sedán", "SUV", "Van", "Minivan", "Sprinter", "Autobús"];
 
   const handleCotizar = () => {
