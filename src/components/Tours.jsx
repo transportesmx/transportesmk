@@ -12,6 +12,7 @@ const tours = [
     description:
       "Descubre los túneles de Guanajuato y disfruta la vista desde el Mirador del Pípila. Visita el Teatro Juárez, la Universidad de Guanajuato y la Alhóndiga de Granaditas. Sumérgete en la historia en el Museo de las Momias y la Iglesia de San Cayetano (Valenciana). No te pierdas el místico Museo de la Santa Inquisición ni el romántico Callejón del Beso.",
     price: "$1,750 x persona",
+    minimo: "(min. 2)",
     duration: "8 hrs aprox.",
     image: "/assets/images/guanajuato.png",
   },
@@ -20,6 +21,7 @@ const tours = [
     description:
       "Recorre el Santuario de Jesús Nazareno en Atotonilco, conocido como la 'Capilla Sixtina de México'. Descubre arte y diseño en la Fábrica La Aurora y disfruta del colorido Mercado de Artesanías Lucas Balderas. Admira la ciudad desde el Mirador, relájate en el Parque Juárez y conoce la historia en los Lavaderos del Chorro.",
     price: "$1,200 x persona",
+    minimo: "(min. 2)",
     duration: "4 hrs aprox.",
     image: "/assets/images/sanmiguel.png",
   },
@@ -28,6 +30,7 @@ const tours = [
     description:
       "Visita el Santuario de Atotonilco y el Mausoleo de José Alfredo Jiménez con degustación de rompope y mezcal. Recorre la Avenida de la Cerámica y la Iglesia del Grito de Independencia. Disfruta las nieves típicas.",
     price: "$1,700 x persona",
+    minimo: "(min. 2)",
     duration: "6 hrs aprox.",
     image: "/assets/images/dolores.png",
   },
@@ -36,6 +39,7 @@ const tours = [
     description:
       "Explora uno de los monolitos más grandes del mundo en el encantador Pueblo Mágico de Bernal. Disfruta de una caminata con vistas impresionantes, recorre sus coloridas calles coloniales y degusta vinos y quesos artesanales en las vinícolas cercanas. Una experiencia inolvidable entre naturaleza, historia y gastronomía.",
     price: "$1,800 x persona",
+    minimo: "(min. 2)",
     duration: "6.5 hrs aprox.",
     image: "/assets/images/queretaro.jpg",
   }
@@ -147,7 +151,7 @@ const Tours = () => {
                 >
                   {tour.description}
                 </motion.p>
-                <ul className="space-y-1 text-[11px] sm:text-base md:text-lg">
+                <ul className="space-y-1 text-[11px] sm:text-base md:text-[12px]">
                   <li className="flex flex-row items-center gap-2">
                     <Image
                       src="/assets/icons/bus.png"
@@ -179,6 +183,9 @@ const Tours = () => {
                 <div className="flex justify-end items-center">
                   <span className="text-lg font-bold text-white">
                     {tour.price}
+                  </span>
+                  <span className="ml-2 pt-1 text-[10px] font-bold text-white">
+                    {tour.minimo}
                   </span>
                 </div>
               </div>
