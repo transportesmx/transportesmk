@@ -29,22 +29,22 @@ export default function Footer() {
           
                 {/* Redes sociales */}
           <div className="flex flex-col items-center lg:items-start space-y-6 ">
-            <Link href="https://www.facebook.com">
-              <span target="_blank" className=" hover:text-blue-500 flex items-center text-[15px] gap-2">
+            <Link href="https://www.facebook.com/TransportesTMX/">
+              <span target="_blank" className=" hover:text-blue-500 flex items-center text-[15px] gap-2"> 
                 <FaFacebookF /> Facebook
               </span>
             </Link>
-            <Link href="https://www.tripadvisor.com">
+            <Link href="https://www.tripadvisor.com.mx/Attraction_Review-g151932-d25402392-Reviews-Transportes_MX-San_Miguel_de_Allende_Central_Mexico_and_Gulf_Coast.html">
               <span target="_blank" className="text-[15px] hover:text-blue-500 flex items-center gap-2">
                 <FaTripadvisor /> Tripadvisor
               </span>
             </Link>
-            <Link href="https://www.instagram.com">
+            <Link href="https://www.instagram.com/trans_portesmx">
               <span target="_blank" className="text-[15px] hover:text-blue-500 flex items-center gap-2">
                 <FaInstagram /> Instagram
               </span>
             </Link>
-            <Link href="https://www.tiktok.com">
+            <Link href="hhttps://www.tiktok.com/@transportes.mx2">
               <span target="_blank" className="text-[15px] hover:text-blue-500 flex items-center gap-2">
                 <FaTiktok /> Tiktok
               </span>
