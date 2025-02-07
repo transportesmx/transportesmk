@@ -69,7 +69,7 @@ export default function Formulario() {
   return (
     <div className="w-full flex items-center justify-center lg:justify-start px-4 sm:px-6 lg:px-0">
       <div className="w-full max-w-md p-6 bg-white/10 backdrop-blur-sm rounded-2xl shadow-lg">
-        <h2 className="text-center text-2xl font-semibold text-white mb-4">Cotizar</h2>
+        <h2 className="text-center text-2xl font-semibold  mb-4">Cotizar</h2>
         <form className="space-y-4" onSubmit={handleSubmit}>
           <input
             type="text"
@@ -77,7 +77,7 @@ export default function Formulario() {
             placeholder="Nombre"
             value={formData.nombre}
             onChange={handleChange}
-            className="w-full p-3 rounded-lg bg-white/20 placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-3 rounded-lg bg-white text-black placeholder-black  focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <div className="flex gap-2 w-full">
           <PhoneInput
@@ -85,6 +85,7 @@ export default function Formulario() {
         value={formData.telefono}
         onChange={handlePhoneChange}    
         inputStyle={{width: "100%"}} // Oculta el input
+        containerStyle={{backgroundColor: "rgba(255, 255, 255, 0.2)", width: "100%"}}
         className="text-black"
       />
 
@@ -94,7 +95,7 @@ export default function Formulario() {
              placeholder="Telefono"
              value={formData.telefono}
             onChange={handleChange}
-              className="w-2/3 p-3 rounded-lg bg-white/20 placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-2/3 p-3 rounded-lg bg-white text-black placeholder-black  focus:outline-none focus:ring-2 focus:ring-blue-500"
         
             /> */}
           </div>
@@ -104,7 +105,7 @@ export default function Formulario() {
             placeholder="Correo Electrónico"
             value={formData.email}
             onChange={handleChange}
-            className="w-full p-3 rounded-lg bg-white/20 placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-3 rounded-lg bg-white text-black placeholder-black  focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-2">
   {/* Selector de fecha */}
@@ -113,7 +114,7 @@ export default function Formulario() {
     onChange={(date) => setStartDate(date)}
     minDate={tomorrow} // No permite fechas pasadas
     dateFormat="dd/MM/yyyy" // Solo permite elegir fecha
-    className="flex-1 p-3 rounded-lg bg-white/20 placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
+    className="flex-1 p-3 rounded-lg bg-white text-black placeholder-black  focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
     placeholderText="Selecciona una fecha"
   />
 
@@ -123,7 +124,7 @@ export default function Formulario() {
     value={time}
     name="time"
     onChange={handleChange}
-    className="flex-1 p-3 rounded-lg bg-white/20 placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
+    className="flex-1 p-3 rounded-lg bg-white text-black placeholder-black  focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
   />
 
  
@@ -134,7 +135,7 @@ export default function Formulario() {
               name="vehicleType"
               value={formData.vehicleType}
               onChange={handleChange}
-              className="mt-1 bg-white/30 text-white rounded-lg py-2 px-3 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="mt-1 text-black  rounded-lg py-2 px-3 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               {vehicleTypes.map((type) => (
                 <option key={type} value={type} className="text-black">{type}</option>
@@ -147,7 +148,7 @@ export default function Formulario() {
             placeholder="Origen"
             value={formData.origen}
             onChange={handleChange}
-            className="w-full p-3 rounded-lg bg-white/20 placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-3 rounded-lg bg-white text-black placeholder-black  focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <input
             type="text"
@@ -155,15 +156,15 @@ export default function Formulario() {
             placeholder="Destino"
             value={formData.destino}
             onChange={handleChange}
-            className="w-full p-3 rounded-lg bg-white/20 placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-3 rounded-lg bg-white text-black placeholder-black  focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <button
             type="submit"
-            className="w-full p-3 mt-4 font-semibold text-white bg-black/70 backdrop-blur-sm hover:bg-gray-700 rounded-lg transition shadow-lg"
+            className="w-full p-3 mt-4 font-semibold  bg-black/70 backdrop-blur-sm hover:bg-gray-700 rounded-lg transition shadow-lg"
           >
             Cotizar
           </button>
-          <p className="text-center text-xs text-white mt-2">
+          <p className="text-center text-xs  mt-2">
             *Atención personalizada 24/7.
           </p>
         </form>
