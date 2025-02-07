@@ -14,12 +14,16 @@ const HeroCotiza = () => {
   const vehicleTypes = ["Sedán", "SUV", "Van", "Minivan", "Sprinter", "Autobús"];
 
   const handleCotizar = () => {
-    const message = `Hola, me gustaría cotizar un traslado de ${from} a ${to} el día ${date} a las ${time}. 
-    Tipo de vehículo: ${vehicleType}.
-    Cantidad de pasajeros: ${passengerCount}.`;
-
-    const url = `https://wa.me/524151393219?text=${encodeURIComponent(message)}`;
-    window.open(url, "_blank");
+    const recipientEmail = "contacto@transportesmx.com"; // Reemplaza con tu correo de destino
+    const subject = "Solicitud de Cotización de Traslado"; // Asunto del correo
+    const body = `Hola, me gustaría cotizar un traslado de ${from} a ${to} el día ${date} a las ${time}.
+    
+    Tipo de vehículo: ${vehicleType}
+    Cantidad de pasajeros: ${passengerCount}`;
+  
+    const mailtoUrl = `mailto:${recipientEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  
+    window.location.href = mailtoUrl; // Abre el cliente de correo del usuario
   };
 
   return (
@@ -116,7 +120,7 @@ const HeroCotiza = () => {
         className="bg-[#0057A9] hover:bg-blue-700 text-white font-bold rounded-lg p-3 transition shadow-lg mt-4 md:mt-0"
         onClick={handleCotizar}
       >
-        <FaWhatsapp className="text-[30px]" />
+        <img src="/assets/icons/email.png" className="text-[30px]" />
       </button>
     </div>
     </div>

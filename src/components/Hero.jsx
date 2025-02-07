@@ -27,18 +27,18 @@ const Hero = () => {
       },
       {
         image: '/assets/images/suburban2.png',
-        title: 'Tu ruta, tu tiempo, nuestro compromiso',
-        description: 'Disfruta de la flexibilidad de un servicio privado con chofer exclusivo. Ideal para recorridos dentro y fuera de la ciudad, con la comodidad que mereces.',
+        title: ' Lujo y comodidad en cada trayecto',
+        description: 'Disfruta de un viaje exclusivo y seguro en nuestra Suburban. Ideal para traslados ejecutivos, viajes familiares o eventos especiales. Amplio espacio, interior de lujo y tecnología de vanguardia para un trayecto sin preocupaciones.',
       },
       {
         image: '/assets/images/camry.png',
-        title: 'Tu ruta, tu tiempo, nuestro compromiso',
-        description: 'Disfruta de la flexibilidad de un servicio privado con chofer exclusivo. Ideal para recorridos dentro y fuera de la ciudad, con la comodidad que mereces.',
+        title: ' Eficiencia y confort en cada traslado',
+        description: 'Nuestros autos combinan elegancia, seguridad y rendimiento. Perfecto para traslados privados, citas de negocios y viajes dentro de la ciudad. Máxima eficiencia y confort para que llegues a tu destino con total tranquilidad.',
       },
       {
         image: '/assets/images/autobus.png',
-        title: 'Tu ruta, tu tiempo, nuestro compromiso',
-        description: 'Disfruta de la flexibilidad de un servicio privado con chofer exclusivo. Ideal para recorridos dentro y fuera de la ciudad, con la comodidad que mereces.',
+        title: 'Viajes en grupo con total comodidad',
+        description: 'Nuestros Autobúses ofrecen capacidad para 50 pasajeros, con asientos reclinables, WC, puertos de carga, aire acondicionado y entretenimiento a bordo. La mejor opción para playas, conciertos, eventos corporativos y traslados masivos con seguridad y puntualidad.',
       },
     
   ];
