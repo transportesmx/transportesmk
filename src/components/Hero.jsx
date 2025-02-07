@@ -24,7 +24,22 @@ const Hero = () => {
         image: '/assets/images/chofer.png',
         title: 'Tu ruta, tu tiempo, nuestro compromiso',
         description: 'Disfruta de la flexibilidad de un servicio privado con chofer exclusivo. Ideal para recorridos dentro y fuera de la ciudad, con la comodidad que mereces.',
-      }
+      },
+      {
+        image: '/assets/images/suburban2.png',
+        title: 'Tu ruta, tu tiempo, nuestro compromiso',
+        description: 'Disfruta de la flexibilidad de un servicio privado con chofer exclusivo. Ideal para recorridos dentro y fuera de la ciudad, con la comodidad que mereces.',
+      },
+      {
+        image: '/assets/images/camry.png',
+        title: 'Tu ruta, tu tiempo, nuestro compromiso',
+        description: 'Disfruta de la flexibilidad de un servicio privado con chofer exclusivo. Ideal para recorridos dentro y fuera de la ciudad, con la comodidad que mereces.',
+      },
+      {
+        image: '/assets/images/autobus.png',
+        title: 'Tu ruta, tu tiempo, nuestro compromiso',
+        description: 'Disfruta de la flexibilidad de un servicio privado con chofer exclusivo. Ideal para recorridos dentro y fuera de la ciudad, con la comodidad que mereces.',
+      },
     
   ];
 
