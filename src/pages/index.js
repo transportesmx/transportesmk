@@ -10,6 +10,7 @@ import Hero from "@/components/Hero";
 import Testimonios from "@/components/Testimonios";
 import Tours from "@/components/Tours";
 import BodasModal from "@/components/BodasModal"; // Asegúrate de importar el componente del modal
+import Clientes from "@/components/Clientes";
 import Head from "next/head";
 
 
@@ -70,6 +71,7 @@ export default function Home() {
       <Testimonios />
       <Galeria />
       <Faqs />
+      <Clientes/>
       {isBodasModalVisible && <BodasModal />} {/* Renderizar el modal condicionalmente */}
     </Fragment>
   );
