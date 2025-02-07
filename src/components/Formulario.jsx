@@ -120,12 +120,15 @@ export default function Formulario() {
 
   {/* Selector de hora */}
   <input
-    type="time"
-    value={time}
-    name="time"
-    onChange={handleChange}
-    className="flex-1 p-3 rounded-lg bg-white text-black placeholder-black  focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
-  />
+  type="time"
+  value={time}
+  name="time"
+  onChange={handleChange}
+  className="flex-1 p-3 rounded-lg bg-white text-black placeholder-black focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
+  pattern="[0-9]{2}:[0-9]{2}" // Forza el formato HH:MM
+  inputMode="numeric" // Evita el selector nativo en iOS
+  style={{ appearance: "textfield" }} // Desactiva estilos nativos
+/>
 
  
 </div>
