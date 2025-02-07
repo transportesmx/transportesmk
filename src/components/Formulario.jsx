@@ -49,7 +49,7 @@ export default function Formulario() {
   const handleSubmit = (e) => {
     e.preventDefault();
     const { nombre, telefono, lada,  email, pasajeros, origen, destino, vehicleType } = formData;
-    if (nombre && telefono && lada && email && pasajeros && origen && destino && vehicleType) {
+    if (nombre && telefono && lada && email && pasajeros && origen && destino && vehi|cleType) {
       console.log(startDate)
       const formattedDate = startDate.toLocaleDateString('es-ES');
       const hora = startDate.toLocaleTimeString('es-ES');
