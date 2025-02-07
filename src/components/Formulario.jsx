@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import Select from 'react-select';
-import PhoneInput from 'react-phone-input-2';
-import 'react-phone-input-2/lib/style.css';
-import countryList from 'react-select-country-list';
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";import 'react-phone-input-2/lib/style.css';
+import Select from "react-select";
+import countryList from "country-codes-list";
 
-const vehicleTypes = ['Sedán', 'SUV', 'Minivan', 'Autobús'];
+const vehicleTypes = ['Sedán 3 pax', 'SUV 4 pax', 'Minivan 6 pax', 'Suburban 6 pax', 'Toyota Hiace 12 pax', 'Sprinter 20 pax', 'Autobús 50 pax'];
 
 export default function Formulario() {
 
@@ -25,12 +25,10 @@ export default function Formulario() {
     origen: '',
     destino: '',
     vehicleType: '',
-  });
+    lada: "+52"
+    });
 
-  const countryOptions = countryList().getData().map((country) => ({
-    label: `${country.label} ${country.value}`,
-    value: country.value,
-  }));
+   
 
   const handleChange = (e) => {
     setFormData({
@@ -82,16 +80,15 @@ export default function Formulario() {
             className="w-full p-3 rounded-lg bg-white/20 placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <div className="flex gap-2 w-full">
-            <input
-               type="text"
-               name="lada"
-               placeholder="Lada"
-               value={formData.lada}
-            onChange={handleChange}
-              className="w-1/3  p-3 rounded-lg bg-white/20 placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-            
-            />
-            <input
+          <PhoneInput
+        country={"mx"} // México como predeterminado // Permite buscar país
+        value={formData.telefono}
+        onChange={handlePhoneChange}    
+        inputStyle={{width: "100%"}} // Oculta el input
+        className="text-black"
+      />
+
+          {/*   <input
              type="text"
              name="telefono"
              placeholder="Telefono"
@@ -99,7 +96,7 @@ export default function Formulario() {
             onChange={handleChange}
               className="w-2/3 p-3 rounded-lg bg-white/20 placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
         
-            />
+            /> */}
           </div>
           <input
             type="email"
@@ -109,31 +106,28 @@ export default function Formulario() {
             onChange={handleChange}
             className="w-full p-3 rounded-lg bg-white/20 placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-          <DatePicker
-              selected={startDate}
-              onChange={(date) => setStartDate(date)}
-              minDate={tomorrow} // No permite fechas pasadas
-              dateFormat="dd/MM/yyyy" // Solo permite elegir fecha
-              className="w-full flex-1 p-3 rounded-lg bg-white/20 placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholderText="Selecciona una fecha"
-            />
+          <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-2">
+  {/* Selector de fecha */}
+  <DatePicker
+    selected={startDate}
+    onChange={(date) => setStartDate(date)}
+    minDate={tomorrow} // No permite fechas pasadas
+    dateFormat="dd/MM/yyyy" // Solo permite elegir fecha
+    className="flex-1 p-3 rounded-lg bg-white/20 placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
+    placeholderText="Selecciona una fecha"
+  />
+
+  {/* Selector de hora */}
   <input
-          type="time"
-          value={time}
-            onChange={handleChange}
-          className="mt-1 bg-white/30 text-white rounded-lg py-2 px-3 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-          
-            <input
-              type="number"
-              name="pasajeros"
-              placeholder="Número de pasajeros"
-              value={formData.pasajeros}
-              onChange={handleChange}
-              className="flex-1 p-3 rounded-lg bg-white/20 placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
+    type="time"
+    value={time}
+    name="time"
+    onChange={handleChange}
+    className="flex-1 p-3 rounded-lg bg-white/20 placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
+  />
+
+ 
+</div>
           <div className="relative w-full">
             
             <select
