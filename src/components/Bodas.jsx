@@ -5,11 +5,11 @@ import { FaWhatsapp } from 'react-icons/fa';
 
 function Boda() {
   const handleCotizar = () => {
-    const phoneNumber = "524151393219"; // Reemplaza con el número de WhatsApp incluyendo el código de país (52 para México).
-    const message = "Hola, me gustaría cotizar el servicio para una boda";
-    const encodedMessage = encodeURIComponent(message);
-    const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
-    window.open(whatsappURL, "_blank");
+    const recipientEmail = "amstrekgrt@gmail.com"; // Reemplaza con tu correo de destino
+    const subject = "Información para bodas"; // Asunto del correo
+    const body = "Hola, me gustaría informacion sobre el servicio para una boda";
+    const mailtoUrl = `mailto:${recipientEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href = mailtoUrl; // Abre el cliente de correo del usuario
   };
 
   const containerVariants = {

@@ -3,6 +3,15 @@ import React from 'react';
 import { motion } from 'framer-motion';
 
 function Ejecutivo() {
+
+  const handleCotizar = () => {
+    const recipientEmail = "amstrekgrt@gmail.com"; // Reemplaza con tu correo de destino
+    const subject = "Información para traslado ejecutivo"; // Asunto del correo
+    const body = "Hola, me gustaría informacion sobre el servicio de transporte ejecutivo";
+    const mailtoUrl = `mailto:${recipientEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href = mailtoUrl; // Abre el cliente de correo del usuario
+  };
+
   const containerVariants = {
     hidden: { opacity: 0, y: 50 },
     visible: {
@@ -100,9 +109,13 @@ function Ejecutivo() {
               className="flex justify-center md:justify-start space-x-4 mt-8 text-xl md:text-2xl"
               variants={itemVariants}
             >
-              <button className="px-32 py-2 bg-white/50 hover:bg-gray-700 rounded-lg transition mt-8 md:hidden">
-                Cotizar
-              </button>
+             <motion.button
+              className="w-full px-32 py-2 bg-white/50 hover:bg-gray-700 rounded-lg transition mt-8 md:hidden"
+              onClick={handleCotizar}
+              variants={itemVariants}
+            >
+              Cotizar
+            </motion.button>
             </motion.div>
           </motion.div>
 
@@ -161,6 +174,8 @@ function Ejecutivo() {
             <motion.button
               className="w-full px-32 py-2 bg-white/50 hover:bg-gray-700 rounded-lg transition mt-8"
               variants={itemVariants}
+              onClick={handleCotizar}
+
             >
               Cotizar
             </motion.button>
