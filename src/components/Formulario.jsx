@@ -9,7 +9,14 @@ import countryList from 'react-select-country-list';
 const vehicleTypes = ['Sedán', 'SUV', 'Minivan', 'Autobús'];
 
 export default function Formulario() {
-  const [startDate, setStartDate] = useState(new Date());
+
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const [startDate, setStartDate] = useState(tomorrow);
+
+  const [time, setTime] = useState("12:00");
+
+
   const [formData, setFormData] = useState({
     nombre: '',
     telefono: '',
@@ -49,11 +56,11 @@ export default function Formulario() {
   const handleSubmit = (e) => {
     e.preventDefault();
     const { nombre, telefono, lada,  email, pasajeros, origen, destino, vehicleType } = formData;
-    if (nombre && telefono && lada && email && pasajeros && origen && destino && vehi|cleType) {
+    if (nombre && telefono && lada && email && pasajeros && origen && destino && vehicleType) {
       console.log(startDate)
       const formattedDate = startDate.toLocaleDateString('es-ES');
       const hora = startDate.toLocaleTimeString('es-ES');
-      const message = `Hola! Soy ${nombre}. mi correo es ${email}, mi telefono es ${lada}${telefono} necesito un traslado para el aeropuerto el dia ${formattedDate} a las ${hora}, somos ${pasajeros} personas\nOrigen: ${origen}\nDestino: ${destino}\nTipo de vehículo: ${vehicleType}`;
+      const message = `Hola! Soy ${nombre}. mi correo es ${email}, mi telefono es ${lada}${telefono} necesito un traslado para el aeropuerto el dia ${formattedDate} a las ${time}, somos ${pasajeros} personas\nOrigen: ${origen}\nDestino: ${destino}\nTipo de vehículo: ${vehicleType}`;
       const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
       window.open(whatsappUrl, '_blank');
     } else {
@@ -103,16 +110,20 @@ export default function Formulario() {
             className="w-full p-3 rounded-lg bg-white/20 placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-            <DatePicker
+          <DatePicker
               selected={startDate}
               onChange={(date) => setStartDate(date)}
-              showTimeSelect
-              timeFormat="HH:mm"
-              timeIntervals={15}
-              dateFormat="Pp"
+              minDate={tomorrow} // No permite fechas pasadas
+              dateFormat="dd/MM/yyyy" // Solo permite elegir fecha
               className="w-full flex-1 p-3 rounded-lg bg-white/20 placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholderText="Select a date"
+              placeholderText="Selecciona una fecha"
             />
+  <input
+          type="time"
+          value={time}
+            onChange={handleChange}
+          className="mt-1 bg-white/30 text-white rounded-lg py-2 px-3 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
           
             <input
               type="number"

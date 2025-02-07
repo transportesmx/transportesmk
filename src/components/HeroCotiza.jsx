@@ -83,7 +83,7 @@ const HeroCotiza = () => {
           onChange={(e) => setTime(e.target.value)}
           className="mt-1 bg-white/30 text-white rounded-lg py-2 px-3 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
-      </div>
+      </div> 
 
       {/* Dropdown: Tipo de Vehículo */}
       <div className="relative w-full">
