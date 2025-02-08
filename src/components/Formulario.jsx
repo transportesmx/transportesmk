@@ -18,6 +18,7 @@ export default function Formulario() {
   const [startDate, setStartDate] = useState(tomorrow);
   const [returnDate, setReturnDate] = useState(returnD );
   const [time, setTime] = useState("12:00");
+  const [timeR, setTimeR] = useState("12:00");
   const [returnTime, setReturnTime] = useState("12:00");
   const [isRoundTrip, setIsRoundTrip] = useState(false);
 
@@ -31,7 +32,8 @@ export default function Formulario() {
     destino: '',
     vehicleType: '',
     lada: "+52",
-    time: ''
+    time: '',
+    timeR: '',
     });
 
    
@@ -45,6 +47,9 @@ export default function Formulario() {
     
       if (name === 'time') {
         setTime(value);
+      }
+      if (name === 'timeR') {
+        setTimeR(value);
       }
     };
 
@@ -65,11 +70,14 @@ export default function Formulario() {
   const handleSubmit = (e) => {
     e.preventDefault();
     const { nombre, telefono, lada,  email, pasajeros, origen, destino, vehicleType } = formData;
-    if (nombre && telefono && lada && email && pasajeros && origen && destino && vehicleType) {
+    console.log(nombre, telefono, email, pasajeros, origen, destino, vehicleType);
+    if (nombre && telefono &&  email  && origen && destino && vehicleType) {
       console.log(startDate)
       const formattedDate = startDate.toLocaleDateString('es-ES');
       const hora = startDate.toLocaleTimeString('es-ES');
-      const message = `Hola! Soy ${nombre}. mi correo es ${email}, mi telefono es ${lada}${telefono} necesito un traslado para el aeropuerto el dia ${formattedDate} a las ${time}, somos ${pasajeros} personas\nOrigen: ${origen}\nDestino: ${destino}\nTipo de vehículo: ${vehicleType}`;
+      const message = 
+      isRoundTrip == true ? `Hola! Soy ${nombre}. mi correo es ${email}, mi telefono es ${telefono} necesito un traslado para el aeropuerto el dia ${formattedDate} a las ${time}\nOrigen: ${origen}\nDestino: ${destino}\nTipo de vehículo: ${vehicleType}\nRegreso: ${returnDate.toLocaleDateString('es-ES')} a las ${timeR}` :
+      `Hola! Soy ${nombre}. mi correo es ${email}, mi telefono es ${lada}${telefono} necesito un traslado para el aeropuerto el dia ${formattedDate} a las ${time}\nOrigen: ${origen}\nDestino: ${destino}\nTipo de vehículo: ${vehicleType}`;
       const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
       window.open(whatsappUrl, '_blank');
     } else {
@@ -168,8 +176,8 @@ export default function Formulario() {
               />
                <input
               type="time"
-              value={time}
-              name="time"
+              value={timeR}
+              name="timeR"
               onChange={handleChange}
               className="flex-1 w-[270px] md:w-[400px] p-3 rounded-lg bg-white text-black placeholder-black focus:outline-none focus:ring-2 focus:ring-blue-500 "
               />
