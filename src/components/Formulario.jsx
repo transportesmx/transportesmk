@@ -139,7 +139,7 @@ export default function Formulario() {
 
  
 </div>
-<div className="w-full ">
+  <div className="w-full ">
 
 
   {/* Selector de hora */}
@@ -148,7 +148,7 @@ export default function Formulario() {
               value={time}
               name="time"
               onChange={handleChange}
-              className="flex-1 w-[270px] md:w-[400px] p-3 rounded-lg bg-white text-black placeholder-black focus:outline-none focus:ring-2 focus:ring-blue-500 "
+              className="flex-1 min-w-[235px] w-full p-3 rounded-lg bg-white text-black placeholder-black focus:outline-none focus:ring-2 focus:ring-blue-500 "
               />
 
               </div>
@@ -179,7 +179,7 @@ export default function Formulario() {
               value={timeR}
               name="timeR"
               onChange={handleChange}
-              className="flex-1 w-[270px] md:w-[400px] p-3 rounded-lg bg-white text-black placeholder-black focus:outline-none focus:ring-2 focus:ring-blue-500 "
+              className="flex-1 min-w-[235px] w-full  p-3 rounded-lg bg-white text-black placeholder-black focus:outline-none focus:ring-2 focus:ring-blue-500 "
               />
             </div>
           )}
