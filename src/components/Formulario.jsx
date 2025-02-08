@@ -12,9 +12,14 @@ export default function Formulario() {
 
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
-  const [startDate, setStartDate] = useState(tomorrow);
+  const returnD = new Date();
+  returnD.setDate(returnD.getDate() + 2);
 
+  const [startDate, setStartDate] = useState(tomorrow);
+  const [returnDate, setReturnDate] = useState(returnD );
   const [time, setTime] = useState("12:00");
+  const [returnTime, setReturnTime] = useState("12:00");
+  const [isRoundTrip, setIsRoundTrip] = useState(false);
 
 
   const [formData, setFormData] = useState({
@@ -25,17 +30,23 @@ export default function Formulario() {
     origen: '',
     destino: '',
     vehicleType: '',
-    lada: "+52"
+    lada: "+52",
+    time: ''
     });
 
    
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
+    const handleChange = (e) => {
+      const { name, value } = e.target;
+      setFormData({
+        ...formData,
+        [name]: value
+      });
+    
+      if (name === 'time') {
+        setTime(value);
+      }
+    };
 
   const handleCountryChange = (selectedOption) => {
     setFormData({
@@ -107,7 +118,7 @@ export default function Formulario() {
             onChange={handleChange}
             className="w-full p-3 rounded-lg bg-white text-black placeholder-black  focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-2">
+          <div className="flex flex-col  space-y-4 sm:space-y-0 sm:space-x-2">
   {/* Selector de fecha */}
   <DatePicker
     selected={startDate}
@@ -118,27 +129,59 @@ export default function Formulario() {
     placeholderText="Selecciona una fecha"
   />
 
-  {/* Selector de hora */}
-  <input
-  type="time"
-  value={time}
-  name="time"
-  onChange={handleChange}
-  className="flex-1 p-3 rounded-lg bg-white text-black placeholder-black focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
-  pattern="[0-9]{2}:[0-9]{2}" // Forza el formato HH:MM
-  inputMode="numeric" // Evita el selector nativo en iOS
-  style={{ appearance: "textfield" }} // Desactiva estilos nativos
-/>
-
  
 </div>
+<div className="w-full ">
+
+
+  {/* Selector de hora */}
+  <input
+              type="time"
+              value={time}
+              name="time"
+              onChange={handleChange}
+              className="flex-1 w-[270px] md:w-[400px] p-3 rounded-lg bg-white text-black placeholder-black focus:outline-none focus:ring-2 focus:ring-blue-500 "
+              />
+
+              </div>
+              <div className="flex items-center space-x-2">
+            <input
+              type="checkbox"
+              id="roundTrip"
+              checked={isRoundTrip}
+              onChange={() => setIsRoundTrip(!isRoundTrip)}
+              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              
+            />
+            <label htmlFor="roundTrip" className="text-white">Ida y vuelta</label>
+          </div>
+          {isRoundTrip && (
+            <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+              
+              <DatePicker
+                selected={returnDate}
+                onChange={(date) => setReturnDate(date)}
+                minDate={startDate}
+                dateFormat="dd/MM/yyyy"
+                className="w-full flex-1 p-3 rounded-lg bg-white placeholder-black text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholderText="Selecciona una fecha de regreso"
+              />
+               <input
+              type="time"
+              value={time}
+              name="time"
+              onChange={handleChange}
+              className="flex-1 w-[270px] md:w-[400px] p-3 rounded-lg bg-white text-black placeholder-black focus:outline-none focus:ring-2 focus:ring-blue-500 "
+              />
+            </div>
+          )}
           <div className="relative w-full">
             
             <select
               name="vehicleType"
               value={formData.vehicleType}
               onChange={handleChange}
-              className="mt-1 text-black  rounded-lg py-2 px-3 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="mt-1 text-black  rounded-lg py-3 px-3 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               {vehicleTypes.map((type) => (
                 <option key={type} value={type} className="text-black">{type}</option>
@@ -161,6 +204,7 @@ export default function Formulario() {
             onChange={handleChange}
             className="w-full p-3 rounded-lg bg-white text-black placeholder-black  focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
+          
           <button
             type="submit"
             className="w-full p-3 mt-4 font-semibold  bg-black/70 backdrop-blur-sm hover:bg-gray-700 rounded-lg transition shadow-lg"
