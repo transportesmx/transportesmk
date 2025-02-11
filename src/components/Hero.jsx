@@ -72,7 +72,7 @@ const Hero = () => {
   return (
     <div
     id="Hero"
-    className="relative w-full h-screen lg:h-[90vh] max-h-[730px] overflow-hidden  ">
+    className="relative w-full h-screen lg:h-[90vh] max-h-[730px] lg:min-h-[720px] overflow-hidden  ">
       <AnimatePresence mode="wait">
         <motion.div
           key={currentSlide}
@@ -105,7 +105,7 @@ const Hero = () => {
         </motion.div>
       </AnimatePresence>
 
-      <div className='hidden lg:block mt-14 absolute bottom-[140px] xl:bottom-[80px] pl-24 transform space-x-2'>
+      <div className='hidden lg:block mt-14 absolute bottom-[70px] xl:bottom-[80px] pl-24 transform space-x-2'>
               <HeroCotiza/>
             </div>
 

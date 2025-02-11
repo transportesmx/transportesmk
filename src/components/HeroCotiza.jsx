@@ -1,13 +1,27 @@
 import React, { useState } from "react";
 import { FaWhatsapp } from "react-icons/fa";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const HeroCotiza = () => {
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const returnD = new Date();
+  returnD.setDate(returnD.getDate() + 2);
+
   const [from, setFrom] = useState("Aeropuerto Benito");
   const [to, setTo] = useState("Querétaro");
   const [date, setDate] = useState("2025-04-02");
   const [vehicleType, setVehicleType] = useState("Sedán");
   const [passengerCount, setPassengerCount] = useState(1);
   const [time, setTime] = useState("12:00");
+  const [returnTime, setReturnTime] = useState("12:00");
+  const [isRoundTrip, setIsRoundTrip] = useState(false);
+  const [startDate, setStartDate] = useState(tomorrow);
+  const [timeR, setTimeR] = useState("12:00");
+
+  const [returnDate, setReturnDate] = useState(returnD );
+
 
   const locations = ["Aeropuerto AICM", "Aeropuerto AIFA", "Aeropuerto BJX GTO", "Aeropuerto AIQ QRO", "Aeropuerto GDL","Ciudad Querétaro", "San Miguel de Allende", "Ciudad Guanajuato" ];
   const destinations = ["Ciudad Querétaro", "San Miguel de Allende","Ciudad Guanajuato","Aeropuerto AICM", "Aeropuerto AIFA", "Aeropuerto BJX GTO", "Aeropuerto AIQ QRO", "Aeropuerto GDL",];
@@ -27,7 +41,7 @@ const HeroCotiza = () => {
   };
 
   return (
-    <div className="flex items-center bg-white/15 bg-opacity-80 rounded-2xl px-6 shadow-lg w-[700px] h-[200px] max-w-4xl mx-auto gap-5 ">
+    <div className="flex items-center bg-white/15 bg-opacity-80 rounded-2xl px-6 shadow-lg w-[700px] h-[270px] max-w-4xl mx-auto gap-5 ">
       <div className="flex flex-col justify-center gap-4">
     <div className="flex items-center justify-between gap-4 ">
       
@@ -112,6 +126,46 @@ const HeroCotiza = () => {
         />
       </div>
       </div> 
+      <div className="w-full flex justify-between items-center space-x-2">
+        <div className="w-1/3 flex items-center space-x-2">
+            <input
+              type="checkbox"
+              id="roundTrip"
+              checked={isRoundTrip}
+              onChange={() => setIsRoundTrip(!isRoundTrip)}
+              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              
+            />
+            <label htmlFor="roundTrip" className="text-white">Ida y vuelta</label>
+            </div>
+            {isRoundTrip && (
+  <div className="w-2/3 flex space-x-4">
+    <div className="w-full">
+    <label className="block text-white font-bold text-sm">Fecha Regreso</label>
+
+      <DatePicker
+        selected={returnDate}
+        onChange={(date) => setReturnDate(date)}
+        minDate={startDate}
+        dateFormat="dd/MM/yyyy"
+        className="bg-white/30 text-white rounded-lg py-2 px-3 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+        placeholderText="Selecciona una fecha de regreso"
+      />
+    </div>
+    <div className="w-full">
+    <label className="block text-white font-bold text-sm">Hora regreso</label>
+
+      <input
+        type="time"
+        value={timeR}
+        name="timeR"
+        onChange={(e) => setTimeR(e.target.value)}
+        className="bg-white/30 text-white rounded-lg py-2 px-3 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
+    </div>
+  </div>
+)}
+          </div>
       </div>
       
       <div className="h-full flex flex-col justify-center items-center">
