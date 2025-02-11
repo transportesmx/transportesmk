@@ -16,7 +16,7 @@ const clientes = [
 
 const ClientesCarousel = () => {
   return (
-    <div className="w-full bg-white py-10">
+    <div className="w-full bg-white py-4">
       <Swiper
         spaceBetween={30}
         slidesPerView={3}
