@@ -69,17 +69,19 @@ export default function Formulario() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const { nombre, telefono, lada,  email, pasajeros, origen, destino, vehicleType } = formData;
-    console.log(nombre, telefono, email, pasajeros, origen, destino, vehicleType);
-    if (nombre && telefono &&  email  && origen && destino && vehicleType) {
-      console.log(startDate)
+    const { nombre, telefono, lada, email, pasajeros, origen, destino, vehicleType } = formData;
+  
+    if (nombre && telefono && email && origen && destino && vehicleType) {
       const formattedDate = startDate.toLocaleDateString('es-ES');
-      const hora = startDate.toLocaleTimeString('es-ES');
-      const message = 
-      isRoundTrip == true ? `Hola! Soy ${nombre}. mi correo es ${email}, mi telefono es ${telefono} necesito un traslado para el aeropuerto el dia ${formattedDate} a las ${time}\nOrigen: ${origen}\nDestino: ${destino}\nTipo de vehículo: ${vehicleType}\nRegreso: ${returnDate.toLocaleDateString('es-ES')} a las ${timeR}` :
-      `Hola! Soy ${nombre}. mi correo es ${email}, mi telefono es ${lada}${telefono} necesito un traslado para el aeropuerto el dia ${formattedDate} a las ${time}\nOrigen: ${origen}\nDestino: ${destino}\nTipo de vehículo: ${vehicleType}`;
-      const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
-      window.open(whatsappUrl, '_blank');
+      const subject = "Solicitud de Cotización de Traslado";
+      const message = isRoundTrip
+        ? `Hola! Soy ${nombre}. mi correo es ${email}, mi telefono es ${lada}${telefono} necesito un traslado para el aeropuerto el dia ${formattedDate} a las ${time}, somos ${pasajeros} personas\nOrigen: ${origen}\nDestino: ${destino}\nTipo de vehículo: ${vehicleType}\nRegreso: ${returnDate.toLocaleDateString('es-ES')} a las ${timeR}`
+        : `Hola! Soy ${nombre}. mi correo es ${email}, mi telefono es ${lada}${telefono} necesito un traslado para el aeropuerto el dia ${formattedDate} a las ${time}, somos ${pasajeros} personas\nOrigen: ${origen}\nDestino: ${destino}\nTipo de vehículo: ${vehicleType}`;
+      
+      const recipientEmail = "amstrekgrt@gmail.com"; // Reemplaza con tu correo de destino
+      const mailtoUrl = `mailto:${recipientEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`;
+  
+      window.location.href = mailtoUrl; // Abre el cliente de correo del usuario
     } else {
       alert('Por favor, complete todos los campos.');
     }
