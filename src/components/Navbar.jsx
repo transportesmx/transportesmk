@@ -36,8 +36,9 @@ const Navbar = () => {
             </button>
             {isDropdownOpen && (
               <div className="absolute top-8 left-0 bg-black shadow-md rounded-lg w-40 py-2">
-                <a href="/#Aeropuerto" className="block px-4 py-2 ">Aeropuerto</a>
-                <a href="/#Bodas" className="block px-4 py-2 ">Bodas</a>
+                <a href="/#Aeropuerto" className="block px-4 py-2 ">
+                Traslado Aeropuerto</a>
+                <a href="/#Bodas" className="block px-4 py-2 ">Trasnporte Bodas Destino</a>
                 <a href="/#Chofer" className="block px-4 py-2 ">Privado</a>
               </div>
             )}
@@ -101,10 +102,10 @@ const Navbar = () => {
               <div className="bg-white shadow-md rounded-lg w-full">
                 <Link href="/#Aeropuerto" className="block bg-black px-4 py-2 hover:bg-gray-600"
                 onClick={() => setIsMenuOpen(false)}
-                >Aeropuerto</Link>
+                >Traslado Aeropuerto</Link>
                 <Link href="/#Bodas" className="block bg-black px-4 py-2 hover:bg-gray-600"
                 onClick={() => setIsMenuOpen(false)}
-                >Bodas</Link>
+                >Transporte Bodas Destino</Link>
                 <Link href="/#Chofer" className="block bg-black px-4 py-2 hover:bg-gray-600"
                 onClick={() => setIsMenuOpen(false)}
                 >Chofer Privado</Link>
