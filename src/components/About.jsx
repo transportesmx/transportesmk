@@ -2,6 +2,7 @@ import Image from 'next/image';
 import React from 'react';
 import { FaBus, FaClock, FaFacebook, FaInstagram, FaTiktok, FaTripadvisor, FaTruck, FaWhatsapp } from 'react-icons/fa';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 
 const variants = {
   hidden: { opacity: 0, y: 50 },
@@ -48,11 +49,11 @@ function About() {
             </ul>
 
             <div className="flex md:hidden justify-center md:justify-start space-x-4 mt-8 text-xl md:text-2xl">
-              <a href="#" aria-label="Facebook" className="hover:text-blue-500 text-[36px]"><FaFacebook /></a>
-              <a href="#" aria-label="Instagram" className="hover:text-pink-500 text-[36px] "><FaInstagram /></a>
-              <a href="#" aria-label="TikTok" className="hover:text-black text-[36px]"><FaTiktok /></a>
-              <a href="#" aria-label="TripAdvisor" className="hover:text-green-500 text-[36px]"><FaTripadvisor /></a>
-              <a href="#" aria-label="WhatsApp" className="hover:text-green-500 text-[36px]"><FaWhatsapp /></a>
+              <Link href="https://www.facebook.com/TransportesTMX/" target="_blank" aria-label="Facebook" className="hover:text-blue-500 text-[36px]"><FaFacebook /></Link>
+              <Link href="https://www.instagram.com/trans_portesmx"  aria-label="Instagram"  target="_blank" className="hover:text-pink-500 text-[36px] "><FaInstagram /></Link>
+              <Link href="https://www.tiktok.com/@transportes.mx2" target="_blank"  aria-label="TikTok" className="hover:text-black text-[36px]"><FaTiktok /></Link>
+              <Link href="https://www.tripadvisor.com.mx/Attraction_Review-g151932-d25402392-Reviews-Transportes_MX-San_Miguel_de_Allende_Central_Mexico_and_Gulf_Coast.html" target="_blank" aria-label="TripAdvisor" className="hover:text-green-500 text-[36px]"><FaTripadvisor /></Link>
+              <Link href="https://wa.me/524151393219" target="_blank" aria-label="WhatsApp" className="hover:text-green-500 text-[36px]"><FaWhatsapp /></Link>
             </div>
           </motion.div>
 
@@ -78,11 +79,11 @@ function About() {
             </div>
 
             <div className="hidden md:flex justify-center md:justify-start space-x-4 mt-8 text-xl md:text-2xl">
-              <a href="#" aria-label="Facebook" className="hover:text-blue-500 text-[36px]"><FaFacebook /></a>
-              <a href="#" aria-label="Instagram" className="hover:text-pink-500 text-[36px] "><FaInstagram /></a>
-              <a href="#" aria-label="TikTok" className="hover:text-black text-[36px]"><FaTiktok /></a>
-              <a href="#" aria-label="TripAdvisor" className="hover:text-green-500 text-[36px]"><FaTripadvisor /></a>
-              <a href="#" aria-label="WhatsApp" className="hover:text-green-500 text-[36px]"><FaWhatsapp /></a>
+            <Link href="https://www.facebook.com/TransportesTMX/" target="_blank" aria-label="Facebook" className="hover:text-blue-500 text-[36px]"><FaFacebook /></Link>
+              <Link href="https://www.instagram.com/trans_portesmx"   target="_blank" aria-label="Instagram" className="hover:text-pink-500 text-[36px] "><FaInstagram /></Link>
+              <Link href="https://www.tiktok.com/@transportes.mx2" target="_blank"  aria-label="TikTok" className="hover:text-black text-[36px]"><FaTiktok /></Link>
+              <Link href="https://www.tripadvisor.com.mx/Attraction_Review-g151932-d25402392-Reviews-Transportes_MX-San_Miguel_de_Allende_Central_Mexico_and_Gulf_Coast.html"  target="_blank" aria-label="TripAdvisor" className="hover:text-green-500 text-[36px]"><FaTripadvisor /></Link>
+              <Link href="https://wa.me/524151393219" target="_blank" aria-label="WhatsApp" className="hover:text-green-500 text-[36px]"><FaWhatsapp /></Link>
             </div>
           </motion.div>
         </div>
