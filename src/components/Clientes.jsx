@@ -12,6 +12,7 @@ const clientes = [
   { nombre: "Empresa 6", logo: "/assets/clients/6.png" },
   { nombre: "Empresa 6", logo: "/assets/clients/7.png" },
   { nombre: "Empresa 6", logo: "/assets/clients/8.png" },
+  { nombre: "Empresa 6", logo: "/assets/clients/9.png" },
 ];
 
 const ClientesCarousel = () => {
