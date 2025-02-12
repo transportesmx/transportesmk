@@ -72,7 +72,7 @@ const Hero = () => {
   return (
     <div
     id="Hero"
-    className="relative w-full h-screen lg:h-[90vh] max-h-[730px] lg:min-h-[720px] overflow-hidden  ">
+    className="relative w-full h-screen lg:h-[90vh] max-h-[730px] lg:min-h-[720px] xl:min-h-[850px] overflow-hidden  ">
       <AnimatePresence mode="wait">
         <motion.div
           key={currentSlide}
