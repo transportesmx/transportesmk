@@ -1,0 +1,135 @@
+{
+    "hero": {
+        "slides": [
+            {
+                "image": "/assets/images/suburban.png",
+                "title": "Explora, vive y disfruta destinos inolvidables",
+                "description": "Descubre la riqueza cultural y los paisajes más impresionantes con nuestros tours personalizados. Vive la magia de cada rincón con comodidad y un servicio de lujo."
+            },
+            {
+                "image": "/assets/images/sprinter.png",
+                "title": "Llegadas y salidas con puntualidad y comodidad",
+                "description": "Disfruta de un traslado cómodo y seguro a los principales aeropuertos. Viaja sin preocupaciones, siempre a tiempo y con atención personalizada."
+            },
+            {
+                "image": "/assets/images/odissey.png",
+                "title": "Movilidad para cada compromiso",
+                "description": "Maximiza tu tiempo con un transporte exclusivo y seguro. Perfecto para reuniones de trabajo, eventos empresariales y traslados VIP."
+            },
+            {
+                "image": "/assets/images/chofer.png",
+                "title": "Tu ruta, tu tiempo, nuestro compromiso",
+                "description": "Disfruta de la flexibilidad de un servicio privado con chofer exclusivo. Ideal para recorridos dentro y fuera de la ciudad, con la comodidad que mereces."
+            },
+            {
+                "image": "/assets/images/suburban2.png",
+                "title": "Lujo y comodidad en cada trayecto",
+                "description": "Disfruta de un viaje exclusivo y seguro en nuestra Suburban. Ideal para traslados ejecutivos, viajes familiares o eventos especiales."
+            }
+        ],
+        "buttons": {
+            "quote": "Cotizar",
+            "reserve": "Reservar"
+        }
+    },
+    "about": {
+        "title": "Más de 10 años de experiencia ofreciendo transporte turístico y ejecutivo de excelencia.",
+        "features": {
+            "punctuality": "Puntualidad garantizada.",
+            "drivers": "Choferes altamente capacitados.",
+            "vehicles": "Vehículos en perfectas condiciones.",
+            "support": "Atención personalizada 24/7."
+        },
+        "mission": {
+            "title": "Misión",
+            "description": "Ofrecer servicios de transporte de calidad, garantizando la mejor experiencia para nuestros clientes, con un enfoque en puntualidad, seguridad y atención personalizada."
+        },
+        "vision": {
+            "title": "Visión",
+            "description": "Ser la compañía de transporte más confiable y reconocida, destacándonos por nuestra excelencia y profesionalismo."
+        }
+    },
+    "faqs": {
+        "title": "Preguntas Frecuentes",
+        "questions": [
+            {
+                "question": "¿Cómo puedo solicitar una cotización?",
+                "answer": "Puedes solicitar una cotización completando el formulario en esta página. Nuestro equipo te responderá a través de WhatsApp en pocos minutos para brindarte todos los detalles."
+            },
+            {
+                "question": "¿Cuánto tiempo tardan en confirmar mi reservación?",
+                "answer": "Nuestro equipo confirmará tu reservación dentro de las siguientes 24 horas."
+            },
+            {
+                "question": "¿Qué servicios de transporte ofrecen?",
+                "answer": "Ofrecemos transporte privado, grupal y ejecutivo dependiendo de la necesidad del cliente."
+            }
+        ],
+        "buttons": {
+            "chat": "Chatear"
+        }
+    },
+    "aeropuerto": {
+        "title": "Traslado Aeropuerto",
+        "description": "Servicio personalizado, rápido y confiable."
+    },
+    "autobus": {
+        "title": "Viajes en Grupo con Total Comodidad",
+        "description": "Nuestros autobuses ofrecen capacidad para 50 pasajeros, con asientos reclinables, WC, aire acondicionado y entretenimiento a bordo.",
+        "features": {
+            "capacity": "Capacidad para 50 pasajeros con asientos reclinables.",
+            "experienced_drivers": "Choferes experimentados para un viaje seguro y confiable.",
+            "events": "Te llevamos a tu concierto o evento favorito con total comodidad.",
+            "punctuality": "Puntualidad garantizada en cada traslado."
+        },
+        "buttons": {
+            "quote": "Cotizar"
+        }
+    },
+    "testimonials": {
+        "title": "Testimonios",
+        "reviews": [
+            {
+                "name": "Ana Martínez",
+                "service": "Traslado a Aeropuerto",
+                "review": "Reservamos transporte a Monterrey para visas de trabajo en EE.UU. Todo salió excelente, muy puntuales y con experiencia en trayectos largos."
+            },
+            {
+                "name": "Carlos Ramírez",
+                "service": "Chofer Privado",
+                "review": "Tienen vehículos para todas las necesidades. Hemos viajado varias veces a San Miguel y siempre nos sentimos seguros reservando con ellos."
+            }
+        ]
+    },
+    "tours": {
+        "title": "Tours",
+        "options": [
+            {
+                "name": "Guanajuato",
+                "description": "Descubre los túneles de Guanajuato y disfruta la vista desde el Mirador del Pípila.",
+                "price": "$1,750 x persona",
+                "duration": "8 hrs aprox."
+            },
+            {
+                "name": "San Miguel De Allende",
+                "description": "Recorre el Santuario de Jesús Nazareno en Atotonilco, conocido como la 'Capilla Sixtina de México'.",
+                "price": "$1,200 x persona",
+                "duration": "4 hrs aprox."
+            }
+        ],
+        "buttons": {
+            "quote": "Reservar"
+        }
+    },
+    "footer": {
+        "rights": "© 2025. Transportes TMX. Todos los derechos reservados.",
+        "terms": "Términos y condiciones",
+        "privacy": "Política de Privacidad",
+        "social": {
+            "facebook": "Facebook",
+            "instagram": "Instagram",
+            "tripadvisor": "Tripadvisor",
+            "tiktok": "Tiktok"
+        }
+    }
+}
