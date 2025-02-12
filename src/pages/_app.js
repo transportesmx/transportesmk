@@ -1,10 +1,12 @@
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
+import { AppProvider } from "@/Context/AppContext";
 import "@/styles/globals.css";
 import Image from "next/image";
 
 export default function App({ Component, pageProps }) {
   return (
+    <AppProvider>
     <div className="bg-black">
     <div className="bg-black max-w-[1440px] min-w-sm mx-auto text-white">
     <Navbar />
@@ -21,5 +23,6 @@ export default function App({ Component, pageProps }) {
         </a>
           </div>
     </div>
+    </AppProvider>
 )
 }

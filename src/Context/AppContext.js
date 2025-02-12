@@ -11,27 +11,27 @@ export const AppProvider = ({ children }) => {
   const [idioma, setIdioma] = useState(() => {
     if (typeof window !== 'undefined') {
       const savedLang = localStorage.getItem("idioma");
-      return savedLang === "ES"
-        ? { nombre: 'ES', code: 'MX' }
-        : { nombre: 'EN', code: 'US' };
+      return savedLang === "EN"
+        ? { nombre: 'EN', code: 'US' }
+        : { nombre: 'ES', code: 'MX' };
     } else {
-      return { nombre: 'EN', code: 'US' }; // Valor predeterminado para SSR
+      return { nombre: 'ES', code: 'MX' }; // Valor predeterminado para SSR
     }
   });
-  const [traduccion, setTraduccion] = useState(idioma.nombre === "ES" ? ES : EN);
+  const [traduccion, setTraduccion] = useState(idioma.nombre === "EN" ? EN : ES);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const savedLang = localStorage.getItem("idioma");
-      if (savedLang === "ES") {
-        setIdioma({
-          nombre: 'ES',
-          code: 'MX',
-        });
-      } else {
+      if (savedLang === "EN") {
         setIdioma({
           nombre: 'EN',
           code: 'US',
+        });
+      } else {
+        setIdioma({
+          nombre: 'ES',
+          code: 'MX',
         });
       }
     }

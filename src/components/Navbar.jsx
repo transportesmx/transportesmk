@@ -1,12 +1,16 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { FaFacebookF, FaInstagram, FaTiktok, FaTripadvisor, FaWhatsapp } from "react-icons/fa";
 import { IoMdArrowDropdown } from "react-icons/io";
 import { HiMenu, HiX } from "react-icons/hi";
 import Link from "next/link";
+import { AppContext } from "@/Context/AppContext";
+
+
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const { idioma } = useContext(AppContext);
 
   const handleCotizar = () => {
     const phoneNumber = "524151393219"; // Reemplaza con el número de WhatsApp incluyendo el código de país (52 para México).
@@ -15,6 +19,8 @@ const Navbar = () => {
     const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
     window.open(whatsappURL, "_blank");
   };
+
+
 
   return (
     <header className="bg-black shadow-md sticky top-0 z-50">
@@ -50,7 +56,10 @@ const Navbar = () => {
           <div className="flex items-center space-x-8">
 
           <div className="hidden lg:flex items-center space-x-2">
+            {console.log(idioma)}
+            <div className={`flex items-center space-x-1  rounded-md ${idioma.nombre == "ES" && "p-1 bg-white"}`}>
             <img src="/assets/icons/mexico.png" alt="Mexican Flag" className="h-5" />
+            </div>
             <a href="#" className="hover:text-blue-500 transition">ESP</a>
             <span className="text-white ">{"/"}</span>
 
