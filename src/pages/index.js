@@ -10,6 +10,7 @@ import Hero from "@/components/Hero";
 import Testimonios from "@/components/Testimonios";
 import Tours from "@/components/Tours";
 import BodasModal from "@/components/BodasModal"; // Asegúrate de importar el componente del modal
+import Autobus from "@/components/Autobus";
 import Clientes from "@/components/Clientes";
 import Head from "next/head";
 
@@ -67,6 +68,7 @@ export default function Home() {
       <Boda />
       <Chofer />
       <Ejecutivo />
+      <Autobus  />
       <Tours />
       <Testimonios />
       <Galeria />
