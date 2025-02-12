@@ -1,4 +1,4 @@
-import { useState, useEffect, Fragment } from "react";
+import { useState, useEffect, Fragment, useContext } from "react";
 import About from "@/components/About";
 import Aeropuerto from "@/components/Aeropuerto";
 import Boda from "@/components/Bodas";
@@ -13,10 +13,12 @@ import BodasModal from "@/components/BodasModal"; // Asegúrate de importar el c
 import Autobus from "@/components/Autobus";
 import Clientes from "@/components/Clientes";
 import Head from "next/head";
+import { AppContext } from "@/Context/AppContext";
 
 
 export default function Home() {
   const [isBodasModalVisible, setIsBodasModalVisible] = useState(false);
+  const {idioma, setIdioma} = useContext(AppContext);
 
   useEffect(() => {
     const timer = setTimeout(() => {

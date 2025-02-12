@@ -32,6 +32,28 @@
             "reserve": "Reservar"
         }
     },
+    "navbar": {
+        "home": "Inicio",
+        "about": "Acerca",
+        "services": "Servicios",
+        "airport_transfer": "Traslado Aeropuerto",
+        "wedding_transport": "Transporte para bodas",
+        "private_driver": "Chofer Privado",
+        "executive_transport": "Transporte Ejecutivo",
+        "tours": "Tours",
+        "quote": "Cotiza",
+        "languages": {
+            "spanish": "ESP",
+            "english": "EN"
+        },
+        "social": {
+            "facebook": "Facebook",
+            "instagram": "Instagram",
+            "tripadvisor": "Tripadvisor",
+            "tiktok": "Tiktok",
+            "whatsapp": "WhatsApp"
+        }
+    },
     "about": {
         "title": "Más de 10 años de experiencia ofreciendo transporte turístico y ejecutivo de excelencia.",
         "features": {
@@ -74,7 +96,7 @@
         "description": "Servicio personalizado, rápido y confiable."
     },
     "autobus": {
-        "title": "Viajes en Grupo con Total Comodidad",
+        "title": "Viajes en grupo con total comodidad",
         "description": "Nuestros autobuses ofrecen capacidad para 50 pasajeros, con asientos reclinables, WC, aire acondicionado y entretenimiento a bordo.",
         "features": {
             "capacity": "Capacidad para 50 pasajeros con asientos reclinables.",
@@ -107,14 +129,14 @@
             {
                 "name": "Guanajuato",
                 "description": "Descubre los túneles de Guanajuato y disfruta la vista desde el Mirador del Pípila.",
-                "price": "$1,750 x persona",
-                "duration": "8 hrs aprox."
+                "price": "$1,750 por persona",
+                "duration": "Aprox. 8 horas"
             },
             {
                 "name": "San Miguel De Allende",
-                "description": "Recorre el Santuario de Jesús Nazareno en Atotonilco, conocido como la 'Capilla Sixtina de México'.",
-                "price": "$1,200 x persona",
-                "duration": "4 hrs aprox."
+                "description": "Visita el Santuario de Jesús Nazareno en Atotonilco, conocido como la 'Capilla Sixtina de México'.",
+                "price": "$1,200 por persona",
+                "duration": "Aprox. 4 horas"
             }
         ],
         "buttons": {

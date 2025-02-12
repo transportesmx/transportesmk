@@ -10,7 +10,7 @@ import { AppContext } from "@/Context/AppContext";
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const { idioma } = useContext(AppContext);
+  const { idioma, setIdioma } = useContext(AppContext);
 
   const handleCotizar = () => {
     const phoneNumber = "524151393219"; // Reemplaza con el número de WhatsApp incluyendo el código de país (52 para México).
@@ -19,6 +19,8 @@ const Navbar = () => {
     const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
     window.open(whatsappURL, "_blank");
   };
+
+  const { traduccion } = useContext(AppContext);
 
 
 
@@ -56,15 +58,23 @@ const Navbar = () => {
           <div className="flex items-center space-x-8">
 
           <div className="hidden lg:flex items-center space-x-2">
-            {console.log(idioma)}
+            <div className="flex items-center  gap-2"
+            onClick={() => setIdioma({ nombre: "ES", code: "MX" })}
+            >
             <div className={`flex items-center space-x-1  rounded-md ${idioma.nombre == "ES" && "p-1 bg-white"}`}>
             <img src="/assets/icons/mexico.png" alt="Mexican Flag" className="h-5" />
             </div>
             <a href="#" className="hover:text-blue-500 transition">ESP</a>
+            </div>
             <span className="text-white ">{"/"}</span>
-
+            <div className="flex items-center  gap-2"
+            onClick={() => setIdioma({ nombre: "EN", code: "US" })}
+            >
             <a href="#" className="hover:text-blue-500 transition">EN</a>
+            <div className={`flex items-center space-x-1  rounded-md ${idioma.nombre == "EN" && "p-1 bg-white"}`}>
             <img src="/assets/icons/eu.png" alt="Mexican Flag" className="h-5" />
+            </div>
+            </div>
           </div>
 
           <div className=" items-center space-x-4 hidden lg:flex">
@@ -133,11 +143,43 @@ const Navbar = () => {
           >Cotiza</span>
 
           <div className="px-4 py-2 flex items-center space-x-2">
+          <div className="flex items-center  gap-2"
+            onClick={() => setIdioma({ nombre: "ES", code: "MX" })}
+            >
+          <div className={`flex items-center space-x-1  rounded-md ${idioma.nombre == "ES" && "p-1 bg-white"}`}>
           <img src="/assets/icons/mexico.png" alt="Mexican Flag" className="h-5" />
+          </div>
             <span className="hover:text-blue-500">ESP</span>
+          </div>
             <span className="text-white ">{"/"}</span>
+            <div className="flex items-center  gap-2"
+            onClick={() => setIdioma({ nombre: "EN", code: "US" })}
+            >
             <span className="hover:text-blue-500">EN</span>
+            <div className={`flex items-center space-x-1  rounded-md ${idioma.nombre == "EN" && "p-1 bg-white"}`}>
             <img src="/assets/icons/eu.png" alt="Mexican Flag" className="h-5" />
+            </div>
+            </div>
+          </div>
+
+          <div className="hidden lg:flex items-center space-x-2">
+            <div className="flex items-center  gap-2"
+            onClick={() => setIdioma({ nombre: "ES", code: "MX" })}
+            >
+            <div className={`flex items-center space-x-1  rounded-md ${idioma.nombre == "ES" && "p-1 bg-white"}`}>
+            <img src="/assets/icons/mexico.png" alt="Mexican Flag" className="h-5" />
+            </div>
+            <a href="#" className="hover:text-blue-500 transition">ESP</a>
+            </div>
+            <span className="text-white ">{"/"}</span>
+            <div className="flex items-center  gap-2"
+            onClick={() => setIdioma({ nombre: "EN", code: "US" })}
+            >
+            <a href="#" className="hover:text-blue-500 transition">EN</a>
+            <div className={`flex items-center space-x-1  rounded-md ${idioma.nombre == "EN" && "p-1 bg-white"}`}>
+            <img src="/assets/icons/eu.png" alt="Mexican Flag" className="h-5" />
+            </div>
+            </div>
           </div>
 
        
