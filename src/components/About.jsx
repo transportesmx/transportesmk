@@ -1,8 +1,10 @@
 import Image from 'next/image';
-import React from 'react';
+import React, { useContext } from 'react';
 import { FaBus, FaClock, FaFacebook, FaInstagram, FaTiktok, FaTripadvisor, FaTruck, FaWhatsapp } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import App from '@/pages/_app';
+import { AppContext } from '@/Context/AppContext';
 
 const variants = {
   hidden: { opacity: 0, y: 50 },
@@ -10,6 +12,9 @@ const variants = {
 };
 
 function About() {
+
+  const {traduccion} = useContext(AppContext)
+
   return (
     <motion.div
     id="About"
@@ -30,21 +35,26 @@ function About() {
             transition={{ duration: 0.5, delay: 0.2 }}
           >
             <h1 className="text-[32px] md:text-[30px] leading-[34px] md:leading-[30px] md:text-4xl xl:text-5xl font-bold text-center md:text-left mb-12">
-              Más de 10 años de experiencia ofreciendo transporte turístico y ejecutivo de excelencia.
+              {traduccion.about.title}
             </h1>
             <ul className="space-y-4 text-sm sm:text-base md:text-lg">
               <li className="flex flex-col md:flex-row items-center text-[20px] gap-4">
                 <Image src="/assets/icons/clock.png" width={38} height={38} alt="Clock" />
-                Puntualidad garantizada.
+                {traduccion.about.features.punctuality}
               </li>
               <li className="flex flex-col md:flex-row items-center text-[20px] gap-4">
-                <Image src="/assets/icons/driver.png" width={38} height={38} alt="Clock" /> Choferes altamente capacitados.
+                <Image src="/assets/icons/driver.png" width={38} height={38} alt="Clock" /> 
+                {traduccion.about.features.drivers}
+
               </li>
               <li className="flex flex-col md:flex-row items-center text-[20px] gap-4">
-                <Image src="/assets/icons/bus.png" width={38} height={38} alt="Clock" /> Vehículos en perfectas condiciones.
+                <Image src="/assets/icons/bus.png" width={38} height={38} alt="Clock" /> 
+                {traduccion.about.features.vehicles}
+
               </li>
               <li className="flex flex-col md:flex-row items-center text-[20px] gap-4">
-                <Image src="/assets/icons/24.png" width={38} height={38} alt="Clock" /> Atención personalizada 24/7.
+                <Image src="/assets/icons/24.png" width={38} height={38} alt="Clock" />                 {traduccion.about.features.support}
+
               </li>
             </ul>
 
@@ -64,17 +74,16 @@ function About() {
             transition={{ duration: 0.5, delay: 0.4 }}
           >
             <div className="mb-8">
-              <h2 className="text-2xl md:text-3xl font-bold mb-2">Misión:</h2>
+              <h2 className="text-2xl md:text-3xl font-bold mb-2">                {traduccion.about.mission.title}
+              </h2>
               <p className="text-sm sm:text-base md:text-lg">
-                Ofrecer servicios de transporte de calidad, garantizando la mejor experiencia para
-                nuestros clientes, con un enfoque en puntualidad, seguridad y atención personalizada.
+              {traduccion.about.mission.description}
               </p>
             </div>
             <div>
-              <h2 className="text-2xl md:text-3xl font-bold mb-2">Visión:</h2>
+              <h2 className="text-2xl md:text-3xl font-bold mb-2">{traduccion.about.vision.title}</h2>
               <p className="text-sm sm:text-base md:text-lg">
-                Ser la compañía de transporte más confiable y reconocida, destacándonos por nuestra
-                excelencia y profesionalismo.
+              {traduccion.about.vision.description}
               </p>
             </div>
 
