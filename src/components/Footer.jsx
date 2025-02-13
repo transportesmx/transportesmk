@@ -1,7 +1,12 @@
+import { AppContext } from '@/Context/AppContext';
 import Link from 'next/link';
-import { FaFacebookF, FaInstagram, FaTripadvisor, FaTiktok } from 'react-icons/fa';
+import { useContext } from 'react';
+import { FaFacebookF, FaInstagram, FaTripadvisor, FaTiktok, FaMailBulk,  FaLocationArrow } from 'react-icons/fa';
+import { FaPhone } from "react-icons/fa6";
+import { IoMdMail } from 'react-icons/io';
 
 export default function Footer() {
+  const {traducccion} = useContext(AppContext);
   return (
     <footer className="bg-black text-white py-12">
       <div className="max-w-screen-xl mx-auto px-4 sm:px-6">
@@ -9,20 +14,22 @@ export default function Footer() {
           {/* Logo y slogan */}
           <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
             <img src="/assets/logo.png" alt="Logo" className="h-16 mb-4" /> {/* Asegúrate de poner el path correcto */}
-            <p className="text-lg mb-4 text-[15px] max-w-[320px]">Viaja con comodidad, puntualidad y la mejor atención. ¡Cotiza tu traslado ahora!</p>
-            <p className="text-sm">© 2025. Transportes TMX. Todos los derechos reservados.</p>
+            <p className="text-lg mb-4 text-[15px] max-w-[320px]">
+              {traducccion.logoSlogan}
+            </p>
+            <p className="text-sm">{traducccion.rights}</p>
           </div>
 
           {/* Sección de servicios */}
           <div className="flex flex-col lg:flex-row lg:space-x-12 mb-6 lg:mb-0 space-y-6 lg:space-y-0">
             <div>
-              <h3 className="font-bold text-lg mb-4 text-center lg:text-left">Servicios</h3>
+              <h3 className="font-bold text-lg mb-4 text-center lg:text-left">{traducccion.services.title}</h3>
               <ul className="space-y-2 text-center lg:text-left">
-                <li><Link href="/#Aeropuerto"><span className="hover:text-blue-500">Traslados a Aeropuerto</span></Link></li>
-                <li><Link href="/#Bodas"><span className="hover:text-blue-500">Transporte para bodas</span></Link></li>
+                <li><Link href="/#Aeropuerto"><span className="hover:text-blue-500">{traducccion.services.aeropuerto}</span></Link></li>
+                <li><Link href="/#Bodas"><span className="hover:text-blue-500">{traducccion.services.bodas}</span></Link></li>
               
-                <li><Link href="/#Chofer"><span className="hover:text-blue-500">Chofer Privado</span></Link></li>
-                <li><Link href="/#Ejecutivo"><span className="hover:text-blue-500">Transporte Ejecutivo</span></Link></li>
+                <li><Link href="/#Chofer"><span className="hover:text-blue-500">{traducccion.services.chofer}</span></Link></li>
+                <li><Link href="/#Ejecutivo"><span className="hover:text-blue-500">{traducccion.services.ejecutivo}</span></Link></li>
               </ul>
             </div>
 
@@ -50,6 +57,22 @@ export default function Footer() {
               </span>
             </Link>
           </div>
+          
+          <div className="flex flex-col items-center lg:items-start space-y-6 ">
+            <a href='mailto:amstrekgrt@gmail.com '>
+              <span  className=" hover:text-blue-500 flex items-center text-[15px] gap-2"> 
+              <IoMdMail /> amstrekgrt@gmail.com
+              </span>
+            </a>
+            <a href='tel:+524151393219 '>
+              <span  className=" hover:text-blue-500 flex items-center text-[15px] gap-2"> 
+              <FaPhone/>  +52 415 139 3219
+              </span>
+            </a>
+              <span  className=" hover:text-blue-500 flex items-center text-[15px] gap-2"> 
+              <FaLocationArrow/>  San Miguel de Allende Guanajuato
+              </span>
+          </div>
           </div>
 
       
@@ -58,19 +81,22 @@ export default function Footer() {
         {/* Enlaces a términos y condiciones */}
         <div className="mt-8 text-center flex flex-col lg:flex-row  lg:justify-center items-center">
           <Link href="/Terminos">
-            <span className="text-sm text-gray-400 hover:text-blue-500">Términos y condiciones</span>
+            <span className="text-sm text-gray-400 hover:text-blue-500">{traducccion.links.terms}</span>
           </Link>
           <div className="mx-8 cursor-pointer hidden lg:block" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
             <img src="/assets/icons/arriba.png" alt="Flecha arriba" className="h-6 inline transform -translate-y-2" />
           </div>
           <Link href="/Privacidad">
-            <span className="text-sm text-gray-400 hover:text-blue-500">Política de Privacidad</span>
+            <span className="text-sm text-gray-400 hover:text-blue-500">{traducccion.links.privacy}</span>
           </Link>
           <div className="mx-8 cursor-pointer  lg:hidden" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
             <img src="/assets/icons/arriba.png" alt="Flecha arriba" className="h-6 inline transform translate-y-4" />
           </div>                 
           
         </div>
+
+       
+
       </div>
     </footer>
   );

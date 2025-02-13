@@ -78,7 +78,7 @@ const Galeria = () => {
           modules={[Navigation]}
           className="w-full h-full"
         >
-          {traduccion.galeria.categories .map((category, index) => (
+          {traduccion.galeria.categories.map((category, index) => (
             <SwiperSlide key={index}>
               <motion.div
                 className="relative group cursor-pointer overflow-hidden rounded-lg shadow-lg w-[300px] h-[550px]"

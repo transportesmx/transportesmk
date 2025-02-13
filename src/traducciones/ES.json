@@ -514,15 +514,31 @@
       }
     ]
   },
-    "footer": {
-        "rights": "© 2025. Transportes TMX. Todos los derechos reservados.",
-        "terms": "Términos y condiciones",
-        "privacy": "Política de Privacidad",
-        "social": {
-            "facebook": "Facebook",
-            "instagram": "Instagram",
-            "tripadvisor": "Tripadvisor",
-            "tiktok": "Tiktok"
-        }
-    }
+   "footer": {
+    "logoSlogan": "Viaja con comodidad, puntualidad y la mejor atención. ¡Cotiza tu traslado ahora!",
+    "rights": "© 2025. Transportes TMX. Todos los derechos reservados.",
+    "services": {
+      "title": "Servicios",
+      "aeropuerto": "Traslados a Aeropuerto",
+      "bodas": "Transporte para bodas",
+      "chofer": "Chofer Privado",
+      "ejecutivo": "Transporte Ejecutivo"
+    },
+    "social": {
+      "facebook": "Facebook",
+      "tripadvisor": "Tripadvisor",
+      "instagram": "Instagram",
+      "tiktok": "Tiktok"
+    },
+    "contact": {
+      "email": "amstrekgrt@gmail.com",
+      "phone": "+52 415 139 3219",
+      "address": "San Miguel de Allende, Guanajuato"
+    },
+    "links": {
+      "terms": "Términos y condiciones",
+      "privacy": "Política de Privacidad"
+    },
+    "backToTop": "Volver arriba"
+  }
 }
