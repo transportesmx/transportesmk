@@ -2,8 +2,13 @@ import Image from 'next/image';
 import React from 'react';
 import { motion } from 'framer-motion';
 import { FaBus, FaUserTie, FaMusic, FaClock } from 'react-icons/fa'; // Íconos para el servicio
+import { useContext } from 'react';
+import { AppContext } from '../Context/AppContext';
 
 function Autobus() {
+  
+  const { traduccion } = useContext(AppContext);
+
   const handleCotizar = () => {
     const recipientEmail = "amstrekgrt@gmail.com"; // Correo destino
     const subject = "Información sobre Transporte en Autobús";
@@ -42,13 +47,10 @@ function Autobus() {
           {/* Left Section */}
           <motion.div variants={itemVariants}>
             <h1 className="text-[40px] lg:text-[50px] leading-[34px] md:leading-[30px] md:text-4xl lg:text-5xl font-bold text-center md:text-left mb-8 md:mb-12">
-              Viajes en Grupo con Total Comodidad
+              {traduccion.autobus.title}
             </h1>
             <p className="text-center md:text-left text-[20px] md:text-[24px] mb-8">
-              Nuestros autobuses ofrecen capacidad para 50 pasajeros, con asientos reclinables, 
-              WC, aire acondicionado y entretenimiento a bordo. 
-              La mejor opción para playas, conciertos, eventos corporativos y traslados masivos 
-              con seguridad y puntualidad.
+             {traduccion.autobus.description}
             </p>
             <motion.ul
               className="space-y-4 text-sm sm:text-base md:text-lg md:hidden"
@@ -56,19 +58,19 @@ function Autobus() {
             >
               <motion.li className="flex flex-col md:flex-row items-center text-[20px] gap-4 text-center md:text-left" variants={itemVariants}>
                 <FaBus className="text-3xl text-white" />
-                Capacidad para 50 pasajeros con asientos reclinables.
+                {traduccion.autobus.features[0].text}
               </motion.li>
               <motion.li className="flex flex-col md:flex-row items-center text-[20px] gap-4 text-center md:text-left" variants={itemVariants}>
                 <FaUserTie className="text-3xl text-white" />
-                Choferes experimentados para un viaje seguro y confiable.
+                {traduccion.autobus.features[1].text}
               </motion.li>
               <motion.li className="flex flex-col md:flex-row items-center text-[20px] gap-4 text-center md:text-left" variants={itemVariants}>
                 <FaMusic className="text-3xl text-white" />
-                Te llevamos a tu concierto o evento favorito con total comodidad.
+                {traduccion.autobus.features[2].text}
               </motion.li>
               <motion.li className="flex flex-col md:flex-row items-center text-[20px] gap-4 text-center md:text-left" variants={itemVariants}>
                 <FaClock className="text-3xl text-white" />
-                Puntualidad garantizada en cada traslado.
+                {traduccion.autobus.features[3].text}
               </motion.li>
             </motion.ul>
             <div className="flex justify-center md:justify-start space-x-4 mt-8 text-xl md:text-2xl">
@@ -77,7 +79,7 @@ function Autobus() {
                 onClick={handleCotizar}
                 variants={itemVariants}
               >
-                Cotizar
+              {traduccion.autobus.buttons.quote}
               </motion.button>
             </div>
           </motion.div>
@@ -87,19 +89,19 @@ function Autobus() {
             <ul className="space-y-4 text-sm sm:text-base md:text-lg">
               <motion.li className="flex flex-col md:flex-row items-center text-[20px] gap-4 text-center md:text-left" variants={itemVariants}>
                 <FaBus className="text-3xl text-white" />
-                Capacidad para 50 pasajeros con asientos reclinables.
+                {traduccion.autobus.features[0].text}
               </motion.li>
               <motion.li className="flex flex-col md:flex-row items-center text-[20px] gap-4 text-center md:text-left" variants={itemVariants}>
                 <FaUserTie className="text-3xl text-white" />
-                Choferes experimentados para un viaje seguro y confiable.
+                {traduccion.autobus.features[1].text}
               </motion.li>
               <motion.li className="flex flex-col md:flex-row items-center text-[20px] gap-4 text-center md:text-left" variants={itemVariants}>
                 <FaMusic className="text-3xl text-white" />
-                Te llevamos a tu concierto o evento favorito con total comodidad.
+                {traduccion.autobus.features[2].text}
               </motion.li>
               <motion.li className="flex flex-col md:flex-row items-center text-[20px] gap-4 text-center md:text-left" variants={itemVariants}>
                 <FaClock className="text-3xl text-white" />
-                Puntualidad garantizada en cada traslado.
+                {traduccion.autobus.features[3].text}
               </motion.li>
             </ul>
             <motion.button
@@ -107,7 +109,7 @@ function Autobus() {
               onClick={handleCotizar}
               variants={itemVariants}
             >
-              Cotizar
+              {traduccion.autobus.buttons.quote}
             </motion.button>
           </motion.div>
         </div>

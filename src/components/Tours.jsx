@@ -5,45 +5,10 @@ import { motion } from "framer-motion";
 import "swiper/css";
 import "swiper/css/navigation";
 import Image from "next/image";
+import { useContext } from "react";
+import { AppContext } from "../Context/AppContext";
 
-const tours = [
-  {
-    title: "Guanajuato",
-    description:
-      "Descubre los túneles de Guanajuato y disfruta la vista desde el Mirador del Pípila. Visita el Teatro Juárez, la Universidad de Guanajuato y la Alhóndiga de Granaditas. Sumérgete en la historia en el Museo de las Momias y la Iglesia de San Cayetano (Valenciana). No te pierdas el místico Museo de la Santa Inquisición ni el romántico Callejón del Beso.",
-    price: "$1,750 x persona",
-    minimo: "(min. 2)",
-    duration: "8 hrs aprox.",
-    image: "/assets/images/guanajuato.png",
-  },
-  {
-    title: "San Miguel De Allende",
-    description:
-      "Recorre el Santuario de Jesús Nazareno en Atotonilco, conocido como la 'Capilla Sixtina de México'. Descubre arte y diseño en la Fábrica La Aurora y disfruta del colorido Mercado de Artesanías Lucas Balderas. Admira la ciudad desde el Mirador, relájate en el Parque Juárez y conoce la historia en los Lavaderos del Chorro.",
-    price: "$1,200 x persona",
-    minimo: "(min. 2)",
-    duration: "4 hrs aprox.",
-    image: "/assets/images/sanmiguel.png",
-  },
-  {
-    title: "Dolores, Hidalgo",
-    description:
-      "Visita el Santuario de Atotonilco y el Mausoleo de José Alfredo Jiménez con degustación de rompope y mezcal. Recorre la Avenida de la Cerámica y la Iglesia del Grito de Independencia. Disfruta las nieves típicas.",
-    price: "$1,700 x persona",
-    minimo: "(min. 2)",
-    duration: "6 hrs aprox.",
-    image: "/assets/images/dolores.png",
-  },
-  {
-    title: "Peña de Bernal",
-    description:
-      "Explora uno de los monolitos más grandes del mundo en el encantador Pueblo Mágico de Bernal. Disfruta de una caminata con vistas impresionantes, recorre sus coloridas calles coloniales y degusta vinos y quesos artesanales en las vinícolas cercanas. Una experiencia inolvidable entre naturaleza, historia y gastronomía.",
-    price: "$1,800 x persona",
-    minimo: "(min. 2)",
-    duration: "6.5 hrs aprox.",
-    image: "/assets/images/queretaro.jpg",
-  }
-];
+
 
 const handleCotizar = (tour) => {
   const phoneNumber = "524151393219"; // Reemplaza con el número de WhatsApp incluyendo el código de país (52 para México).
@@ -67,6 +32,8 @@ const Tours = () => {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
   };
+
+  const {traduccion} = useContext(AppContext);
 
   return (
     <motion.div
@@ -95,7 +62,7 @@ const Tours = () => {
         className="text-3xl font-bold mb-4 text-black text-center"
         variants={itemVariants}
       >
-        Tours
+        {traduccion.tours.title}
       </motion.h2>
       <Swiper
         spaceBetween={20}
@@ -121,7 +88,7 @@ const Tours = () => {
         modules={[Navigation]}
         className="w-full h-full"
       >
-        {tours.map((tour, index) => (
+        {traduccion.tours.options.map((tour, index) => (
           <SwiperSlide key={index}>
             <motion.div
               className="bg-gray-100 rounded-lg shadow-lg overflow-hidden h-[550px] lg:h-[630px] w-[271px] lg:w-[321px] cursor-pointer relative"
@@ -135,7 +102,7 @@ const Tours = () => {
               />
               <img
                 src="/assets/images/fade.png"
-                alt={tour.title}
+                alt={tour.name}
                 className="w-full h-full object-cover absolute top-0 left-0"
               />
               <div className="p-4 absolute bottom-0 z-30">
@@ -143,7 +110,7 @@ const Tours = () => {
                   className="text-[30px] leading-[30px] font-bold mb-2 drop-shadow-xl"
                   variants={itemVariants}
                 >
-                  {tour.title}
+                  {tour.name}
                 </motion.h3>
                 <motion.p
                   className="text-white text-[14px] leading-[18px] font-bold mb-4 drop-shadow-2xl"
@@ -159,7 +126,7 @@ const Tours = () => {
                       height={22}
                       alt="Bus"
                     />
-                    Sedán, SUV y Van con aire acondicionado
+                    {traduccion.tours.static.vehicle_info}
                   </li>
                   <li className="flex flex-row items-center gap-2">
                     <Image
@@ -168,7 +135,7 @@ const Tours = () => {
                       height={22}
                       alt="Driver"
                     />
-                    Chofer Bilingüe
+                    {traduccion.tours.static.driver_info}
                   </li>
                   <li className="flex flex-row items-center gap-2">
                     <Image
