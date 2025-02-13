@@ -27,6 +27,7 @@ const Navbar = () => {
   return (
     <header className="bg-black shadow-md sticky top-0 z-50">
       <div className="container mx-auto flex justify-between items-center px-4 py-2">
+        {console.log(traduccion)}
         <div className="flex items-center py-4">
           <img src="/assets/logo.png" alt="MK Logo" className="h-8 mr-4" />
         </div>

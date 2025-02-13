@@ -6,7 +6,7 @@ import { FaPhone } from "react-icons/fa6";
 import { IoMdMail } from 'react-icons/io';
 
 export default function Footer() {
-  const {traducccion} = useContext(AppContext);
+  const {traduccion} = useContext(AppContext);
   return (
     <footer className="bg-black text-white py-12">
       <div className="max-w-screen-xl mx-auto px-4 sm:px-6">
@@ -14,22 +14,20 @@ export default function Footer() {
           {/* Logo y slogan */}
           <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
             <img src="/assets/logo.png" alt="Logo" className="h-16 mb-4" /> {/* Asegúrate de poner el path correcto */}
-            <p className="text-lg mb-4 text-[15px] max-w-[320px]">
-              {traducccion.logoSlogan}
-            </p>
-            <p className="text-sm">{traducccion.rights}</p>
+            <p className="text-lg mb-4 text-[15px] max-w-[320px]">{traduccion.footer.logoSlogan}</p>
+            <p className="text-sm">{traduccion.footer.rights}</p>
           </div>
 
           {/* Sección de servicios */}
           <div className="flex flex-col lg:flex-row lg:space-x-12 mb-6 lg:mb-0 space-y-6 lg:space-y-0">
             <div>
-              <h3 className="font-bold text-lg mb-4 text-center lg:text-left">{traducccion.services.title}</h3>
+              <h3 className="font-bold text-lg mb-4 text-center lg:text-left">{traduccion.footer.services.title}</h3>
               <ul className="space-y-2 text-center lg:text-left">
-                <li><Link href="/#Aeropuerto"><span className="hover:text-blue-500">{traducccion.services.aeropuerto}</span></Link></li>
-                <li><Link href="/#Bodas"><span className="hover:text-blue-500">{traducccion.services.bodas}</span></Link></li>
+                <li><Link href="/#Aeropuerto"><span className="hover:text-blue-500">{traduccion.footer.services.aeropuerto}</span></Link></li>
+                <li><Link href="/#Bodas"><span className="hover:text-blue-500">{traduccion.footer.services.bodas}</span></Link></li>
               
-                <li><Link href="/#Chofer"><span className="hover:text-blue-500">{traducccion.services.chofer}</span></Link></li>
-                <li><Link href="/#Ejecutivo"><span className="hover:text-blue-500">{traducccion.services.ejecutivo}</span></Link></li>
+                <li><Link href="/#Chofer"><span className="hover:text-blue-500">{traduccion.footer.services.chofer}</span></Link></li>
+                <li><Link href="/#Ejecutivo"><span className="hover:text-blue-500">{traduccion.footer.services.ejecutivo}</span></Link></li>
               </ul>
             </div>
 
@@ -74,29 +72,22 @@ export default function Footer() {
               </span>
           </div>
           </div>
-
-      
         </div>
-
         {/* Enlaces a términos y condiciones */}
         <div className="mt-8 text-center flex flex-col lg:flex-row  lg:justify-center items-center">
           <Link href="/Terminos">
-            <span className="text-sm text-gray-400 hover:text-blue-500">{traducccion.links.terms}</span>
+            <span className="text-sm text-gray-400 hover:text-blue-500">{traduccion.footer.links.terms}</span>
           </Link>
           <div className="mx-8 cursor-pointer hidden lg:block" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
             <img src="/assets/icons/arriba.png" alt="Flecha arriba" className="h-6 inline transform -translate-y-2" />
           </div>
           <Link href="/Privacidad">
-            <span className="text-sm text-gray-400 hover:text-blue-500">{traducccion.links.privacy}</span>
+            <span className="text-sm text-gray-400 hover:text-blue-500">{traduccion.footer.links.privacy}</span>
           </Link>
           <div className="mx-8 cursor-pointer  lg:hidden" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
             <img src="/assets/icons/arriba.png" alt="Flecha arriba" className="h-6 inline transform translate-y-4" />
           </div>                 
-          
         </div>
-
-       
-
       </div>
     </footer>
   );

@@ -1,157 +1,521 @@
 {
     "hero": {
-        "slides": [
-            {
-                "image": "/assets/images/suburban.png",
-                "title": "Explore, Live, and Enjoy Unforgettable Destinations",
-                "description": "Discover cultural richness and breathtaking landscapes with our personalized tours. Experience the magic of every place with comfort and luxury service."
-            },
-            {
-                "image": "/assets/images/sprinter.png",
-                "title": "Arrivals and Departures with Punctuality and Comfort",
-                "description": "Enjoy a comfortable and safe transfer to major airports. Travel worry-free, always on time, with personalized attention."
-            },
-            {
-                "image": "/assets/images/odissey.png",
-                "title": "Mobility for Every Commitment",
-                "description": "Maximize your time with exclusive and secure transportation. Perfect for business meetings, corporate events, and VIP transfers."
-            },
-            {
-                "image": "/assets/images/chofer.png",
-                "title": "Your Route, Your Time, Our Commitment",
-                "description": "Enjoy the flexibility of a private service with an exclusive driver. Ideal for city tours and long-distance trips with the comfort you deserve."
-            },
-            {
-                "image": "/assets/images/suburban2.png",
-                "title": "Luxury and Comfort in Every Journey",
-                "description": "Enjoy an exclusive and safe trip in our Suburban. Ideal for executive transfers, family trips, or special events."
-            }
-        ],
-        "buttons": {
-            "quote": "Get a Quote",
-            "reserve": "Book Now"
+      "slides": [
+        {
+          "image": "/assets/images/suburban.png",
+          "title": "Explore, Live & Enjoy Unforgettable Destinations",
+          "description": "Discover the cultural richness and the most breathtaking landscapes with our personalized tours. Experience the magic of every corner with comfort and luxury service."
+        },
+        {
+          "image": "/assets/images/sprinter.png",
+          "title": "Arrivals & Departures with Punctuality and Comfort",
+          "description": "Enjoy a comfortable and safe transfer to the main airports. Travel worry-free, always on time, with personalized attention."
+        },
+        {
+          "image": "/assets/images/odissey.png",
+          "title": "Mobility for Every Commitment",
+          "description": "Maximize your time with exclusive and secure transportation. Perfect for business meetings, corporate events, and VIP transfers."
+        },
+        {
+          "image": "/assets/images/chofer.png",
+          "title": "Your Route, Your Time, Our Commitment",
+          "description": "Enjoy the flexibility of a private service with an exclusive driver. Ideal for trips within and outside the city, with the comfort you deserve."
+        },
+        {
+          "image": "/assets/images/suburban2.png",
+          "title": "Luxury and Comfort on Every Journey",
+          "description": "Enjoy an exclusive and safe ride in our Suburban. Ideal for executive transfers, family trips, or special events."
+        },
+        {
+          "image": "/assets/images/camry.png",
+          "title": "Efficiency and Comfort in Every Transfer",
+          "description": "Our cars combine elegance, safety, and performance. Perfect for private transfers, business appointments, and city trips. Maximum efficiency and comfort so you reach your destination with complete peace of mind."
         }
+      ],
+      "buttons": {
+        "quote": "Get a Quote",
+        "reserve": "Reserve"
+      }
+    },
+    "heroCotiza": {
+      "from": "From",
+      "to": "To",
+      "date": "Date",
+      "time": "Time",
+      "vehicle": "Vehicle",
+      "passengers": "Passengers",
+      "roundTrip": "Round Trip",
+      "returnDate": "Return Date",
+      "returnTime": "Return Time",
+      "placeholderReturnDate": "Select a return date"
     },
     "navbar": {
-        "home": "Home",
-        "about": "About Us",
-        "services": "Services",
-        "airport_transfer": "Airport Transfer",
-        "wedding_transport": "Wedding Transportation",
-        "private_driver": "Private Driver",
-        "executive_transport": "Executive Transport",
-        "tours": "Tours",
-        "quote": "Get a Quote",
-        "languages": {
-            "spanish": "ESP",
-            "english": "EN"
-        },
-        "social": {
-            "facebook": "Facebook",
-            "instagram": "Instagram",
-            "tripadvisor": "Tripadvisor",
-            "tiktok": "Tiktok",
-            "whatsapp": "WhatsApp"
-        }
+      "home": "Home",
+      "about": "About",
+      "services": "Services",
+      "airport_transfer": "Airport Transfer",
+      "wedding_transport": "Wedding Transport",
+      "private_driver": "Private Driver",
+      "executive_transport": "Executive Transport",
+      "tours": "Tours",
+      "quote": "Get a Quote",
+      "languages": {
+        "spanish": "ES",
+        "english": "EN"
+      },
+      "social": {
+        "facebook": "Facebook",
+        "instagram": "Instagram",
+        "tripadvisor": "Tripadvisor",
+        "tiktok": "Tiktok",
+        "whatsapp": "WhatsApp"
+      }
     },
     "about": {
-        "title": "Over 10 Years of Experience Providing Premium Tourism and Executive Transport.",
-        "features": {
-            "punctuality": "Guaranteed punctuality.",
-            "drivers": "Highly trained drivers.",
-            "vehicles": "Well-maintained vehicles.",
-            "support": "24/7 personalized support."
-        },
-        "mission": {
-            "title": "Mission",
-            "description": "To offer high-quality transport services, ensuring the best experience for our customers, with a focus on punctuality, safety, and personalized attention."
-        },
-        "vision": {
-            "title": "Vision",
-            "description": "To be the most reliable and recognized transport company, standing out for our excellence and professionalism."
-        }
+      "title": "Over 10 Years of Experience Providing Excellent Tourist and Executive Transportation",
+      "features": {
+        "punctuality": "Guaranteed Punctuality.",
+        "drivers": "Highly Trained Drivers.",
+        "vehicles": "Vehicles in Perfect Condition.",
+        "support": "24/7 Personalized Support."
+      },
+      "mission": {
+        "title": "Mission",
+        "description": "To provide quality transportation services, ensuring the best experience for our clients with a focus on punctuality, safety, and personalized attention."
+      },
+      "vision": {
+        "title": "Vision",
+        "description": "To be the most reliable and recognized transportation company, standing out for our excellence and professionalism."
+      }
     },
     "faqs": {
-        "title": "Frequently Asked Questions",
-        "questions": [
-            {
-                "question": "How can I request a quote?",
-                "answer": "You can request a quote by filling out the form on this page. Our team will respond via WhatsApp within minutes to provide all the details."
-            },
-            {
-                "question": "How long does it take to confirm my reservation?",
-                "answer": "Our team will confirm your reservation within 24 hours."
-            },
-            {
-                "question": "What types of transportation services do you offer?",
-                "answer": "We offer private, group, and executive transportation depending on the client's needs."
-            }
-        ],
-        "buttons": {
-            "chat": "Chat Now"
+      "title": "Frequently Asked Questions",
+      "questions": [
+        {
+          "question": "How can I request a quote?",
+          "answer": "You can request a quote by filling out the form on this page. Our team will respond via WhatsApp in just a few minutes to provide you with all the details."
+        },
+        {
+          "question": "How long does it take to confirm my reservation?",
+          "answer": "Our team will confirm your reservation within the next 24 hours."
+        },
+        {
+          "question": "What transportation services do you offer?",
+          "answer": "We offer private, group, and executive transportation services depending on the client's needs."
+        },
+        {
+          "question": "Are the vehicles private or shared?",
+          "answer": "The vehicles are private, ensuring your comfort and privacy throughout the journey."
+        },
+        {
+          "question": "How far in advance should I book?",
+          "answer": "We recommend booking at least 48 hours before your trip to ensure availability."
+        },
+        {
+          "question": "What payment methods are accepted?",
+          "answer": "We accept payments by credit/debit card, bank transfers, and cash."
+        },
+        {
+          "question": "Do you issue invoices?",
+          "answer": "Yes, we issue invoices. Just provide your tax details at the time of booking."
         }
+      ],
+      "buttons": {
+        "chat": "Chat"
+      }
+    },
+    "boda": {
+      "title": "Wedding Transfer",
+      "description": "At Transportes MX, we understand how important your wedding day is. Our wedding transfer service is designed to ensure that the bride, groom, and guests arrive comfortably, on time, and in style. We take care of every detail so you can simply enjoy your day.",
+      "features": [
+        {
+          "icon": "/assets/icons/clock.png",
+          "text": "Precise coordination for every transfer, from the ceremony venue to the reception."
+        },
+        {
+          "icon": "/assets/icons/driver.png",
+          "text": "Uniformed, friendly drivers who know the most efficient routes."
+        },
+        {
+          "icon": "/assets/icons/bus.png",
+          "text": "Transportation for small groups or large groups of over 600 people."
+        },
+        {
+          "icon": "/assets/icons/24.png",
+          "text": "Schedules, routes, and stops tailored to your event's needs."
+        }
+      ],
+      "buttons": {
+        "quote": "Get a Quote"
+      }
+    },
+    "chofer": {
+      "title": "Private Driver",
+      "description": "Our private driver vehicles are available for personalized use for as long as you need. Whether for city tours, executive transfers, or long trips to tourist destinations, we adapt to your schedule to offer you a luxurious, worry-free experience.",
+      "features": [
+        {
+          "icon": "/assets/icons/diamante.png",
+          "text": "Personalized attention to ensure a flawless experience."
+        },
+        {
+          "icon": "/assets/icons/driver.png",
+          "text": "Uniformed, friendly drivers who know the most efficient routes."
+        },
+        {
+          "icon": "/assets/icons/bus.png",
+          "text": "A wide fleet that includes sedans, SUVs, and vans in perfect condition."
+        },
+        {
+          "icon": "/assets/icons/24.png",
+          "text": "Schedules tailored to your agenda and personalized stops according to your needs."
+        }
+      ],
+      "buttons": {
+        "quote": "Get a Quote"
+      }
+    },
+    "ejecutivo": {
+      "title": "Executive & Corporate Transfer",
+      "description": "Our executive and corporate transfer service is designed to meet the needs of professionals and companies seeking comfort, punctuality, and premium service. Whether for business meetings, corporate events, or airport transfers, we guarantee an efficient, hassle-free experience.",
+      "features": [
+        {
+          "icon": "/assets/icons/clock.png",
+          "text": "Guaranteed punctuality."
+        },
+        {
+          "icon": "/assets/icons/driver.png",
+          "text": "Uniformed, friendly drivers who know the most efficient routes."
+        },
+        {
+          "icon": "/assets/icons/bus.png",
+          "text": "A wide fleet that includes sedans, SUVs, and vans in perfect condition."
+        },
+        {
+          "icon": "/assets/icons/24.png",
+          "text": "Schedules and routes tailored to your business needs."
+        }
+      ],
+      "buttons": {
+        "quote": "Get a Quote"
+      }
     },
     "aeropuerto": {
-        "title": "Airport Transfer",
-        "description": "Personalized, fast, and reliable service."
+      "title": "Airport Transfer",
+      "description": "Personalized, fast, and reliable service."
+    },
+    "formulario": {
+      "title": "Get a Quote",
+      "fields": {
+        "name": "Name",
+        "phone": "Phone",
+        "email": "Email",
+        "passengers": "Number of Passengers",
+        "origin": "Origin",
+        "destination": "Destination",
+        "vehicle": "Vehicle Type",
+        "date": "Date",
+        "time": "Time",
+        "round_trip": "Round Trip",
+        "return_date": "Return Date",
+        "return_time": "Return Time"
+      },
+      "buttons": {
+        "submit": "Submit",
+        "support": "*24/7 Personalized Support."
+      }
     },
     "autobus": {
-        "title": "Group Travel with Total Comfort",
-        "description": "Our buses accommodate up to 50 passengers, featuring reclining seats, restrooms, air conditioning, and onboard entertainment.",
-        "features": {
-            "capacity": "Seats up to 50 passengers with reclining seats.",
-            "experienced_drivers": "Experienced drivers for a safe and reliable trip.",
-            "events": "We take you to your favorite concert or event with total comfort.",
-            "punctuality": "Guaranteed punctuality on every transfer."
+      "title": "Group Travel with Total Comfort",
+      "description": "Our buses offer capacity for 50 passengers, with reclining seats, restrooms, air conditioning, and onboard entertainment. The best option for beaches, concerts, corporate events, and mass transfers with safety and punctuality.",
+      "features": [
+        {
+          "icon": "/assets/icons/bus.png",
+          "text": "Capacity for 50 passengers with reclining seats."
         },
-        "buttons": {
-            "quote": "Get a Quote"
+        {
+          "icon": "/assets/icons/user-tie.png",
+          "text": "Experienced drivers for a safe and reliable journey."
+        },
+        {
+          "icon": "/assets/icons/music.png",
+          "text": "We take you to your favorite concert or event in complete comfort."
+        },
+        {
+          "icon": "/assets/icons/clock.png",
+          "text": "Guaranteed punctuality on every transfer."
         }
-    },
-    "testimonials": {
-        "title": "Testimonials",
-        "reviews": [
-            {
-                "name": "Ana Martínez",
-                "service": "Airport Transfer",
-                "review": "We booked transport to Monterrey for U.S. work visas. Everything went great—very punctual and experienced with long-distance trips."
-            },
-            {
-                "name": "Carlos Ramírez",
-                "service": "Private Driver",
-                "review": "They have vehicles for all needs. We've traveled several times to San Miguel and always feel safe booking with them."
-            }
-        ]
+      ],
+      "buttons": {
+        "quote": "Get a Quote"
+      }
     },
     "tours": {
-        "title": "Tours",
-        "options": [
-            {
-                "name": "Guanajuato",
-                "description": "Discover the tunnels of Guanajuato and enjoy the view from the Pípila Lookout.",
-                "price": "$1,750 per person",
-                "duration": "Approx. 8 hours"
-            },
-            {
-                "name": "San Miguel De Allende",
-                "description": "Visit the Sanctuary of Jesús Nazareno in Atotonilco, known as the 'Sistine Chapel of Mexico'.",
-                "price": "$1,200 per person",
-                "duration": "Approx. 4 hours"
-            }
-        ],
-        "buttons": {
-            "quote": "Book Now"
+      "title": "Tours",
+      "options": [
+        {
+          "name": "Guanajuato",
+          "description": "Discover the tunnels of Guanajuato and enjoy the view from the Pípila Lookout. Visit the Juárez Theater, the University of Guanajuato, and the Alhóndiga de Granaditas. Immerse yourself in history at the Mummy Museum and the Church of San Cayetano (Valenciana). Don't miss the mystical Museum of the Holy Inquisition or the romantic Callejón del Beso.",
+          "price": "$1,750 per person",
+          "minimo": "(min. 2)",
+          "duration": "Approximately 8 hrs",
+          "image": "/assets/images/guanajuato.png"
+        },
+        {
+          "name": "San Miguel De Allende",
+          "description": "Tour the Sanctuary of Jesús Nazareno in Atotonilco, known as the 'Sistine Chapel of Mexico'. Discover art and design at Fábrica La Aurora and enjoy the colorful Lucas Balderas Artisan Market. Admire the city from the Lookout, relax in Juárez Park, and learn about history at the Lavaderos del Chorro.",
+          "price": "$1,200 per person",
+          "minimo": "(min. 2)",
+          "duration": "Approximately 4 hrs",
+          "image": "/assets/images/sanmiguel.png"
+        },
+        {
+          "name": "Dolores, Hidalgo",
+          "description": "Visit the Sanctuary of Atotonilco and the Mausoleum of José Alfredo Jiménez with tastings of rompope and mezcal. Explore Ceramics Avenue and the Church of the Cry of Independence. Enjoy traditional shaved ice.",
+          "price": "$1,700 per person",
+          "minimo": "(min. 2)",
+          "duration": "Approximately 6 hrs",
+          "image": "/assets/images/dolores.png"
+        },
+        {
+          "name": "Peña de Bernal",
+          "description": "Explore one of the largest monoliths in the world in the charming Magic Town of Bernal. Enjoy a hike with breathtaking views, stroll through its colorful colonial streets, and sample artisanal wines and cheeses at nearby wineries. An unforgettable experience blending nature, history, and gastronomy.",
+          "price": "$1,800 per person",
+          "minimo": "(min. 2)",
+          "duration": "Approximately 6.5 hrs",
+          "image": "/assets/images/queretaro.jpg"
         }
+      ],
+      "static": {
+        "vehicle_info": "Sedan, SUV, and Van with Air Conditioning",
+        "driver_info": "Bilingual Driver"
+      },
+      "buttons": {
+        "quote": "Book Now"
+      }
+    },
+    "testimonios": {
+      "title": "Testimonials",
+      "reviews": [
+        {
+          "nombre": "Ana Martínez",
+          "description": "We booked transportation to Monterrey for work visas to the USA. Everything went excellently, very punctual and experienced with long-distance routes.",
+          "usuario": "/assets/images/testimonios/usuario2.png",
+          "servicio": "Airport Transfer",
+          "imagen": "/assets/images/testimonios/1.png"
+        },
+        {
+          "nombre": "Carlos Ramírez",
+          "description": "They have vehicles for all needs. We have traveled several times to San Miguel and always felt safe booking with them.",
+          "usuario": "/assets/images/testimonios/usuario4.png",
+          "servicio": "Private Driver",
+          "imagen": "/assets/images/testimonios/2.png"
+        },
+        {
+          "nombre": "María Hernández",
+          "description": "We are a wedding planning company and have worked with them for years. Always punctual, professional, and with excellent service.",
+          "usuario": "/assets/images/testimonios/usuario3.png",
+          "servicio": "Wedding Transfer",
+          "imagen": "/assets/images/testimonios/3.png"
+        },
+        {
+          "nombre": "Luis Gómez",
+          "description": "The tour to San Miguel was amazing. We visited iconic places and made the most of our day. I would definitely do it again.",
+          "usuario": "/assets/images/testimonios/usuario1.png",
+          "servicio": "Tours (San Miguel de Allende)",
+          "imagen": "/assets/images/testimonios/4.png"
+        },
+        {
+          "nombre": "Eduardo Torres",
+          "description": "The executive transfer was impeccable. Punctuality, comfort, and professional service. Ideal for business trips.",
+          "usuario": "/assets/images/testimonios/usuario21.png",
+          "servicio": "Executive Transfer",
+          "imagen": "/assets/images/testimonios/5.png"
+        },
+        {
+          "nombre": "Laura Sánchez",
+          "description": "The vineyard tour was a great experience. Comfortable transport, friendly driver, and everything well organized. I would do it again.",
+          "usuario": "/assets/images/testimonios/usuario5.png",
+          "servicio": "Tours (Vineyard Route)",
+          "imagen": "/assets/images/testimonios/6.png"
+        },
+        {
+          "nombre": "Fernando Pérez",
+          "description": "A first-class service. They picked me up on time and the transfer was safe and efficient. Perfect for long trips.",
+          "usuario": "/assets/images/testimonios/usuario13.png",
+          "servicio": "Private Driver",
+          "imagen": "/assets/images/testimonios/7.png"
+        },
+        {
+          "nombre": "Alejandra Ruiz",
+          "description": "We traveled from California and arrived on different flights. They picked us up on time and everything was excellent. We also took excursions to vineyards.",
+          "usuario": "/assets/images/testimonios/usuario9.png",
+          "servicio": "Wedding Transfer",
+          "imagen": "/assets/images/testimonios/8.png"
+        },
+        {
+          "nombre": "Ricardo López",
+          "description": "We travel to San Miguel every year from the USA. We always book their transfers and the service is excellent. 100% recommended.",
+          "usuario": "/assets/images/testimonios/usuario8.png",
+          "servicio": "Executive Transfer",
+          "imagen": "/assets/images/testimonios/9.png"
+        },
+        {
+          "nombre": "Sofía Torres",
+          "description": "We booked the Guanajuato tour and visited many places without wasting any time. Very well organized and an excellent experience.",
+          "usuario": "/assets/images/testimonios/usuario11.png",
+          "servicio": "Tours (Guanajuato)",
+          "imagen": "/assets/images/testimonios/10.png"
+        },
+        {
+          "nombre": "Javier Muñoz",
+          "description": "My family and I used the airport transfer service and it was excellent. Punctuality, safety, and comfort guaranteed.",
+          "usuario": "/assets/images/testimonios/usuario10.png",
+          "servicio": "Airport Transfer",
+          "imagen": "/assets/images/testimonios/11.png"
+        },
+        {
+          "nombre": "Paula Gómez",
+          "description": "The Querétaro tour was an unforgettable experience. Beautiful places, excellent logistics, and a very attentive driver. Recommended.",
+          "usuario": "/assets/images/testimonios/usuario12.png",
+          "servicio": "Tours (Querétaro)",
+          "imagen": "/assets/images/testimonios/12.png"
+        },
+        {
+          "nombre": "Roberto Castro",
+          "description": "We hired a private driver to visit several agricultural companies. Punctual, helpful, and knowledgeable about the routes.",
+          "usuario": "/assets/images/testimonios/usuario27.png",
+          "servicio": "Private Driver",
+          "imagen": "/assets/images/testimonios/13.png"
+        },
+        {
+          "nombre": "Ismael Serrano",
+          "description": "We hired their service for our wedding with 350 guests. Impeccable coordination and punctual transfers. Highly recommended.",
+          "usuario": "/assets/images/testimonios/usuario25.png",
+          "servicio": "Wedding Transfer",
+          "imagen": "/assets/images/testimonios/14.png"
+        },
+        {
+          "nombre": "Daniel Ríos",
+          "description": "The executive transfer was top-notch. Punctual, comfortable, and professional. I highly recommend it for business trips.",
+          "usuario": "/assets/images/testimonios/usuario22.png",
+          "servicio": "Executive Transfer",
+          "imagen": "/assets/images/testimonios/15.png"
+        }
+      ]
+    },
+    "galeria": {
+      "title": "Visual Gallery",
+      "categories": [
+        {
+          "title": "Airport Transfers",
+          "image": "/assets/images/galeria/aeropuertos/aeropuertos.jpg",
+          "categoryImages": [
+            "/assets/images/galeria/aeropuertos/swiper/1.jpg",
+            "/assets/images/galeria/aeropuertos/swiper/2.jpg",
+            "/assets/images/galeria/aeropuertos/swiper/3.jpg",
+            "/assets/images/galeria/aeropuertos/swiper/4.jpg",
+            "/assets/images/galeria/aeropuertos/swiper/5.jpg",
+            "/assets/images/galeria/aeropuertos/swiper/6.jpg",
+            "/assets/images/galeria/aeropuertos/swiper/7.jpg",
+            "/assets/images/galeria/aeropuertos/swiper/8.jpg",
+            "/assets/images/galeria/aeropuertos/swiper/9.jpg",
+            "/assets/images/galeria/aeropuertos/swiper/10.jpg",
+            "/assets/images/galeria/aeropuertos/swiper/11.jpg",
+            "/assets/images/galeria/aeropuertos/swiper/12.jpg",
+            "/assets/images/galeria/aeropuertos/swiper/13.jpg",
+            "/assets/images/galeria/aeropuertos/swiper/14.jpg",
+            "/assets/images/galeria/aeropuertos/swiper/15.jpg",
+            "/assets/images/galeria/aeropuertos/swiper/16.jpg",
+            "/assets/images/galeria/aeropuertos/swiper/17.jpg",
+            "/assets/images/galeria/aeropuertos/swiper/18.jpg",
+            "/assets/images/galeria/aeropuertos/swiper/19.jpg",
+            "/assets/images/galeria/aeropuertos/swiper/20.jpg"
+          ]
+        },
+        {
+          "title": "Wedding Transport",
+          "image": "/assets/images/galeria/bodas/bodas.jpg",
+          "categoryImages": [
+            "/assets/images/galeria/bodas/swiper/1.jpg",
+            "/assets/images/galeria/bodas/swiper/2.jpg",
+            "/assets/images/galeria/bodas/swiper/3.jpg",
+            "/assets/images/galeria/bodas/swiper/4.jpg",
+            "/assets/images/galeria/bodas/swiper/5.jpg",
+            "/assets/images/galeria/bodas/swiper/6.jpg"
+          ]
+        },
+        {
+          "title": "Tourist Transport",
+          "image": "/assets/images/galeria/turistico/turistico.jpg",
+          "categoryImages": [
+            "/assets/images/galeria/turistico/swiper/1.jpg",
+            "/assets/images/galeria/turistico/swiper/2.jpg",
+            "/assets/images/galeria/turistico/swiper/3.jpg",
+            "/assets/images/galeria/turistico/swiper/4.jpg",
+            "/assets/images/galeria/turistico/swiper/5.jpg",
+            "/assets/images/galeria/turistico/swiper/6.jpg",
+            "/assets/images/galeria/turistico/swiper/7.jpg",
+            "/assets/images/galeria/turistico/swiper/8.jpg",
+            "/assets/images/galeria/turistico/swiper/9.jpg",
+            "/assets/images/galeria/turistico/swiper/10.jpg",
+            "/assets/images/galeria/turistico/swiper/11.jpg",
+            "/assets/images/galeria/turistico/swiper/12.jpg",
+            "/assets/images/galeria/turistico/swiper/13.jpg",
+            "/assets/images/galeria/turistico/swiper/14.jpg",
+            "/assets/images/galeria/turistico/swiper/15.jpg",
+            "/assets/images/galeria/turistico/swiper/16.jpg",
+            "/assets/images/galeria/turistico/swiper/17.jpg"
+          ]
+        },
+        {
+          "title": "Private Driver",
+          "image": "/assets/images/galeria/chofer/chofer.jpg",
+          "categoryImages": [
+            "/assets/images/galeria/chofer/swiper/1.jpg",
+            "/assets/images/galeria/chofer/swiper/2.jpg",
+            "/assets/images/galeria/chofer/swiper/3.jpg",
+            "/assets/images/galeria/chofer/swiper/4.jpg",
+            "/assets/images/galeria/chofer/swiper/5.jpg",
+            "/assets/images/galeria/chofer/swiper/6.jpg",
+            "/assets/images/galeria/chofer/swiper/7.jpg",
+            "/assets/images/galeria/chofer/swiper/8.jpg",
+            "/assets/images/galeria/chofer/swiper/9.jpg",
+            "/assets/images/galeria/chofer/swiper/10.jpg",
+            "/assets/images/galeria/chofer/swiper/11.jpg",
+            "/assets/images/galeria/chofer/swiper/12.jpg",
+            "/assets/images/galeria/chofer/swiper/13.jpg",
+            "/assets/images/galeria/chofer/swiper/14.jpg",
+            "/assets/images/galeria/chofer/swiper/15.jpg"
+          ]
+        }
+      ]
     },
     "footer": {
-        "rights": "© 2025. Transportes TMX. All Rights Reserved.",
-        "terms": "Terms and Conditions",
-        "privacy": "Privacy Policy",
-        "social": {
-            "facebook": "Facebook",
-            "instagram": "Instagram",
-            "tripadvisor": "Tripadvisor",
-            "tiktok": "Tiktok"
-        }
+      "logoSlogan": "Travel with comfort, punctuality, and the best service. Get your transfer quote now!",
+      "rights": "© 2025. Transportes TMX. All rights reserved.",
+      "services": {
+        "title": "Services",
+        "aeropuerto": "Airport Transfers",
+        "bodas": "Wedding Transport",
+        "chofer": "Private Driver",
+        "ejecutivo": "Executive Transport"
+      },
+      "social": {
+        "facebook": "Facebook",
+        "tripadvisor": "Tripadvisor",
+        "instagram": "Instagram",
+        "tiktok": "Tiktok"
+      },
+      "contact": {
+        "email": "amstrekgrt@gmail.com",
+        "phone": "+52 415 139 3219",
+        "address": "San Miguel de Allende, Guanajuato"
+      },
+      "links": {
+        "terms": "Terms & Conditions",
+        "privacy": "Privacy Policy"
+      },
+      "backToTop": "Back to Top"
     }
-}
+  }
+  
