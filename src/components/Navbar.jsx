@@ -32,28 +32,29 @@ const Navbar = () => {
         </div>
 
         <nav className="hidden lg:flex items-center space-x-4">
-          <a href="/#Hero" className="hover:text-blue-500 transition">Inicio</a>
-          <a href="/#About" className="hover:text-blue-500 transition">Acerca</a>
+          {console.log(traduccion)}
+          <a href="/#Hero" className="hover:text-blue-500 transition">{traduccion.navbar.home}</a>
+          <a href="/#About" className="hover:text-blue-500 transition">{traduccion.navbar.about}</a>
 
           <div className="relative">
             <button
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               className="flex items-center hover:text-blue-500 transition"
             >
-              Servicios <IoMdArrowDropdown className="ml-1" />
+              {traduccion.navbar.services} <IoMdArrowDropdown className="ml-1" />
             </button>
             {isDropdownOpen && (
               <div className="absolute top-8 left-0 bg-black shadow-md rounded-lg w-40 py-2">
                 <a href="/#Aeropuerto" className="block px-4 py-2 ">
-                Traslado Aeropuerto</a>
-                <a href="/#Bodas" className="block px-4 py-2 ">Trasnporte Bodas Destino</a>
-                <a href="/#Chofer" className="block px-4 py-2 ">Privado</a>
+                {traduccion.navbar.airport_transfer}</a>
+                <a href="/#Bodas" className="block px-4 py-2 ">{traduccion.navbar.wedding_transport}</a>
+                <a href="/#Chofer" className="block px-4 py-2 ">{traduccion.navbar.private_driver}</a>
               </div>
             )}
           </div>
 
-          <a href="/#Tours" className="hover:text-blue-500 transition">Tours</a>
-          <span onClick={handleCotizar} className="hover:text-blue-500 transition cursor-pointer">Cotiza</span>
+          <a href="/#Tours" className="hover:text-blue-500 transition">{traduccion.navbar.tours}</a>
+          <span onClick={handleCotizar} className="hover:text-blue-500 transition cursor-pointer">{traduccion.navbar.quote}</span>
           </nav>
           <div className="flex items-center space-x-8">
 
@@ -105,42 +106,42 @@ const Navbar = () => {
         <div className="lg:hidden bg-black shadow-md">
           <a href="/#Hero" className="block px-4 py-2 hover:bg-gray-600"
           onClick={() => setIsMenuOpen(false)}
-          >Inicio</a>
+          >{traduccion.navbar.home}</a>
           <a href="/#About"
           onClick={() => setIsMenuOpen(false)}
-          className="block px-4 py-2 hover:bg-gray-600">Acerca</a>
+          className="block px-4 py-2 hover:bg-gray-600">{traduccion.navbar.about}</a>
 
           <div className="relative">
             <button
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               className="flex w-full px-4 py-2 justify-between hover:bg-gray-600"
             >
-              Servicios <IoMdArrowDropdown />
+              {traduccion.navbar.services} <IoMdArrowDropdown />
             </button>
             {isDropdownOpen && (
               <div className="bg-white shadow-md rounded-lg w-full">
                 <Link href="/#Aeropuerto" className="block bg-black px-4 py-2 hover:bg-gray-600"
                 onClick={() => setIsMenuOpen(false)}
-                >Traslado Aeropuerto</Link>
+                >{traduccion.navbar.airport_transfer}</Link>
                 <Link href="/#Bodas" className="block bg-black px-4 py-2 hover:bg-gray-600"
                 onClick={() => setIsMenuOpen(false)}
-                >Transporte Bodas Destino</Link>
+                >{traduccion.navbar.wedding_transport}</Link>
                 <Link href="/#Chofer" className="block bg-black px-4 py-2 hover:bg-gray-600"
                 onClick={() => setIsMenuOpen(false)}
-                >Chofer Privado</Link>
+                >{traduccion.navbar.private_driver}</Link>
               </div>
             )}
           </div>
 
           <a href="/#Tours" className="block px-4 py-2 hover:bg-gray-600"
           onClick={() => setIsMenuOpen(false)}
-          >Tours</a>
+          >{traduccion.navbar.tours}</a>
           <span className="block px-4 py-2 hover:bg-gray-600"
           onClick={() => {
             setIsMenuOpen(false)
             handleCotizar()
           }}
-          >Cotiza</span>
+          >{traduccion.navbar.quote}</span>
 
           <div className="px-4 py-2 flex items-center space-x-2">
           <div className="flex items-center  gap-2"
@@ -169,13 +170,13 @@ const Navbar = () => {
             <div className={`flex items-center space-x-1  rounded-md ${idioma.nombre == "ES" && "p-1 bg-white"}`}>
             <img src="/assets/icons/mexico.png" alt="Mexican Flag" className="h-5" />
             </div>
-            <a href="#" className="hover:text-blue-500 transition">ESP</a>
+            <span className="hover:text-blue-500 transition">ESP</span>
             </div>
             <span className="text-white ">{"/"}</span>
             <div className="flex items-center  gap-2"
             onClick={() => setIdioma({ nombre: "EN", code: "US" })}
             >
-            <a href="#" className="hover:text-blue-500 transition">EN</a>
+            <span  className="hover:text-blue-500 transition">EN</span>
             <div className={`flex items-center space-x-1  rounded-md ${idioma.nombre == "EN" && "p-1 bg-white"}`}>
             <img src="/assets/icons/eu.png" alt="Mexican Flag" className="h-5" />
             </div>
@@ -185,19 +186,21 @@ const Navbar = () => {
        
 
           <div className="px-4 py-2 flex items-center justify-center space-x-8 text-[30px]">
-          <Link href="https://www.facebook.com/TransportesTMX/" target="_blank">
+          <Link href="https://www.facebook.com/TransportesTMX/" target="_blank"
+          onClick={() => setIsMenuOpen(false)}
+          >
             <FaFacebookF className="hover:text-blue-500 cursor-pointer" />
             </Link>
-            <Link href="https://www.instagram.com/trans_portesmx" target="_blank">
+            <Link href="https://www.instagram.com/trans_portesmx" target="_blank" onClick={() => setIsMenuOpen(false)}>
             <FaInstagram className="hover:text-pink-500 cursor-pointer" />
             </Link>
-            <Link href="https://www.tiktok.com/@transportes.mx2" target="_blank">
+            <Link href="https://www.tiktok.com/@transportes.mx2" target="_blank" onClick={() => setIsMenuOpen(false)}>
             <FaTiktok className="hover:text-black cursor-pointer" />
             </Link>
-            <Link href="https://www.tripadvisor.com.mx/Attraction_Review-g151932-d25402392-Reviews-Transportes_MX-San_Miguel_de_Allende_Central_Mexico_and_Gulf_Coast.html" target="_blank">
+            <Link href="https://www.tripadvisor.com.mx/Attraction_Review-g151932-d25402392-Reviews-Transportes_MX-San_Miguel_de_Allende_Central_Mexico_and_Gulf_Coast.html" target="_blank" onClick={() => setIsMenuOpen(false)}>
             <FaTripadvisor className="hover:text-green-500 cursor-pointer" />
             </Link>
-            <Link href="https://wa.me/524151393219" target="_blank">
+            <Link href="https://wa.me/524151393219" target="_blank" onClick={() => setIsMenuOpen(false)}>
             <FaWhatsapp className="hover:text-green-500 cursor-pointer" />
             </Link>
           </div>
