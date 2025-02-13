@@ -1,8 +1,11 @@
 import Image from 'next/image';
-import React from 'react';
+import React, { useContext } from 'react';
 import { motion } from 'framer-motion';
+import { AppContext } from '@/Context/AppContext';
 
 function Ejecutivo() {
+
+const { traduccion } = useContext(AppContext);
 
   const handleCotizar = () => {
     const recipientEmail = "amstrekgrt@gmail.com"; // Reemplaza con tu correo de destino
@@ -42,15 +45,11 @@ function Ejecutivo() {
           {/* Left Section */}
           <motion.div variants={itemVariants}>
             <h1 className="text-[40px] lg:text-[50px] leading-[45px] md:leading-[30px] md:text-4xl lg:text-5xl font-bold text-center md:text-left mb-8 md:mb-12">
-              Traslado Ejecutivo y Corporativo
+{traduccion.ejecutivo.title}
             </h1>
             <p className="text-center md:text-left text-[20px] md:text-[24px] mb-8">
-              Nuestro servicio de traslado ejecutivo y corporativo está diseñado
-              para satisfacer las necesidades de profesionales y empresas que
-              buscan comodidad, puntualidad y un servicio premium. Ya sea para
-              reuniones de trabajo, eventos empresariales o traslados al
-              aeropuerto, garantizamos una experiencia eficiente y sin
-              contratiempos.
+            {traduccion.ejecutivo.description}
+
             </p>
             <motion.ul
               className="space-y-4 text-sm sm:text-base md:text-lg md:hidden"
@@ -66,7 +65,8 @@ function Ejecutivo() {
                   height={38}
                   alt="Clock"
                 />
-                Puntualidad garantizada.
+                {traduccion.ejecutivo.features[0].text}
+
               </motion.li>
               <motion.li
                 className="flex flex-col md:flex-row items-center text-[20px] gap-4 text-center md:text-left"
@@ -78,7 +78,8 @@ function Ejecutivo() {
                   height={38}
                   alt="Driver"
                 />
-                Conductores uniformados, amables y conocedores de las rutas más eficientes.
+                                {traduccion.ejecutivo.features[1].text}
+
               </motion.li>
               <motion.li
                 className="flex flex-col md:flex-row items-center text-[20px] gap-4 text-center md:text-left"
@@ -90,7 +91,8 @@ function Ejecutivo() {
                   height={38}
                   alt="Bus"
                 />
-                Amplia flota que incluye sedanes, SUVs, y vans en perfectas condiciones.
+                                {traduccion.ejecutivo.features[2].text}
+
               </motion.li>
               <motion.li
                 className="flex flex-col md:flex-row items-center text-[20px] gap-4 text-center md:text-left"
@@ -102,7 +104,8 @@ function Ejecutivo() {
                   height={38}
                   alt="Clock"
                 />
-                Horarios y rutas adaptados a tus necesidades empresariales.
+                {traduccion.ejecutivo.features[3].text}
+
               </motion.li>
             </motion.ul>
             <motion.div
@@ -114,7 +117,8 @@ function Ejecutivo() {
               onClick={handleCotizar}
               variants={itemVariants}
             >
-              Cotizar
+                              {traduccion.ejecutivo.buttons.quote}
+
             </motion.button>
             </motion.div>
           </motion.div>
@@ -132,7 +136,7 @@ function Ejecutivo() {
                   height={38}
                   alt="Clock"
                 />
-                Puntualidad garantizada.
+                {traduccion.ejecutivo.features[0].text}
               </motion.li>
               <motion.li
                 className="flex flex-col md:flex-row items-center text-[20px] gap-4 text-center md:text-left"
@@ -144,7 +148,8 @@ function Ejecutivo() {
                   height={38}
                   alt="Driver"
                 />
-                Conductores uniformados, amables y conocedores de las rutas más eficientes.
+                                {traduccion.ejecutivo.features[1].text}
+
               </motion.li>
               <motion.li
                 className="flex flex-col md:flex-row items-center text-[20px] gap-4 text-center md:text-left"
@@ -156,7 +161,8 @@ function Ejecutivo() {
                   height={38}
                   alt="Bus"
                 />
-                Amplia flota que incluye sedanes, SUVs, y vans en perfectas condiciones.
+                                {traduccion.ejecutivo.features[2].text}
+
               </motion.li>
               <motion.li
                 className="flex flex-col md:flex-row items-center text-[20px] gap-4 text-center md:text-left"
@@ -168,8 +174,8 @@ function Ejecutivo() {
                   height={38}
                   alt="Clock"
                 />
-                Horarios y rutas adaptados a tus necesidades empresariales.
-              </motion.li>
+                {traduccion.ejecutivo.features[3].text}
+                </motion.li>
             </ul>
             <motion.button
               className="w-full px-32 py-2 bg-white/50 hover:bg-gray-700 rounded-lg transition mt-8"
@@ -177,7 +183,7 @@ function Ejecutivo() {
               onClick={handleCotizar}
 
             >
-              Cotizar
+              {traduccion.ejecutivo.buttons.quote}
             </motion.button>
           </motion.div>
         </div>

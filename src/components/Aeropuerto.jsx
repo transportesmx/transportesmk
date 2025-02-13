@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import Formulario from './Formulario';
 import { motion } from 'framer-motion';
+import { AppContext } from '@/Context/AppContext';
 
 const variants = {
   hidden: { opacity: 0, y: 50 },
@@ -8,6 +9,9 @@ const variants = {
 };
 
 function Aeropuerto() {
+
+const {traduccion} = useContext(AppContext)
+
   return (
     <motion.div
     id="Aeropuerto"
@@ -24,15 +28,15 @@ function Aeropuerto() {
           variants={variants}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
-          Traslado Aeropuerto
+          {traduccion.aeropuerto.title}
         </motion.h1>
         <motion.p
           className='text-lg lg:text-xl text-center px- mb-6'
           variants={variants}
           transition={{ duration: 0.5, delay: 0.4 }}
         >
-          Servicio personalizado, rápido y confiable.
-        </motion.p>
+          {traduccion.aeropuerto.title}
+          </motion.p>
         <motion.div
           className='w-full px-4 lg:px-0 flex flex-col justify-center items-center lg:items-start'
           variants={variants}

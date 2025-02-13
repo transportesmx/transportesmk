@@ -113,6 +113,107 @@
         "title": "Traslado Aeropuerto",
         "description": "Servicio personalizado, rápido y confiable."
     },
+    "formulario": {
+        "title": "Cotizar",
+        "fields": {
+            "name": "Nombre",
+            "phone": "Teléfono",
+            "email": "Correo Electrónico",
+            "passengers": "Número de pasajeros",
+            "origin": "Origen",
+            "destination": "Destino",
+            "vehicle": "Tipo de vehículo",
+            "date": "Fecha",
+            "time": "Hora",
+            "round_trip": "Ida y vuelta",
+            "return_date": "Fecha de regreso",
+            "return_time": "Hora de regreso"
+        },
+        "buttons": {
+            "submit": "Enviar",
+            "support": "*Atención personalizada 24/7."
+
+        }
+    },
+    "boda": {
+    "title": "Traslado para Bodas",
+    "description": "En Transportes MX entendemos la importancia de un día tan especial como tu boda. Nuestro servicio de traslado para bodas está diseñado para garantizar que los novios e invitados lleguen cómodos, puntuales y con estilo. Nos encargamos de cada detalle para que tú solo te preocupes por disfrutar.",
+    "features": [
+      {
+        "icon": "/assets/icons/clock.png",
+        "text": "Coordinación precisa para cada traslado, desde el lugar de la ceremonia hasta la recepción."
+      },
+      {
+        "icon": "/assets/icons/driver.png",
+        "text": "Conductores uniformados, amables y conocedores de las rutas más eficientes."
+      },
+      {
+        "icon": "/assets/icons/bus.png",
+        "text": "Transporte para grupos pequeños o grupos grandes de hasta más de 600 personas."
+      },
+      {
+        "icon": "/assets/icons/24.png",
+        "text": "Ajustamos horarios, rutas y paradas según las necesidades de tu evento."
+      }
+    ],
+    "buttons": {
+      "quote": "Cotizar",
+      "support": "Atención personalizada para garantizar una experiencia impecable."
+
+    }
+  },
+  "chofer": {
+    "title": "Chofer Privado",
+    "description": "Nuestros vehículos con chofer privado están disponibles para uso personalizado durante el tiempo que necesites. Ya sea para recorridos dentro de la ciudad, traslados ejecutivos o viajes largos a destinos turísticos, nos adaptamos a tus planes y horarios para ofrecerte una experiencia de lujo, sin preocupaciones.",
+    "features": [
+      {
+        "icon": "/assets/icons/diamante.png",
+        "text": "Atención personalizada para garantizar una experiencia impecable."
+      },
+      {
+        "icon": "/assets/icons/driver.png",
+        "text": "Conductores uniformados, amables y conocedores de las rutas más eficientes."
+      },
+      {
+        "icon": "/assets/icons/bus.png",
+        "text": "Amplia flota que incluye sedanes, SUVs, y vans en perfectas condiciones."
+      },
+      {
+        "icon": "/assets/icons/24.png",
+        "text": "Horarios adaptados a tu agenda y paradas personalizadas según tus necesidades."
+      }
+    ],
+    "buttons": {
+      "quote": "Cotizar"
+      
+    }
+  },
+  "ejecutivo": {
+    "title": "Traslado Ejecutivo y Corporativo",
+    "description": "Nuestro servicio de traslado ejecutivo y corporativo está diseñado para satisfacer las necesidades de profesionales y empresas que buscan comodidad, puntualidad y un servicio premium. Ya sea para reuniones de trabajo, eventos empresariales o traslados al aeropuerto, garantizamos una experiencia eficiente y sin contratiempos.",
+    "features": [
+      {
+        "icon": "/assets/icons/clock.png",
+        "text": "Puntualidad garantizada."
+      },
+      {
+        "icon": "/assets/icons/driver.png",
+        "text": "Conductores uniformados, amables y conocedores de las rutas más eficientes."
+      },
+      {
+        "icon": "/assets/icons/bus.png",
+        "text": "Amplia flota que incluye sedanes, SUVs, y vans en perfectas condiciones."
+      },
+      {
+        "icon": "/assets/icons/24.png",
+        "text": "Horarios y rutas adaptados a tus necesidades empresariales."
+      }
+    ],
+    "buttons": {
+      "quote": "Cotizar"
+    }
+  },
+
     "autobus": {
         "title": "Viajes en grupo con total comodidad",
         "description": "Nuestros autobuses ofrecen capacidad para 50 pasajeros, con asientos reclinables, WC, aire acondicionado y entretenimiento a bordo.",

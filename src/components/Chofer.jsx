@@ -1,8 +1,12 @@
 import Image from 'next/image';
-import React from 'react';
+import React, { useContext } from 'react';
 import { motion } from 'framer-motion';
+import { AppContext } from '@/Context/AppContext';
 
 function Chofer() {
+
+  const { traduccion } = useContext(AppContext);
+
   const handleCotizar = () => {
 
     const recipientEmail = "amstrekgrt@gmail.com"; // Reemplaza con tu correo de destino
@@ -42,14 +46,11 @@ function Chofer() {
           {/* Left Section */}
           <motion.div variants={itemVariants}>
             <h1 className="text-[40px] lg:text-[50px] leading-[34px] md:leading-[30px] md:text-4xl lg:text-5xl font-bold text-center md:text-left mb-8 md:mb-12">
-              Chofer Privado
+              {traduccion.chofer.title}
             </h1>
             <p className="text-center md:text-left text-[20px] md:text-[24px] mb-8">
-              Nuestros vehículos con chofer privado están disponibles para uso
-              personalizado durante el tiempo que necesites. Ya sea para
-              recorridos dentro de la ciudad, traslados ejecutivos o viajes
-              largos a destinos turísticos, nos adaptamos a tus planes y
-              horarios para ofrecerte una experiencia de lujo, sin preocupaciones.
+            {traduccion.chofer.description}
+
             </p>
             <motion.ul
               className="space-y-4 text-sm sm:text-base md:text-lg md:hidden"
@@ -65,7 +66,8 @@ function Chofer() {
                   height={38}
                   alt="Clock"
                 />
-                Atención personalizada para garantizar una experiencia impecable.
+                              {traduccion.chofer.features[0].text}
+
               </motion.li>
               <motion.li
                 className="flex flex-col md:flex-row items-center text-[20px] gap-4 text-center md:text-left"
@@ -77,7 +79,8 @@ function Chofer() {
                   height={38}
                   alt="Driver"
                 />
-                Conductores uniformados, amables y conocedores de las rutas más eficientes.
+                                              {traduccion.chofer.features[1].text}
+
               </motion.li>
               <motion.li
                 className="flex flex-col md:flex-row items-center text-[20px] gap-4 text-center md:text-left"
@@ -89,7 +92,8 @@ function Chofer() {
                   height={38}
                   alt="Bus"
                 />
-                Amplia flota que incluye sedanes, SUVs, y vans en perfectas condiciones.
+                                              {traduccion.chofer.features[2].text}
+
               </motion.li>
               <motion.li
                 className="flex flex-col md:flex-row items-center text-[20px] gap-4 text-center md:text-left"
@@ -101,7 +105,8 @@ function Chofer() {
                   height={38}
                   alt="Clock"
                 />
-                Horarios adaptados a tu agenda y paradas personalizadas según tus necesidades.
+                                             {traduccion.chofer.features[3].text}
+
               </motion.li>
             </motion.ul>
             <div className="flex justify-center md:justify-start space-x-4 mt-8 text-xl md:text-2xl">
@@ -110,7 +115,8 @@ function Chofer() {
                 onClick={handleCotizar}
                 variants={itemVariants}
               >
-                Cotizar
+                                              {traduccion.chofer.buttons.quote}
+
               </motion.button>
             </div>
           </motion.div>
@@ -128,7 +134,7 @@ function Chofer() {
                   height={38}
                   alt="Clock"
                 />
-                Atención personalizada para garantizar una experiencia impecable.
+                {traduccion.chofer.features[0].text}
               </motion.li>
               <motion.li
                 className="flex flex-col md:flex-row items-center text-[20px] gap-4 text-center md:text-left"
@@ -140,7 +146,8 @@ function Chofer() {
                   height={38}
                   alt="Driver"
                 />
-                Conductores uniformados, amables y conocedores de las rutas más eficientes.
+                               {traduccion.chofer.features[1].text}
+
               </motion.li>
               <motion.li
                 className="flex flex-col md:flex-row items-center text-[20px] gap-4 text-center md:text-left"
@@ -152,7 +159,8 @@ function Chofer() {
                   height={38}
                   alt="Bus"
                 />
-                Amplia flota que incluye sedanes, SUVs, y vans en perfectas condiciones.
+                                {traduccion.chofer.features[2].text}
+
               </motion.li>
               <motion.li
                 className="flex flex-col md:flex-row items-center text-[20px] gap-4 text-center md:text-left"
@@ -164,7 +172,8 @@ function Chofer() {
                   height={38}
                   alt="Clock"
                 />
-                Horarios adaptados a tu agenda y paradas personalizadas según tus necesidades.
+                                {traduccion.chofer.features[3].text}
+
               </motion.li>
             </ul>
             <motion.button
@@ -172,7 +181,8 @@ function Chofer() {
               onClick={handleCotizar}
               variants={itemVariants}
             >
-              Cotizar
+                              {traduccion.chofer.buttons.quote}
+
             </motion.button>
           </motion.div>
         </div>

@@ -1,14 +1,17 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";import 'react-phone-input-2/lib/style.css';
 import Select from "react-select";
 import countryList from "country-codes-list";
+import { AppContext } from '@/Context/AppContext';
 
 const vehicleTypes = ['Sedán 3 pax', 'SUV 4 pax', 'Minivan 6 pax', 'Suburban 6 pax', 'Toyota Hiace 12 pax', 'Sprinter 20 pax', 'Autobús 50 pax'];
 
 export default function Formulario() {
+
+  const { traduccion } = useContext(AppContext);
 
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
@@ -90,12 +93,13 @@ export default function Formulario() {
   return (
     <div className="w-full flex items-center justify-center lg:justify-start px-4 sm:px-6 lg:px-0">
       <div className="w-full max-w-md p-6 bg-white/10 backdrop-blur-sm rounded-2xl shadow-lg">
-        <h2 className="text-center text-2xl font-semibold  mb-4">Cotizar</h2>
+        <h2 className="text-center text-2xl font-semibold  mb-4">
+          {traduccion.formulario.title}</h2>
         <form className="space-y-4" onSubmit={handleSubmit}>
           <input
             type="text"
             name="nombre"
-            placeholder="Nombre"
+            placeholder={traduccion.formulario.fields.name}
             value={formData.nombre}
             onChange={handleChange}
             className="w-full p-3 rounded-lg bg-white text-black placeholder-black  focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -123,7 +127,7 @@ export default function Formulario() {
           <input
             type="email"
             name="email"
-            placeholder="Correo Electrónico"
+            placeholder={traduccion.formulario.fields.email}
             value={formData.email}
             onChange={handleChange}
             className="w-full p-3 rounded-lg bg-white text-black placeholder-black  focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -163,7 +167,7 @@ export default function Formulario() {
               className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
               
             />
-            <label htmlFor="roundTrip" className="text-white">Ida y vuelta</label>
+            <label htmlFor="roundTrip" className="text-white">{traduccion.formulario.fields.round_trip}</label>
           </div>
           {isRoundTrip && (
             <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
@@ -201,7 +205,7 @@ export default function Formulario() {
           <input
             type="text"
             name="origen"
-            placeholder="Origen"
+            placeholder={traduccion.formulario.fields.origin}
             value={formData.origen}
             onChange={handleChange}
             className="w-full p-3 rounded-lg bg-white text-black placeholder-black  focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -209,7 +213,7 @@ export default function Formulario() {
           <input
             type="text"
             name="destino"
-            placeholder="Destino"
+            placeholder={traduccion.formulario.fields.destination}
             value={formData.destino}
             onChange={handleChange}
             className="w-full p-3 rounded-lg bg-white text-black placeholder-black  focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -219,10 +223,11 @@ export default function Formulario() {
             type="submit"
             className="w-full p-3 mt-4 font-semibold  bg-black/70 backdrop-blur-sm hover:bg-gray-700 rounded-lg transition shadow-lg"
           >
-            Cotizar
+            {traduccion.formulario.buttons.submit}
           </button>
           <p className="text-center text-xs  mt-2">
-            *Atención personalizada 24/7.
+          {traduccion.formulario.buttons.support}
+
           </p>
         </form>
       </div>
