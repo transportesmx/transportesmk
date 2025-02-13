@@ -89,26 +89,43 @@
             "description": "Ser la compañía de transporte más confiable y reconocida, destacándonos por nuestra excelencia y profesionalismo."
         }
     },
-    "faqs": {
-        "title": "Preguntas Frecuentes",
-        "questions": [
-            {
-                "question": "¿Cómo puedo solicitar una cotización?",
-                "answer": "Puedes solicitar una cotización completando el formulario en esta página. Nuestro equipo te responderá a través de WhatsApp en pocos minutos para brindarte todos los detalles."
-            },
-            {
-                "question": "¿Cuánto tiempo tardan en confirmar mi reservación?",
-                "answer": "Nuestro equipo confirmará tu reservación dentro de las siguientes 24 horas."
-            },
-            {
-                "question": "¿Qué servicios de transporte ofrecen?",
-                "answer": "Ofrecemos transporte privado, grupal y ejecutivo dependiendo de la necesidad del cliente."
-            }
-        ],
-        "buttons": {
-            "chat": "Chatear"
-        }
-    },
+   
+  "faqs": {
+    "title": "Preguntas Frecuentes",
+    "questions": [
+      {
+        "question": "¿Cómo puedo solicitar una cotización?",
+        "answer": "Puedes solicitar una cotización completando el formulario en esta página. Nuestro equipo te responderá a través de WhatsApp en pocos minutos para brindarte todos los detalles."
+      },
+      {
+        "question": "¿Cuánto tiempo tardan en confirmar mi reservación?",
+        "answer": "Nuestro equipo confirmará tu reservación dentro de las siguientes 24 horas."
+      },
+      {
+        "question": "¿Qué servicios de transporte ofrecen?",
+        "answer": "Ofrecemos transporte privado, grupal y ejecutivo dependiendo de la necesidad del cliente."
+      },
+      {
+        "question": "¿Los vehículos son privados o compartidos?",
+        "answer": "Los vehículos son privados, garantizando tu comodidad y privacidad durante el trayecto."
+      },
+      {
+        "question": "¿Con cuánto tiempo de anticipación debo reservar?",
+        "answer": "Te recomendamos reservar al menos 48 horas antes de tu viaje para asegurar disponibilidad."
+      },
+      {
+        "question": "¿Qué métodos de pago se aceptan?",
+        "answer": "Aceptamos pagos con tarjeta de crédito y débito, transferencias bancarias y pagos en efectivo."
+      },
+      {
+        "question": "¿Emiten factura?",
+        "answer": "Sí, emitimos factura. Solo proporciona tus datos fiscales al momento de la reserva."
+      }
+    ],
+    "buttons": {
+      "chat": "Chatear"
+    }
+  },
     "aeropuerto": {
         "title": "Traslado Aeropuerto",
         "description": "Servicio personalizado, rápido y confiable."
@@ -407,6 +424,93 @@
         "usuario": "/assets/images/testimonios/usuario22.png",
         "servicio": "Traslado Ejecutivo",
         "imagen": "/assets/images/testimonios/15.png"
+      }
+    ]
+  },
+  "galeria": {
+    "title": "Galería Visual",
+    "categories": [
+      {
+        "title": "Traslado a Aeropuertos",
+        "image": "/assets/images/galeria/aeropuertos/aeropuertos.jpg",
+        "categoryImages": [
+          "/assets/images/galeria/aeropuertos/swiper/1.jpg",
+          "/assets/images/galeria/aeropuertos/swiper/2.jpg",
+          "/assets/images/galeria/aeropuertos/swiper/3.jpg",
+          "/assets/images/galeria/aeropuertos/swiper/4.jpg",
+          "/assets/images/galeria/aeropuertos/swiper/5.jpg",
+          "/assets/images/galeria/aeropuertos/swiper/6.jpg",
+          "/assets/images/galeria/aeropuertos/swiper/7.jpg",
+          "/assets/images/galeria/aeropuertos/swiper/8.jpg",
+          "/assets/images/galeria/aeropuertos/swiper/9.jpg",
+          "/assets/images/galeria/aeropuertos/swiper/10.jpg",
+          "/assets/images/galeria/aeropuertos/swiper/11.jpg",
+          "/assets/images/galeria/aeropuertos/swiper/12.jpg",
+          "/assets/images/galeria/aeropuertos/swiper/13.jpg",
+          "/assets/images/galeria/aeropuertos/swiper/14.jpg",
+          "/assets/images/galeria/aeropuertos/swiper/15.jpg",
+          "/assets/images/galeria/aeropuertos/swiper/16.jpg",
+          "/assets/images/galeria/aeropuertos/swiper/17.jpg",
+          "/assets/images/galeria/aeropuertos/swiper/18.jpg",
+          "/assets/images/galeria/aeropuertos/swiper/19.jpg",
+          "/assets/images/galeria/aeropuertos/swiper/20.jpg"
+        ]
+      },
+      {
+        "title": "Transporte para bodas",
+        "image": "/assets/images/galeria/bodas/bodas.jpg",
+        "categoryImages": [
+          "/assets/images/galeria/bodas/swiper/1.jpg",
+          "/assets/images/galeria/bodas/swiper/2.jpg",
+          "/assets/images/galeria/bodas/swiper/3.jpg",
+          "/assets/images/galeria/bodas/swiper/4.jpg",
+          "/assets/images/galeria/bodas/swiper/5.jpg",
+          "/assets/images/galeria/bodas/swiper/6.jpg"
+        ]
+      },
+      {
+        "title": "Transporte Turístico",
+        "image": "/assets/images/galeria/turistico/turistico.jpg",
+        "categoryImages": [
+          "/assets/images/galeria/turistico/swiper/1.jpg",
+          "/assets/images/galeria/turistico/swiper/2.jpg",
+          "/assets/images/galeria/turistico/swiper/3.jpg",
+          "/assets/images/galeria/turistico/swiper/4.jpg",
+          "/assets/images/galeria/turistico/swiper/5.jpg",
+          "/assets/images/galeria/turistico/swiper/6.jpg",
+          "/assets/images/galeria/turistico/swiper/7.jpg",
+          "/assets/images/galeria/turistico/swiper/8.jpg",
+          "/assets/images/galeria/turistico/swiper/9.jpg",
+          "/assets/images/galeria/turistico/swiper/10.jpg",
+          "/assets/images/galeria/turistico/swiper/11.jpg",
+          "/assets/images/galeria/turistico/swiper/12.jpg",
+          "/assets/images/galeria/turistico/swiper/13.jpg",
+          "/assets/images/galeria/turistico/swiper/14.jpg",
+          "/assets/images/galeria/turistico/swiper/15.jpg",
+          "/assets/images/galeria/turistico/swiper/16.jpg",
+          "/assets/images/galeria/turistico/swiper/17.jpg"
+        ]
+      },
+      {
+        "title": "Chofer Privado",
+        "image": "/assets/images/galeria/chofer/chofer.jpg",
+        "categoryImages": [
+          "/assets/images/galeria/chofer/swiper/1.jpg",
+          "/assets/images/galeria/chofer/swiper/2.jpg",
+          "/assets/images/galeria/chofer/swiper/3.jpg",
+          "/assets/images/galeria/chofer/swiper/4.jpg",
+          "/assets/images/galeria/chofer/swiper/5.jpg",
+          "/assets/images/galeria/chofer/swiper/6.jpg",
+          "/assets/images/galeria/chofer/swiper/7.jpg",
+          "/assets/images/galeria/chofer/swiper/8.jpg",
+          "/assets/images/galeria/chofer/swiper/9.jpg",
+          "/assets/images/galeria/chofer/swiper/10.jpg",
+          "/assets/images/galeria/chofer/swiper/11.jpg",
+          "/assets/images/galeria/chofer/swiper/12.jpg",
+          "/assets/images/galeria/chofer/swiper/13.jpg",
+          "/assets/images/galeria/chofer/swiper/14.jpg",
+          "/assets/images/galeria/chofer/swiper/15.jpg"
+        ]
       }
     ]
   },

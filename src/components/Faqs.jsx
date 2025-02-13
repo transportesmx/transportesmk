@@ -1,43 +1,9 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { useContext } from "react";
+import { AppContext } from "../Context/AppContext";
 
-const faqData = [
-  {
-    question: "¿Cómo puedo solicitar una cotización?",
-    answer:
-      "Puedes solicitar una cotización completando el formulario en esta página. Nuestro equipo te responderá a través de WhatsApp en pocos minutos para brindarte todos los detalles.",
-  },
-  {
-    question: "¿Cuánto tiempo tardan en confirmar mi reservación?",
-    answer:
-      "Nuestro equipo confirmará tu reservación dentro de las siguientes 24 horas.",
-  },
-  {
-    question: "¿Qué servicios de transporte ofrecen?",
-    answer:
-      "Ofrecemos transporte privado, grupal y ejecutivo dependiendo de la necesidad del cliente.",
-  },
-  {
-    question: "¿Los vehículos son privados o compartidos?",
-    answer:
-      "Los vehículos son privados, garantizando tu comodidad y privacidad durante el trayecto.",
-  },
-  {
-    question: "¿Con cuánto tiempo de anticipación debo reservar?",
-    answer:
-      "Te recomendamos reservar al menos 48 horas antes de tu viaje para asegurar disponibilidad.",
-  },
-  {
-    question: "¿Qué métodos de pago se aceptan?",
-    answer:
-      "Aceptamos pagos con tarjeta de crédito y débito, transferencias bancarias y pagos en efectivo.",
-  },
-  {
-    question: "¿Emiten factura?",
-    answer:
-      "Sí, emitimos factura. Solo proporciona tus datos fiscales al momento de la reserva.",
-  },
-];
+
 
 const handlePreguntar = () => {
   const phoneNumber = "524151393219"; // Número de WhatsApp con código de país.
@@ -48,6 +14,9 @@ const handlePreguntar = () => {
 };
 
 export default function Faqs() {
+
+  const {traduccion} = useContext(AppContext);
+
   const [selectedFaq, setSelectedFaq] = useState(null);
 
   const toggleFaq = (index) => {
@@ -68,7 +37,7 @@ export default function Faqs() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        Preguntas Frecuentes
+        {traduccion.faqs.title}
       </motion.h2>
       <div className="flex flex-col lg:flex-row items-center justify-around gap-8">
         {/* Sección Izquierda: Preguntas */}
@@ -78,7 +47,7 @@ export default function Faqs() {
           whileInView="visible"
           viewport={{ once: true, amount: 0.1 }}
         >
-          {faqData.map((faq, index) => (
+          {traduccion.faqs.questions.map((faq, index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, y: 20 }}

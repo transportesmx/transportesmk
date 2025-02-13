@@ -4,95 +4,17 @@ import { Navigation } from 'swiper/modules';
 import "swiper/css";
 import "swiper/css/navigation";
 import { motion } from "framer-motion";
+import { useContext } from "react";
+import { AppContext } from "../Context/AppContext";
 
 import Image from "next/image";
 
-const galleryData = [
-  {
-    title: "Traslado a Aeropuertos",
-    image: "/assets/images/galeria/aeropuertos/aeropuertos.jpg",
-    categoryImages:[
-  "/assets/images/galeria/aeropuertos/swiper/1.jpg",
-  "/assets/images/galeria/aeropuertos/swiper/2.jpg",
-  "/assets/images/galeria/aeropuertos/swiper/3.jpg",
-  "/assets/images/galeria/aeropuertos/swiper/4.jpg",
-  "/assets/images/galeria/aeropuertos/swiper/5.jpg",
-  "/assets/images/galeria/aeropuertos/swiper/6.jpg",
-  "/assets/images/galeria/aeropuertos/swiper/7.jpg",
-  "/assets/images/galeria/aeropuertos/swiper/8.jpg",
-  "/assets/images/galeria/aeropuertos/swiper/9.jpg",
-  "/assets/images/galeria/aeropuertos/swiper/10.jpg",
-  "/assets/images/galeria/aeropuertos/swiper/11.jpg",
-  "/assets/images/galeria/aeropuertos/swiper/12.jpg",
-  "/assets/images/galeria/aeropuertos/swiper/13.jpg",
-  "/assets/images/galeria/aeropuertos/swiper/14.jpg",
-  "/assets/images/galeria/aeropuertos/swiper/15.jpg",
-  "/assets/images/galeria/aeropuertos/swiper/16.jpg",
-  "/assets/images/galeria/aeropuertos/swiper/17.jpg",
-  "/assets/images/galeria/aeropuertos/swiper/18.jpg",
-  "/assets/images/galeria/aeropuertos/swiper/19.jpg",
-  "/assets/images/galeria/aeropuertos/swiper/20.jpg",
-    ] 
-  },
-  {
-    title: "Transporte para bodas",
-    image: "/assets/images/galeria/bodas/bodas.jpg",
-    categoryImages:[
-      "/assets/images/galeria/bodas/swiper/1.jpg",
-      "/assets/images/galeria/bodas/swiper/2.jpg",
-      "/assets/images/galeria/bodas/swiper/3.jpg",
-      "/assets/images/galeria/bodas/swiper/4.jpg",
-      "/assets/images/galeria/bodas/swiper/5.jpg",
-      "/assets/images/galeria/bodas/swiper/6.jpg"
-    ] 
-  },
-  {
-    title: "Transporte Turístico",
-    image: "/assets/images/galeria/turistico/turistico.jpg",
-    categoryImages: [
-      "/assets/images/galeria/turistico/swiper/1.jpg",
-      "/assets/images/galeria/turistico/swiper/2.jpg",
-      "/assets/images/galeria/turistico/swiper/3.jpg",
-      "/assets/images/galeria/turistico/swiper/4.jpg",
-      "/assets/images/galeria/turistico/swiper/5.jpg",
-      "/assets/images/galeria/turistico/swiper/6.jpg",
-      "/assets/images/galeria/turistico/swiper/7.jpg",
-      "/assets/images/galeria/turistico/swiper/8.jpg",
-      "/assets/images/galeria/turistico/swiper/9.jpg",
-      "/assets/images/galeria/turistico/swiper/10.jpg",
-      "/assets/images/galeria/turistico/swiper/11.jpg",
-      "/assets/images/galeria/turistico/swiper/12.jpg",
-      "/assets/images/galeria/turistico/swiper/13.jpg",
-      "/assets/images/galeria/turistico/swiper/14.jpg",
-      "/assets/images/galeria/turistico/swiper/15.jpg",
-      "/assets/images/galeria/turistico/swiper/16.jpg",
-      "/assets/images/galeria/turistico/swiper/17.jpg",
-    ]
-  },
-  {
-    title: "Chofer Privado",
-    image: "/assets/images/galeria/chofer/chofer.jpg",
-    categoryImages: [
-      "/assets/images/galeria/chofer/swiper/1.jpg",
-      "/assets/images/galeria/chofer/swiper/2.jpg",
-      "/assets/images/galeria/chofer/swiper/3.jpg",
-      "/assets/images/galeria/chofer/swiper/4.jpg",
-      "/assets/images/galeria/chofer/swiper/5.jpg",
-      "/assets/images/galeria/chofer/swiper/6.jpg",
-      "/assets/images/galeria/chofer/swiper/7.jpg",
-      "/assets/images/galeria/chofer/swiper/8.jpg",
-      "/assets/images/galeria/chofer/swiper/9.jpg",
-      "/assets/images/galeria/chofer/swiper/10.jpg",
-      "/assets/images/galeria/chofer/swiper/11.jpg",
-      "/assets/images/galeria/chofer/swiper/12.jpg",
-      "/assets/images/galeria/chofer/swiper/13.jpg",
-      "/assets/images/galeria/chofer/swiper/14.jpg",
-      "/assets/images/galeria/chofer/swiper/15.jpg",
-    ]
-  },
-];
+
 
 const Galeria = () => {
+
+  const { traduccion } = useContext(AppContext);
+
   const [isSwiperOpen, setIsSwiperOpen] = useState(false);
   const [currentImages, setCurrentImages] = useState([]);
   const [swiperIndex, setSwiperIndex] = useState(0);
@@ -156,7 +78,7 @@ const Galeria = () => {
           modules={[Navigation]}
           className="w-full h-full"
         >
-          {galleryData.map((category, index) => (
+          {traduccion.galeria.categories .map((category, index) => (
             <SwiperSlide key={index}>
               <motion.div
                 className="relative group cursor-pointer overflow-hidden rounded-lg shadow-lg w-[300px] h-[550px]"
@@ -192,7 +114,7 @@ const Galeria = () => {
             className="w-11/12 h-3/4"
             onSlideChange={(swiper) => setSwiperIndex(swiper.activeIndex)}
           >
-            {currentImages.map((image, idx) => (
+            {categoryImages.map((image, idx) => (
               <SwiperSlide key={idx}>
                 <Image
                   src={image}
