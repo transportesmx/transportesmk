@@ -25,13 +25,31 @@
                 "image": "/assets/images/suburban2.png",
                 "title": "Lujo y comodidad en cada trayecto",
                 "description": "Disfruta de un viaje exclusivo y seguro en nuestra Suburban. Ideal para traslados ejecutivos, viajes familiares o eventos especiales."
-            }
+            },
+            
+      {
+        "image": "/assets/images/camry.png",
+        "title": " Eficiencia y confort en cada traslado",
+        "description": "Nuestros autos combinan elegancia, seguridad y rendimiento. Perfecto para traslados privados, citas de negocios y viajes dentro de la ciudad. Máxima eficiencia y confort para que llegues a tu destino con total tranquilidad."
+      }
         ],
         "buttons": {
             "quote": "Cotizar",
             "reserve": "Reservar"
         }
     },
+    "heroCotiza": {
+    "from": "Desde",
+    "to": "Hacia",
+    "date": "Fecha",
+    "time": "Hora",
+    "vehicle": "Vehículo",
+    "passengers": "Pasajeros",
+    "roundTrip": "Ida y vuelta",
+    "returnDate": "Fecha de regreso",
+    "returnTime": "Hora de regreso",
+    "placeholderReturnDate": "Selecciona una fecha de regreso"
+  },
     "navbar": {
         "home": "Inicio",
         "about": "Acerca",

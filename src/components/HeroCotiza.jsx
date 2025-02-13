@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { FaWhatsapp } from "react-icons/fa";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { useContext } from "react";
+import { AppContext } from "../Context/AppContext";
+
 
 const HeroCotiza = () => {
   const tomorrow = new Date();
@@ -22,6 +25,7 @@ const HeroCotiza = () => {
 
   const [returnDate, setReturnDate] = useState(returnD );
 
+  const {traduccion} = useContext(AppContext);
 
   const locations = ["Aeropuerto AICM", "Aeropuerto AIFA", "Aeropuerto BJX GTO", "Aeropuerto AIQ QRO", "Aeropuerto GDL","Ciudad Querétaro", "San Miguel de Allende", "Ciudad Guanajuato" ];
   const destinations = ["Ciudad Querétaro", "San Miguel de Allende","Ciudad Guanajuato","Aeropuerto AICM", "Aeropuerto AIFA", "Aeropuerto BJX GTO", "Aeropuerto AIQ QRO", "Aeropuerto GDL",];
@@ -56,7 +60,7 @@ const HeroCotiza = () => {
       
       {/* Dropdown: Desde */}
       <div className="relative w-full">
-        <label className="block text-white font-bold text-sm">Desde</label>
+        <label className="block text-white font-bold text-sm">{traduccion.heroCotiza.from}</label>
         <select
           value={from}
           onChange={(e) => setFrom(e.target.value)}
@@ -70,7 +74,7 @@ const HeroCotiza = () => {
 
       {/* Dropdown: Hacia */}
       <div className="relative w-full">
-        <label className="block text-white font-bold text-sm">Hacia</label>
+        <label className="block text-white font-bold text-sm">{traduccion.heroCotiza.to}</label>
         <select
           value={to}
           onChange={(e) => setTo(e.target.value)}
@@ -84,7 +88,7 @@ const HeroCotiza = () => {
 
       {/* Input: Fecha */}
       <div className="relative w-full">
-        <label className="block text-white font-bold text-sm">Fecha</label>
+        <label className="block text-white font-bold text-sm">{traduccion.heroCotiza.date}</label>
         <input
           type="date"
           value={date}
@@ -99,7 +103,7 @@ const HeroCotiza = () => {
       <div className="flex  items-center justify-between  shadow-lg w-full max-w-3xl mx-auto gap-4">
       {/* Input: Hora y Minuto */}
       <div className="relative w-full">
-        <label className="block text-white font-bold text-sm">Hora</label>
+        <label className="block text-white font-bold text-sm">{traduccion.heroCotiza.time}</label>
         <input
           type="time"
           value={time}
@@ -110,7 +114,7 @@ const HeroCotiza = () => {
 
       {/* Dropdown: Tipo de Vehículo */}
       <div className="relative w-full">
-        <label className="block text-white font-bold text-sm">Vehículo</label>
+        <label className="block text-white font-bold text-sm">{traduccion.heroCotiza.vehicle}</label>
         <select
           value={vehicleType}
           onChange={(e) => setVehicleType(e.target.value)}
@@ -124,7 +128,7 @@ const HeroCotiza = () => {
 
       {/* Input: Número de Pasajeros */}
       <div className="relative w-full">
-        <label className="block text-white font-bold text-sm">Pasajeros</label>
+        <label className="block text-white font-bold text-sm">{traduccion.heroCotiza.passengers}</label>
         <input
           type="number"
           min="1"
@@ -145,12 +149,12 @@ const HeroCotiza = () => {
               className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
               
             />
-            <label htmlFor="roundTrip" className="text-white">Ida y vuelta</label>
+            <label htmlFor="roundTrip" className="text-white">{traduccion.heroCotiza.roundTrip}</label>
             </div>
             {isRoundTrip && (
   <div className="w-2/3 flex space-x-4">
     <div className="w-full">
-    <label className="block text-white font-bold text-sm">Fecha Regreso</label>
+    <label className="block text-white font-bold text-sm">{traduccion.heroCotiza.returnDate}</label>
 
       <DatePicker
         selected={returnDate}
@@ -162,7 +166,7 @@ const HeroCotiza = () => {
       />
     </div>
     <div className="w-full">
-    <label className="block text-white font-bold text-sm">Hora regreso</label>
+    <label className="block text-white font-bold text-sm">{traduccion.heroCotiza.returnTime}</label>
 
       <input
         type="time"
