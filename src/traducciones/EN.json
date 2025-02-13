@@ -4,7 +4,7 @@
             {
                 "image": "/assets/images/suburban.png",
                 "title": "Explore, Live, and Enjoy Unforgettable Destinations",
-                "description": "Discover cultural richness and breathtaking landscapes with our personalized tours. Experience the magic of every corner with comfort and luxury service."
+                "description": "Discover cultural richness and breathtaking landscapes with our personalized tours. Experience the magic of every place with comfort and luxury service."
             },
             {
                 "image": "/assets/images/sprinter.png",
@@ -19,12 +19,12 @@
             {
                 "image": "/assets/images/chofer.png",
                 "title": "Your Route, Your Time, Our Commitment",
-                "description": "Enjoy the flexibility of a private service with an exclusive driver. Ideal for city and out-of-town tours, with the comfort you deserve."
+                "description": "Enjoy the flexibility of a private service with an exclusive driver. Ideal for city tours and long-distance trips with the comfort you deserve."
             },
             {
                 "image": "/assets/images/suburban2.png",
                 "title": "Luxury and Comfort in Every Journey",
-                "description": "Enjoy an exclusive and safe ride in our Suburban. Ideal for executive transfers, family trips, or special events."
+                "description": "Enjoy an exclusive and safe trip in our Suburban. Ideal for executive transfers, family trips, or special events."
             }
         ],
         "buttons": {
@@ -32,21 +32,43 @@
             "reserve": "Book Now"
         }
     },
+    "navbar": {
+        "home": "Home",
+        "about": "About Us",
+        "services": "Services",
+        "airport_transfer": "Airport Transfer",
+        "wedding_transport": "Wedding Transportation",
+        "private_driver": "Private Driver",
+        "executive_transport": "Executive Transport",
+        "tours": "Tours",
+        "quote": "Get a Quote",
+        "languages": {
+            "spanish": "ESP",
+            "english": "EN"
+        },
+        "social": {
+            "facebook": "Facebook",
+            "instagram": "Instagram",
+            "tripadvisor": "Tripadvisor",
+            "tiktok": "Tiktok",
+            "whatsapp": "WhatsApp"
+        }
+    },
     "about": {
-        "title": "Over 10 Years of Experience Providing Excellence in Tourist and Executive Transportation.",
+        "title": "Over 10 Years of Experience Providing Premium Tourism and Executive Transport.",
         "features": {
-            "punctuality": "Guaranteed Punctuality.",
-            "drivers": "Highly Trained Drivers.",
-            "vehicles": "Vehicles in Perfect Condition.",
-            "support": "24/7 Personalized Attention."
+            "punctuality": "Guaranteed punctuality.",
+            "drivers": "Highly trained drivers.",
+            "vehicles": "Well-maintained vehicles.",
+            "support": "24/7 personalized support."
         },
         "mission": {
             "title": "Mission",
-            "description": "To provide high-quality transportation services, ensuring the best experience for our clients, with a focus on punctuality, safety, and personalized attention."
+            "description": "To offer high-quality transport services, ensuring the best experience for our customers, with a focus on punctuality, safety, and personalized attention."
         },
         "vision": {
             "title": "Vision",
-            "description": "To be the most reliable and recognized transportation company, standing out for our excellence and professionalism."
+            "description": "To be the most reliable and recognized transport company, standing out for our excellence and professionalism."
         }
     },
     "faqs": {
@@ -54,14 +76,14 @@
         "questions": [
             {
                 "question": "How can I request a quote?",
-                "answer": "You can request a quote by completing the form on this page. Our team will respond via WhatsApp within minutes to provide all the details."
+                "answer": "You can request a quote by filling out the form on this page. Our team will respond via WhatsApp within minutes to provide all the details."
             },
             {
                 "question": "How long does it take to confirm my reservation?",
-                "answer": "Our team will confirm your reservation within the next 24 hours."
+                "answer": "Our team will confirm your reservation within 24 hours."
             },
             {
-                "question": "What transportation services do you offer?",
+                "question": "What types of transportation services do you offer?",
                 "answer": "We offer private, group, and executive transportation depending on the client's needs."
             }
         ],
@@ -74,12 +96,12 @@
         "description": "Personalized, fast, and reliable service."
     },
     "autobus": {
-        "title": "Group Trips with Total Comfort",
-        "description": "Our buses accommodate up to 50 passengers, featuring reclining seats, a restroom, air conditioning, and onboard entertainment.",
+        "title": "Group Travel with Total Comfort",
+        "description": "Our buses accommodate up to 50 passengers, featuring reclining seats, restrooms, air conditioning, and onboard entertainment.",
         "features": {
-            "capacity": "Capacity for 50 passengers with reclining seats.",
-            "experienced_drivers": "Experienced drivers for a safe and reliable journey.",
-            "events": "We take you to your favorite concert or event in total comfort.",
+            "capacity": "Seats up to 50 passengers with reclining seats.",
+            "experienced_drivers": "Experienced drivers for a safe and reliable trip.",
+            "events": "We take you to your favorite concert or event with total comfort.",
             "punctuality": "Guaranteed punctuality on every transfer."
         },
         "buttons": {
@@ -92,12 +114,12 @@
             {
                 "name": "Ana Martínez",
                 "service": "Airport Transfer",
-                "review": "We booked transportation to Monterrey for U.S. work visas. Everything was excellent, very punctual, and experienced in long trips."
+                "review": "We booked transport to Monterrey for U.S. work visas. Everything went great—very punctual and experienced with long-distance trips."
             },
             {
                 "name": "Carlos Ramírez",
                 "service": "Private Driver",
-                "review": "They have vehicles for all needs. We've traveled to San Miguel multiple times and always feel safe booking with them."
+                "review": "They have vehicles for all needs. We've traveled several times to San Miguel and always feel safe booking with them."
             }
         ]
     },
@@ -106,13 +128,13 @@
         "options": [
             {
                 "name": "Guanajuato",
-                "description": "Explore the tunnels of Guanajuato and enjoy the view from the Pipila Lookout.",
+                "description": "Discover the tunnels of Guanajuato and enjoy the view from the Pípila Lookout.",
                 "price": "$1,750 per person",
                 "duration": "Approx. 8 hours"
             },
             {
                 "name": "San Miguel De Allende",
-                "description": "Visit the Sanctuary of Jesus of Nazareth in Atotonilco, known as the 'Sistine Chapel of Mexico'.",
+                "description": "Visit the Sanctuary of Jesús Nazareno in Atotonilco, known as the 'Sistine Chapel of Mexico'.",
                 "price": "$1,200 per person",
                 "duration": "Approx. 4 hours"
             }

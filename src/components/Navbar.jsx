@@ -32,7 +32,6 @@ const Navbar = () => {
         </div>
 
         <nav className="hidden lg:flex items-center space-x-4">
-          {console.log(traduccion)}
           <a href="/#Hero" className="hover:text-blue-500 transition">{traduccion.navbar.home}</a>
           <a href="/#About" className="hover:text-blue-500 transition">{traduccion.navbar.about}</a>
 
@@ -200,7 +199,7 @@ const Navbar = () => {
             <Link href="https://www.tripadvisor.com.mx/Attraction_Review-g151932-d25402392-Reviews-Transportes_MX-San_Miguel_de_Allende_Central_Mexico_and_Gulf_Coast.html" target="_blank" onClick={() => setIsMenuOpen(false)}>
             <FaTripadvisor className="hover:text-green-500 cursor-pointer" />
             </Link>
-            <Link href="https://wa.me/524151393219" target="_blank" onClick={() => setIsMenuOpen(false)}>
+            <Link href="https://wa.me/524151393219" target="_blank" >
             <FaWhatsapp className="hover:text-green-500 cursor-pointer" />
             </Link>
           </div>
