@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import HeroCotiza from './HeroCotiza';
 import { useContext } from 'react';
 import { AppContext } from '../Context/AppContext';
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
 const Hero = () => {
   
@@ -38,6 +39,20 @@ const Hero = () => {
     <div
     id="Hero"
     className="relative w-full h-screen lg:h-[90vh] max-h-[730px] lg:min-h-[720px] xl:min-h-[850px] overflow-hidden  ">
+    <div className="hidden lg:block absolute left-8 top-1/2 transform -translate-y-1/2 z-10">
+  <FaChevronLeft
+    className="text-white text-4xl cursor-pointer"
+    onClick={() =>
+      setCurrentSlide((prev) =>
+        prev === 0 ? traduccion.hero.slides.length - 1 : prev - 1
+      )
+    }
+  />
+</div>
+<div className="hidden lg:block absolute right-8 top-1/2 transform -translate-y-1/2 z-10">
+          <FaChevronRight className="text-white text-4xl cursor-pointer" onClick={() => setCurrentSlide((prev) => (prev + 1) % traduccion.hero.slides.length)} />
+        </div>
+
       <AnimatePresence mode="wait">
         <motion.div
           key={currentSlide}
