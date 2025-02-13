@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react';
-import ES from '../Traducciones/ES.json';
-import EN from '../Traducciones/EN.json';
+import ES from '../Traduccion/ES.json';
+import EN from '../Traduccion/EN.json';
 
 // Crea el contexto
 export const AppContext = createContext();
