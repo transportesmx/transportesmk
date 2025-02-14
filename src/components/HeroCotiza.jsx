@@ -60,7 +60,7 @@ const HeroCotiza = () => {
       
       {/* Dropdown: Desde */}
       <div className="relative w-full">
-        <label className="block text-white font-bold text-sm">{traduccion.heroCotiza.from}</label>
+        <label className="block text-white font-bold text-sm">{traduccion.heroCotiza.from}</label> 
         <select
           value={from}
           onChange={(e) => setFrom(e.target.value)}

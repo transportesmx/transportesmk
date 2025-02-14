@@ -13,6 +13,9 @@ export default function Formulario() {
 
   const { traduccion } = useContext(AppContext);
 
+  const locations = ["Aeropuerto AICM", "Aeropuerto AIFA", "Aeropuerto BJX GTO", "Aeropuerto AIQ QRO", "Aeropuerto GDL","Ciudad Querétaro", "San Miguel de Allende", "Ciudad Guanajuato" ];
+  const destinations = ["Ciudad Querétaro", "San Miguel de Allende","Ciudad Guanajuato","Aeropuerto AICM", "Aeropuerto AIFA", "Aeropuerto BJX GTO", "Aeropuerto AIQ QRO", "Aeropuerto GDL",];
+
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
   const returnD = new Date();
@@ -78,8 +81,10 @@ export default function Formulario() {
       const formattedDate = startDate.toLocaleDateString('es-ES');
       const subject = "Solicitud de Cotización de Traslado";
       const message = isRoundTrip
-        ? `Hola! Soy ${nombre}. mi correo es ${email}, mi telefono es ${lada}${telefono} necesito un traslado para el aeropuerto el dia ${formattedDate} a las ${time}, somos ${pasajeros} personas\nOrigen: ${origen}\nDestino: ${destino}\nTipo de vehículo: ${vehicleType}\nRegreso: ${returnDate.toLocaleDateString('es-ES')} a las ${timeR}`
-        : `Hola! Soy ${nombre}. mi correo es ${email}, mi telefono es ${lada}${telefono} necesito un traslado para el aeropuerto el dia ${formattedDate} a las ${time}, somos ${pasajeros} personas\nOrigen: ${origen}\nDestino: ${destino}\nTipo de vehículo: ${vehicleType}`;
+        ? `Hola! Soy ${nombre}. mi correo es ${email}, mi telefono es ${lada}${telefono} necesito un traslado para el aeropuerto el dia ${formattedDate} a las ${time}, somos ${pasajeros} personas\nOrigen: ${origen}\nDestino: ${destino}\nTipo de vehículo: ${vehicleType}\nRegreso: ${returnDate.toLocaleDateString('es-ES')} a las ${timeR}
+        \nComentario: ${formData.comentario}
+        `
+        : `Hola! Soy ${nombre}. mi correo es ${email}, mi telefono es ${lada}${telefono} necesito un traslado para el aeropuerto el dia ${formattedDate} a las ${time}, somos ${pasajeros} personas\nOrigen: ${origen}\nDestino: ${destino}\nTipo de vehículo: ${vehicleType} \nComentario: ${formData.comentario}`;
       
       const recipientEmail = "amstrekgrt@gmail.com"; // Reemplaza con tu correo de destino
       const mailtoUrl = `mailto:${recipientEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`;
@@ -202,22 +207,38 @@ export default function Formulario() {
               ))}
             </select>
           </div>
-          <input
-            type="text"
-            name="origen"
-            placeholder={traduccion.formulario.fields.origin}
-            value={formData.origen}
-            onChange={handleChange}
-            className="w-full p-3 rounded-lg bg-white text-black placeholder-black  focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <input
-            type="text"
-            name="destino"
-            placeholder={traduccion.formulario.fields.destination}
-            value={formData.destino}
-            onChange={handleChange}
-            className="w-full p-3 rounded-lg bg-white text-black placeholder-black  focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+          
+          <select
+          name='origen'
+          value={formData.origen}
+          onChange={handleChange}
+          className="w-full p-3 rounded-lg bg-white text-black placeholder-black  focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          {locations.map((location) => (
+            <option key={location} value={location} className="text-black">{location}</option>
+          ))}
+        </select>
+          
+          <select
+          name='destino'
+          value={formData.destino}
+          onChange={handleChange}
+          className="w-full p-3 rounded-lg bg-white text-black placeholder-black  focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          {destinations.map((location) => (
+            <option key={location} value={location} className="text-black">{location}</option>
+          ))}
+        </select>
+        <textarea 
+        name="comentario"
+        placeholder={traduccion.formulario.fields.comment}
+        value={formData.comentario}
+        onChange={handleChange}
+        className="w-full p-3 rounded-lg bg-white text-black placeholder-black  focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+
+
+          
           
           <button
             type="submit"

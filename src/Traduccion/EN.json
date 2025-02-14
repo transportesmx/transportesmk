@@ -213,6 +213,7 @@
         "origin": "Origin",
         "destination": "Destination",
         "vehicle": "Vehicle Type",
+        "comment":"Comment",
         "date": "Date",
         "time": "Time",
         "round_trip": "Round Trip",

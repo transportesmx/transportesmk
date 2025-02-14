@@ -140,6 +140,7 @@
             "origin": "Origen",
             "destination": "Destino",
             "vehicle": "Tipo de vehículo",
+            "comment":"Comentario",
             "date": "Fecha",
             "time": "Hora",
             "round_trip": "Ida y vuelta",
