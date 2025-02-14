@@ -4,6 +4,8 @@ import HeroCotiza from './HeroCotiza';
 import { useContext } from 'react';
 import { AppContext } from '../Context/AppContext';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { useSwipeable } from 'react-swipeable';
+
 
 const Hero = () => {
   
@@ -35,9 +37,21 @@ const Hero = () => {
     return () => clearInterval(interval);
   }, []);
 
+  const swipeHandlers = useSwipeable({
+    onSwipedLeft: () => setCurrentSlide(prev => (prev + 1) % traduccion.hero.slides.length),
+    onSwipedRight: () =>
+      setCurrentSlide(prev =>
+        prev === 0 ? traduccion.hero.slides.length - 1 : prev - 1
+      ),
+    preventDefaultTouchmoveEvent: true,
+    trackMouse: true
+  });
+
+
   return (
     <div
     id="Hero"
+    {...swipeHandlers}
     className="relative w-full h-screen lg:h-[90vh] max-h-[730px] lg:min-h-[720px] xl:min-h-[850px] overflow-hidden  ">
     <div className="hidden lg:block absolute left-8 top-1/2 transform -translate-y-1/2 z-10">
   <FaChevronLeft
