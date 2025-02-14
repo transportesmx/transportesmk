@@ -180,6 +180,11 @@
 
     }
   },
+  "bodasModal": {
+    "title": "Conoce nuestros traslados para bodas",
+    "description": "Disfruta de un servicio de transporte exclusivo para tu gran día. Garantizamos comodidad, puntualidad y elegancia para los novios e invitados. Desde autos de lujo hasta vans decoradas, hacemos que cada traslado sea perfecto para que solo te preocupes por disfrutar tu celebración.",
+    "button": "Cotizar"
+  },
   "chofer": {
     "title": "Chofer Privado",
     "description": "Nuestros vehículos con chofer privado están disponibles para uso personalizado durante el tiempo que necesites. Ya sea para recorridos dentro de la ciudad, traslados ejecutivos o viajes largos a destinos turísticos, nos adaptamos a tus planes y horarios para ofrecerte una experiencia de lujo, sin preocupaciones.",

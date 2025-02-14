@@ -1,7 +1,11 @@
+import { AppContext } from "@/Context/AppContext";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 
 const BodasModal = () => {
+
+  const {traduccion} = useContext(AppContext);
+
   const [isOpen, setIsOpen] = useState(true);
 
   const closeModal = () => {
@@ -35,14 +39,10 @@ const BodasModal = () => {
           {/* Modal Content */}
           <div className="p-6 text-center">
             <h2 className="text-xl font-bold mb-4 text-gray-800">
-              Conoce nuestros traslados para bodas
+              {traduccion.bodasModal.title}
             </h2>
             <p className="text-gray-600 mb-6">
-              Disfruta de un servicio de transporte exclusivo para tu gran día.
-              Garantizamos comodidad, puntualidad y elegancia para los novios e
-              invitados. Desde autos de lujo hasta vans decoradas, hacemos que
-              cada traslado sea perfecto para que solo te preocupes por
-              disfrutar tu celebración.
+              {traduccion.bodasModal.description}
             </p>
             <button
               onClick={() =>
@@ -53,7 +53,7 @@ const BodasModal = () => {
               }
               className="px-6 py-3 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition shadow-lg"
             >
-              Cotizar
+              {traduccion.bodasModal.button}
             </button>
           </div>
         </div>
