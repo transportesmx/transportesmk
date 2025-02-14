@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   FaFacebookF,
   FaInstagram,
@@ -16,6 +16,24 @@ const Navbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const { idioma, setIdioma } = useContext(AppContext);
 
+  const menuRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        menuRef.current &&
+        !menuRef.current.contains(event.target)
+      ) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   const handleCotizar = () => {
     const phoneNumber = "524151393219"; // Reemplaza con el número de WhatsApp incluyendo el código de país (52 para México).
     const message = "Hola, me gustaría cotizar un servicio";
@@ -27,7 +45,9 @@ const Navbar = () => {
   const { traduccion } = useContext(AppContext);
 
   return (
-    <header className="bg-black shadow-md sticky top-0 z-50">
+    <header className="bg-black/70 shadow-md sticky top-0 z-50"
+    
+    >
       <div className="container mx-auto flex justify-between items-center px-4 py-2">
         <div
           className="flex items-center py-4"
@@ -156,7 +176,7 @@ const Navbar = () => {
       </div>
 
       {isMenuOpen && (
-        <div className="lg:hidden bg-black shadow-md">
+        <div ref={menuRef} className="lg:hidden bg-black shadow-md">
           <a
             href="/#Hero"
             className="block px-4 py-2 hover:bg-gray-600"
