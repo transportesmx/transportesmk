@@ -33,7 +33,7 @@ const Hero = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % traduccion.hero.slides.length);
-    }, 10000);
+    }, 7000);
     return () => clearInterval(interval);
   }, []);
 
