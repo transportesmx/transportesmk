@@ -35,7 +35,7 @@ const {traduccion} = useContext(AppContext)
           variants={variants}
           transition={{ duration: 0.5, delay: 0.4 }}
         >
-          {traduccion.aeropuerto.title}
+          {traduccion.aeropuerto.description}
           </motion.p>
         <motion.div
           className='w-full px-4 lg:px-0 flex flex-col justify-center items-center lg:items-start'
