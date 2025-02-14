@@ -95,7 +95,9 @@ const Tours = () => {
               onClick={() => handleCotizar(tour)}
               variants={itemVariants}
             >
-              <img
+              <Image
+              objectFit="cover"
+              layout="fill"
                 src={tour.image}
                 alt={tour.title}
                 className="w-full h-full object-cover"

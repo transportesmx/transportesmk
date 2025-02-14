@@ -20,6 +20,7 @@ const Galeria = () => {
   const [swiperIndex, setSwiperIndex] = useState(0);
 
   const openSwiper = (images, index) => {
+    console.log(images)
     setCurrentImages(images);
     setSwiperIndex(index);
     setIsSwiperOpen(true);
@@ -86,7 +87,9 @@ const Galeria = () => {
                 whileHover={{ scale: 1.05 }}
                 transition={{ duration: 0.3 }}
               >
-                <img
+                <Image
+                 objectFit="cover"
+                  layout="fill"
                   src={category.image}
                   alt={category.title}
                   className="object-cover transition-transform duration-300 group-hover:scale-110 w-[300px] h-[550px]"
@@ -114,7 +117,7 @@ const Galeria = () => {
             className="w-11/12 h-3/4"
             onSlideChange={(swiper) => setSwiperIndex(swiper.activeIndex)}
           >
-            {categoryImages.map((image, idx) => (
+            {currentImages.map((image, idx) => (
               <SwiperSlide key={idx}>
                 <Image
                   src={image}
