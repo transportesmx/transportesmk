@@ -13,7 +13,9 @@ export default function Footer() {
         <div className="flex flex-col lg:flex-row justify-between items-center space-y-8 lg:space-y-0 lg:px-16">
           {/* Logo y slogan */}
           <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
-            <img src="/assets/logo.png" alt="Logo" className="h-16 mb-4" /> {/* Asegúrate de poner el path correcto */}
+            <img src="/assets/logo.png" alt="Logo" className="h-16 mb-4 cursor-pointer"
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            /> {/* Asegúrate de poner el path correcto */}
             <p className="text-lg mb-4 text-[15px] max-w-[320px]">{traduccion.footer.logoSlogan}</p>
             <p className="text-sm">{traduccion.footer.rights}</p>
           </div>
