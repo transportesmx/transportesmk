@@ -6,12 +6,15 @@ import "react-phone-input-2/lib/style.css";import 'react-phone-input-2/lib/style
 import Select from "react-select";
 import countryList from "country-codes-list";
 import { AppContext } from '@/Context/AppContext';
+import emailjs from 'emailjs-com';
 
 const vehicleTypes = ['Sedán 3 pax', 'SUV 4 pax', 'Minivan 6 pax', 'Suburban 6 pax', 'Toyota Hiace 12 pax', 'Sprinter 20 pax', 'Autobús 50 pax'];
 
 export default function Formulario() {
 
   const { traduccion } = useContext(AppContext);
+
+
 
   const locations = ["Origen","Aeropuerto AICM", "Aeropuerto AIFA", "Aeropuerto BJX GTO", "Aeropuerto AIQ QRO", "Aeropuerto GDL","Ciudad Querétaro", "San Miguel de Allende", "Ciudad Guanajuato" ];
   const destinations = ["Destino","Ciudad Querétaro", "San Miguel de Allende","Ciudad Guanajuato","Aeropuerto AICM", "Aeropuerto AIFA", "Aeropuerto BJX GTO", "Aeropuerto AIQ QRO", "Aeropuerto GDL",];
@@ -80,6 +83,69 @@ export default function Formulario() {
     if (nombre && telefono && email && origen && destino && vehicleType) {
       const formattedDate = startDate.toLocaleDateString('es-ES');
       const subject = "Solicitud de Cotización de Traslado";
+      const message = isRoundTrip 
+        ? `Hola! Soy ${nombre}. Mi correo es ${email}, mi teléfono es ${lada}${telefono}. Necesito un traslado para el aeropuerto el día ${formattedDate} a las ${time}.
+Origen: ${origen}
+Destino: ${destino}
+Tipo de vehículo: ${vehicleType}
+Regreso: ${returnDate.toLocaleDateString('es-ES')} a las ${timeR}
+Comentario: ${formData.comentario}`
+        : `Hola! Soy ${nombre}. Mi correo es ${email}, mi teléfono es ${lada}${telefono}. Necesito un traslado para el aeropuerto el día ${formattedDate} a las ${time}.
+Origen: ${origen}
+Destino: ${destino}
+Tipo de vehículo: ${vehicleType}
+Comentario: ${formData.comentario}`;
+      
+      // Configura aquí tus IDs de EmailJS
+      const serviceID = process.env.NEXT_PUBLIC_SERVICE_ID;
+      const templateID = process.env.NEXT_PUBLIC_TEMPLATE_ID;
+      const userID = process.env.NEXT_PUBLIC_USER_ID;
+  
+      const templateParams = {
+        subject,
+        message,
+        from_name: nombre,
+        from_email: email,
+      };
+  
+      emailjs.send(serviceID, templateID, templateParams, userID)
+        .then((response) => {
+          console.log('Correo enviado!', response.status, response.text);
+          // Reinicia el formulario
+          setFormData({
+            nombre: '',
+            telefono: '',
+            email: '',
+            pasajeros: '',
+            origen: '',
+            destino: '',
+            vehicleType: '',
+            lada: "+52",
+            time: '12:00',
+            timeR: '12:00',
+            comentario: ''
+          });
+          setStartDate(tomorrow);
+          setReturnDate(returnD);
+          setTime("12:00");
+          setTimeR("12:00");
+          alert('Correo enviado correctamente.');
+        }, (err) => {
+          console.error('Error al enviar el correo:', err);
+          alert('Hubo un error, intenta nuevamente.');
+        });
+    } else {
+      alert('Por favor, complete todos los campos.');
+    }
+  };
+
+ /*  const handleSubmit = (e) => {
+    e.preventDefault();
+    const { nombre, telefono, lada, email, pasajeros, origen, destino, vehicleType } = formData;
+  
+    if (nombre && telefono && email && origen && destino && vehicleType) {
+      const formattedDate = startDate.toLocaleDateString('es-ES');
+      const subject = "Solicitud de Cotización de Traslado";
       const message = isRoundTrip
         ? `Hola! Soy ${nombre}. mi correo es ${email}, mi telefono es ${lada}${telefono} necesito un traslado para el aeropuerto el dia ${formattedDate} a las ${time}, somos ${pasajeros} personas\nOrigen: ${origen}\nDestino: ${destino}\nTipo de vehículo: ${vehicleType}\nRegreso: ${returnDate.toLocaleDateString('es-ES')} a las ${timeR}
         \nComentario: ${formData.comentario}
@@ -111,7 +177,7 @@ export default function Formulario() {
     } else {
       alert('Por favor, complete todos los campos.');
     }
-  };
+  }; */
 
   return (
     <div className="w-full flex items-center justify-center lg:justify-start px-4 sm:px-6 lg:px-0">
