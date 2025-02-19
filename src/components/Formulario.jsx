@@ -38,8 +38,8 @@ export default function Formulario() {
     destino: '',
     vehicleType: '',
     lada: "+52",
-    time: '',
-    timeR: '',
+    time: '12:00',
+    timeR: '12:00',
     });
 
    
@@ -90,6 +90,24 @@ export default function Formulario() {
       const mailtoUrl = `mailto:${recipientEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`;
   
       window.location.href = mailtoUrl; // Abre el cliente de correo del usuario
+      
+      setFormData({
+        nombre: '',
+        telefono: '',
+        email: '',
+        pasajeros: '',
+        origen: '',
+        destino: '',
+        vehicleType: '',
+        lada: "+52",
+        time: '12:00',
+        timeR: '12:00',
+      });
+      setStartDate(tomorrow);
+      setReturnDate(returnD);
+      setTime("12:00");
+      setTimeR("12:00");
+
     } else {
       alert('Por favor, complete todos los campos.');
     }
@@ -202,7 +220,7 @@ export default function Formulario() {
               onChange={handleChange}
               className="mt-1 text-black  rounded-lg py-3 px-3 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              {vehicleTypes.map((type) => (
+              {traduccion.formulario.fields.vehicleTypes.map((type) => (
                 <option key={type} value={type} className="text-black">{type}</option>
               ))}
             </select>

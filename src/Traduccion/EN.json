@@ -225,8 +225,18 @@
         "return_date": "Return Date",
         "return_time": "Return Time",
         "locations" : ["From","Aeropuerto AICM", "Aeropuerto AIFA", "Aeropuerto BJX GTO", "Aeropuerto AIQ QRO", "Aeropuerto GDL","Ciudad Querétaro", "San Miguel de Allende", "Ciudad Guanajuato" ],
-             "destinations" : ["To","Ciudad Querétaro", "San Miguel de Allende","Ciudad Guanajuato","Aeropuerto AICM", "Aeropuerto AIFA", "Aeropuerto BJX GTO", "Aeropuerto AIQ QRO", "Aeropuerto GDL"]
-      },
+             "destinations" : ["To","Ciudad Querétaro", "San Miguel de Allende","Ciudad Guanajuato","Aeropuerto AICM", "Aeropuerto AIFA", "Aeropuerto BJX GTO", "Aeropuerto AIQ QRO", "Aeropuerto GDL"],
+             "vehicleTypes": [
+              "Vehicle Type",
+              "Sedan 3 pax",
+              "SUV 4 pax",
+              "Minivan 6 pax",
+              "Suburban 6 pax",
+              "Toyota Hiace 12 pax",
+              "Sprinter 20 pax",
+              "Bus 50 pax"
+            ]
+            },
       "buttons": {
         "submit": "Submit",
         "support": "*24/7 Personalized Support."
