@@ -223,7 +223,9 @@
         "time": "Time",
         "round_trip": "Round Trip",
         "return_date": "Return Date",
-        "return_time": "Return Time"
+        "return_time": "Return Time",
+        "locations" : ["From","Aeropuerto AICM", "Aeropuerto AIFA", "Aeropuerto BJX GTO", "Aeropuerto AIQ QRO", "Aeropuerto GDL","Ciudad Querétaro", "San Miguel de Allende", "Ciudad Guanajuato" ],
+             "destinations" : ["To","Ciudad Querétaro", "San Miguel de Allende","Ciudad Guanajuato","Aeropuerto AICM", "Aeropuerto AIFA", "Aeropuerto BJX GTO", "Aeropuerto AIQ QRO", "Aeropuerto GDL"]
       },
       "buttons": {
         "submit": "Submit",
