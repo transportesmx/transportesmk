@@ -59,9 +59,9 @@ export default function Footer() {
           </div>
           
           <div className="flex flex-col items-center lg:items-start space-y-6 ">
-            <a href='mailto:amstrekgrt@gmail.com '>
+            <a href='mailto:contacto@transportesmx.org '>
               <span  className=" hover:text-blue-500 flex items-center text-[15px] gap-2"> 
-              <IoMdMail /> amstrekgrt@gmail.com
+              <IoMdMail /> contacto@transportesmx.org
               </span>
             </a>
             <a href='tel:+524151393219 '>

@@ -9,7 +9,7 @@ function Chofer() {
 
   const handleCotizar = () => {
 
-    const recipientEmail = "amstrekgrt@gmail.com"; // Reemplaza con tu correo de destino
+    const recipientEmail = "contacto@transportesmx.org"; // Reemplaza con tu correo de destino
     const subject = "Información para Chofer Privado"; // Asunto del correo
     const body = "Hola, me gustaría informacion para el servicio de chofer privado";
     const mailtoUrl = `mailto:${recipientEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;

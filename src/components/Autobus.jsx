@@ -10,7 +10,7 @@ function Autobus() {
   const { traduccion } = useContext(AppContext);
 
   const handleCotizar = () => {
-    const recipientEmail = "amstrekgrt@gmail.com"; // Correo destino
+    const recipientEmail = "contacto@transportesmx.org"; // Correo destino
     const subject = "Información sobre Transporte en Autobús";
     const body = "Hola, me gustaría obtener más información sobre el servicio de transporte en autobús.";
     const mailtoUrl = `mailto:${recipientEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;

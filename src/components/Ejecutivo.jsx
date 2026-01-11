@@ -8,7 +8,7 @@ function Ejecutivo() {
 const { traduccion } = useContext(AppContext);
 
   const handleCotizar = () => {
-    const recipientEmail = "amstrekgrt@gmail.com"; // Reemplaza con tu correo de destino
+    const recipientEmail = "contacto@transportesmx.org"; // Reemplaza con tu correo de destino
     const subject = "Información para traslado ejecutivo"; // Asunto del correo
     const body = "Hola, me gustaría informacion sobre el servicio de transporte ejecutivo";
     const mailtoUrl = `mailto:${recipientEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;

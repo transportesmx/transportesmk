@@ -152,7 +152,7 @@ Comentario: ${formData.comentario}`;
         `
         : `Hola! Soy ${nombre}. mi correo es ${email}, mi telefono es ${lada}${telefono} necesito un traslado para el aeropuerto el dia ${formattedDate} a las ${time}, somos ${pasajeros} personas\nOrigen: ${origen}\nDestino: ${destino}\nTipo de vehículo: ${vehicleType} \nComentario: ${formData.comentario}`;
       
-      const recipientEmail = "amstrekgrt@gmail.com"; // Reemplaza con tu correo de destino
+      const recipientEmail = "contacto@transportesmx.org"; // Reemplaza con tu correo de destino
       const mailtoUrl = `mailto:${recipientEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`;
   
       window.location.href = mailtoUrl; // Abre el cliente de correo del usuario

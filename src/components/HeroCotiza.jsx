@@ -32,7 +32,7 @@ const HeroCotiza = () => {
   const vehicleTypes = ["Sedán", "SUV", "Van", "Minivan", "Sprinter", "Autobús"];
 
   const handleCotizar = () => {
-    const recipientEmail = "amstrekgrt@gmail.com"; // Reemplaza con tu correo de destino
+    const recipientEmail = "contacto@transportesmx.org"; // Reemplaza con tu correo de destino
     const subject = "Solicitud de Cotización de Traslado"; // Asunto del correo
     const body = isRoundTrip
       ? `Hola, me gustaría cotizar un traslado de ${from} a ${to} el día ${date} a las ${time}.
