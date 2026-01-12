@@ -664,7 +664,7 @@
   },
    "footer": {
     "logoSlogan": "Viaja con comodidad, puntualidad y la mejor atención. ¡Cotiza tu traslado ahora!",
-    "rights": "© 2025. Transportes TMX. Todos los derechos reservados.",
+    "rights": "© {{year}}. Transportes TMX. Todos los derechos reservados.",
     "services": {
       "title": "Servicios",
       "aeropuerto": "Traslados a Aeropuerto",

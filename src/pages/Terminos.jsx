@@ -14,7 +14,7 @@ const TermsAndConditions = () => {
           Términos y Condiciones
         </h1>
         <p className="text-gray-600 mb-6">
-          Última actualización: <strong>10 de enero de 2025</strong>
+          Última actualización: <strong>{new Date().toLocaleDateString()}</strong>
         </p>
 
         <motion.section
@@ -135,7 +135,7 @@ const TermsAndConditions = () => {
           <p className="text-gray-800 font-semibold mt-2">
             📍 Dirección: San Miguel de Allende, GTO, México <br />
             📞 Teléfono: +52 415 139 3219 <br />
-            📧 Email: contacto@transportesmx.com
+            📧 Email: contacto@transportesmx.org
           </p>
         </motion.section>
 

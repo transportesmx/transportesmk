@@ -49,7 +49,7 @@ export default function Home() {
         content="Viaja con seguridad y comodidad con Transportes MX. Servicios de traslado a aeropuertos, bodas, ejecutivos, chofer privado y tours en San Miguel de Allende, Querétaro y Guanajuato."
       />
       <meta property="og:image" content="/ogimage.jpg" />
-      <meta property="og:url" content="https://www.transportesmx.com" />
+      <meta property="og:url" content="https://www.transportesmx.org" />
       <meta property="og:type" content="website" />
 
       {/* Twitter */}

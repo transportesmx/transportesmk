@@ -17,7 +17,7 @@ export default function Footer() {
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             /> {/* Asegúrate de poner el path correcto */}
             <p className="text-lg mb-4 text-[15px] max-w-[320px]">{traduccion.footer.logoSlogan}</p>
-            <p className="text-sm">{traduccion.footer.rights}</p>
+            <p className="text-sm">{traduccion.footer.rights.replace('{{year}}', new Date().getFullYear())}</p>
           </div>
 
           {/* Sección de servicios */}

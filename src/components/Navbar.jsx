@@ -17,22 +17,43 @@ const Navbar = () => {
   const { idioma, setIdioma } = useContext(AppContext);
 
   const menuRef = useRef(null);
+  const buttonRef = useRef(null);
 
+  // Bloquear scroll cuando el menú está abierto
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    // Limpiar al desmontar el componente
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isMenuOpen]);
+
+  // Cerrar menú al hacer click fuera
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
         menuRef.current &&
-        !menuRef.current.contains(event.target)
+        !menuRef.current.contains(event.target) &&
+        buttonRef.current &&
+        !buttonRef.current.contains(event.target)
       ) {
         setIsMenuOpen(false);
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
+    if (isMenuOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, []);
+  }, [isMenuOpen]);
 
   const handleCotizar = () => {
     const phoneNumber = "524151393219"; // Reemplaza con el número de WhatsApp incluyendo el código de país (52 para México).
@@ -169,7 +190,7 @@ const Navbar = () => {
         </div>
 
         <div className="lg:hidden flex items-center">
-          <button onClick={() => setIsMenuOpen(!isMenuOpen)}>
+          <button ref={buttonRef} onClick={() => setIsMenuOpen(!isMenuOpen)}>
             {isMenuOpen ? <HiX size={24} /> : <HiMenu size={24} />}
           </button>
         </div>
@@ -248,7 +269,6 @@ const Navbar = () => {
               className="flex items-center  gap-2 cursor-pointer"
               onClick={() => {
                 setIdioma({ nombre: "ES", code: "MX" });
-                setIsMenuOpen(false);
               }}
             >
               <div
@@ -269,7 +289,6 @@ const Navbar = () => {
               className="flex items-center  gap-2 cursor-pointer"
               onClick={() => {
                 setIdioma({ nombre: "EN", code: "US" });
-                setIsMenuOpen(false);
               }}
             >
               <span className="hover:text-blue-500">EN</span>

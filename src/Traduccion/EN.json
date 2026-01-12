@@ -649,7 +649,7 @@
   },
     "footer": {
       "logoSlogan": "Travel with comfort, punctuality, and the best service. Get your transfer quote now!",
-      "rights": "© 2025. Transportes TMX. All rights reserved.",
+      "rights": "© {{year}}. Transportes TMX. All rights reserved.",
       "services": {
         "title": "Services",
         "aeropuerto": "Airport Transfers",

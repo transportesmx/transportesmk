@@ -14,7 +14,7 @@ const HeroCotiza = () => {
 
   const [from, setFrom] = useState("Aeropuerto AICM");
   const [to, setTo] = useState("Querétaro");
-  const [date, setDate] = useState("2025-04-02");
+  const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [vehicleType, setVehicleType] = useState("Sedán");
   const [passengerCount, setPassengerCount] = useState(1);
   const [time, setTime] = useState("12:00");
