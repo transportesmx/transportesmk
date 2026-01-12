@@ -12,7 +12,7 @@ import { AppContext } from "../Context/AppContext";
 
 const handleCotizar = (tour) => {
   const phoneNumber = "524151393219"; // Reemplaza con el número de WhatsApp incluyendo el código de país (52 para México).
-  const message = `Hola, me gustaría reservar el tour de ${tour.title}`;
+  const message = `Hola, me gustaría reservar el tour de ${tour.name}`;
   const encodedMessage = encodeURIComponent(message);
   const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
   window.open(whatsappURL, "_blank");
