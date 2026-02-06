@@ -117,6 +117,9 @@ const Navbar = () => {
           >
             {traduccion.navbar.quote}
           </span>
+          <Link href="/reservar" className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition font-semibold text-sm">
+            {idioma.nombre === 'EN' ? 'Book now' : 'Reservar'}
+          </Link>
         </nav>
         <div className="flex items-center space-x-8">
           <div className="hidden lg:flex items-center space-x-2">
@@ -263,6 +266,13 @@ const Navbar = () => {
           >
             {traduccion.navbar.quote}
           </span>
+          <Link
+            href="/reservar"
+            className="block px-4 py-3 mx-4 my-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition font-semibold text-sm text-center"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            {idioma.nombre === 'EN' ? '🚗 Book now' : '🚗 Reservar ahora'}
+          </Link>
 
           <div className="px-4 py-2 flex items-center space-x-2">
             <div

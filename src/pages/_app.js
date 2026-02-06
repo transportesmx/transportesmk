@@ -3,8 +3,21 @@ import Navbar from "@/components/Navbar";
 import { AppProvider } from "@/Context/AppContext";
 import "@/styles/globals.css";
 import Image from "next/image";
+import { useRouter } from "next/router";
 
 export default function App({ Component, pageProps }) {
+  const router = useRouter();
+  const isReservar = router.pathname.startsWith('/reservar');
+
+  // La página de reservas tiene su propio layout (sin Navbar/Footer)
+  if (isReservar) {
+    return (
+      <AppProvider>
+        <Component {...pageProps} />
+      </AppProvider>
+    );
+  }
+
   return (
     <AppProvider>
     <div className="bg-black">
@@ -24,5 +37,5 @@ export default function App({ Component, pageProps }) {
           </div>
     </div>
     </AppProvider>
-)
+  )
 }

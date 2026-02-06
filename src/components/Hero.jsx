@@ -5,24 +5,23 @@ import { useContext } from 'react';
 import { AppContext } from '../Context/AppContext';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { useSwipeable } from 'react-swipeable';
+import { useRouter } from 'next/router';
 
 
 const Hero = () => {
   
   const {traduccion} = useContext(AppContext);
+  const router = useRouter();
 
   const handleEmailClickCotizar = () => {
-    const emailAddress = "contacto@transportesmx.org"; // Reemplaza con tu correo
+    const emailAddress = "contacto@transportesmx.org";
     const subject = "Cotización de servicio";
     const body = "Hola, me gustaría cotizar un servicio";
     window.location.href = `mailto:${emailAddress}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   };
   
   const handleEmailClickReservar = () => {
-    const emailAddress = "contacto@transportesmx.org"; // Reemplaza con tu correo
-    const subject = "Reserva de servicio";
-    const body = "Hola, me gustaría reservar un servicio";
-    window.location.href = `mailto:${emailAddress}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    router.push('/reservar');
   };
 
   const [currentSlide, setCurrentSlide] = useState(0);
