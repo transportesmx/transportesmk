@@ -2,49 +2,16 @@ import React, { useState, useContext } from 'react';
 import { useReserva } from '@/Context/ReservaContext';
 import { AppContext } from '@/Context/AppContext';
 import { motion } from 'framer-motion';
-import { FaCreditCard, FaStore, FaCalendarAlt, FaArrowLeft, FaLock, FaShieldAlt, FaCheckCircle } from 'react-icons/fa';
-import { SiVisa, SiMastercard } from 'react-icons/si';
+import { FaArrowLeft, FaLock, FaShieldAlt, FaCreditCard, FaStore } from 'react-icons/fa';
 
 export default function PagoCheckout({ onNext, onBack }) {
   const { reserva, dispatch } = useReserva();
-  const { idioma } = useContext(AppContext);
-  const isEN = idioma.nombre === 'EN';
-  const [metodoPago, setMetodoPago] = useState('');
+  const { traduccion } = useContext(AppContext);
+  const t = traduccion?.reservar?.step5 || {};
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const metodosPago = [
-    {
-      id: 'tarjeta',
-      icon: FaCreditCard,
-      nombre: isEN ? 'Credit / Debit Card' : 'Tarjeta de crédito / débito',
-      descripcion: 'Visa, Mastercard, American Express',
-      gradient: 'from-blue-600/15 to-cyan-600/15',
-      border: 'border-blue-500/30',
-      iconColor: 'text-blue-400',
-    },
-    {
-      id: 'oxxo',
-      icon: FaStore,
-      nombre: 'OXXO Pay',
-      descripcion: isEN ? 'Pay with cash at any OXXO store' : 'Paga en efectivo en cualquier OXXO',
-      gradient: 'from-yellow-600/15 to-orange-600/15',
-      border: 'border-yellow-500/30',
-      iconColor: 'text-yellow-400',
-    },
-    {
-      id: 'msi',
-      icon: FaCalendarAlt,
-      nombre: isEN ? 'Monthly installments' : 'Meses sin intereses',
-      descripcion: isEN ? '3, 6 or 12 months with selected cards' : '3, 6 o 12 meses con tarjetas participantes',
-      gradient: 'from-purple-600/15 to-pink-600/15',
-      border: 'border-purple-500/30',
-      iconColor: 'text-purple-400',
-    },
-  ];
-
   const handlePagar = async () => {
-    if (!metodoPago) { setError(isEN ? 'Select a payment method' : 'Selecciona un método de pago'); return; }
     setLoading(true);
     setError('');
 
@@ -63,21 +30,18 @@ export default function PagoCheckout({ onNext, onBack }) {
             duracion: reserva.duracion, clienteNombre: reserva.clienteNombre,
             clienteEmail: reserva.clienteEmail, clienteTelefono: reserva.clienteTelefono,
           },
-          metodoPago,
         }),
       });
 
       const data = await response.json();
 
       if (data.url) {
-        // Stripe Checkout — redirige al usuario a la página de pago de Stripe
         window.location.href = data.url;
       } else {
-        // Modo demo (sin Stripe configurado) — avanza al paso de confirmación
         dispatch({
           type: 'SET_PAGO',
           payload: {
-            metodoPago,
+            metodoPago: 'demo',
             stripeSessionId: data.sessionId || 'demo_' + Date.now(),
             reservaId: data.reservaId || '',
             estadoPago: 'pagado',
@@ -86,137 +50,143 @@ export default function PagoCheckout({ onNext, onBack }) {
         onNext();
       }
     } catch (err) {
-      // Fallback: avanza en modo demo si hay error de red
       console.error('Error al crear sesión de pago:', err);
-      dispatch({
-        type: 'SET_PAGO',
-        payload: { metodoPago, stripeSessionId: 'demo_' + Date.now(), estadoPago: 'pagado' },
-      });
-      onNext();
-    } finally {
+      setError(t.errorConnection || 'Error de conexión. Inténtalo de nuevo.');
       setLoading(false);
     }
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto">
-      <motion.div
-        className="rounded-3xl overflow-hidden shadow-2xl"
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-      >
-        {/* Header */}
-        <div className="bg-gradient-to-r from-emerald-700 via-green-600 to-teal-700 p-5 md:p-6 text-center">
-          <h2 className="text-xl md:text-2xl font-bold">
-            {isEN ? 'Secure Payment' : 'Pago Seguro'}
-          </h2>
-          <p className="text-green-200 text-sm mt-1">
-            {isEN ? 'Choose how you want to pay' : 'Elige cómo deseas pagar'}
+    <div className="max-w-lg mx-auto">
+      <div className="text-center mb-6">
+        <h2 className="text-xl sm:text-2xl font-bold tracking-tight">
+          {t.title || 'Confirmar y pagar'}
+        </h2>
+        <p className="text-white/40 text-sm mt-1">
+          {t.subtitle || 'Revisa tu reserva antes de pagar'}
+        </p>
+      </div>
+
+      <div className="bg-white/[0.03] border border-white/[0.06] rounded-2xl p-5 mb-5 space-y-4">
+        <div className="flex items-start gap-3">
+          <div className="flex flex-col items-center gap-0.5 pt-1">
+            <div className="w-2 h-2 rounded-full bg-emerald-400" />
+            <div className="w-px h-5 bg-white/10" />
+            <div className="w-2 h-2 rounded-full bg-red-400" />
+          </div>
+          <div className="flex-1 min-w-0 space-y-1.5">
+            <p className="text-sm text-white/70 truncate">{reserva.origen}</p>
+            <p className="text-sm text-white/70 truncate">{reserva.destino}</p>
+          </div>
+        </div>
+
+        <div className="h-px bg-white/[0.04]" />
+
+        <div className="grid grid-cols-2 gap-3 text-sm">
+          <div>
+            <p className="text-[10px] text-white/25 uppercase tracking-wider font-medium">{t.date || 'Fecha'}</p>
+            <p className="text-white/60 mt-0.5">{reserva.fechaIda} · {reserva.horaIda}</p>
+          </div>
+          <div>
+            <p className="text-[10px] text-white/25 uppercase tracking-wider font-medium">{t.vehicle || 'Vehículo'}</p>
+            <p className="text-white/60 mt-0.5">{reserva.vehiculoNombre}</p>
+          </div>
+          <div>
+            <p className="text-[10px] text-white/25 uppercase tracking-wider font-medium">{t.passengers || 'Pasajeros'}</p>
+            <p className="text-white/60 mt-0.5">{reserva.numPasajeros}</p>
+          </div>
+          <div>
+            <p className="text-[10px] text-white/25 uppercase tracking-wider font-medium">{t.trip || 'Viaje'}</p>
+            <p className="text-white/60 mt-0.5">
+              {reserva.tipoViaje === 'redondo' ? (t.roundTrip || 'Ida y vuelta') : (t.oneWay || 'Sencillo')}
+            </p>
+          </div>
+        </div>
+
+        {reserva.tipoViaje === 'redondo' && reserva.fechaRegreso && (
+          <>
+            <div className="h-px bg-white/[0.04]" />
+            <div>
+              <p className="text-[10px] text-white/25 uppercase tracking-wider font-medium">{t.return || 'Regreso'}</p>
+              <p className="text-sm text-white/60 mt-0.5">{reserva.fechaRegreso} · {reserva.horaRegreso}</p>
+            </div>
+          </>
+        )}
+
+        <div className="h-px bg-white/[0.04]" />
+
+        <div className="grid grid-cols-1 gap-1 text-sm">
+          <p className="text-[10px] text-white/25 uppercase tracking-wider font-medium">{t.contact || 'Contacto'}</p>
+          <p className="text-white/60">{reserva.clienteNombre}</p>
+          <p className="text-white/40 text-xs">{reserva.clienteEmail} · {reserva.clienteTelefono}</p>
+        </div>
+
+        <div className="h-px bg-white/[0.04]" />
+
+        <div className="flex items-center justify-between">
+          <p className="text-[10px] text-white/25 uppercase tracking-wider font-medium">Total</p>
+          <p className="text-2xl font-bold text-white">
+            ${reserva.precioTotal?.toLocaleString('es-MX')}
+            <span className="text-xs font-normal text-white/25 ml-1">MXN</span>
           </p>
         </div>
+      </div>
 
-        <div className="bg-gradient-to-b from-gray-900/95 to-black/95 p-5 md:p-6 border border-white/5 border-t-0">
-          {/* Total */}
-          <div className="relative overflow-hidden rounded-2xl p-6 mb-6 text-center border border-white/10">
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 via-transparent to-purple-600/10" />
-            <div className="relative z-10">
-              <p className="text-gray-500 text-xs uppercase tracking-widest mb-2">{isEN ? 'Total' : 'Total a pagar'}</p>
-              <p className="text-5xl font-extrabold text-white">
-                ${reserva.precioTotal.toLocaleString('es-MX')}
-              </p>
-              <p className="text-gray-500 text-sm mt-1">MXN</p>
-              <div className="flex flex-wrap justify-center gap-2 mt-3 text-[11px] text-gray-500">
-                <span>{reserva.vehiculoNombre}</span>
-                <span>•</span>
-                <span>{reserva.distancia}</span>
-                <span>•</span>
-                <span>{reserva.tipoViaje === 'redondo' ? (isEN ? 'Round trip' : 'Ida y vuelta') : (isEN ? 'One way' : 'Sencillo')}</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Métodos de pago */}
-          <div className="space-y-3 mb-6">
-            {metodosPago.map((metodo, index) => {
-              const Icon = metodo.icon;
-              const isSelected = metodoPago === metodo.id;
-
-              return (
-                <motion.button
-                  key={metodo.id}
-                  onClick={() => { setMetodoPago(metodo.id); setError(''); }}
-                  className={`w-full flex items-center gap-4 p-4 rounded-xl border-2 transition-all duration-300 text-left ${
-                    isSelected
-                      ? `${metodo.border} bg-gradient-to-r ${metodo.gradient} shadow-lg`
-                      : 'border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/8'
-                  }`}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <div className={`w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center ${metodo.iconColor} border border-white/10`}>
-                    <Icon className="text-xl" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-bold text-white">{metodo.nombre}</p>
-                    <p className="text-xs text-gray-400">{metodo.descripcion}</p>
-                  </div>
-                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
-                    isSelected ? 'bg-green-500 border-green-500' : 'border-gray-600'
-                  }`}>
-                    {isSelected && <FaCheckCircle className="text-white text-[10px]" />}
-                  </div>
-                </motion.button>
-              );
-            })}
-          </div>
-
-          {/* Seguridad */}
-          <div className="flex items-center justify-center gap-4 text-xs text-gray-500 mb-5 p-3 bg-white/5 rounded-xl border border-white/5">
-            <div className="flex items-center gap-1.5">
-              <FaLock className="text-green-400" />
-              <span>SSL 256-bit</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <FaShieldAlt className="text-blue-400" />
-              <span>Stripe</span>
-            </div>
-          </div>
-
-          {error && (
-            <motion.div className="bg-red-500/10 border border-red-500/30 text-red-400 p-3 rounded-xl text-sm text-center mb-4"
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-              {error}
-            </motion.div>
-          )}
-
-          {/* Botones */}
-          <div className="flex gap-3">
-            <button onClick={onBack} disabled={loading}
-              className="flex items-center gap-2 px-5 py-3.5 bg-white/5 hover:bg-white/10 rounded-xl transition text-gray-400 border border-white/10 font-medium disabled:opacity-50">
-              <FaArrowLeft className="text-sm" /> {isEN ? 'Back' : 'Atrás'}
-            </button>
-            <motion.button onClick={handlePagar} disabled={loading || !metodoPago}
-              className="flex-1 p-3.5 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 disabled:from-gray-700 disabled:to-gray-700 text-white font-bold rounded-xl transition-all shadow-lg text-lg flex items-center justify-center gap-2"
-              whileHover={!loading && metodoPago ? { scale: 1.01 } : {}}
-              whileTap={!loading && metodoPago ? { scale: 0.99 } : {}}
-            >
-              {loading ? (
-                <>
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  {isEN ? 'Processing...' : 'Procesando...'}
-                </>
-              ) : (
-                <>
-                  <FaLock className="text-sm" />
-                  {isEN ? 'Pay now' : 'Pagar ahora'}
-                </>
-              )}
-            </motion.button>
-          </div>
+      <div className="flex items-center justify-center gap-4 text-[11px] text-white/20 mb-5">
+        <div className="flex items-center gap-1.5">
+          <FaCreditCard className="text-xs" />
+          <span>{t.cards || 'Tarjetas'}</span>
         </div>
-      </motion.div>
+        <span>·</span>
+        <div className="flex items-center gap-1.5">
+          <FaStore className="text-xs" />
+          <span>OXXO</span>
+        </div>
+        <span>·</span>
+        <div className="flex items-center gap-1.5">
+          <FaLock className="text-emerald-500/50 text-xs" />
+          <span>SSL</span>
+        </div>
+        <span>·</span>
+        <div className="flex items-center gap-1.5">
+          <FaShieldAlt className="text-blue-400/50 text-xs" />
+          <span>Stripe</span>
+        </div>
+      </div>
+
+      {error && (
+        <motion.p
+          className="text-red-400 text-sm text-center bg-red-500/[0.06] border border-red-500/[0.1] rounded-lg p-3 mb-4"
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+        >
+          {error}
+        </motion.p>
+      )}
+
+      <div className="flex gap-3">
+        <button onClick={onBack} disabled={loading}
+          className="px-5 py-3 text-sm text-white/50 hover:text-white/70 bg-white/[0.04] hover:bg-white/[0.06] border border-white/[0.06] rounded-lg transition-all flex items-center gap-2 disabled:opacity-30">
+          <FaArrowLeft className="text-xs" /> {t.back || 'Atrás'}
+        </button>
+        <button onClick={handlePagar} disabled={loading}
+          className="flex-1 py-3 bg-white text-[#0a0a0f] font-semibold rounded-lg text-sm hover:bg-white/90 active:scale-[0.99] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+          {loading ? (
+            <>
+              <div className="w-4 h-4 border-2 border-[#0a0a0f]/20 border-t-[#0a0a0f] rounded-full animate-spin" />
+              {t.redirecting || 'Redirigiendo...'}
+            </>
+          ) : (
+            <>
+              <FaLock className="text-xs" />
+              {t.payNow || 'Pagar ahora'}
+            </>
+          )}
+        </button>
+      </div>
+
+      <p className="text-center text-[11px] text-white/15 mt-4">
+        {t.redirectNote || 'Serás redirigido a Stripe para completar el pago de forma segura.'}
+      </p>
     </div>
   );
 }

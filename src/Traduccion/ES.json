@@ -688,5 +688,125 @@
       "privacy": "Política de Privacidad"
     },
     "backToTop": "Volver arriba"
+  },
+  "reservar": {
+    "pageTitle": "Reservar traslado",
+    "steps": {
+      "service": "Servicio",
+      "route": "Ruta",
+      "vehicle": "Vehículo",
+      "details": "Datos",
+      "payment": "Pago"
+    },
+    "step1": {
+      "title": "Reserva tu traslado",
+      "subtitle": "Precio al instante · Pago seguro · Puerta a puerta",
+      "pickup": "Recogida",
+      "destination": "Destino",
+      "pickupPlaceholder": "Aeropuerto, hotel, dirección...",
+      "loadingMaps": "Cargando Maps...",
+      "date": "Fecha",
+      "time": "Hora",
+      "passengers": "Pasajeros",
+      "tripType": "Tipo",
+      "oneWay": "Sencillo",
+      "roundTrip": "Ida y vuelta",
+      "returnDate": "Fecha regreso",
+      "returnTime": "Hora regreso",
+      "submit": "Ver ruta y precios",
+      "errorPickup": "Selecciona un lugar de recogida válido",
+      "errorDestination": "Selecciona un destino válido",
+      "errorDate": "Selecciona una fecha",
+      "errorReturnDate": "Selecciona fecha de regreso"
+    },
+    "step2": {
+      "title": "Tu ruta",
+      "subtitle": "Verifica antes de elegir tu vehículo",
+      "pickup": "Recogida",
+      "destination": "Destino",
+      "calculating": "Calculando ruta...",
+      "errorRoute": "No se pudo calcular la ruta.",
+      "distance": "Distancia",
+      "estTime": "Tiempo est.",
+      "disclaimer": "* Los tiempos pueden variar por tráfico",
+      "back": "Atrás",
+      "next": "Elegir vehículo"
+    },
+    "step3": {
+      "title": "Selecciona tu vehículo",
+      "optionsFor": "opciones para",
+      "passenger": "pasajero(s)",
+      "popular": "Popular",
+      "bags": "maletas",
+      "roundTrip": "Ida y vuelta",
+      "oneWay": "Sencillo",
+      "discountIncluded": "10% desc. incluido",
+      "unavailable": "No disponible",
+      "noVehicles": "No hay vehículos para este número de pasajeros",
+      "back": "Atrás",
+      "pax": "pax"
+    },
+    "step4": {
+      "title": "Tus datos",
+      "subtitle": "Necesitamos tu información para confirmar",
+      "summary": "Resumen del servicio",
+      "fullName": "Nombre completo",
+      "namePlaceholder": "Juan Pérez",
+      "email": "Correo electrónico",
+      "emailNote": "Aquí recibirás tu confirmación y hoja de servicio",
+      "phone": "Teléfono",
+      "privacy": "Tus datos están protegidos con encriptación SSL. Nunca los compartiremos.",
+      "errorName": "Ingresa tu nombre completo",
+      "errorEmail": "Ingresa un email válido",
+      "errorPhone": "Ingresa un teléfono válido (10 dígitos)",
+      "back": "Atrás",
+      "next": "Continuar al pago"
+    },
+    "step5": {
+      "title": "Confirmar y pagar",
+      "subtitle": "Revisa tu reserva antes de pagar",
+      "date": "Fecha",
+      "vehicle": "Vehículo",
+      "passengers": "Pasajeros",
+      "trip": "Viaje",
+      "roundTrip": "Ida y vuelta",
+      "oneWay": "Sencillo",
+      "return": "Regreso",
+      "contact": "Contacto",
+      "cards": "Tarjetas",
+      "errorConnection": "Error de conexión. Inténtalo de nuevo.",
+      "back": "Atrás",
+      "payNow": "Pagar ahora",
+      "redirecting": "Redirigiendo...",
+      "redirectNote": "Serás redirigido a Stripe para completar el pago de forma segura."
+    },
+    "step6": {
+      "title": "Reserva confirmada",
+      "subtitle": "Tu traslado ha sido reservado exitosamente",
+      "booking": "Reserva",
+      "date": "Fecha",
+      "vehicle": "Vehículo",
+      "return": "Regreso",
+      "newBooking": "Nueva reserva",
+      "home": "Inicio",
+      "emailNote": "Se envió un correo de confirmación con tu hoja de servicio a tu email."
+    },
+    "footerInfo": {
+      "secure": "Pago seguro con Stripe",
+      "reviews": "+500 reseñas positivas",
+      "support": "Soporte 24/7"
+    },
+    "exito": {
+      "pageTitle": "¡Pago exitoso!",
+      "title": "¡Pago Exitoso!",
+      "subtitle": "Tu reserva ha sido confirmada",
+      "verifying": "Verificando pago...",
+      "verifyingNote": "Estamos confirmando tu pago y enviando tu hoja de servicio...",
+      "processing": "Generando PDF y enviando confirmación...",
+      "emailNote": "Recibirás un correo de confirmación con los detalles de tu traslado.",
+      "transactionId": "ID de transacción",
+      "whatsapp": "Confirmar por WhatsApp",
+      "home": "Volver al inicio"
+    }
   }
 }

@@ -4,18 +4,14 @@ import { useReserva } from '@/Context/ReservaContext';
 import { AppContext } from '@/Context/AppContext';
 import { defaultCenter, mapOptions, routeOptions, calcularRuta } from '@/lib/google-maps';
 import { motion } from 'framer-motion';
-import { FaRoute, FaClock, FaMapMarkerAlt, FaArrowRight, FaArrowLeft, FaCheckCircle } from 'react-icons/fa';
+import { FaRoute, FaClock, FaArrowRight, FaArrowLeft } from 'react-icons/fa';
 
-const mapContainerStyle = {
-  width: '100%',
-  height: '380px',
-  borderRadius: '16px',
-};
+const mapContainerStyle = { width: '100%', height: '100%' };
 
 export default function MapaRuta({ onNext, onBack, isLoaded }) {
   const { reserva, dispatch } = useReserva();
-  const { idioma } = useContext(AppContext);
-  const isEN = idioma.nombre === 'EN';
+  const { traduccion } = useContext(AppContext);
+  const t = traduccion?.reservar?.step2 || {};
 
   const [directions, setDirections] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -42,7 +38,7 @@ export default function MapaRuta({ onNext, onBack, isLoaded }) {
           },
         });
       } catch (err) {
-        setError(isEN ? 'Could not calculate route.' : 'No se pudo calcular la ruta.');
+        setError(t.errorRoute || 'No se pudo calcular la ruta.');
       } finally {
         setLoading(false);
       }
@@ -51,116 +47,94 @@ export default function MapaRuta({ onNext, onBack, isLoaded }) {
   }, [isLoaded, reserva.origenCoords, reserva.destinoCoords]);
 
   return (
-    <div className="w-full max-w-3xl mx-auto">
-      <motion.div
-        className="rounded-3xl overflow-hidden shadow-2xl"
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-      >
-        {/* Header */}
-        <div className="bg-gradient-to-r from-indigo-700 via-blue-600 to-cyan-600 p-5 md:p-6">
-          <h2 className="text-xl md:text-2xl font-bold text-center">
-            {isEN ? 'Your route' : 'Tu ruta'}
-          </h2>
-          <p className="text-blue-200 text-center text-sm mt-1">
-            {isEN ? 'Review your route before choosing a vehicle' : 'Revisa tu ruta antes de elegir vehículo'}
-          </p>
-        </div>
+    <div className="max-w-3xl mx-auto">
+      <div className="text-center mb-6">
+        <h2 className="text-xl sm:text-2xl font-bold tracking-tight">
+          {t.title || 'Tu ruta'}
+        </h2>
+        <p className="text-white/40 text-sm mt-1">
+          {t.subtitle || 'Verifica antes de elegir tu vehículo'}
+        </p>
+      </div>
 
-        <div className="bg-gradient-to-b from-gray-900/95 to-black/95 p-5 md:p-6 border border-white/5 border-t-0">
-          {/* Origen → Destino */}
-          <div className="flex items-center gap-3 mb-5">
-            <div className="flex flex-col items-center gap-1">
-              <div className="w-3 h-3 rounded-full bg-green-400 shadow-lg shadow-green-400/50" />
-              <div className="w-px h-8 bg-gradient-to-b from-green-400 to-red-400" />
-              <div className="w-3 h-3 rounded-full bg-red-400 shadow-lg shadow-red-400/50" />
+      <div className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-4 mb-4">
+        <div className="flex items-start gap-3">
+          <div className="flex flex-col items-center gap-0.5 pt-0.5">
+            <div className="w-2 h-2 rounded-full bg-emerald-400" />
+            <div className="w-px h-6 bg-white/10" />
+            <div className="w-2 h-2 rounded-full bg-red-400" />
+          </div>
+          <div className="flex-1 min-w-0 space-y-2">
+            <div>
+              <p className="text-[10px] text-white/30 uppercase tracking-wider font-medium">{t.pickup || 'Recogida'}</p>
+              <p className="text-sm text-white/80 truncate">{reserva.origen}</p>
             </div>
-            <div className="flex-1 space-y-3">
-              <div>
-                <p className="text-[10px] text-gray-500 uppercase tracking-wider">{isEN ? 'Pickup' : 'Recogida'}</p>
-                <p className="text-sm text-white font-medium truncate">{reserva.origen}</p>
-              </div>
-              <div>
-                <p className="text-[10px] text-gray-500 uppercase tracking-wider">{isEN ? 'Destination' : 'Destino'}</p>
-                <p className="text-sm text-white font-medium truncate">{reserva.destino}</p>
-              </div>
+            <div>
+              <p className="text-[10px] text-white/30 uppercase tracking-wider font-medium">{t.destination || 'Destino'}</p>
+              <p className="text-sm text-white/80 truncate">{reserva.destino}</p>
             </div>
           </div>
-
-          {/* Mapa */}
-          {loading ? (
-            <div className="w-full h-[380px] rounded-2xl bg-white/5 flex items-center justify-center border border-white/10">
-              <div className="flex flex-col items-center gap-4">
-                <div className="relative">
-                  <div className="w-14 h-14 border-4 border-blue-500/30 rounded-full" />
-                  <div className="w-14 h-14 border-4 border-blue-500 border-t-transparent rounded-full animate-spin absolute inset-0" />
-                </div>
-                <p className="text-gray-400 text-sm font-medium">
-                  {isEN ? 'Calculating your route...' : 'Calculando tu ruta...'}
-                </p>
-              </div>
-            </div>
-          ) : error ? (
-            <div className="w-full h-[380px] rounded-2xl bg-red-500/5 flex items-center justify-center border border-red-500/20">
-              <p className="text-red-400 text-center px-6">{error}</p>
-            </div>
-          ) : isLoaded ? (
-            <div className="rounded-2xl overflow-hidden border border-white/10 shadow-inner">
-              <GoogleMap mapContainerStyle={mapContainerStyle} center={defaultCenter} zoom={8} options={mapOptions}>
-                {directions && <DirectionsRenderer directions={directions} options={{ polylineOptions: routeOptions }} />}
-              </GoogleMap>
-            </div>
-          ) : null}
-
-          {/* Datos de distancia y tiempo */}
-          {!loading && !error && reserva.distancia && (
-            <div className="grid grid-cols-2 gap-4 mt-5">
-              <motion.div
-                className="relative overflow-hidden rounded-2xl p-5 text-center border border-blue-500/20"
-                initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }}
-              >
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 to-blue-800/10" />
-                <div className="relative z-10">
-                  <FaRoute className="text-blue-400 text-2xl mx-auto mb-2" />
-                  <p className="text-[11px] text-gray-500 uppercase tracking-wider">{isEN ? 'Distance' : 'Distancia'}</p>
-                  <p className="text-2xl font-bold text-white mt-1">{reserva.distancia}</p>
-                </div>
-              </motion.div>
-
-              <motion.div
-                className="relative overflow-hidden rounded-2xl p-5 text-center border border-purple-500/20"
-                initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }}
-              >
-                <div className="absolute inset-0 bg-gradient-to-br from-purple-600/10 to-purple-800/10" />
-                <div className="relative z-10">
-                  <FaClock className="text-purple-400 text-2xl mx-auto mb-2" />
-                  <p className="text-[11px] text-gray-500 uppercase tracking-wider">{isEN ? 'Estimated time' : 'Tiempo estimado'}</p>
-                  <p className="text-2xl font-bold text-white mt-1">{reserva.duracion}</p>
-                </div>
-              </motion.div>
-            </div>
-          )}
-
-          <p className="text-gray-600 text-[11px] text-center mt-3">
-            {isEN ? '* Estimates may vary due to traffic conditions' : '* Los estimados pueden variar por condiciones de tráfico'}
-          </p>
-
-          {/* Botones */}
-          <div className="flex gap-3 mt-6">
-            <button onClick={onBack}
-              className="flex items-center gap-2 px-5 py-3.5 bg-white/5 hover:bg-white/10 rounded-xl transition text-gray-400 border border-white/10 font-medium">
-              <FaArrowLeft className="text-sm" /> {isEN ? 'Back' : 'Atrás'}
-            </button>
-            <motion.button onClick={onNext} disabled={loading || !!error}
-              className="flex-1 p-3.5 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 disabled:from-gray-700 disabled:to-gray-700 text-white font-bold rounded-xl transition-all shadow-lg text-lg flex items-center justify-center gap-2 group"
-              whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }}
-            >
-              {isEN ? 'Choose vehicle' : 'Elegir vehículo'}
-              <FaArrowRight className="group-hover:translate-x-1 transition-transform" />
-            </motion.button>
-          </div>
         </div>
-      </motion.div>
+      </div>
+
+      <div className="rounded-xl overflow-hidden border border-white/[0.06] mb-4">
+        {loading ? (
+          <div className="w-full h-[320px] sm:h-[380px] bg-white/[0.02] flex items-center justify-center">
+            <div className="flex flex-col items-center gap-3">
+              <div className="w-8 h-8 border-2 border-blue-500/30 border-t-blue-500 rounded-full animate-spin" />
+              <p className="text-white/30 text-sm">{t.calculating || 'Calculando ruta...'}</p>
+            </div>
+          </div>
+        ) : error ? (
+          <div className="w-full h-[320px] sm:h-[380px] bg-red-500/[0.03] flex items-center justify-center">
+            <p className="text-red-400/80 text-sm text-center px-6">{error}</p>
+          </div>
+        ) : isLoaded ? (
+          <div className="h-[320px] sm:h-[380px]">
+            <GoogleMap mapContainerStyle={mapContainerStyle} center={defaultCenter} zoom={8} options={mapOptions}>
+              {directions && <DirectionsRenderer directions={directions} options={{ polylineOptions: routeOptions }} />}
+            </GoogleMap>
+          </div>
+        ) : null}
+      </div>
+
+      {!loading && !error && reserva.distancia && (
+        <div className="grid grid-cols-2 gap-3 mb-4">
+          <motion.div
+            className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-4 text-center"
+            initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+          >
+            <FaRoute className="text-blue-400 text-lg mx-auto mb-1.5" />
+            <p className="text-[10px] text-white/30 uppercase tracking-wider font-medium">{t.distance || 'Distancia'}</p>
+            <p className="text-xl font-bold text-white mt-0.5">{reserva.distancia}</p>
+          </motion.div>
+
+          <motion.div
+            className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-4 text-center"
+            initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}
+          >
+            <FaClock className="text-purple-400 text-lg mx-auto mb-1.5" />
+            <p className="text-[10px] text-white/30 uppercase tracking-wider font-medium">{t.estTime || 'Tiempo est.'}</p>
+            <p className="text-xl font-bold text-white mt-0.5">{reserva.duracion}</p>
+          </motion.div>
+        </div>
+      )}
+
+      <p className="text-white/15 text-[11px] text-center mb-5">
+        {t.disclaimer || '* Los tiempos pueden variar por tráfico'}
+      </p>
+
+      <div className="flex gap-3">
+        <button onClick={onBack}
+          className="px-5 py-3 text-sm text-white/50 hover:text-white/70 bg-white/[0.04] hover:bg-white/[0.06] border border-white/[0.06] rounded-lg transition-all flex items-center gap-2">
+          <FaArrowLeft className="text-xs" /> {t.back || 'Atrás'}
+        </button>
+        <button onClick={onNext} disabled={loading || !!error}
+          className="flex-1 py-3 bg-white text-[#0a0a0f] font-semibold rounded-lg text-sm hover:bg-white/90 active:scale-[0.99] transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+          {t.next || 'Elegir vehículo'}
+          <FaArrowRight className="text-xs" />
+        </button>
+      </div>
     </div>
   );
 }

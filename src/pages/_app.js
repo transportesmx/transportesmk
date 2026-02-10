@@ -9,11 +9,15 @@ export default function App({ Component, pageProps }) {
   const router = useRouter();
   const isReservar = router.pathname.startsWith('/reservar');
 
-  // La página de reservas tiene su propio layout (sin Navbar/Footer)
   if (isReservar) {
     return (
       <AppProvider>
-        <Component {...pageProps} />
+        <div className="bg-[#0a0a0f] min-h-screen">
+          <div className="max-w-[1440px] min-w-sm mx-auto text-white">
+            <Navbar />
+            <Component {...pageProps} />
+          </div>
+        </div>
       </AppProvider>
     );
   }

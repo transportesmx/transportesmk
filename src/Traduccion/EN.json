@@ -673,6 +673,126 @@
         "privacy": "Privacy Policy"
       },
       "backToTop": "Back to Top"
+    },
+    "reservar": {
+      "pageTitle": "Book a transfer",
+      "steps": {
+        "service": "Service",
+        "route": "Route",
+        "vehicle": "Vehicle",
+        "details": "Details",
+        "payment": "Payment"
+      },
+      "step1": {
+        "title": "Book your transfer",
+        "subtitle": "Instant pricing · Secure payment · Door to door",
+        "pickup": "Pickup",
+        "destination": "Destination",
+        "pickupPlaceholder": "Airport, hotel, address...",
+        "loadingMaps": "Loading Maps...",
+        "date": "Date",
+        "time": "Time",
+        "passengers": "Passengers",
+        "tripType": "Trip type",
+        "oneWay": "One way",
+        "roundTrip": "Round trip",
+        "returnDate": "Return date",
+        "returnTime": "Return time",
+        "submit": "See route & prices",
+        "errorPickup": "Select a valid pickup location",
+        "errorDestination": "Select a valid destination",
+        "errorDate": "Select a date",
+        "errorReturnDate": "Select a return date"
+      },
+      "step2": {
+        "title": "Your route",
+        "subtitle": "Verify before choosing your vehicle",
+        "pickup": "Pickup",
+        "destination": "Destination",
+        "calculating": "Calculating route...",
+        "errorRoute": "Could not calculate the route.",
+        "distance": "Distance",
+        "estTime": "Est. time",
+        "disclaimer": "* Estimates may vary due to traffic",
+        "back": "Back",
+        "next": "Choose vehicle"
+      },
+      "step3": {
+        "title": "Select your vehicle",
+        "optionsFor": "options for",
+        "passenger": "passenger(s)",
+        "popular": "Popular",
+        "bags": "bags",
+        "roundTrip": "Round trip",
+        "oneWay": "One way",
+        "discountIncluded": "10% discount included",
+        "unavailable": "Unavailable",
+        "noVehicles": "No vehicles available for this number of passengers",
+        "back": "Back",
+        "pax": "pax"
+      },
+      "step4": {
+        "title": "Your details",
+        "subtitle": "We need your info to confirm the booking",
+        "summary": "Service summary",
+        "fullName": "Full name",
+        "namePlaceholder": "John Doe",
+        "email": "Email",
+        "emailNote": "You will receive your confirmation and PDF here",
+        "phone": "Phone",
+        "privacy": "Your data is protected with SSL encryption. We will never share it.",
+        "errorName": "Enter your full name",
+        "errorEmail": "Enter a valid email",
+        "errorPhone": "Enter a valid phone number",
+        "back": "Back",
+        "next": "Continue to payment"
+      },
+      "step5": {
+        "title": "Confirm & Pay",
+        "subtitle": "Review your booking before payment",
+        "date": "Date",
+        "vehicle": "Vehicle",
+        "passengers": "Passengers",
+        "trip": "Trip",
+        "roundTrip": "Round trip",
+        "oneWay": "One way",
+        "return": "Return",
+        "contact": "Contact",
+        "cards": "Cards",
+        "errorConnection": "Connection error. Please try again.",
+        "back": "Back",
+        "payNow": "Pay now",
+        "redirecting": "Redirecting...",
+        "redirectNote": "You will be redirected to Stripe to complete the payment securely."
+      },
+      "step6": {
+        "title": "Booking confirmed",
+        "subtitle": "Your transfer has been booked successfully",
+        "booking": "Booking",
+        "date": "Date",
+        "vehicle": "Vehicle",
+        "return": "Return",
+        "newBooking": "New booking",
+        "home": "Home",
+        "emailNote": "A confirmation email with your service sheet has been sent to your inbox."
+      },
+      "footerInfo": {
+        "secure": "Secure payment with Stripe",
+        "reviews": "+500 positive reviews",
+        "support": "24/7 Support"
+      },
+      "exito": {
+        "pageTitle": "Payment successful!",
+        "title": "Payment Successful!",
+        "subtitle": "Your booking has been confirmed",
+        "verifying": "Verifying payment...",
+        "verifyingNote": "We are confirming your payment and sending your service sheet...",
+        "processing": "Generating PDF and sending confirmation...",
+        "emailNote": "You will receive a confirmation email with your transfer details.",
+        "transactionId": "Transaction ID",
+        "whatsapp": "Confirm via WhatsApp",
+        "home": "Back to home"
+      }
     }
   }
   

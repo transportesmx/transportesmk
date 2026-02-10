@@ -6,9 +6,9 @@ export default async function handler(req, res) {
     return res.status(405).end('Method Not Allowed');
   }
 
-  const { reserva, metodoPago } = req.body;
+  const { reserva } = req.body;
 
-  if (!reserva || !metodoPago) {
+  if (!reserva) {
     return res.status(400).json({ message: 'Faltan datos de la reserva' });
   }
 
@@ -36,15 +36,13 @@ export default async function handler(req, res) {
         vehiculo_id: reserva.vehiculoId,
         vehiculo_nombre: reserva.vehiculoNombre,
         precio_total: reserva.precioTotal,
-        metodo_pago: metodoPago,
-        estado_pago: 'pendiente',
       }).select().single();
 
       if (error) {
         console.error('[Supabase] Error guardando reserva:', error);
       } else {
         reservaId = data.id;
-        console.log('[Supabase] ✅ Reserva guardada:', reservaId);
+        console.log('[Supabase] Reserva guardada:', reservaId);
       }
     }
 
@@ -62,11 +60,8 @@ export default async function handler(req, res) {
     const Stripe = (await import('stripe')).default;
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-    const paymentMethodTypes = ['card'];
-    if (metodoPago === 'oxxo') paymentMethodTypes.push('oxxo');
-
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: paymentMethodTypes,
+      payment_method_types: ['card', 'oxxo'],
       line_items: [
         {
           price_data: {
@@ -93,16 +88,15 @@ export default async function handler(req, res) {
         fechaIda: reserva.fechaIda,
         horaIda: reserva.horaIda,
         vehiculoNombre: reserva.vehiculoNombre,
+        vehiculoId: reserva.vehiculoId || '',
         tipoViaje: reserva.tipoViaje,
         numPasajeros: String(reserva.numPasajeros),
         distancia: reserva.distancia || '',
         duracion: reserva.duracion || '',
+        fechaRegreso: reserva.fechaRegreso || '',
+        horaRegreso: reserva.horaRegreso || '',
+        precioTotal: String(reserva.precioTotal),
       },
-      ...(metodoPago === 'msi' && {
-        payment_method_options: {
-          card: { installments: { enabled: true } },
-        },
-      }),
     });
 
     // 4. Actualizar reserva con el session ID de Stripe
@@ -112,7 +106,7 @@ export default async function handler(req, res) {
       }).eq('id', reservaId);
     }
 
-    console.log('[Stripe] ✅ Sesión creada:', session.id);
+    console.log('[Stripe] Sesión creada:', session.id);
     return res.status(200).json({ url: session.url, sessionId: session.id, reservaId });
   } catch (error) {
     console.error('Error creando sesión de pago:', error);

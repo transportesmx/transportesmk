@@ -1,13 +1,11 @@
 import { getServiceSupabase } from '@/lib/supabase';
 import { crearEventoCalendario } from '@/lib/google-calendar';
+import { enviarEmailConfirmacion } from '@/lib/email';
 
 export const config = {
   api: { bodyParser: false },
 };
 
-/**
- * Lee el body raw de la request
- */
 function readRawBody(req) {
   return new Promise((resolve, reject) => {
     const chunks = [];
@@ -15,6 +13,18 @@ function readRawBody(req) {
     req.on('end', () => resolve(Buffer.concat(chunks)));
     req.on('error', reject);
   });
+}
+
+async function generarPDFBuffer(reservaData) {
+  try {
+    const { generarHojaServicio } = await import('@/lib/pdf-generator');
+    const doc = generarHojaServicio(reservaData, 'es');
+    const arrayBuffer = doc.output('arraybuffer');
+    return Buffer.from(arrayBuffer);
+  } catch (err) {
+    console.error('[PDF] Error generando PDF:', err.message);
+    return null;
+  }
 }
 
 export default async function handler(req, res) {
@@ -39,58 +49,75 @@ export default async function handler(req, res) {
     switch (event.type) {
       case 'checkout.session.completed': {
         const session = event.data.object;
-        const metadata = session.metadata || {};
-        console.log('✅ Pago completado:', session.id);
-        console.log('   Reserva ID:', metadata.reservaId);
+        const meta = session.metadata || {};
+        console.log('[Webhook] Pago completado:', session.id);
 
         const supabase = getServiceSupabase();
 
-        // 1. Actualizar reserva en Supabase
-        if (supabase && metadata.reservaId) {
-          const { error } = await supabase.from('reservas').update({
-            estado: 'pagada',
-            estado_pago: 'pagado',
-            stripe_payment_intent: session.payment_intent,
-          }).eq('id', metadata.reservaId);
+        // Verificar si ya fue procesado por verificar-sesion
+        if (supabase && meta.reservaId) {
+          const { data: reserva } = await supabase
+            .from('reservas')
+            .select('estado')
+            .eq('id', meta.reservaId)
+            .single();
 
-          if (error) {
-            console.error('[Supabase] Error actualizando reserva:', error);
-          } else {
-            console.log('[Supabase] ✅ Reserva actualizada a pagada');
+          if (reserva?.estado === 'confirmada') {
+            console.log('[Webhook] Ya procesado por verificar-sesion, omitiendo');
+            break;
           }
         }
 
-        // 2. Crear evento en Google Calendar
-        try {
-          const eventId = await crearEventoCalendario({
-            clienteNombre: metadata.clienteNombre,
-            clienteEmail: session.customer_email,
-            clienteTelefono: metadata.clienteTelefono,
-            origen: metadata.origen,
-            destino: metadata.destino,
-            fechaIda: metadata.fechaIda,
-            horaIda: metadata.horaIda,
-            vehiculoNombre: metadata.vehiculoNombre,
-            numPasajeros: metadata.numPasajeros,
-            precioTotal: session.amount_total / 100,
-            distancia: metadata.distancia,
-            duracion: metadata.duracion,
-            tipoViaje: metadata.tipoViaje,
-          });
+        // Procesar post-pago
+        if (supabase && meta.reservaId) {
+          try {
+            await supabase.from('reservas').update({ estado: 'pagada' }).eq('id', meta.reservaId);
+            console.log('[Supabase] Reserva actualizada a pagada');
+          } catch (err) {
+            console.error('[Supabase] Error:', err.message);
+          }
+        }
 
-          if (eventId && supabase && metadata.reservaId) {
-            await supabase.from('reservas').update({
-              google_calendar_event_id: eventId,
-              estado: 'confirmada',
-            }).eq('id', metadata.reservaId);
-            console.log('[Calendar] ✅ Evento creado y reserva confirmada');
+        const reservaData = {
+          id: meta.reservaId || session.id.slice(-8),
+          clienteNombre: meta.clienteNombre || '',
+          clienteEmail: session.customer_email || '',
+          clienteTelefono: meta.clienteTelefono || '',
+          origen: meta.origen || '',
+          destino: meta.destino || '',
+          fechaIda: meta.fechaIda || '',
+          horaIda: meta.horaIda || '',
+          vehiculoNombre: meta.vehiculoNombre || '',
+          vehiculoId: meta.vehiculoId || '',
+          numPasajeros: meta.numPasajeros || '',
+          precioTotal: session.amount_total / 100,
+          distancia: meta.distancia || '',
+          duracion: meta.duracion || '',
+          tipoViaje: meta.tipoViaje || 'sencillo',
+          fechaRegreso: meta.fechaRegreso || '',
+          horaRegreso: meta.horaRegreso || '',
+          metodoPago: session.payment_method_types?.[0] || 'tarjeta',
+          estadoPago: 'pagado',
+        };
+
+        const pdfBuffer = await generarPDFBuffer(reservaData);
+        console.log('[PDF]', pdfBuffer ? `Generado (${pdfBuffer.length} bytes)` : 'No se pudo generar');
+
+        try {
+          await enviarEmailConfirmacion(reservaData, pdfBuffer);
+        } catch (emailErr) {
+          console.error('[Email] Error:', emailErr.message);
+        }
+
+        try {
+          const eventId = await crearEventoCalendario(reservaData);
+          if (eventId && supabase && meta.reservaId) {
+            await supabase.from('reservas').update({ estado: 'confirmada' }).eq('id', meta.reservaId);
+            console.log('[Calendar] Evento creado y reserva confirmada');
           }
         } catch (calError) {
-          console.error('[Calendar] Error creando evento:', calError.message);
+          console.error('[Calendar] Error:', calError.message);
         }
-
-        // 3. TODO: Enviar email de confirmación con Resend
-        // ...
 
         break;
       }
