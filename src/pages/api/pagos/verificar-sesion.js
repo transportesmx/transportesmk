@@ -5,10 +5,10 @@ import { enviarEmailConfirmacion } from '@/lib/email';
 /**
  * Genera el PDF en el servidor (Buffer) para adjuntar al email
  */
-async function generarPDFBuffer(reservaData) {
+async function generarPDFBuffer(reservaData, lang = 'es') {
   try {
     const { generarHojaServicio } = await import('@/lib/pdf-generator');
-    const doc = generarHojaServicio(reservaData, 'es');
+    const doc = generarHojaServicio(reservaData, lang);
     const arrayBuffer = doc.output('arraybuffer');
     return Buffer.from(arrayBuffer);
   } catch (err) {
@@ -23,6 +23,7 @@ async function generarPDFBuffer(reservaData) {
  */
 async function procesarPostPago(session) {
   const meta = session.metadata || {};
+  const lang = meta.lang || 'es';
   const supabase = getServiceSupabase();
 
   // Verificar que no se haya procesado ya
@@ -34,7 +35,6 @@ async function procesarPostPago(session) {
       .single();
 
     if (reserva?.estado === 'confirmada' || reserva?.estado === 'pagada') {
-      // Ya fue procesada, verificar si ya se envió email
       if (reserva.estado === 'confirmada') {
         console.log('[Verificar] Reserva ya confirmada, omitiendo');
         return { already_processed: true };
@@ -42,7 +42,7 @@ async function procesarPostPago(session) {
     }
   }
 
-  console.log('[Verificar] Procesando post-pago para sesión:', session.id);
+  console.log('[Verificar] Procesando post-pago para sesión:', session.id, '| Idioma:', lang);
 
   // 1. Actualizar reserva en Supabase a "pagada"
   if (supabase && meta.reservaId) {
@@ -79,22 +79,22 @@ async function procesarPostPago(session) {
     estadoPago: 'pagado',
   };
 
-  // 2. Generar PDF
-  const pdfBuffer = await generarPDFBuffer(reservaData);
-  console.log('[PDF]', pdfBuffer ? `Generado (${pdfBuffer.length} bytes)` : 'No se pudo generar');
+  // 2. Generar PDF en el idioma correspondiente
+  const pdfBuffer = await generarPDFBuffer(reservaData, lang);
+  console.log('[PDF]', pdfBuffer ? `Generado (${pdfBuffer.length} bytes) [${lang}]` : 'No se pudo generar');
 
-  // 3. Enviar emails
+  // 3. Enviar emails en el idioma correspondiente
   let emailResult = null;
   try {
-    emailResult = await enviarEmailConfirmacion(reservaData, pdfBuffer);
+    emailResult = await enviarEmailConfirmacion(reservaData, pdfBuffer, lang);
   } catch (emailErr) {
     console.error('[Email] Error:', emailErr.message);
   }
 
-  // 4. Crear evento en Google Calendar
+  // 4. Crear evento en Google Calendar en el idioma correspondiente
   let calendarEventId = null;
   try {
-    calendarEventId = await crearEventoCalendario(reservaData);
+    calendarEventId = await crearEventoCalendario(reservaData, lang);
     if (calendarEventId && supabase && meta.reservaId) {
       await supabase.from('reservas').update({
         estado: 'confirmada',
@@ -134,7 +134,6 @@ export default async function handler(req, res) {
     const Stripe = (await import('stripe')).default;
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-    // Obtener la sesión de Stripe con todos los detalles
     const session = await stripe.checkout.sessions.retrieve(sessionId, {
       expand: ['customer_details'],
     });
@@ -143,7 +142,6 @@ export default async function handler(req, res) {
       return res.status(404).json({ error: 'Sesión no encontrada' });
     }
 
-    // Solo procesar si el pago fue exitoso
     if (session.payment_status !== 'paid') {
       return res.status(200).json({
         status: 'pending',
@@ -152,7 +150,6 @@ export default async function handler(req, res) {
       });
     }
 
-    // Procesar acciones post-pago
     const result = await procesarPostPago(session);
 
     return res.status(200).json({

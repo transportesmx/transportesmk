@@ -12,7 +12,7 @@ export default function Exito() {
   const { traduccion } = useContext(AppContext);
   const t = traduccion?.reservar?.exito || {};
 
-  const [status, setStatus] = useState('loading'); // loading | verifying | success | error
+  const [status, setStatus] = useState('loading');
   const [details, setDetails] = useState(null);
   const hasVerified = useRef(false);
 
@@ -28,7 +28,6 @@ export default function Exito() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ sessionId: session_id }),
         });
-
         const data = await res.json();
         console.log('[Éxito] Verificación:', data);
 
@@ -36,14 +35,13 @@ export default function Exito() {
           setStatus('success');
           setDetails(data.reservaData || null);
         } else if (data.status === 'pending') {
-          // Para OXXO u otros métodos async, el pago puede estar pendiente
           setStatus('success');
         } else {
-          setStatus('success'); // Mostrar éxito de todas formas
+          setStatus('success');
         }
       } catch (err) {
         console.error('[Éxito] Error verificando:', err);
-        setStatus('success'); // Mostrar éxito aunque falle la verificación
+        setStatus('success');
       }
     };
 
@@ -63,9 +61,17 @@ export default function Exito() {
       <Head>
         <title>{t.pageTitle || '¡Pago exitoso!'} | TransportesMX</title>
       </Head>
-      <div className="min-h-[calc(100vh-64px)] bg-black flex items-center justify-center p-4">
+      <div className="min-h-[calc(100vh-64px)] relative flex items-center justify-center p-4 overflow-hidden">
+        {/* Fondo con imagen */}
+        <div
+          className="fixed inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: 'url(/assets/images/reservacion.png)' }}
+        />
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm" />
+        <div className="fixed inset-0 bg-gradient-to-b from-[#0a0a0f]/90 via-transparent to-[#0a0a0f]/95" />
+
         <motion.div
-          className="relative z-10 max-w-md w-full rounded-3xl overflow-hidden shadow-2xl"
+          className="relative z-10 max-w-md w-full rounded-3xl overflow-hidden shadow-2xl border border-white/10"
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ type: 'spring', stiffness: 200 }}
@@ -97,7 +103,7 @@ export default function Exito() {
           </div>
 
           {/* Body */}
-          <div className="bg-gray-900 p-6 text-center border border-white/5 border-t-0">
+          <div className="bg-[#0f0f15]/95 backdrop-blur-md p-6 text-center border-t border-white/5">
             {isLoading ? (
               <div className="py-4">
                 <div className="flex items-center justify-center gap-2 text-white/40 text-sm">
@@ -107,13 +113,13 @@ export default function Exito() {
               </div>
             ) : (
               <>
-                <p className="text-gray-400 text-sm mb-6">
+                <p className="text-white/50 text-sm mb-6">
                   {t.emailNote || 'Recibirás un correo de confirmación con los detalles de tu traslado.'}
                 </p>
 
                 {session_id && (
                   <div className="bg-white/5 rounded-xl p-3 mb-6 border border-white/10">
-                    <p className="text-xs text-gray-500">{t.transactionId || 'ID de transacción'}</p>
+                    <p className="text-xs text-white/30">{t.transactionId || 'ID de transacción'}</p>
                     <p className="text-sm text-white font-mono truncate">{session_id}</p>
                   </div>
                 )}

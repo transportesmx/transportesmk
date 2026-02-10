@@ -15,10 +15,10 @@ function readRawBody(req) {
   });
 }
 
-async function generarPDFBuffer(reservaData) {
+async function generarPDFBuffer(reservaData, lang = 'es') {
   try {
     const { generarHojaServicio } = await import('@/lib/pdf-generator');
-    const doc = generarHojaServicio(reservaData, 'es');
+    const doc = generarHojaServicio(reservaData, lang);
     const arrayBuffer = doc.output('arraybuffer');
     return Buffer.from(arrayBuffer);
   } catch (err) {
@@ -50,7 +50,8 @@ export default async function handler(req, res) {
       case 'checkout.session.completed': {
         const session = event.data.object;
         const meta = session.metadata || {};
-        console.log('[Webhook] Pago completado:', session.id);
+        const lang = meta.lang || 'es';
+        console.log('[Webhook] Pago completado:', session.id, '| Idioma:', lang);
 
         const supabase = getServiceSupabase();
 
@@ -100,17 +101,17 @@ export default async function handler(req, res) {
           estadoPago: 'pagado',
         };
 
-        const pdfBuffer = await generarPDFBuffer(reservaData);
-        console.log('[PDF]', pdfBuffer ? `Generado (${pdfBuffer.length} bytes)` : 'No se pudo generar');
+        const pdfBuffer = await generarPDFBuffer(reservaData, lang);
+        console.log('[PDF]', pdfBuffer ? `Generado (${pdfBuffer.length} bytes) [${lang}]` : 'No se pudo generar');
 
         try {
-          await enviarEmailConfirmacion(reservaData, pdfBuffer);
+          await enviarEmailConfirmacion(reservaData, pdfBuffer, lang);
         } catch (emailErr) {
           console.error('[Email] Error:', emailErr.message);
         }
 
         try {
-          const eventId = await crearEventoCalendario(reservaData);
+          const eventId = await crearEventoCalendario(reservaData, lang);
           if (eventId && supabase && meta.reservaId) {
             await supabase.from('reservas').update({ estado: 'confirmada' }).eq('id', meta.reservaId);
             console.log('[Calendar] Evento creado y reserva confirmada');

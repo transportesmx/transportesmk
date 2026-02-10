@@ -11,7 +11,7 @@ export const AppProvider = ({ children }) => {
       const savedLang = localStorage.getItem("idioma");
       return savedLang === "EN" ? { nombre: 'EN', code: 'US' } : { nombre: 'ES', code: 'MX' };
     } else {
-      return { nombre: 'ES', code: 'MX' };
+      return { nombre: 'EN', code: 'US' };
     }
   });
   const [traduccion, setTraduccion] = useState(idioma.nombre === "EN" ? EN : ES);

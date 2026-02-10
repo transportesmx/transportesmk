@@ -97,7 +97,7 @@ export default function SelectorVehiculo({ onNext, onBack }) {
                 <div className="flex-1 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                   <div className="flex-1">
                     <h3 className="text-base font-semibold text-white">{vehiculo.nombre}</h3>
-                    <p className="text-white/30 text-sm mt-0.5">{vehiculo.descripcion}</p>
+                    <p className="text-white/50 text-sm mt-0.5">{vehiculo.descripcion}</p>
 
                     <div className="flex items-center gap-4 mt-3">
                       <div className="flex items-center gap-1.5 text-white/80 text-xs">
@@ -112,7 +112,7 @@ export default function SelectorVehiculo({ onNext, onBack }) {
 
                     <div className="flex flex-wrap gap-x-3 gap-y-1 mt-2">
                       {vehiculo.caracteristicas.map((c, i) => (
-                        <span key={i} className="text-[11px] text-white/25 flex items-center gap-1">
+                        <span key={i} className="text-[11px] text-white/70 flex items-center gap-1">
                           <FaCheck className="text-emerald-500/60 text-[7px]" /> {c}
                         </span>
                       ))}
@@ -122,13 +122,13 @@ export default function SelectorVehiculo({ onNext, onBack }) {
                   <div className="flex-shrink-0 sm:text-right">
                     {vehiculo.precio ? (
                       <div>
-                        <p className="text-[10px] text-white/25 uppercase tracking-wider font-medium">
+                        <p className="text-[10px] text-white/70 uppercase tracking-wider font-medium">
                           {reserva.tipoViaje === 'redondo' ? (t.roundTrip || 'Ida y vuelta') : (t.oneWay || 'Sencillo')}
                         </p>
                         <p className="text-2xl sm:text-3xl font-bold text-white mt-0.5">
                           ${vehiculo.precio.precioTotal.toLocaleString('es-MX')}
                         </p>
-                        <p className="text-[11px] text-white/20 mt-0.5">MXN</p>
+                        <p className="text-[11px] text-white/50 mt-0.5">MXN</p>
                         {reserva.tipoViaje === 'redondo' && (
                           <p className="text-[11px] text-emerald-400/60 mt-1">
                             {t.discountIncluded || '10% desc. incluido'}

@@ -6,7 +6,7 @@ import { FaArrowLeft, FaLock, FaShieldAlt, FaCreditCard, FaStore } from 'react-i
 
 export default function PagoCheckout({ onNext, onBack }) {
   const { reserva, dispatch } = useReserva();
-  const { traduccion } = useContext(AppContext);
+  const { traduccion, idioma } = useContext(AppContext);
   const t = traduccion?.reservar?.step5 || {};
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -29,6 +29,7 @@ export default function PagoCheckout({ onNext, onBack }) {
             precioTotal: reserva.precioTotal, distancia: reserva.distancia,
             duracion: reserva.duracion, clienteNombre: reserva.clienteNombre,
             clienteEmail: reserva.clienteEmail, clienteTelefono: reserva.clienteTelefono,
+            lang: idioma?.nombre === 'EN' ? 'en' : 'es',
           },
         }),
       });
@@ -132,7 +133,7 @@ export default function PagoCheckout({ onNext, onBack }) {
         </div>
       </div>
 
-      <div className="flex items-center justify-center gap-4 text-[11px] text-white/20 mb-5">
+      <div className="flex items-center justify-center gap-4 text-[11px] text-white/60 mb-5">
         <div className="flex items-center gap-1.5">
           <FaCreditCard className="text-xs" />
           <span>{t.cards || 'Tarjetas'}</span>
@@ -184,7 +185,7 @@ export default function PagoCheckout({ onNext, onBack }) {
         </button>
       </div>
 
-      <p className="text-center text-[11px] text-white/15 mt-4">
+      <p className="text-center text-[11px] text-white/60 mt-4">
         {t.redirectNote || 'Serás redirigido a Stripe para completar el pago de forma segura.'}
       </p>
     </div>

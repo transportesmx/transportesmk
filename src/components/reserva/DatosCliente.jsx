@@ -36,7 +36,7 @@ export default function DatosCliente({ onNext, onBack }) {
         <h2 className="text-xl sm:text-2xl font-bold tracking-tight">
           {t.title || 'Tus datos'}
         </h2>
-        <p className="text-white/40 text-sm mt-1">
+        <p className="text-white/80 text-sm mt-1">
           {t.subtitle || 'Necesitamos tu información para confirmar'}
         </p>
       </div>
@@ -64,7 +64,7 @@ export default function DatosCliente({ onNext, onBack }) {
       <div className="bg-white/[0.03] border border-white/[0.06] rounded-2xl p-5 sm:p-7">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="text-xs font-medium text-white/40 mb-1.5 flex items-center gap-1.5">
+            <label className="text-xs font-medium text-white/80 mb-1.5 flex items-center gap-1.5">
               <FaUser className="text-[10px]" /> {t.fullName || 'Nombre completo'}
             </label>
             <input type="text" value={nombre} onChange={(e) => setNombre(e.target.value)}
@@ -72,25 +72,25 @@ export default function DatosCliente({ onNext, onBack }) {
           </div>
 
           <div>
-            <label className="text-xs font-medium text-white/40 mb-1.5 flex items-center gap-1.5">
+            <label className="text-xs font-medium text-white/80 mb-1.5 flex items-center gap-1.5">
               <FaEnvelope className="text-[10px]" /> {t.email || 'Correo electrónico'}
             </label>
             <input type="email" value={email} onChange={(e) => setEmail(e.target.value)}
               placeholder="correo@ejemplo.com" className={inputBase} />
-            <p className="text-[11px] text-white/20 mt-1">
+            <p className="text-[11px] text-white/60 mt-1">
               {t.emailNote || 'Aquí recibirás tu confirmación y hoja de servicio'}
             </p>
           </div>
 
           <div>
-            <label className="text-xs font-medium text-white/40 mb-1.5 flex items-center gap-1.5">
+            <label className="text-xs font-medium text-white/80 mb-1.5 flex items-center gap-1.5">
               <FaPhone className="text-[10px]" /> {t.phone || 'Teléfono'}
             </label>
             <input type="tel" value={telefono} onChange={(e) => setTelefono(e.target.value)}
               placeholder="+52 415 123 4567" className={inputBase} />
           </div>
 
-          <div className="flex items-start gap-2 text-[11px] text-white/20 pt-1">
+          <div className="flex items-start gap-2 text-[11px] text-white/60 pt-1">
             <FaLock className="text-emerald-500/50 mt-0.5 flex-shrink-0" />
             <span>{t.privacy || 'Tus datos están protegidos con encriptación SSL. Nunca los compartiremos.'}</span>
           </div>

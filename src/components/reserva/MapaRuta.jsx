@@ -120,7 +120,7 @@ export default function MapaRuta({ onNext, onBack, isLoaded }) {
         </div>
       )}
 
-      <p className="text-white/15 text-[11px] text-center mb-5">
+      <p className="text-white/80 text-[11px] text-center mb-5">
         {t.disclaimer || '* Los tiempos pueden variar por tráfico'}
       </p>
 

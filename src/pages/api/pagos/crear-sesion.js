@@ -69,6 +69,7 @@ export default async function handler(req, res) {
             product_data: {
               name: `Traslado ${reserva.vehiculoNombre}`,
               description: `${reserva.origen} → ${reserva.destino} | ${reserva.fechaIda} ${reserva.horaIda}`,
+              images: ['https://transportesmx.org/assets/logo.png'],
             },
             unit_amount: Math.round(reserva.precioTotal * 100),
           },
@@ -96,6 +97,7 @@ export default async function handler(req, res) {
         fechaRegreso: reserva.fechaRegreso || '',
         horaRegreso: reserva.horaRegreso || '',
         precioTotal: String(reserva.precioTotal),
+        lang: reserva.lang || 'es',
       },
     });
 

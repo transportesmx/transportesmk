@@ -1,10 +1,51 @@
 /**
  * Integración con Google Calendar para TransportesMX
  * Usa OAuth 2.0 con Refresh Token.
- * Invita al cliente como asistente para que reciba el evento en su calendario.
+ * Soporta español (es) e inglés (en).
  */
 
-export async function crearEventoCalendario(reserva) {
+const calLabels = {
+  es: {
+    transfer: 'Traslado',
+    returnTransfer: 'Regreso',
+    route: 'Ruta',
+    vehicle: 'Vehículo',
+    passengers: 'Pasajeros',
+    phone: 'Tel',
+    email: 'Email',
+    total: 'Total',
+    distance: 'Distancia',
+    duration: 'Duración',
+    type: 'Tipo',
+    roundTrip: 'Ida y vuelta',
+    oneWay: 'Sencillo',
+    returnDate: 'Regreso',
+    returnTrip: 'Viaje de regreso',
+  },
+  en: {
+    transfer: 'Transfer',
+    returnTransfer: 'Return',
+    route: 'Route',
+    vehicle: 'Vehicle',
+    passengers: 'Passengers',
+    phone: 'Phone',
+    email: 'Email',
+    total: 'Total',
+    distance: 'Distance',
+    duration: 'Duration',
+    type: 'Type',
+    roundTrip: 'Round trip',
+    oneWay: 'One way',
+    returnDate: 'Return',
+    returnTrip: 'Return trip',
+  },
+};
+
+/**
+ * @param {Object} reserva - datos de la reserva
+ * @param {string} lang - 'es' o 'en'
+ */
+export async function crearEventoCalendario(reserva, lang = 'es') {
   if (
     !process.env.GOOGLE_CALENDAR_CLIENT_ID ||
     !process.env.GOOGLE_CALENDAR_CLIENT_SECRET ||
@@ -13,6 +54,8 @@ export async function crearEventoCalendario(reserva) {
     console.log('[Calendar] OAuth no configurado — omitiendo');
     return null;
   }
+
+  const t = calLabels[lang] || calLabels.es;
 
   try {
     const { google } = await import('googleapis');
@@ -32,35 +75,42 @@ export async function crearEventoCalendario(reserva) {
     const fechaInicio = new Date(`${reserva.fechaIda}T${reserva.horaIda}:00`);
     const fechaFin = new Date(fechaInicio.getTime() + 2 * 60 * 60 * 1000);
 
-    // Asistentes: dueño + cliente
+    // Asistentes: cliente
     const attendees = [];
     if (reserva.clienteEmail) {
       attendees.push({ email: reserva.clienteEmail, displayName: reserva.clienteNombre });
     }
 
     const descripcion = [
-      `📍 Ruta: ${reserva.origen} → ${reserva.destino}`,
-      `🚘 Vehículo: ${reserva.vehiculoNombre}`,
-      `👥 Pasajeros: ${reserva.numPasajeros}`,
-      `📞 Tel: ${reserva.clienteTelefono}`,
-      `📧 Email: ${reserva.clienteEmail}`,
-      `💰 Total: $${reserva.precioTotal} MXN`,
-      reserva.distancia ? `📏 Distancia: ${reserva.distancia}` : '',
-      reserva.duracion ? `⏱️ Duración: ${reserva.duracion}` : '',
+      `📍 ${t.route}: ${reserva.origen} → ${reserva.destino}`,
+      `🚘 ${t.vehicle}: ${reserva.vehiculoNombre}`,
+      `👥 ${t.passengers}: ${reserva.numPasajeros}`,
+      `📞 ${t.phone}: ${reserva.clienteTelefono}`,
+      `📧 ${t.email}: ${reserva.clienteEmail}`,
+      `💰 ${t.total}: $${reserva.precioTotal} MXN`,
+      reserva.distancia ? `📏 ${t.distance}: ${reserva.distancia}` : '',
+      reserva.duracion ? `⏱️ ${t.duration}: ${reserva.duracion}` : '',
       '',
-      `Tipo: ${reserva.tipoViaje === 'redondo' ? 'Ida y vuelta' : 'Sencillo'}`,
+      `${t.type}: ${reserva.tipoViaje === 'redondo' ? t.roundTrip : t.oneWay}`,
       reserva.tipoViaje === 'redondo' && reserva.fechaRegreso
-        ? `Regreso: ${reserva.fechaRegreso} a las ${reserva.horaRegreso}`
+        ? `${t.returnDate}: ${reserva.fechaRegreso} ${reserva.horaRegreso}`
         : '',
+      '',
+      'TransportesMX - transportesmx.org',
     ].filter(Boolean).join('\n');
 
     const evento = {
-      summary: `🚗 Traslado: ${reserva.clienteNombre}`,
+      summary: `🚗 ${t.transfer}: ${reserva.clienteNombre}`,
       description: descripcion,
+      location: reserva.origen || '',
       start: { dateTime: fechaInicio.toISOString(), timeZone: 'America/Mexico_City' },
       end: { dateTime: fechaFin.toISOString(), timeZone: 'America/Mexico_City' },
       colorId: '9',
       attendees,
+      organizer: {
+        displayName: 'TransportesMX',
+        self: true,
+      },
       reminders: {
         useDefault: false,
         overrides: [
@@ -73,7 +123,7 @@ export async function crearEventoCalendario(reserva) {
     const result = await calendar.events.insert({
       calendarId: process.env.GOOGLE_CALENDAR_ID || 'primary',
       resource: evento,
-      sendUpdates: 'all', // Envía invitación por email al cliente
+      sendUpdates: 'all',
     });
 
     console.log('[Calendar] ✅ Evento creado:', result.data.id);
@@ -85,8 +135,9 @@ export async function crearEventoCalendario(reserva) {
 
       const eventoRegreso = {
         ...evento,
-        summary: `🔄 Regreso: ${reserva.clienteNombre}`,
-        description: `Viaje de regreso\n${descripcion}`,
+        summary: `🔄 ${t.returnTransfer}: ${reserva.clienteNombre}`,
+        description: `${t.returnTrip}\n${descripcion}`,
+        location: reserva.destino || '',
         start: { dateTime: fechaRegreso.toISOString(), timeZone: 'America/Mexico_City' },
         end: { dateTime: fechaFinRegreso.toISOString(), timeZone: 'America/Mexico_City' },
         colorId: '6',
