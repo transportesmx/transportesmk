@@ -98,7 +98,7 @@ export default function BuscadorServicio({ onNext, isLoaded }) {
     onNext();
   };
 
-  const inputBase = 'w-full px-4 py-3 rounded-lg bg-white/[0.04] border border-white/[0.08] text-white placeholder-white/30 text-sm focus:outline-none focus:border-blue-500/50 focus:bg-white/[0.06] transition-all duration-200';
+  const inputBase = 'w-full px-4 py-3 rounded-lg bg-white/[0.04] border border-white/[0.08] text-white placeholder-white/60 text-sm focus:outline-none focus:border-blue-500/50 focus:bg-white/[0.06] transition-all duration-200';
 
   return (
     <div className="max-w-lg mx-auto">

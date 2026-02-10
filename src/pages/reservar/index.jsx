@@ -52,7 +52,7 @@ function ReservaFlow() {
       {/* Fondo con imagen */}
       <div
         className="fixed inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: 'url(/assets/images/sanmiguel.png)' }}
+        style={{ backgroundImage: 'url(/assets/images/reservacion.png)' }}
       />
       <div className="fixed inset-0 bg-black/80 backdrop-blur-sm" />
       <div className="fixed inset-0 bg-gradient-to-b from-[#0a0a0f]/90 via-transparent to-[#0a0a0f]/95" />
@@ -76,7 +76,7 @@ function ReservaFlow() {
 
         {/* Footer info */}
         {reserva.paso < 6 && (
-          <div className="mt-10 pb-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-white/25">
+          <div className="mt-10 pb-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-white/60">
             <span>{t.secure || 'Pago seguro con Stripe'}</span>
             <span className="hidden sm:inline">·</span>
             <span>{t.reviews || '+500 reseñas positivas'}</span>

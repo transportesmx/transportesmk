@@ -52,7 +52,7 @@ export default function SelectorVehiculo({ onNext, onBack }) {
         <h2 className="text-xl sm:text-2xl font-bold tracking-tight">
           {t.title || 'Selecciona tu vehículo'}
         </h2>
-        <p className="text-white/40 text-sm mt-1">
+        <p className="text-white/80 text-sm mt-1">
           {vehiculosConPrecio.length} {t.optionsFor || 'opciones para'} {reserva.numPasajeros} {t.passenger || 'pasajero(s)'}
           {reserva.distancia && <span className="text-white/20"> · {reserva.distancia}</span>}
         </p>
@@ -100,11 +100,11 @@ export default function SelectorVehiculo({ onNext, onBack }) {
                     <p className="text-white/30 text-sm mt-0.5">{vehiculo.descripcion}</p>
 
                     <div className="flex items-center gap-4 mt-3">
-                      <div className="flex items-center gap-1.5 text-white/40 text-xs">
+                      <div className="flex items-center gap-1.5 text-white/80 text-xs">
                         <FaUsers className="text-[10px]" />
                         <span>{vehiculo.capacidadPasajeros} {t.pax || 'pax'}</span>
                       </div>
-                      <div className="flex items-center gap-1.5 text-white/40 text-xs">
+                      <div className="flex items-center gap-1.5 text-white/80 text-xs">
                         <FaSuitcase className="text-[10px]" />
                         <span>{vehiculo.capacidadEquipaje} {t.bags || 'maletas'}</span>
                       </div>
