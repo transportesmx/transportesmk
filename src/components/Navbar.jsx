@@ -111,12 +111,12 @@ const Navbar = () => {
           <a href="/#Tours" className="hover:text-blue-500 transition">
             {traduccion.navbar.tours}
           </a>
-          <span
+          {/* <span
             onClick={handleCotizar}
             className="hover:text-blue-500 transition cursor-pointer"
           >
             {traduccion.navbar.quote}
-          </span>
+          </span> */}
           <Link href="/reservar" className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition font-semibold text-sm">
             {idioma.nombre === 'EN' ? 'Book now' : 'Reservar'}
           </Link>
@@ -192,7 +192,13 @@ const Navbar = () => {
           </div>
         </div>
 
-        <div className="lg:hidden flex items-center">
+        <div className="lg:hidden flex items-center gap-3">
+          <Link
+            href="/reservar"
+            className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 rounded-lg transition font-semibold text-xs text-white whitespace-nowrap"
+          >
+            {idioma.nombre === 'EN' ? 'Book now' : 'Reservar'}
+          </Link>
           <button ref={buttonRef} onClick={() => setIsMenuOpen(!isMenuOpen)}>
             {isMenuOpen ? <HiX size={24} /> : <HiMenu size={24} />}
           </button>
@@ -257,7 +263,7 @@ const Navbar = () => {
           >
             {traduccion.navbar.tours}
           </a>
-          <span
+         {/*  <span
             className="block px-4 py-2 hover:bg-gray-600"
             onClick={() => {
               setIsMenuOpen(false);
@@ -265,15 +271,7 @@ const Navbar = () => {
             }}
           >
             {traduccion.navbar.quote}
-          </span>
-          <Link
-            href="/reservar"
-            className="block px-4 py-3 mx-4 my-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition font-semibold text-sm text-center"
-            onClick={() => setIsMenuOpen(false)}
-          >
-            {idioma.nombre === 'EN' ? '🚗 Book now' : '🚗 Reservar ahora'}
-          </Link>
-
+          </span> */}
           <div className="px-4 py-2 flex items-center space-x-2">
             <div
               className="flex items-center  gap-2 cursor-pointer"

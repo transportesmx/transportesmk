@@ -1,4 +1,4 @@
-import { useState, useEffect, Fragment, useContext } from "react";
+import { useState, useEffect, useRef, Fragment, useContext } from "react";
 import About from "@/components/About";
 import Aeropuerto from "@/components/Aeropuerto";
 import Boda from "@/components/Bodas";
@@ -9,7 +9,7 @@ import Galeria from "@/components/Galeria";
 import Hero from "@/components/Hero";
 import Testimonios from "@/components/Testimonios";
 import Tours from "@/components/Tours";
-import BodasModal from "@/components/BodasModal"; // Asegúrate de importar el componente del modal
+import BodasModal from "@/components/BodasModal";
 import Autobus from "@/components/Autobus";
 import Clientes from "@/components/Clientes";
 import Head from "next/head";
@@ -18,15 +18,26 @@ import { AppContext } from "@/Context/AppContext";
 
 export default function Home() {
   const [isBodasModalVisible, setIsBodasModalVisible] = useState(false);
+  const [bodasModalShown, setBodasModalShown] = useState(false);
+  const bodasRef = useRef(null);
   const {idioma, setIdioma} = useContext(AppContext);
 
+  // Mostrar modal solo cuando la sección de Bodas entra en el viewport
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsBodasModalVisible(true);
-    }, 5000); // 5000 ms = 5 segundos
-
-    return () => clearTimeout(timer); // Limpiar el timeout si el componente se desmonta
-  }, []);
+    if (bodasModalShown) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !bodasModalShown) {
+          setIsBodasModalVisible(true);
+          setBodasModalShown(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.3 }
+    );
+    if (bodasRef.current) observer.observe(bodasRef.current);
+    return () => observer.disconnect();
+  }, [bodasModalShown]);
 
   return (
     <Fragment>
@@ -66,8 +77,10 @@ export default function Home() {
     </Head>
       <Hero />
       <About />
-      <Aeropuerto />
-      <Boda />
+      {/* <Aeropuerto /> */}
+      <div ref={bodasRef}>
+        <Boda />
+      </div>
       <Chofer />
       <Ejecutivo />
       <Autobus  />

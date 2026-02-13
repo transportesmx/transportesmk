@@ -11,7 +11,7 @@ const resend = process.env.RESEND_API_KEY
   : null;
 
 const FROM_EMAIL = 'TransportesMX <reservas@transportesmx.org>';
-const OWNER_EMAIL = 'sitiotransportesmx@gmail.com';
+const OWNER_EMAIL = 'contacto@transportesmx.org';
 const LOGO_URL = 'https://transportesmx.org/assets/logo.png';
 
 const emailLabels = {

@@ -2,16 +2,48 @@ import jsPDF from 'jspdf';
 import { LOGO_BASE64 } from './logo-base64';
 
 const COLORS = {
-  primary: [0, 50, 100],
-  accent: [30, 100, 200],
-  dark: [20, 20, 25],
-  text: [40, 40, 50],
-  textLight: [100, 110, 120],
-  value: [30, 80, 180],
-  line: [180, 190, 200],
+  black: [0, 0, 0],
+  dark: [20, 20, 20],
+  text: [30, 30, 30],
+  textLight: [100, 100, 100],
+  line: [180, 180, 180],
   white: [255, 255, 255],
-  greenText: [30, 130, 50],
+  red: [200, 30, 30],
 };
+
+/**
+ * Genera un folio único y fácil de rastrear
+ * Formato: TMX-YYMMDD-XXXX (ej: TMX-260212-A3F8)
+ */
+function generarFolio(reservaId) {
+  const now = new Date();
+  const yy = String(now.getFullYear()).slice(2);
+  const mm = String(now.getMonth() + 1).padStart(2, '0');
+  const dd = String(now.getDate()).padStart(2, '0');
+  const hash = reservaId
+    ? reservaId.toString().slice(-4).toUpperCase()
+    : Math.random().toString(36).slice(2, 6).toUpperCase();
+  return `TMX-${yy}${mm}${dd}-${hash}`;
+}
+
+/**
+ * Formatea teléfono con lada y espacios
+ * Ej: "4151393219" → "+52 415 139 3219"
+ */
+function formatearTelefono(tel) {
+  if (!tel) return 'N/A';
+  const limpio = tel.replace(/\D/g, '');
+  if (limpio.length === 10) {
+    return `+52 ${limpio.slice(0, 3)} ${limpio.slice(3, 6)} ${limpio.slice(6)}`;
+  }
+  if (limpio.length === 12 && limpio.startsWith('52')) {
+    return `+${limpio.slice(0, 2)} ${limpio.slice(2, 5)} ${limpio.slice(5, 8)} ${limpio.slice(8)}`;
+  }
+  if (limpio.length === 13 && limpio.startsWith('521')) {
+    return `+${limpio.slice(0, 2)} ${limpio.slice(3, 6)} ${limpio.slice(6, 9)} ${limpio.slice(9)}`;
+  }
+  return tel;
+}
 
 const labels = {
   es: {
@@ -23,8 +55,6 @@ const labels = {
     website: 'https://transportesmx.org',
     folio: 'Folio',
     date: 'Fecha',
-    paid: 'Pagado',
-    pending: 'Pendiente',
     client: 'Cliente',
     clientPhone: 'Teléfono',
     clientEmail: 'Correo',
@@ -34,6 +64,9 @@ const labels = {
     dateTime: 'Fecha y hora',
     pickupAt: 'Recoger en',
     numPassengers: 'Número de Pasajeros',
+    numBags: 'Número de Maletas',
+    airline: 'Aerolínea',
+    flightNumber: 'No. Vuelo',
     destination: 'Destino',
     distance: 'Distancia',
     estTime: 'Tiempo estimado',
@@ -43,7 +76,6 @@ const labels = {
     returnSection: 'Regreso:',
     returnPickup: 'Recoger en',
     returnDateTime: 'Fecha y hora',
-    total: 'Total',
     footer: 'TransportesMX | transportesmx.org | +52 415 139 3219',
     generated: 'Documento generado el',
   },
@@ -56,8 +88,6 @@ const labels = {
     website: 'https://transportesmx.org',
     folio: 'Folio',
     date: 'Date',
-    paid: 'Paid',
-    pending: 'Pending',
     client: 'Client',
     clientPhone: 'Phone',
     clientEmail: 'Email',
@@ -67,6 +97,9 @@ const labels = {
     dateTime: 'Date and time',
     pickupAt: 'Pickup at',
     numPassengers: 'Number of Passengers',
+    numBags: 'Number of Bags',
+    airline: 'Airline',
+    flightNumber: 'Flight No.',
     destination: 'Destination',
     distance: 'Distance',
     estTime: 'Estimated time',
@@ -76,14 +109,18 @@ const labels = {
     returnSection: 'Return:',
     returnPickup: 'Pickup at',
     returnDateTime: 'Date and time',
-    total: 'Total',
     footer: 'TransportesMX | transportesmx.org | +52 415 139 3219',
     generated: 'Document generated on',
   },
 };
 
 /**
- * Genera una hoja de servicio PDF profesional con logo de TransportesMX
+ * Genera una hoja de servicio PDF profesional
+ * - Solo color negro (sin azul)
+ * - Sin precios
+ * - Folio en recuadro rojo con letras blancas
+ * - Teléfonos formateados con lada
+ * - Incluye aerolínea y número de vuelo
  */
 export function generarHojaServicio(reserva, lang = 'es') {
   const t = labels[lang] || labels.es;
@@ -100,11 +137,11 @@ export function generarHojaServicio(reserva, lang = 'es') {
   } catch (e) {
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(22);
-    doc.setTextColor(...COLORS.primary);
+    doc.setTextColor(...COLORS.black);
     doc.text('TRANSPORTES MX', margin, y + 10);
   }
 
-  // Info empresa debajo del logo
+  // Info empresa
   y += 18;
   doc.setFontSize(8);
   doc.setFont('helvetica', 'normal');
@@ -113,35 +150,38 @@ export function generarHojaServicio(reserva, lang = 'es') {
   doc.text(t.address, margin, y + 4);
   doc.text(t.phone, margin, y + 8);
   doc.text(t.email, margin, y + 12);
-  doc.setTextColor(...COLORS.accent);
   doc.text(t.website, margin, y + 16);
 
-  // Folio y fecha (derecha)
+  // Folio en RECUADRO ROJO
+  const folio = generarFolio(reserva.id);
   const rightX = pw - margin;
+  const folioText = `${t.folio}: ${folio}`;
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(11);
-  doc.setTextColor(...COLORS.text);
-  const folioNum = reserva.id ? String(reserva.id).slice(0, 8).toUpperCase() : 'N/A';
-  doc.text(`${t.folio}: ${folioNum}`, rightX, margin + 8, { align: 'right' });
+  doc.setFontSize(10);
+  const folioW = doc.getStringUnitWidth(folioText) * 10 / doc.internal.scaleFactor + 12;
+  const folioH = 9;
+  const folioX = rightX - folioW;
+  const folioY = margin + 2;
 
+  // Recuadro rojo
+  doc.setFillColor(...COLORS.red);
+  doc.roundedRect(folioX, folioY, folioW, folioH, 2, 2, 'F');
+  doc.setTextColor(...COLORS.white);
+  doc.text(folioText, folioX + 6, folioY + 6.5);
+
+  // Fecha
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(10);
+  doc.setTextColor(...COLORS.text);
   const fechaDoc = new Date().toLocaleDateString(lang === 'en' ? 'en-US' : 'es-MX', {
     day: '2-digit', month: '2-digit', year: 'numeric',
   });
-  doc.text(`${t.date}: ${fechaDoc}`, rightX, margin + 15, { align: 'right' });
-
-  // Status
-  const isPaid = reserva.estadoPago === 'pagado';
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(10);
-  doc.setTextColor(isPaid ? 30 : 200, isPaid ? 130 : 100, isPaid ? 50 : 0);
-  doc.text(isPaid ? t.paid : t.pending, rightX, margin + 22, { align: 'right' });
+  doc.text(`${t.date}: ${fechaDoc}`, rightX, margin + 20, { align: 'right' });
 
   y += 22;
 
-  // Línea azul
-  doc.setDrawColor(...COLORS.accent);
+  // Línea separadora
+  doc.setDrawColor(...COLORS.black);
   doc.setLineWidth(0.8);
   doc.line(margin, y, pw - margin, y);
   y += 10;
@@ -153,12 +193,12 @@ export function generarHojaServicio(reserva, lang = 'es') {
   doc.setFont('helvetica', 'normal');
   doc.text(`${t.client}: `, margin, y);
   doc.setFont('helvetica', 'bold');
-  const clientLabelW = doc.getStringUnitWidth(`${t.client}: `) * 11 / doc.internal.scaleFactor;
-  doc.text(reserva.clienteNombre || 'N/A', margin + clientLabelW, y);
+  const clW = doc.getStringUnitWidth(`${t.client}: `) * 11 / doc.internal.scaleFactor;
+  doc.text(reserva.clienteNombre || 'N/A', margin + clW, y);
   y += 6;
 
   doc.setFont('helvetica', 'normal');
-  doc.text(`${t.clientPhone}: ${reserva.clienteTelefono || 'N/A'}`, margin, y);
+  doc.text(`${t.clientPhone}: ${formatearTelefono(reserva.clienteTelefono)}`, margin, y);
   y += 6;
   doc.text(`${t.clientEmail}: ${reserva.clienteEmail || 'N/A'}`, margin, y);
   y += 12;
@@ -179,9 +219,18 @@ export function generarHojaServicio(reserva, lang = 'es') {
     { label: t.dateTime, value: `${reserva.fechaIda || 'N/A'} / ${reserva.horaIda || 'N/A'} hrs` },
     { label: t.pickupAt, value: reserva.origen || 'N/A' },
     { label: t.numPassengers, value: `${reserva.numPasajeros || 'N/A'} PAX` },
-    { label: t.clientPhone, value: reserva.clienteTelefono || 'N/A' },
+    { label: t.numBags, value: `${reserva.numMaletas || '0'}` },
+    { label: t.clientPhone, value: formatearTelefono(reserva.clienteTelefono) },
     { label: t.destination, value: reserva.destino || 'N/A' },
   ];
+
+  // Aerolínea y vuelo (si aplica)
+  if (reserva.aerolinea) {
+    bulletItems.push({ label: t.airline, value: reserva.aerolinea });
+  }
+  if (reserva.numVuelo) {
+    bulletItems.push({ label: t.flightNumber, value: reserva.numVuelo });
+  }
 
   if (reserva.distancia) bulletItems.push({ label: t.distance, value: reserva.distancia });
   if (reserva.duracion) bulletItems.push({ label: t.estTime, value: reserva.duracion });
@@ -197,7 +246,8 @@ export function generarHojaServicio(reserva, lang = 'es') {
     doc.text(`${item.label}: `, margin + 8, y);
 
     const labelWidth = doc.getStringUnitWidth(`${item.label}: `) * 10 / doc.internal.scaleFactor;
-    doc.setTextColor(...COLORS.value);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(...COLORS.black);
     const maxW = contentWidth - 8 - labelWidth - 5;
     const lines = doc.splitTextToSize(String(item.value), maxW);
     doc.text(lines, margin + 8 + labelWidth, y);
@@ -206,34 +256,16 @@ export function generarHojaServicio(reserva, lang = 'es') {
 
   y += 5;
 
-  // ── TOTAL ──
-  doc.setDrawColor(...COLORS.line);
-  doc.setLineWidth(0.3);
-  doc.line(margin, y, pw - margin, y);
-  y += 8;
-
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(13);
-  doc.setTextColor(...COLORS.text);
-  doc.text(`${t.total}: `, margin, y);
-
-  doc.setTextColor(...COLORS.primary);
-  doc.setFontSize(16);
-  const totalStr = `$${Number(reserva.precioTotal || 0).toLocaleString('es-MX')} MXN`;
-  const totalLW = doc.getStringUnitWidth(`${t.total}: `) * 13 / doc.internal.scaleFactor;
-  doc.text(totalStr, margin + totalLW, y);
-  y += 12;
-
-  // ── REGRESO ──
+  // ── REGRESO (si aplica) ──
   if (reserva.tipoViaje === 'redondo' && reserva.fechaRegreso) {
-    doc.setDrawColor(...COLORS.accent);
+    doc.setDrawColor(...COLORS.black);
     doc.setLineWidth(0.5);
     doc.line(margin, y, pw - margin, y);
     y += 8;
 
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(12);
-    doc.setTextColor(...COLORS.primary);
+    doc.setTextColor(...COLORS.black);
     doc.text(t.returnSection, margin, y);
     y += 8;
 
@@ -250,7 +282,7 @@ export function generarHojaServicio(reserva, lang = 'es') {
       doc.setTextColor(...COLORS.text);
       doc.text(`${item.label}: `, margin + 8, y);
       const lw = doc.getStringUnitWidth(`${item.label}: `) * 10 / doc.internal.scaleFactor;
-      doc.setTextColor(...COLORS.value);
+      doc.setTextColor(...COLORS.black);
       doc.text(String(item.value), margin + 8 + lw, y);
       y += 7;
     });

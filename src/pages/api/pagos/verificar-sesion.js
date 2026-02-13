@@ -75,6 +75,9 @@ async function procesarPostPago(session) {
     tipoViaje: meta.tipoViaje || 'sencillo',
     fechaRegreso: meta.fechaRegreso || '',
     horaRegreso: meta.horaRegreso || '',
+    numMaletas: meta.numMaletas || '',
+    aerolinea: meta.aerolinea || '',
+    numVuelo: meta.numVuelo || '',
     metodoPago: session.payment_method_types?.[0] || 'tarjeta',
     estadoPago: 'pagado',
   };

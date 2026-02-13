@@ -97,6 +97,9 @@ export default async function handler(req, res) {
         fechaRegreso: reserva.fechaRegreso || '',
         horaRegreso: reserva.horaRegreso || '',
         precioTotal: String(reserva.precioTotal),
+        numMaletas: String(reserva.numMaletas || 0),
+        aerolinea: reserva.aerolinea || '',
+        numVuelo: reserva.numVuelo || '',
         lang: reserva.lang || 'es',
       },
     });

@@ -1,12 +1,15 @@
-import React, { useRef, useContext, useState } from 'react';
+import React, { useRef, useContext, useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import { useReserva } from '@/Context/ReservaContext';
 import { AppContext } from '@/Context/AppContext';
 import { Autocomplete } from '@react-google-maps/api';
 import { autocompleteOptions } from '@/lib/google-maps';
 import { motion } from 'framer-motion';
-import { FaCalendarAlt, FaClock, FaUsers, FaExchangeAlt, FaArrowRight } from 'react-icons/fa';
+import { FaCalendarAlt, FaClock, FaUsers, FaExchangeAlt, FaArrowRight, FaSuitcase, FaPlane, FaHashtag } from 'react-icons/fa';
+import { HiSwitchVertical } from 'react-icons/hi';
 
 export default function BuscadorServicio({ onNext, isLoaded }) {
+  const router = useRouter();
   const { reserva, dispatch } = useReserva();
   const { traduccion } = useContext(AppContext);
   const t = traduccion?.reservar?.step1 || {};
@@ -16,9 +19,27 @@ export default function BuscadorServicio({ onNext, isLoaded }) {
 
   const [origenText, setOrigenText] = useState(reserva.origen || '');
   const [destinoText, setDestinoText] = useState(reserva.destino || '');
+
+  // Pre-llenar desde query params (viene del Hero)
+  const [prefilled, setPrefilled] = useState(false);
+  useEffect(() => {
+    if (router.isReady && !prefilled) {
+      const { origen, destino, fecha, hora, pasajeros, maletas } = router.query;
+      if (origen) setOrigenText(decodeURIComponent(origen));
+      if (destino) setDestinoText(decodeURIComponent(destino));
+      if (fecha) setFechaIda(decodeURIComponent(fecha));
+      if (hora) setHoraIda(decodeURIComponent(hora));
+      if (pasajeros) setNumPasajeros(parseInt(pasajeros) || 1);
+      if (maletas) setNumMaletas(parseInt(maletas) || 0);
+      setPrefilled(true);
+    }
+  }, [router.isReady]);
   const [fechaIda, setFechaIda] = useState(reserva.fechaIda || '');
   const [horaIda, setHoraIda] = useState(reserva.horaIda || '12:00');
   const [numPasajeros, setNumPasajeros] = useState(reserva.numPasajeros || 1);
+  const [numMaletas, setNumMaletas] = useState(reserva.numMaletas || 1);
+  const [aerolinea, setAerolinea] = useState(reserva.aerolinea || '');
+  const [numVuelo, setNumVuelo] = useState(reserva.numVuelo || '');
   const [tipoViaje, setTipoViaje] = useState(reserva.tipoViaje || 'sencillo');
   const [fechaRegreso, setFechaRegreso] = useState(reserva.fechaRegreso || '');
   const [horaRegreso, setHoraRegreso] = useState(reserva.horaRegreso || '12:00');
@@ -65,6 +86,28 @@ export default function BuscadorServicio({ onNext, isLoaded }) {
     }
   };
 
+  // Intercambiar origen y destino
+  const handleSwap = () => {
+    const tmpText = origenText;
+    const tmpCoords = reserva.origenCoords;
+    const tmpPlaceId = reserva.origenPlaceId;
+
+    setOrigenText(destinoText);
+    setDestinoText(tmpText);
+
+    dispatch({
+      type: 'SET_BUSQUEDA',
+      payload: {
+        origen: destinoText,
+        origenCoords: reserva.destinoCoords,
+        origenPlaceId: reserva.destinoPlaceId,
+        destino: tmpText,
+        destinoCoords: tmpCoords,
+        destinoPlaceId: tmpPlaceId,
+      },
+    });
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     setError('');
@@ -90,7 +133,7 @@ export default function BuscadorServicio({ onNext, isLoaded }) {
       type: 'SET_BUSQUEDA',
       payload: {
         origen: origenText, destino: destinoText, fechaIda, horaIda,
-        numPasajeros, tipoViaje,
+        numPasajeros, numMaletas, aerolinea, numVuelo, tipoViaje,
         fechaRegreso: tipoViaje === 'redondo' ? fechaRegreso : '',
         horaRegreso: tipoViaje === 'redondo' ? horaRegreso : '',
       },
@@ -113,51 +156,58 @@ export default function BuscadorServicio({ onNext, isLoaded }) {
 
       <div className="bg-white/[0.03] border border-white/[0.06] rounded-2xl p-5 sm:p-7">
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="relative">
-            <div className="absolute left-[19px] top-[42px] w-px h-[calc(100%-60px)] bg-white/[0.08]" />
+          {/* Origen + Swap + Destino */}
+          <div className="flex gap-3">
+            {/* Columna izquierda: puntos + swap */}
+            <div className="flex flex-col items-center pt-7 gap-0">
+              <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 flex-shrink-0" />
+              <div className="w-px h-3 bg-white/[0.08]" />
+              <button
+                type="button"
+                onClick={handleSwap}
+                className="w-7 h-7 rounded-full bg-white/[0.06] border border-white/[0.1] hover:bg-white/[0.15] hover:border-white/25 flex items-center justify-center transition-all duration-200 group flex-shrink-0"
+                title={t.swap || 'Intercambiar'}
+              >
+                <HiSwitchVertical className="text-white/40 group-hover:text-white text-sm transition-colors" />
+              </button>
+              <div className="w-px h-3 bg-white/[0.08]" />
+              <div className="w-2.5 h-2.5 rounded-full bg-red-400 flex-shrink-0" />
+            </div>
 
-            <div className="relative mb-3">
-              <label className="text-xs font-medium text-white/40 mb-1.5 block pl-10">
-                {t.pickup || 'Recogida'}
-              </label>
-              <div className="relative flex items-center">
-                <div className="absolute left-0 w-10 flex justify-center z-10">
-                  <div className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
-                </div>
+            {/* Columna derecha: inputs */}
+            <div className="flex-1 space-y-3">
+              <div>
+                <label className="text-xs font-medium text-white/40 mb-1.5 block">
+                  {t.pickup || 'Recogida'}
+                </label>
                 {isLoaded ? (
                   <Autocomplete onLoad={onOrigenLoad} onPlaceChanged={onOrigenChanged} options={autocompleteOptions} className="w-full">
                     <input
                       type="text" value={origenText}
                       onChange={(e) => setOrigenText(e.target.value)}
                       placeholder={t.pickupPlaceholder || 'Aeropuerto, hotel, dirección...'}
-                      className={`${inputBase} pl-10`}
+                      className={inputBase}
                     />
                   </Autocomplete>
                 ) : (
-                  <input type="text" disabled placeholder={t.loadingMaps || 'Cargando Maps...'} className={`${inputBase} pl-10 opacity-40`} />
+                  <input type="text" disabled placeholder={t.loadingMaps || 'Cargando Maps...'} className={`${inputBase} opacity-40`} />
                 )}
               </div>
-            </div>
-
-            <div className="relative">
-              <label className="text-xs font-medium text-white/40 mb-1.5 block pl-10">
-                {t.destination || 'Destino'}
-              </label>
-              <div className="relative flex items-center">
-                <div className="absolute left-0 w-10 flex justify-center z-10">
-                  <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
-                </div>
+              <div>
+                <label className="text-xs font-medium text-white/40 mb-1.5 block">
+                  {t.destination || 'Destino'}
+                </label>
                 {isLoaded ? (
                   <Autocomplete onLoad={onDestinoLoad} onPlaceChanged={onDestinoChanged} options={autocompleteOptions} className="w-full">
                     <input
                       type="text" value={destinoText}
                       onChange={(e) => setDestinoText(e.target.value)}
-                      placeholder={t.pickupPlaceholder || 'Aeropuerto, hotel, dirección...'}
-                      className={`${inputBase} pl-10`}
+                      placeholder={t.destinationPlaceholder || 'Aeropuerto, hotel, dirección...'}
+                      className={inputBase}
                     />
                   </Autocomplete>
                 ) : (
-                  <input type="text" disabled placeholder="..." className={`${inputBase} pl-10 opacity-40`} />
+                  <input type="text" disabled placeholder="..." className={`${inputBase} opacity-40`} />
                 )}
               </div>
             </div>
@@ -165,6 +215,7 @@ export default function BuscadorServicio({ onNext, isLoaded }) {
 
           <div className="h-px bg-white/[0.06]" />
 
+          {/* Fecha y hora */}
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="text-xs font-medium text-white/40 mb-1.5 flex items-center gap-1.5">
@@ -182,13 +233,21 @@ export default function BuscadorServicio({ onNext, isLoaded }) {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          {/* Pasajeros, maletas, tipo viaje */}
+          <div className="grid grid-cols-3 gap-3">
             <div>
               <label className="text-xs font-medium text-white/40 mb-1.5 flex items-center gap-1.5">
                 <FaUsers className="text-[10px]" /> {t.passengers || 'Pasajeros'}
               </label>
-              <input type="number" min="1" max="50" value={numPasajeros}
+              <input type="number" min="1" max="20" value={numPasajeros}
                 onChange={(e) => setNumPasajeros(parseInt(e.target.value) || 1)} className={inputBase} />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-white/40 mb-1.5 flex items-center gap-1.5">
+                <FaSuitcase className="text-[10px]" /> {t.bags || 'Maletas'}
+              </label>
+              <input type="number" min="0" max="20" value={numMaletas}
+                onChange={(e) => setNumMaletas(parseInt(e.target.value) || 0)} className={inputBase} />
             </div>
             <div>
               <label className="text-xs font-medium text-white/40 mb-1.5 flex items-center gap-1.5">
@@ -202,6 +261,31 @@ export default function BuscadorServicio({ onNext, isLoaded }) {
             </div>
           </div>
 
+          {/* Aerolínea y número de vuelo (opcionales) */}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-xs font-medium text-white/40 mb-1.5 flex items-center gap-1.5">
+                <FaPlane className="text-[10px]" /> {t.airline || 'Aerolínea'}
+                <span className="text-white/20 font-normal">({t.optional || 'opcional'})</span>
+              </label>
+              <input type="text" value={aerolinea}
+                onChange={(e) => setAerolinea(e.target.value)}
+                placeholder={t.airlinePlaceholder || 'Ej: Volaris, VivaAerobus'}
+                className={inputBase} />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-white/40 mb-1.5 flex items-center gap-1.5">
+                <FaHashtag className="text-[10px]" /> {t.flightNumber || 'No. Vuelo'}
+                <span className="text-white/20 font-normal">({t.optional || 'opcional'})</span>
+              </label>
+              <input type="text" value={numVuelo}
+                onChange={(e) => setNumVuelo(e.target.value)}
+                placeholder={t.flightPlaceholder || 'Ej: VB1234'}
+                className={inputBase} />
+            </div>
+          </div>
+
+          {/* Regreso */}
           {tipoViaje === 'redondo' && (
             <motion.div
               className="grid grid-cols-2 gap-3 p-3 rounded-lg bg-blue-500/[0.04] border border-blue-500/[0.1]"

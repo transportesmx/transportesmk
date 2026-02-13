@@ -1,18 +1,19 @@
-import React, { useContext, useMemo } from 'react';
+import React, { useContext, useMemo, useState } from 'react';
 import { useReserva } from '@/Context/ReservaContext';
 import { AppContext } from '@/Context/AppContext';
-import { vehiculos, calcularPrecio, filtrarVehiculosPorPasajeros } from '@/lib/pricing';
-import { motion } from 'framer-motion';
-import { FaUsers, FaSuitcase, FaArrowLeft, FaCheck, FaStar } from 'react-icons/fa';
+import { vehiculos, calcularPrecio, filtrarVehiculosPorCapacidad, medidasMaleta } from '@/lib/pricing';
+import { motion, AnimatePresence } from 'framer-motion';
+import { FaUsers, FaSuitcase, FaArrowLeft, FaCheck, FaStar, FaTimesCircle, FaSuitcaseRolling, FaRulerCombined } from 'react-icons/fa';
 
 export default function SelectorVehiculo({ onNext, onBack }) {
   const { reserva, dispatch } = useReserva();
   const { traduccion } = useContext(AppContext);
   const t = traduccion?.reservar?.step3 || {};
+  const [luggageOpen, setLuggageOpen] = useState(null);
 
   const vehiculosDisponibles = useMemo(() => {
-    return filtrarVehiculosPorPasajeros(reserva.numPasajeros);
-  }, [reserva.numPasajeros]);
+    return filtrarVehiculosPorCapacidad(reserva.numPasajeros, reserva.numMaletas || 0);
+  }, [reserva.numPasajeros, reserva.numMaletas]);
 
   const vehiculosConPrecio = useMemo(() => {
     return vehiculosDisponibles.map((v) => {
@@ -61,93 +62,158 @@ export default function SelectorVehiculo({ onNext, onBack }) {
       <div className="space-y-3">
         {vehiculosConPrecio.map((vehiculo, index) => {
           const isSelected = reserva.vehiculoId === vehiculo.id;
+          const isLuggageOpen = luggageOpen === vehiculo.id;
 
           return (
-            <motion.button
+            <motion.div
               key={vehiculo.id}
-              onClick={() => handleSelect(vehiculo)}
-              disabled={!vehiculo.precio}
-              className={`
-                w-full text-left rounded-xl border transition-all duration-200 overflow-hidden group
-                ${isSelected
-                  ? 'border-blue-500/40 bg-blue-500/[0.06]'
-                  : 'border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.04] hover:border-white/[0.1]'
-                }
-                ${!vehiculo.precio ? 'opacity-40 cursor-not-allowed' : ''}
-              `}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.06, duration: 0.2 }}
             >
-              <div className="flex flex-col sm:flex-row">
-                <div className="relative w-full sm:w-56 h-40 sm:h-auto flex-shrink-0 bg-gradient-to-b sm:bg-gradient-to-r from-white/[0.02] to-transparent flex items-center justify-center p-4 overflow-hidden">
-                  {vehiculo.popular && (
-                    <div className="absolute top-2 left-2 z-10 bg-amber-500/90 text-[10px] text-black font-bold px-2 py-0.5 rounded-md flex items-center gap-1">
-                      <FaStar className="text-[8px]" /> {t.popular || 'Popular'}
+              <button
+                onClick={() => handleSelect(vehiculo)}
+                disabled={!vehiculo.precio}
+                className={`
+                  w-full text-left rounded-xl border transition-all duration-200 overflow-hidden group
+                  ${isSelected
+                    ? 'border-blue-500/40 bg-blue-500/[0.06]'
+                    : 'border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.04] hover:border-white/[0.1]'
+                  }
+                  ${!vehiculo.precio ? 'opacity-40 cursor-not-allowed' : ''}
+                `}
+              >
+                <div className="flex flex-col sm:flex-row">
+                  {/* Imagen del vehículo */}
+                  <div className="relative w-full sm:w-56 h-40 sm:h-auto flex-shrink-0 bg-gradient-to-b sm:bg-gradient-to-r from-white/[0.02] to-transparent flex items-center justify-center p-4 overflow-hidden">
+                    {vehiculo.popular && (
+                      <div className="absolute top-2 left-2 z-10 bg-amber-500/90 text-[10px] text-black font-bold px-2 py-0.5 rounded-md flex items-center gap-1">
+                        <FaStar className="text-[8px]" /> {t.popular || 'Popular'}
+                      </div>
+                    )}
+                    <img
+                      src={vehiculo.imagen}
+                      alt={vehiculo.nombre}
+                      className="max-h-32 sm:max-h-36 w-auto object-contain drop-shadow-lg group-hover:scale-[1.03] transition-transform duration-300"
+                      onError={(e) => { e.target.src = '/assets/images/suburban.png'; }}
+                    />
+                  </div>
+
+                  {/* Contenido */}
+                  <div className="flex-1 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div className="flex-1">
+                      <h3 className="text-base font-semibold text-white">{vehiculo.nombre}</h3>
+                      <p className="text-white/50 text-sm mt-0.5">{vehiculo.descripcion}</p>
+
+                      {/* Capacidades */}
+                      <div className="flex items-center gap-4 mt-3">
+                        <div className="flex items-center gap-1.5 text-white/80 text-xs">
+                          <FaUsers className="text-[10px]" />
+                          <span>{vehiculo.capacidadPasajeros} {t.pax || 'pax'}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5 text-white/80 text-xs">
+                          <FaSuitcase className="text-[10px]" />
+                          <span>{vehiculo.capacidadEquipaje} {t.bags || 'maletas'}</span>
+                        </div>
+                        {/* Botón tamaño maleta */}
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setLuggageOpen(isLuggageOpen ? null : vehiculo.id);
+                          }}
+                          className="flex items-center gap-1 text-blue-400/70 hover:text-blue-400 text-xs transition-colors"
+                        >
+                          <FaRulerCombined className="text-[9px]" />
+                          <span className="underline decoration-dotted underline-offset-2">{t.luggageSize || 'Medidas'}</span>
+                        </button>
+                      </div>
+
+                      {/* Cancelación gratis + características */}
+                      <div className="flex flex-wrap gap-x-3 gap-y-1 mt-2">
+                        <span className="text-[11px] text-emerald-400/80 flex items-center gap-1 font-medium">
+                          <FaCheck className="text-[7px]" /> {t.freeCancellation || 'Cancelación gratis'}
+                        </span>
+                        {vehiculo.caracteristicas.map((c, i) => (
+                          <span key={i} className="text-[11px] text-white/70 flex items-center gap-1">
+                            <FaCheck className="text-emerald-500/60 text-[7px]" /> {c}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Precio */}
+                    <div className="flex-shrink-0 sm:text-right">
+                      {vehiculo.precio ? (
+                        <div>
+                          <p className="text-[10px] text-white/70 uppercase tracking-wider font-medium">
+                            {reserva.tipoViaje === 'redondo' ? (t.roundTrip || 'Ida y vuelta') : (t.oneWay || 'Sencillo')}
+                          </p>
+                          <p className="text-2xl sm:text-3xl font-bold text-white mt-0.5">
+                            ${vehiculo.precio.precioTotal.toLocaleString('es-MX')}
+                          </p>
+                          <p className="text-[11px] text-white/50 mt-0.5">MXN</p>
+                          {reserva.tipoViaje === 'redondo' && (
+                            <p className="text-[11px] text-emerald-400/60 mt-1">
+                              {t.discountIncluded || '10% desc. incluido'}
+                            </p>
+                          )}
+                        </div>
+                      ) : (
+                        <p className="text-white/20 text-sm">{t.unavailable || 'No disponible'}</p>
+                      )}
+                    </div>
+                  </div>
+
+                  {isSelected && (
+                    <div className="absolute top-3 right-3 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
+                      <FaCheck className="text-white text-[10px]" />
                     </div>
                   )}
-                  <img
-                    src={vehiculo.imagen}
-                    alt={vehiculo.nombre}
-                    className="max-h-32 sm:max-h-36 w-auto object-contain drop-shadow-lg group-hover:scale-[1.03] transition-transform duration-300"
-                    onError={(e) => { e.target.src = '/assets/images/suburban.png'; }}
-                  />
                 </div>
+              </button>
 
-                <div className="flex-1 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                  <div className="flex-1">
-                    <h3 className="text-base font-semibold text-white">{vehiculo.nombre}</h3>
-                    <p className="text-white/50 text-sm mt-0.5">{vehiculo.descripcion}</p>
-
-                    <div className="flex items-center gap-4 mt-3">
-                      <div className="flex items-center gap-1.5 text-white/80 text-xs">
-                        <FaUsers className="text-[10px]" />
-                        <span>{vehiculo.capacidadPasajeros} {t.pax || 'pax'}</span>
-                      </div>
-                      <div className="flex items-center gap-1.5 text-white/80 text-xs">
-                        <FaSuitcase className="text-[10px]" />
-                        <span>{vehiculo.capacidadEquipaje} {t.bags || 'maletas'}</span>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-wrap gap-x-3 gap-y-1 mt-2">
-                      {vehiculo.caracteristicas.map((c, i) => (
-                        <span key={i} className="text-[11px] text-white/70 flex items-center gap-1">
-                          <FaCheck className="text-emerald-500/60 text-[7px]" /> {c}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="flex-shrink-0 sm:text-right">
-                    {vehiculo.precio ? (
-                      <div>
-                        <p className="text-[10px] text-white/70 uppercase tracking-wider font-medium">
-                          {reserva.tipoViaje === 'redondo' ? (t.roundTrip || 'Ida y vuelta') : (t.oneWay || 'Sencillo')}
-                        </p>
-                        <p className="text-2xl sm:text-3xl font-bold text-white mt-0.5">
-                          ${vehiculo.precio.precioTotal.toLocaleString('es-MX')}
-                        </p>
-                        <p className="text-[11px] text-white/50 mt-0.5">MXN</p>
-                        {reserva.tipoViaje === 'redondo' && (
-                          <p className="text-[11px] text-emerald-400/60 mt-1">
-                            {t.discountIncluded || '10% desc. incluido'}
+              {/* Dropdown de medidas de maleta */}
+              <AnimatePresence>
+                {isLuggageOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="mx-2 mt-1 mb-2 p-4 rounded-xl bg-white/[0.04] border border-white/[0.08] flex flex-col sm:flex-row items-center gap-4">
+                      <div className="flex items-center gap-3">
+                        <FaSuitcaseRolling className="text-blue-400/60 text-2xl" />
+                        <div>
+                          <p className="text-xs font-semibold text-white/80">
+                            {t.luggageSizeTitle || 'Tamaño máximo de maleta'}
                           </p>
-                        )}
+                          <p className="text-[11px] text-white/40 mt-0.5">
+                            {t.luggageFits || 'Caben'} {vehiculo.capacidadEquipaje} {t.bagsInVehicle || 'maletas en este vehículo'}
+                          </p>
+                        </div>
                       </div>
-                    ) : (
-                      <p className="text-white/20 text-sm">{t.unavailable || 'No disponible'}</p>
-                    )}
-                  </div>
-                </div>
-
-                {isSelected && (
-                  <div className="absolute top-3 right-3 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
-                    <FaCheck className="text-white text-[10px]" />
-                  </div>
+                      <div className="flex gap-4 text-center">
+                        <div className="bg-white/[0.04] rounded-lg px-3 py-2 border border-white/[0.06]">
+                          <p className="text-lg font-bold text-white">{medidasMaleta.alto}</p>
+                          <p className="text-[10px] text-white/40 uppercase">{t.height || 'alto'} (cm)</p>
+                        </div>
+                        <div className="bg-white/[0.04] rounded-lg px-3 py-2 border border-white/[0.06]">
+                          <p className="text-lg font-bold text-white">{medidasMaleta.ancho}</p>
+                          <p className="text-[10px] text-white/40 uppercase">{t.width || 'ancho'} (cm)</p>
+                        </div>
+                        <div className="bg-white/[0.04] rounded-lg px-3 py-2 border border-white/[0.06]">
+                          <p className="text-lg font-bold text-white">{medidasMaleta.profundidad}</p>
+                          <p className="text-[10px] text-white/40 uppercase">{t.depth || 'prof.'} (cm)</p>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
                 )}
-              </div>
-            </motion.button>
+              </AnimatePresence>
+            </motion.div>
           );
         })}
       </div>

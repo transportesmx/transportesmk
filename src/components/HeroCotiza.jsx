@@ -1,195 +1,204 @@
-import React, { useState } from "react";
-import { FaWhatsapp } from "react-icons/fa";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import { useContext } from "react";
+import React, { useState, useRef, useContext } from "react";
+import { useRouter } from "next/router";
+import { useJsApiLoader, Autocomplete } from "@react-google-maps/api";
+import { autocompleteOptions } from "@/lib/google-maps";
 import { AppContext } from "../Context/AppContext";
+import { FaArrowRight, FaCalendarAlt, FaClock, FaUsers, FaSuitcase } from "react-icons/fa";
+import { HiSwitchVertical } from "react-icons/hi";
 
+const libraries = ['places'];
 
 const HeroCotiza = () => {
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  const returnD = new Date();
-  returnD.setDate(returnD.getDate() + 2);
+  const router = useRouter();
+  const { traduccion, idioma } = useContext(AppContext);
 
-  const [from, setFrom] = useState("Aeropuerto AICM");
-  const [to, setTo] = useState("Querétaro");
-  const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
-  const [vehicleType, setVehicleType] = useState("Sedán");
-  const [passengerCount, setPassengerCount] = useState(1);
-  const [time, setTime] = useState("12:00");
-  const [returnTime, setReturnTime] = useState("12:00");
-  const [isRoundTrip, setIsRoundTrip] = useState(false);
-  const [startDate, setStartDate] = useState(tomorrow);
-  const [timeR, setTimeR] = useState("12:00");
+  const { isLoaded } = useJsApiLoader({
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '',
+    libraries,
+  });
 
-  const [returnDate, setReturnDate] = useState(returnD );
+  const origenRef = useRef(null);
+  const destinoRef = useRef(null);
+  const [origenText, setOrigenText] = useState('');
+  const [destinoText, setDestinoText] = useState('');
+  const [fecha, setFecha] = useState('');
+  const [hora, setHora] = useState('12:00');
+  const [pasajeros, setPasajeros] = useState(1);
+  const [maletas, setMaletas] = useState(1);
 
-  const {traduccion} = useContext(AppContext);
+  const onOrigenLoad = (autocomplete) => { origenRef.current = autocomplete; };
+  const onDestinoLoad = (autocomplete) => { destinoRef.current = autocomplete; };
 
-  const locations = ["Aeropuerto AICM", "Aeropuerto AIFA", "Aeropuerto BJX GTO", "Aeropuerto AIQ QRO", "Aeropuerto GDL","Ciudad Querétaro", "San Miguel de Allende", "Ciudad Guanajuato" ];
-  const destinations = ["Ciudad Querétaro", "San Miguel de Allende","Ciudad Guanajuato","Aeropuerto AICM", "Aeropuerto AIFA", "Aeropuerto BJX GTO", "Aeropuerto AIQ QRO", "Aeropuerto GDL",];
-  const vehicleTypes = ["Sedán", "SUV", "Van", "Minivan", "Sprinter", "Autobús"];
-
-  const handleCotizar = () => {
-    const recipientEmail = "contacto@transportesmx.org"; // Reemplaza con tu correo de destino
-    const subject = "Solicitud de Cotización de Traslado"; // Asunto del correo
-    const body = isRoundTrip
-      ? `Hola, me gustaría cotizar un traslado de ${from} a ${to} el día ${date} a las ${time}.
-      
-      Tipo de vehículo: ${vehicleType}
-      Cantidad de pasajeros: ${passengerCount}
-      
-      Ida y vuelta:
-      Fecha de regreso: ${returnDate.toLocaleDateString('es-ES')}
-      Hora de regreso: ${timeR}`
-      : `Hola, me gustaría cotizar un traslado de ${from} a ${to} el día ${date} a las ${time}.
-      
-      Tipo de vehículo: ${vehicleType}
-      Cantidad de pasajeros: ${passengerCount}`;
-  
-    const mailtoUrl = `mailto:${recipientEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-  
-    window.location.href = mailtoUrl; // Abre el cliente de correo del usuario
+  const onOrigenChanged = () => {
+    if (origenRef.current) {
+      const place = origenRef.current.getPlace();
+      if (place?.formatted_address) setOrigenText(place.formatted_address);
+      else if (place?.name) setOrigenText(place.name);
+    }
   };
 
+  const onDestinoChanged = () => {
+    if (destinoRef.current) {
+      const place = destinoRef.current.getPlace();
+      if (place?.formatted_address) setDestinoText(place.formatted_address);
+      else if (place?.name) setDestinoText(place.name);
+    }
+  };
+
+  const handleSwap = () => {
+    const tmp = origenText;
+    setOrigenText(destinoText);
+    setDestinoText(tmp);
+  };
+
+  const handleReservar = () => {
+    const params = new URLSearchParams();
+    if (origenText) params.set('origen', origenText);
+    if (destinoText) params.set('destino', destinoText);
+    if (fecha) params.set('fecha', fecha);
+    if (hora) params.set('hora', hora);
+    params.set('pasajeros', String(pasajeros));
+    params.set('maletas', String(maletas));
+    const query = params.toString();
+    router.push(`/reservar${query ? '?' + query : ''}`);
+  };
+
+  const inputStyle = "bg-white/20 backdrop-blur-sm text-white rounded-lg py-2.5 px-3 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-white/50 text-sm";
+
+  const isEN = idioma.nombre === 'EN';
+
   return (
-    <div className="flex items-center bg-white/15 bg-opacity-80 rounded-2xl px-6 shadow-lg w-[700px] h-[270px] max-w-4xl mx-auto gap-5 ">
-      <div className="flex flex-col justify-center gap-4">
-    <div className="flex items-center justify-between gap-4 ">
-      
-      {/* Dropdown: Desde */}
-      <div className="relative w-full">
-        <label className="block text-white font-bold text-sm">{traduccion.heroCotiza.from}</label> 
-        <select
-          value={from}
-          onChange={(e) => setFrom(e.target.value)}
-          className="mt-1 bg-white/30 text-white rounded-lg py-2 px-3 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          {locations.map((location) => (
-            <option key={location} value={location} className="text-black">{location}</option>
-          ))}
-        </select>
-      </div>
-
-      {/* Dropdown: Hacia */}
-      <div className="relative w-full">
-        <label className="block text-white font-bold text-sm">{traduccion.heroCotiza.to}</label>
-        <select
-          value={to}
-          onChange={(e) => setTo(e.target.value)}
-          className="mt-1 bg-white/30 text-white rounded-lg py-2 px-3 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          {destinations.map((destination) => (
-            <option key={destination} value={destination} className="text-black">{destination}</option>
-          ))}
-        </select>
-      </div>
-
-      {/* Input: Fecha */}
-      <div className="relative w-full">
-        <label className="block text-white font-bold text-sm">{traduccion.heroCotiza.date}</label>
-        <input
-          type="date"
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
-          className="mt-1 bg-white/30 text-white rounded-lg py-2 px-3 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-      </div>
-      
-      </div>
-
-     
-      <div className="flex  items-center justify-between  shadow-lg w-full max-w-3xl mx-auto gap-4">
-      {/* Input: Hora y Minuto */}
-      <div className="relative w-full">
-        <label className="block text-white font-bold text-sm">{traduccion.heroCotiza.time}</label>
-        <input
-          type="time"
-          value={time}
-          onChange={(e) => setTime(e.target.value)}
-          className="mt-1 bg-white/30 text-white rounded-lg py-2 px-3 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-      </div> 
-
-      {/* Dropdown: Tipo de Vehículo */}
-      <div className="relative w-full">
-        <label className="block text-white font-bold text-sm">{traduccion.heroCotiza.vehicle}</label>
-        <select
-          value={vehicleType}
-          onChange={(e) => setVehicleType(e.target.value)}
-          className="mt-1 bg-white/30 text-white rounded-lg py-2 px-3 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          {vehicleTypes.map((type) => (
-            <option key={type} value={type} className="text-black">{type}</option>
-          ))}
-        </select>
-      </div>
-
-      {/* Input: Número de Pasajeros */}
-      <div className="relative w-full">
-        <label className="block text-white font-bold text-sm">{traduccion.heroCotiza.passengers}</label>
-        <input
-          type="number"
-          min="1"
-          max="50"
-          value={passengerCount}
-          onChange={(e) => setPassengerCount(e.target.value)}
-          className="mt-1 bg-white/30 text-white rounded-lg py-2 px-3 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-      </div>
-      </div> 
-      <div className="w-full flex justify-between items-center space-x-2">
-        <div className="w-1/3 flex items-center space-x-2">
-            <input
-              type="checkbox"
-              id="roundTrip"
-              checked={isRoundTrip}
-              onChange={() => setIsRoundTrip(!isRoundTrip)}
-              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-              
-            />
-            <label htmlFor="roundTrip" className="text-white">{traduccion.heroCotiza.roundTrip}</label>
-            </div>
-            {isRoundTrip && (
-  <div className="w-2/3 flex space-x-4">
-    <div className="w-full">
-    <label className="block text-white font-bold text-sm">{traduccion.heroCotiza.returnDate}</label>
-
-      <DatePicker
-        selected={returnDate}
-        onChange={(date) => setReturnDate(date)}
-        minDate={startDate}
-        dateFormat="dd/MM/yyyy"
-        className="bg-white/30 text-white rounded-lg py-2 px-3 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-        placeholderText="Selecciona una fecha de regreso"
-      />
-    </div>
-    <div className="w-full">
-    <label className="block text-white font-bold text-sm">{traduccion.heroCotiza.returnTime}</label>
-
-      <input
-        type="time"
-        value={timeR}
-        name="timeR"
-        onChange={(e) => setTimeR(e.target.value)}
-        className="bg-white/30 text-white rounded-lg py-2 px-3 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
-    </div>
-  </div>
-)}
+    <div className="bg-white/15 backdrop-blur-sm rounded-2xl px-5 py-5 shadow-2xl w-full max-w-[820px] mx-auto border border-white/10">
+      <div className="flex flex-col sm:flex-row gap-4">
+        {/* Columna 1: Origen + Destino */}
+        <div className="flex gap-3 flex-1 min-w-0">
+          {/* Puntos + swap */}
+          <div className="flex flex-col items-center pt-7 gap-0">
+            <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 flex-shrink-0" />
+            <div className="w-px h-3 bg-white/20" />
+            <button
+              type="button"
+              onClick={handleSwap}
+              className="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 flex items-center justify-center transition-all flex-shrink-0 group"
+              title="Swap"
+            >
+              <HiSwitchVertical className="text-white/50 group-hover:text-white text-sm transition-colors" />
+            </button>
+            <div className="w-px h-3 bg-white/20" />
+            <div className="w-2.5 h-2.5 rounded-full bg-red-400 flex-shrink-0" />
           </div>
+
+          {/* Inputs origen/destino */}
+          <div className="flex-1 space-y-3 min-w-0">
+            <div>
+              <label className="block text-white/60 font-medium text-xs mb-1">
+                {traduccion?.heroCotiza?.from || 'Recogida'}
+              </label>
+              {isLoaded ? (
+                <Autocomplete onLoad={onOrigenLoad} onPlaceChanged={onOrigenChanged} options={autocompleteOptions}>
+                  <input
+                    type="text"
+                    value={origenText}
+                    onChange={(e) => setOrigenText(e.target.value)}
+                    placeholder={isEN ? 'Airport, hotel, address...' : 'Aeropuerto, hotel, dirección...'}
+                    className={inputStyle}
+                  />
+                </Autocomplete>
+              ) : (
+                <input type="text" disabled placeholder="..." className={`${inputStyle} opacity-40`} />
+              )}
+            </div>
+            <div>
+              <label className="block text-white/60 font-medium text-xs mb-1">
+                {traduccion?.heroCotiza?.to || 'Destino'}
+              </label>
+              {isLoaded ? (
+                <Autocomplete onLoad={onDestinoLoad} onPlaceChanged={onDestinoChanged} options={autocompleteOptions}>
+                  <input
+                    type="text"
+                    value={destinoText}
+                    onChange={(e) => setDestinoText(e.target.value)}
+                    placeholder={isEN ? 'Airport, hotel, address...' : 'Aeropuerto, hotel, dirección...'}
+                    className={inputStyle}
+                  />
+                </Autocomplete>
+              ) : (
+                <input type="text" disabled placeholder="..." className={`${inputStyle} opacity-40`} />
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Columna 2: Fecha + Hora */}
+        <div className="sm:w-40 flex-shrink-0 space-y-3">
+          <div>
+            <label className="block text-white/60 font-medium text-xs mb-1 flex items-center gap-1.5">
+              <FaCalendarAlt className="text-[10px]" />
+              {isEN ? 'Date' : 'Fecha'}
+            </label>
+            <input
+              type="date"
+              value={fecha}
+              onChange={(e) => setFecha(e.target.value)}
+              min={new Date().toISOString().split('T')[0]}
+              className={`${inputStyle} [color-scheme:dark]`}
+            />
+          </div>
+          <div>
+            <label className="block text-white/60 font-medium text-xs mb-1 flex items-center gap-1.5">
+              <FaClock className="text-[10px]" />
+              {isEN ? 'Time' : 'Hora'}
+            </label>
+            <input
+              type="time"
+              value={hora}
+              onChange={(e) => setHora(e.target.value)}
+              className={`${inputStyle} [color-scheme:dark]`}
+            />
+          </div>
+        </div>
+
+        {/* Columna 3: Pasajeros + Maletas */}
+        <div className="sm:w-32 flex-shrink-0 space-y-3">
+          <div>
+            <label className="block text-white/60 font-medium text-xs mb-1 flex items-center gap-1.5">
+              <FaUsers className="text-[10px]" />
+              {isEN ? 'Passengers' : 'Pasajeros'}
+            </label>
+            <input
+              type="number"
+              min="1"
+              max="20"
+              value={pasajeros}
+              onChange={(e) => setPasajeros(parseInt(e.target.value) || 1)}
+              className={inputStyle}
+            />
+          </div>
+          <div>
+            <label className="block text-white/60 font-medium text-xs mb-1 flex items-center gap-1.5">
+              <FaSuitcase className="text-[10px]" />
+              {isEN ? 'Bags' : 'Maletas'}
+            </label>
+            <input
+              type="number"
+              min="0"
+              max="20"
+              value={maletas}
+              onChange={(e) => setMaletas(parseInt(e.target.value) || 0)}
+              className={inputStyle}
+            />
+          </div>
+        </div>
       </div>
-      
-      <div className="h-full flex flex-col justify-center items-center">
-      {/* Submit Button */}
+
+      {/* Botón Reservar */}
       <button
-        className="bg-[#0057A9] hover:bg-blue-700 text-white font-bold rounded-lg p-3 transition shadow-lg mt-4 md:mt-0"
-        onClick={handleCotizar}
+        onClick={handleReservar}
+        className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl py-3 transition-all shadow-lg flex items-center justify-center gap-2 text-sm"
       >
-        <img src="/assets/icons/email.png" className="text-[30px]" />
+        {isEN ? 'Book now' : 'Reservar'}
+        <FaArrowRight className="text-xs" />
       </button>
-    </div>
     </div>
   );
 };
