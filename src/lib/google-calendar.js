@@ -70,6 +70,18 @@ export async function crearEventoCalendario(reserva, lang = 'es') {
       refresh_token: process.env.GOOGLE_CALENDAR_REFRESH_TOKEN,
     });
 
+    // Forzar refresh del access token antes de hacer la llamada
+    try {
+      const { credentials } = await oauth2Client.refreshAccessToken();
+      oauth2Client.setCredentials(credentials);
+      console.log('[Calendar] ✅ Access token renovado correctamente');
+    } catch (refreshError) {
+      console.error('[Calendar] ❌ Error renovando token:', refreshError.message);
+      console.error('[Calendar] ⚠️ Es necesario generar un nuevo Refresh Token en https://developers.google.com/oauthplayground');
+      console.error('[Calendar] Asegúrate de: 1) Usar tu Client ID/Secret en el engrane (⚙️), 2) Autorizar el scope https://www.googleapis.com/auth/calendar, 3) Copiar el nuevo refresh_token a GOOGLE_CALENDAR_REFRESH_TOKEN en .env.local');
+      return null;
+    }
+
     const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
 
     const fechaInicio = new Date(`${reserva.fechaIda}T${reserva.horaIda}:00`);

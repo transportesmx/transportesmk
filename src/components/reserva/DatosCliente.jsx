@@ -3,6 +3,8 @@ import { useReserva } from '@/Context/ReservaContext';
 import { AppContext } from '@/Context/AppContext';
 import { motion } from 'framer-motion';
 import { FaUser, FaEnvelope, FaPhone, FaArrowLeft, FaArrowRight, FaLock } from 'react-icons/fa';
+import { PhoneInput } from 'react-international-phone';
+import 'react-international-phone/style.css';
 
 export default function DatosCliente({ onNext, onBack }) {
   const { reserva, dispatch } = useReserva();
@@ -11,7 +13,7 @@ export default function DatosCliente({ onNext, onBack }) {
 
   const [nombre, setNombre] = useState(reserva.clienteNombre || '');
   const [email, setEmail] = useState(reserva.clienteEmail || '');
-  const [telefono, setTelefono] = useState(reserva.clienteTelefono || '');
+  const [telefono, setTelefono] = useState(reserva.clienteTelefono || '+52');
   const [error, setError] = useState('');
 
   const handleSubmit = (e) => {
@@ -19,7 +21,8 @@ export default function DatosCliente({ onNext, onBack }) {
     setError('');
     if (!nombre.trim()) { setError(t.errorName || 'Ingresa tu nombre completo'); return; }
     if (!email.trim() || !email.includes('@')) { setError(t.errorEmail || 'Ingresa un email válido'); return; }
-    if (!telefono.trim() || telefono.length < 10) { setError(t.errorPhone || 'Ingresa un teléfono válido (10 dígitos)'); return; }
+    const telefonoDigits = telefono.replace(/\D/g, '');
+    if (!telefono.trim() || telefonoDigits.length < 10) { setError(t.errorPhone || 'Ingresa un teléfono válido (10 dígitos)'); return; }
 
     dispatch({
       type: 'SET_CLIENTE',
@@ -86,8 +89,16 @@ export default function DatosCliente({ onNext, onBack }) {
             <label className="text-xs font-medium text-white/80 mb-1.5 flex items-center gap-1.5">
               <FaPhone className="text-[10px]" /> {t.phone || 'Teléfono'}
             </label>
-            <input type="tel" value={telefono} onChange={(e) => setTelefono(e.target.value)}
-              placeholder="+52 415 123 4567" className={inputBase} />
+            <PhoneInput
+              defaultCountry="mx"
+              value={telefono}
+              onChange={(phone) => setTelefono(phone)}
+              inputClassName="phone-input-custom"
+              countrySelectorStyleProps={{
+                buttonClassName: 'phone-country-btn',
+              }}
+              className="phone-wrapper-custom"
+            />
           </div>
 
           <div className="flex items-start gap-2 text-[11px] text-white/60 pt-1">

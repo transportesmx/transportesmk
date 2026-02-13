@@ -28,19 +28,35 @@ function generarFolio(reservaId) {
 
 /**
  * Formatea teléfono con lada y espacios
- * Ej: "4151393219" → "+52 415 139 3219"
+ * Acepta formatos: "+524151393219", "4151393219", "+1 2125551234", etc.
  */
 function formatearTelefono(tel) {
   if (!tel) return 'N/A';
   const limpio = tel.replace(/\D/g, '');
-  if (limpio.length === 10) {
-    return `+52 ${limpio.slice(0, 3)} ${limpio.slice(3, 6)} ${limpio.slice(6)}`;
-  }
+
+  // Ya viene con código MX (+52) + 10 dígitos = 12 dígitos
   if (limpio.length === 12 && limpio.startsWith('52')) {
     return `+${limpio.slice(0, 2)} ${limpio.slice(2, 5)} ${limpio.slice(5, 8)} ${limpio.slice(8)}`;
   }
+  // MX con 1 intercalado: +521...
   if (limpio.length === 13 && limpio.startsWith('521')) {
     return `+${limpio.slice(0, 2)} ${limpio.slice(3, 6)} ${limpio.slice(6, 9)} ${limpio.slice(9)}`;
+  }
+  // Solo 10 dígitos (MX sin código): asume +52
+  if (limpio.length === 10) {
+    return `+52 ${limpio.slice(0, 3)} ${limpio.slice(3, 6)} ${limpio.slice(6)}`;
+  }
+  // USA/Canada (+1) + 10 dígitos = 11 dígitos
+  if (limpio.length === 11 && limpio.startsWith('1')) {
+    return `+1 ${limpio.slice(1, 4)} ${limpio.slice(4, 7)} ${limpio.slice(7)}`;
+  }
+  // Otro formato internacional: poner + y espaciar cada 3 dígitos
+  if (limpio.length > 10) {
+    const countryLen = limpio.length <= 12 ? 2 : 3;
+    const country = limpio.slice(0, countryLen);
+    const rest = limpio.slice(countryLen);
+    const parts = rest.match(/.{1,3}/g) || [];
+    return `+${country} ${parts.join(' ')}`;
   }
   return tel;
 }
