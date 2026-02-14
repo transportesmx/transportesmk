@@ -48,13 +48,13 @@ function ReservaFlow() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-64px)] relative text-white overflow-hidden">
-      {/* Fondo con imagen */}
+    <div className="min-h-[calc(100vh-64px)] relative text-white">
+      {/* Fondo con imagen — sin backdrop-blur para evitar parpadeo al scroll */}
       <div
-        className="fixed inset-0 bg-cover bg-center bg-no-repeat"
+        className="fixed inset-0 bg-cover bg-center bg-no-repeat will-change-transform"
         style={{ backgroundImage: 'url(/assets/images/reservacion.png)' }}
       />
-      <div className="fixed inset-0 bg-black/80 backdrop-blur-sm" />
+      <div className="fixed inset-0 bg-black/85" />
       <div className="fixed inset-0 bg-gradient-to-b from-[#0a0a0f]/90 via-transparent to-[#0a0a0f]/95" />
 
       <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
