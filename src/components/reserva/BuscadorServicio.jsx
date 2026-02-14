@@ -20,10 +20,10 @@ export default function BuscadorServicio({ onNext, isLoaded }) {
   const [origenText, setOrigenText] = useState(reserva.origen || '');
   const [destinoText, setDestinoText] = useState(reserva.destino || '');
 
-  // Pre-llenar desde query params (viene del Hero)
-  const [prefilled, setPrefilled] = useState(false);
+  // Pre-llenar campos simples desde query params (viene del Hero)
+  const [fieldsPrefilled, setFieldsPrefilled] = useState(false);
   useEffect(() => {
-    if (router.isReady && !prefilled) {
+    if (router.isReady && !fieldsPrefilled) {
       const { origen, destino, fecha, hora, pasajeros, maletas } = router.query;
       if (origen) setOrigenText(decodeURIComponent(origen));
       if (destino) setDestinoText(decodeURIComponent(destino));
@@ -31,9 +31,58 @@ export default function BuscadorServicio({ onNext, isLoaded }) {
       if (hora) setHoraIda(decodeURIComponent(hora));
       if (pasajeros) setNumPasajeros(parseInt(pasajeros) || 1);
       if (maletas) setNumMaletas(parseInt(maletas) || 0);
-      setPrefilled(true);
+      setFieldsPrefilled(true);
     }
   }, [router.isReady]);
+
+  // Geocodificar direcciones del Hero cuando Google Maps esté listo
+  const [geoPrefilled, setGeoPrefilled] = useState(false);
+  useEffect(() => {
+    if (!router.isReady || !isLoaded || geoPrefilled) return;
+    const { origen, destino } = router.query;
+    if (!origen && !destino) { setGeoPrefilled(true); return; }
+
+    const geocodeAddress = (address) => {
+      return new Promise((resolve) => {
+        if (!window.google?.maps?.Geocoder) { resolve(null); return; }
+        const geocoder = new window.google.maps.Geocoder();
+        geocoder.geocode({ address }, (results, status) => {
+          if (status === 'OK' && results[0]) {
+            resolve({
+              text: results[0].formatted_address,
+              coords: {
+                lat: results[0].geometry.location.lat(),
+                lng: results[0].geometry.location.lng(),
+              },
+              placeId: results[0].place_id,
+            });
+          } else {
+            resolve(null);
+          }
+        });
+      });
+    };
+
+    const doGeocode = async () => {
+      if (origen && !reserva.origenCoords) {
+        const geo = await geocodeAddress(decodeURIComponent(origen));
+        if (geo) {
+          setOrigenText(geo.text);
+          dispatch({ type: 'SET_BUSQUEDA', payload: { origen: geo.text, origenCoords: geo.coords, origenPlaceId: geo.placeId } });
+        }
+      }
+      if (destino && !reserva.destinoCoords) {
+        const geo = await geocodeAddress(decodeURIComponent(destino));
+        if (geo) {
+          setDestinoText(geo.text);
+          dispatch({ type: 'SET_BUSQUEDA', payload: { destino: geo.text, destinoCoords: geo.coords, destinoPlaceId: geo.placeId } });
+        }
+      }
+      setGeoPrefilled(true);
+    };
+
+    doGeocode();
+  }, [router.isReady, isLoaded]);
   const [fechaIda, setFechaIda] = useState(reserva.fechaIda || '');
   const [horaIda, setHoraIda] = useState(reserva.horaIda || '12:00');
   const [numPasajeros, setNumPasajeros] = useState(reserva.numPasajeros || 1);
