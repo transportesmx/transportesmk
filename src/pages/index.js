@@ -12,6 +12,7 @@ import Tours from "@/components/Tours";
 import BodasModal from "@/components/BodasModal";
 import Autobus from "@/components/Autobus";
 import Clientes from "@/components/Clientes";
+import Clientes2 from "@/components/Clientes2";
 import Head from "next/head";
 import { AppContext } from "@/Context/AppContext";
 
@@ -89,6 +90,7 @@ export default function Home() {
       <Galeria />
       <Faqs />
       <Clientes/>
+      <Clientes2/>
       {isBodasModalVisible && <BodasModal />} {/* Renderizar el modal condicionalmente */}
     </Fragment>
   );

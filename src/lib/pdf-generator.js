@@ -1,20 +1,19 @@
 import jsPDF from 'jspdf';
 import { LOGO_BASE64 } from './logo-base64';
+import { VEHICLE_IMAGES } from './vehicle-images-base64';
 
 const COLORS = {
   black: [0, 0, 0],
   dark: [20, 20, 20],
   text: [30, 30, 30],
   textLight: [100, 100, 100],
-  line: [180, 180, 180],
+  line: [200, 200, 200],
+  lineDark: [120, 120, 120],
   white: [255, 255, 255],
   red: [200, 30, 30],
+  bgLight: [245, 245, 245],
 };
 
-/**
- * Genera un folio único y fácil de rastrear
- * Formato: TMX-YYMMDD-XXXX (ej: TMX-260212-A3F8)
- */
 function generarFolio(reservaId) {
   const now = new Date();
   const yy = String(now.getFullYear()).slice(2);
@@ -26,31 +25,21 @@ function generarFolio(reservaId) {
   return `TMX-${yy}${mm}${dd}-${hash}`;
 }
 
-/**
- * Formatea teléfono con lada y espacios
- * Acepta formatos: "+524151393219", "4151393219", "+1 2125551234", etc.
- */
 function formatearTelefono(tel) {
   if (!tel) return 'N/A';
   const limpio = tel.replace(/\D/g, '');
-
-  // Ya viene con código MX (+52) + 10 dígitos = 12 dígitos
   if (limpio.length === 12 && limpio.startsWith('52')) {
     return `+${limpio.slice(0, 2)} ${limpio.slice(2, 5)} ${limpio.slice(5, 8)} ${limpio.slice(8)}`;
   }
-  // MX con 1 intercalado: +521...
   if (limpio.length === 13 && limpio.startsWith('521')) {
     return `+${limpio.slice(0, 2)} ${limpio.slice(3, 6)} ${limpio.slice(6, 9)} ${limpio.slice(9)}`;
   }
-  // Solo 10 dígitos (MX sin código): asume +52
   if (limpio.length === 10) {
     return `+52 ${limpio.slice(0, 3)} ${limpio.slice(3, 6)} ${limpio.slice(6)}`;
   }
-  // USA/Canada (+1) + 10 dígitos = 11 dígitos
   if (limpio.length === 11 && limpio.startsWith('1')) {
     return `+1 ${limpio.slice(1, 4)} ${limpio.slice(4, 7)} ${limpio.slice(7)}`;
   }
-  // Otro formato internacional: poner + y espaciar cada 3 dígitos
   if (limpio.length > 10) {
     const countryLen = limpio.length <= 12 ? 2 : 3;
     const country = limpio.slice(0, countryLen);
@@ -61,16 +50,29 @@ function formatearTelefono(tel) {
   return tel;
 }
 
+function getVehicleImage(vehiculoId, vehiculoNombre) {
+  if (vehiculoId && VEHICLE_IMAGES[vehiculoId]) return VEHICLE_IMAGES[vehiculoId];
+  const nombre = (vehiculoNombre || '').toLowerCase();
+  if (nombre.includes('sedan')) return VEHICLE_IMAGES.sedan;
+  if (nombre.includes('suburban')) return VEHICLE_IMAGES.suburban;
+  if (nombre.includes('minivan') || nombre.includes('van')) return VEHICLE_IMAGES.minivan;
+  if (nombre.includes('hiace')) return VEHICLE_IMAGES.hiace;
+  if (nombre.includes('sprinter')) return VEHICLE_IMAGES.sprinter;
+  return null;
+}
+
 const labels = {
   es: {
     serviceSheet: 'HOJA DE SERVICIO',
     company: 'Grupo Turístico MX',
+    rfc: 'RATG900822G16',
     address: 'San Miguel de Allende GTO.',
     phone: '+52 415 139 3219',
     email: 'contacto@transportesmx.org',
     website: 'https://transportesmx.org',
     folio: 'Folio',
     date: 'Fecha',
+    status: 'Pagado',
     client: 'Cliente',
     clientPhone: 'Teléfono',
     clientEmail: 'Correo',
@@ -92,18 +94,22 @@ const labels = {
     returnSection: 'Regreso:',
     returnPickup: 'Recoger en',
     returnDateTime: 'Fecha y hora',
+    comments: 'Comentarios',
     footer: 'TransportesMX | transportesmx.org | +52 415 139 3219',
     generated: 'Documento generado el',
+    siteLabel: 'Sitio web:',
   },
   en: {
     serviceSheet: 'SERVICE SHEET',
     company: 'Grupo Turístico MX',
+    rfc: 'RATG900822G16',
     address: 'San Miguel de Allende GTO.',
     phone: '+52 415 139 3219',
     email: 'contacto@transportesmx.org',
     website: 'https://transportesmx.org',
     folio: 'Folio',
     date: 'Date',
+    status: 'Paid',
     client: 'Client',
     clientPhone: 'Phone',
     clientEmail: 'Email',
@@ -125,23 +131,18 @@ const labels = {
     returnSection: 'Return:',
     returnPickup: 'Pickup at',
     returnDateTime: 'Date and time',
+    comments: 'Comments',
     footer: 'TransportesMX | transportesmx.org | +52 415 139 3219',
     generated: 'Document generated on',
+    siteLabel: 'Website:',
   },
 };
 
-/**
- * Genera una hoja de servicio PDF profesional
- * - Solo color negro (sin azul)
- * - Sin precios
- * - Folio en recuadro rojo con letras blancas
- * - Teléfonos formateados con lada
- * - Incluye aerolínea y número de vuelo
- */
 export function generarHojaServicio(reserva, lang = 'es') {
   const t = labels[lang] || labels.es;
   const doc = new jsPDF();
   const pw = doc.internal.pageSize.getWidth();
+  const ph = doc.internal.pageSize.getHeight();
   const margin = 15;
   const contentWidth = pw - margin * 2;
 
@@ -150,25 +151,25 @@ export function generarHojaServicio(reserva, lang = 'es') {
   // ── LOGO ──
   try {
     doc.addImage(LOGO_BASE64, 'PNG', margin, y, 44, 15);
-  } catch (e) {
+  } catch {
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(22);
     doc.setTextColor(...COLORS.black);
     doc.text('TRANSPORTES MX', margin, y + 10);
   }
 
-  // Info empresa
-  y += 18;
+  // ── Empresa info (lado izquierdo, debajo del logo) ──
+  y += 19;
   doc.setFontSize(8);
   doc.setFont('helvetica', 'normal');
   doc.setTextColor(...COLORS.textLight);
-  doc.text(t.company, margin, y);
-  doc.text(t.address, margin, y + 4);
-  doc.text(t.phone, margin, y + 8);
-  doc.text(t.email, margin, y + 12);
-  doc.text(t.website, margin, y + 16);
+  const companyLines = [t.company, t.address, t.phone, t.rfc, t.email, `${t.siteLabel}`, t.website];
+  companyLines.forEach((line) => {
+    doc.text(line, margin, y);
+    y += 3.8;
+  });
 
-  // Folio en RECUADRO ROJO
+  // ── Folio en RECUADRO ROJO (derecha arriba) ──
   const folio = generarFolio(reserva.id);
   const rightX = pw - margin;
   const folioText = `${t.folio}: ${folio}`;
@@ -179,54 +180,70 @@ export function generarHojaServicio(reserva, lang = 'es') {
   const folioX = rightX - folioW;
   const folioY = margin + 2;
 
-  // Recuadro rojo
   doc.setFillColor(...COLORS.red);
   doc.roundedRect(folioX, folioY, folioW, folioH, 2, 2, 'F');
   doc.setTextColor(...COLORS.white);
   doc.text(folioText, folioX + 6, folioY + 6.5);
 
-  // Fecha
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(10);
-  doc.setTextColor(...COLORS.text);
-  const fechaDoc = new Date().toLocaleDateString(lang === 'en' ? 'en-US' : 'es-MX', {
-    day: '2-digit', month: '2-digit', year: 'numeric',
-  });
-  doc.text(`${t.date}: ${fechaDoc}`, rightX, margin + 20, { align: 'right' });
-
-  y += 22;
-
-  // Línea separadora
+  // ── Línea separadora después del header ──
+  y += 4;
   doc.setDrawColor(...COLORS.black);
   doc.setLineWidth(0.8);
   doc.line(margin, y, pw - margin, y);
-  y += 10;
+  y += 8;
 
-  // ── DATOS DEL CLIENTE ──
-  doc.setFontSize(11);
-  doc.setTextColor(...COLORS.text);
+  // ── SECCIÓN 2 COLUMNAS: Cliente (izq) + Vehículo imagen (der) ──
+  const clientSectionY = y;
 
-  doc.setFont('helvetica', 'normal');
-  doc.text(`${t.client}: `, margin, y);
+  // Columna izquierda: datos del cliente
+  doc.setFontSize(10);
   doc.setFont('helvetica', 'bold');
-  const clW = doc.getStringUnitWidth(`${t.client}: `) * 11 / doc.internal.scaleFactor;
-  doc.text(reserva.clienteNombre || 'N/A', margin + clW, y);
+  doc.setTextColor(...COLORS.text);
+  doc.text(`${t.client}:`, margin, y);
+  const clLabelW = doc.getStringUnitWidth(`${t.client}: `) * 10 / doc.internal.scaleFactor;
+  doc.setTextColor(...COLORS.black);
+  doc.text(reserva.clienteNombre || 'N/A', margin + clLabelW, y);
   y += 6;
 
   doc.setFont('helvetica', 'normal');
+  doc.setFontSize(9);
+  doc.setTextColor(...COLORS.text);
   doc.text(`${t.clientPhone}: ${formatearTelefono(reserva.clienteTelefono)}`, margin, y);
-  y += 6;
+  y += 5;
   doc.text(`${t.clientEmail}: ${reserva.clienteEmail || 'N/A'}`, margin, y);
-  y += 12;
+  y += 6;
+
+  const fechaDoc = new Date().toLocaleDateString(lang === 'en' ? 'en-US' : 'es-MX', {
+    day: '2-digit', month: '2-digit', year: 'numeric',
+  });
+  doc.text(`${t.date}: ${fechaDoc}`, margin, y);
+  y += 5;
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(9);
+  doc.text(t.status, margin, y);
+
+  // Columna derecha: imagen del vehículo (ajustada al alto de la columna izq)
+  const colHeight = y - clientSectionY + 2;
+  const imgH = colHeight;
+  const imgW = imgH * 1.7;
+  const imgX = pw - margin - imgW;
+  const vehicleImg = getVehicleImage(reserva.vehiculoId, reserva.vehiculoNombre);
+  if (vehicleImg) {
+    try {
+      doc.addImage(vehicleImg, 'JPEG', imgX, clientSectionY - 2, imgW, imgH);
+    } catch { /* no image */ }
+  }
+
+  y += 8;
 
   // ── DESCRIPCIÓN DEL TRASLADO ──
   doc.setFillColor(...COLORS.dark);
-  doc.rect(margin, y, contentWidth, 9, 'F');
+  doc.rect(margin, y, contentWidth, 8, 'F');
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(11);
+  doc.setFontSize(10);
   doc.setTextColor(...COLORS.white);
-  doc.text(t.transferDesc, margin + 4, y + 6.5);
-  y += 15;
+  doc.text(t.transferDesc, margin + 4, y + 5.5);
+  y += 13;
 
   // Bullet points
   const bulletItems = [
@@ -234,78 +251,80 @@ export function generarHojaServicio(reserva, lang = 'es') {
     { label: t.clientName, value: reserva.clienteNombre || 'N/A' },
     { label: t.dateTime, value: `${reserva.fechaIda || 'N/A'} / ${reserva.horaIda || 'N/A'} hrs` },
     { label: t.pickupAt, value: reserva.origen || 'N/A' },
+  ];
+
+  if (reserva.numVuelo && reserva.aerolinea) {
+    bulletItems.push({ label: `${t.flightNumber} ${t.airline}`, value: `${reserva.aerolinea} ${reserva.numVuelo}` });
+  } else {
+    if (reserva.aerolinea) bulletItems.push({ label: t.airline, value: reserva.aerolinea });
+    if (reserva.numVuelo) bulletItems.push({ label: t.flightNumber, value: reserva.numVuelo });
+  }
+
+  bulletItems.push(
     { label: t.numPassengers, value: `${reserva.numPasajeros || 'N/A'} PAX` },
     { label: t.numBags, value: `${reserva.numMaletas || '0'}` },
     { label: t.clientPhone, value: formatearTelefono(reserva.clienteTelefono) },
     { label: t.destination, value: reserva.destino || 'N/A' },
-  ];
-
-  // Aerolínea y vuelo (si aplica)
-  if (reserva.aerolinea) {
-    bulletItems.push({ label: t.airline, value: reserva.aerolinea });
-  }
-  if (reserva.numVuelo) {
-    bulletItems.push({ label: t.flightNumber, value: reserva.numVuelo });
-  }
+    { label: t.roundTrip, value: reserva.tipoViaje === 'redondo' ? t.yes : t.no },
+  );
 
   if (reserva.distancia) bulletItems.push({ label: t.distance, value: reserva.distancia });
   if (reserva.duracion) bulletItems.push({ label: t.estTime, value: reserva.duracion });
-  bulletItems.push({ label: t.roundTrip, value: reserva.tipoViaje === 'redondo' ? t.yes : t.no });
 
-  doc.setFontSize(10);
+  doc.setFontSize(9.5);
   bulletItems.forEach((item) => {
     doc.setFillColor(...COLORS.text);
-    doc.circle(margin + 4, y - 1.2, 1.2, 'F');
+    doc.circle(margin + 4, y - 1, 1, 'F');
 
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(...COLORS.text);
     doc.text(`${item.label}: `, margin + 8, y);
 
-    const labelWidth = doc.getStringUnitWidth(`${item.label}: `) * 10 / doc.internal.scaleFactor;
+    const labelWidth = doc.getStringUnitWidth(`${item.label}: `) * 9.5 / doc.internal.scaleFactor;
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(...COLORS.black);
     const maxW = contentWidth - 8 - labelWidth - 5;
     const lines = doc.splitTextToSize(String(item.value), maxW);
     doc.text(lines, margin + 8 + labelWidth, y);
-    y += 7 * lines.length;
+    y += 6.5 * lines.length;
   });
 
-  y += 5;
+  y += 4;
 
   // ── REGRESO (si aplica) ──
   if (reserva.tipoViaje === 'redondo' && reserva.fechaRegreso) {
-    doc.setDrawColor(...COLORS.black);
-    doc.setLineWidth(0.5);
+    doc.setDrawColor(...COLORS.lineDark);
+    doc.setLineWidth(0.4);
     doc.line(margin, y, pw - margin, y);
-    y += 8;
+    y += 7;
 
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(12);
+    doc.setFontSize(11);
     doc.setTextColor(...COLORS.black);
     doc.text(t.returnSection, margin, y);
-    y += 8;
+    y += 7;
 
     const returnItems = [
       { label: t.returnPickup, value: reserva.destino || 'N/A' },
       { label: t.returnDateTime, value: `${reserva.fechaRegreso} / ${reserva.horaRegreso || 'N/A'} hrs` },
     ];
 
-    doc.setFontSize(10);
+    doc.setFontSize(9.5);
     returnItems.forEach((item) => {
       doc.setFillColor(...COLORS.text);
-      doc.circle(margin + 4, y - 1.2, 1.2, 'F');
+      doc.circle(margin + 4, y - 1, 1, 'F');
       doc.setFont('helvetica', 'bold');
       doc.setTextColor(...COLORS.text);
       doc.text(`${item.label}: `, margin + 8, y);
-      const lw = doc.getStringUnitWidth(`${item.label}: `) * 10 / doc.internal.scaleFactor;
+      const lw = doc.getStringUnitWidth(`${item.label}: `) * 9.5 / doc.internal.scaleFactor;
       doc.setTextColor(...COLORS.black);
       doc.text(String(item.value), margin + 8 + lw, y);
-      y += 7;
+      y += 6.5;
     });
   }
 
   // ── FOOTER ──
-  const footerY = 275;
+  const footerY = ph - 18;
   doc.setDrawColor(...COLORS.line);
   doc.setLineWidth(0.3);
   doc.line(margin, footerY, pw - margin, footerY);
@@ -313,13 +332,11 @@ export function generarHojaServicio(reserva, lang = 'es') {
   doc.setFontSize(8);
   doc.setTextColor(...COLORS.textLight);
   doc.setFont('helvetica', 'normal');
-  const fW = doc.getStringUnitWidth(t.footer) * 8 / doc.internal.scaleFactor;
-  doc.text(t.footer, (pw - fW) / 2, footerY + 6);
+  doc.text(t.footer, pw / 2, footerY + 5, { align: 'center' });
 
   const genText = `${t.generated} ${new Date().toLocaleDateString(lang === 'en' ? 'en-US' : 'es-MX')}`;
-  const gW = doc.getStringUnitWidth(genText) * 7 / doc.internal.scaleFactor;
   doc.setFontSize(7);
-  doc.text(genText, (pw - gW) / 2, footerY + 11);
+  doc.text(genText, pw / 2, footerY + 10, { align: 'center' });
 
   return doc;
 }
