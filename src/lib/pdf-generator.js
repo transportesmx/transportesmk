@@ -7,6 +7,7 @@ const COLORS = {
   dark: [20, 20, 20],
   text: [30, 30, 30],
   textLight: [100, 100, 100],
+  blue: [0, 51, 153],
   line: [200, 200, 200],
   lineDark: [120, 120, 120],
   white: [255, 255, 255],
@@ -161,13 +162,24 @@ export function generarHojaServicio(reserva, lang = 'es') {
   // ── Empresa info (lado izquierdo, debajo del logo) ──
   y += 19;
   doc.setFontSize(8);
-  doc.setFont('helvetica', 'normal');
-  doc.setTextColor(...COLORS.textLight);
-  const companyLines = [t.company, t.address, t.phone, t.rfc, t.email, `${t.siteLabel}`, t.website];
-  companyLines.forEach((line) => {
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(...COLORS.black);
+  [t.company, t.address, t.phone, t.rfc].forEach((line) => {
     doc.text(line, margin, y);
     y += 3.8;
   });
+  // Email como hipervínculo azul
+  doc.setTextColor(...COLORS.blue);
+  doc.textWithLink(t.email, margin, y, { url: `mailto:${t.email}` });
+  y += 3.8;
+  // Sitio web label en negro + URL azul
+  doc.setTextColor(...COLORS.black);
+  doc.setFont('helvetica', 'bold');
+  doc.text(`${t.siteLabel}`, margin, y);
+  y += 3.8;
+  doc.setTextColor(...COLORS.blue);
+  doc.textWithLink(t.website, margin, y, { url: t.website });
+  y += 3.8;
 
   // ── Folio en RECUADRO ROJO (derecha arriba) ──
   const folio = generarFolio(reserva.id);
@@ -185,6 +197,16 @@ export function generarHojaServicio(reserva, lang = 'es') {
   doc.setTextColor(...COLORS.white);
   doc.text(folioText, folioX + 6, folioY + 6.5);
 
+  // Fecha y Pagado (debajo del folio, alineado a la derecha)
+  const fechaDoc = new Date().toLocaleDateString(lang === 'en' ? 'en-US' : 'es-MX', {
+    day: '2-digit', month: '2-digit', year: 'numeric',
+  });
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(11);
+  doc.setTextColor(...COLORS.black);
+  doc.text(`${t.date}: ${fechaDoc}`, rightX, folioY + folioH + 8, { align: 'right' });
+  doc.text(t.status, rightX, folioY + folioH + 15, { align: 'right' });
+
   // ── Línea separadora después del header ──
   y += 4;
   doc.setDrawColor(...COLORS.black);
@@ -197,30 +219,30 @@ export function generarHojaServicio(reserva, lang = 'es') {
 
   // Columna izquierda: datos del cliente
   doc.setFontSize(10);
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(...COLORS.text);
-  doc.text(`${t.client}:`, margin, y);
-  const clLabelW = doc.getStringUnitWidth(`${t.client}: `) * 10 / doc.internal.scaleFactor;
+  doc.setFont('helvetica', 'normal');
   doc.setTextColor(...COLORS.black);
+  const clLabel = `${t.client}: `;
+  doc.text(clLabel, margin, y);
+  const clLabelW = doc.getStringUnitWidth(clLabel) * 10 / doc.internal.scaleFactor;
+  doc.setFont('helvetica', 'bold');
   doc.text(reserva.clienteNombre || 'N/A', margin + clLabelW, y);
   y += 6;
 
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(9);
-  doc.setTextColor(...COLORS.text);
-  doc.text(`${t.clientPhone}: ${formatearTelefono(reserva.clienteTelefono)}`, margin, y);
+  doc.setTextColor(...COLORS.black);
+  const telLabel = `${t.clientPhone}: `;
+  doc.text(telLabel, margin, y);
+  const telLabelW = doc.getStringUnitWidth(telLabel) * 9 / doc.internal.scaleFactor;
+  doc.text(formatearTelefono(reserva.clienteTelefono), margin + telLabelW, y);
   y += 5;
-  doc.text(`${t.clientEmail}: ${reserva.clienteEmail || 'N/A'}`, margin, y);
-  y += 6;
 
-  const fechaDoc = new Date().toLocaleDateString(lang === 'en' ? 'en-US' : 'es-MX', {
-    day: '2-digit', month: '2-digit', year: 'numeric',
-  });
-  doc.text(`${t.date}: ${fechaDoc}`, margin, y);
+  const emailLabel = `${t.clientEmail}: `;
+  doc.text(emailLabel, margin, y);
+  const emailLabelW = doc.getStringUnitWidth(emailLabel) * 9 / doc.internal.scaleFactor;
+  doc.setTextColor(...COLORS.blue);
+  doc.text(reserva.clienteEmail || 'N/A', margin + emailLabelW, y);
   y += 5;
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(9);
-  doc.text(t.status, margin, y);
 
   // Columna derecha: imagen del vehículo (ajustada al alto de la columna izq)
   const colHeight = y - clientSectionY + 2;
@@ -273,16 +295,16 @@ export function generarHojaServicio(reserva, lang = 'es') {
 
   doc.setFontSize(9.5);
   bulletItems.forEach((item) => {
-    doc.setFillColor(...COLORS.text);
+    doc.setFillColor(...COLORS.black);
     doc.circle(margin + 4, y - 1, 1, 'F');
 
     doc.setFont('helvetica', 'bold');
-    doc.setTextColor(...COLORS.text);
+    doc.setTextColor(...COLORS.black);
     doc.text(`${item.label}: `, margin + 8, y);
 
     const labelWidth = doc.getStringUnitWidth(`${item.label}: `) * 9.5 / doc.internal.scaleFactor;
     doc.setFont('helvetica', 'bold');
-    doc.setTextColor(...COLORS.black);
+    doc.setTextColor(...COLORS.blue);
     const maxW = contentWidth - 8 - labelWidth - 5;
     const lines = doc.splitTextToSize(String(item.value), maxW);
     doc.text(lines, margin + 8 + labelWidth, y);
@@ -311,13 +333,13 @@ export function generarHojaServicio(reserva, lang = 'es') {
 
     doc.setFontSize(9.5);
     returnItems.forEach((item) => {
-      doc.setFillColor(...COLORS.text);
+      doc.setFillColor(...COLORS.black);
       doc.circle(margin + 4, y - 1, 1, 'F');
       doc.setFont('helvetica', 'bold');
-      doc.setTextColor(...COLORS.text);
+      doc.setTextColor(...COLORS.black);
       doc.text(`${item.label}: `, margin + 8, y);
       const lw = doc.getStringUnitWidth(`${item.label}: `) * 9.5 / doc.internal.scaleFactor;
-      doc.setTextColor(...COLORS.black);
+      doc.setTextColor(...COLORS.blue);
       doc.text(String(item.value), margin + 8 + lw, y);
       y += 6.5;
     });
