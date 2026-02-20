@@ -74,11 +74,11 @@ export const vehiculos = [
     capacidadPasajeros: 20,
     capacidadEquipaje: 20,
     imagen: '/assets/images/sprinter.png',
-    precioPorKm: 0, // Pendiente - no disponible en reservación online
+    precioPorKm: 73,
     precioBase: 800,
     caracteristicas: ['Grupos grandes', 'Bodas y eventos', 'Máxima capacidad'],
     popular: false,
-    disponibleReservacion: false, // No disponible hasta definir precio/km
+    disponibleReservacion: true, // No disponible hasta definir precio/km
   },
 ];
 

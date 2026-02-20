@@ -216,43 +216,44 @@ export function generarHojaServicio(reserva, lang = 'es') {
 
   // ── SECCIÓN 2 COLUMNAS: Cliente (izq) + Vehículo imagen (der) ──
   const clientSectionY = y;
+  const fontSize = 12;
 
   // Columna izquierda: datos del cliente
-  doc.setFontSize(10);
+  doc.setFontSize(fontSize);
   doc.setFont('helvetica', 'normal');
   doc.setTextColor(...COLORS.black);
   const clLabel = `${t.client}: `;
   doc.text(clLabel, margin, y);
-  const clLabelW = doc.getStringUnitWidth(clLabel) * 10 / doc.internal.scaleFactor;
+  const clLabelW = doc.getStringUnitWidth(clLabel) * fontSize / doc.internal.scaleFactor;
   doc.setFont('helvetica', 'bold');
   doc.text(reserva.clienteNombre || 'N/A', margin + clLabelW, y);
-  y += 6;
+  y += 8;
 
   doc.setFont('helvetica', 'normal');
-  doc.setFontSize(9);
+  doc.setFontSize(fontSize);
   doc.setTextColor(...COLORS.black);
   const telLabel = `${t.clientPhone}: `;
   doc.text(telLabel, margin, y);
-  const telLabelW = doc.getStringUnitWidth(telLabel) * 9 / doc.internal.scaleFactor;
+  const telLabelW = doc.getStringUnitWidth(telLabel) * fontSize / doc.internal.scaleFactor;
   doc.text(formatearTelefono(reserva.clienteTelefono), margin + telLabelW, y);
-  y += 5;
+  y += 7;
 
   const emailLabel = `${t.clientEmail}: `;
   doc.text(emailLabel, margin, y);
-  const emailLabelW = doc.getStringUnitWidth(emailLabel) * 9 / doc.internal.scaleFactor;
+  const emailLabelW = doc.getStringUnitWidth(emailLabel) * fontSize / doc.internal.scaleFactor;
   doc.setTextColor(...COLORS.blue);
   doc.text(reserva.clienteEmail || 'N/A', margin + emailLabelW, y);
-  y += 5;
+  y += 4;
 
-  // Columna derecha: imagen del vehículo (ajustada al alto de la columna izq)
+  // Columna derecha: imagen del vehículo (aspect ratio real ~2:1)
   const colHeight = y - clientSectionY + 2;
   const imgH = colHeight;
-  const imgW = imgH * 1.7;
+  const imgW = imgH * 2;
   const imgX = pw - margin - imgW;
   const vehicleImg = getVehicleImage(reserva.vehiculoId, reserva.vehiculoNombre);
   if (vehicleImg) {
     try {
-      doc.addImage(vehicleImg, 'JPEG', imgX, clientSectionY - 2, imgW, imgH);
+      doc.addImage(vehicleImg, 'PNG', imgX, clientSectionY - 2, imgW, imgH);
     } catch { /* no image */ }
   }
 
@@ -313,37 +314,36 @@ export function generarHojaServicio(reserva, lang = 'es') {
 
   y += 4;
 
-  // ── REGRESO (si aplica) ──
-  if (reserva.tipoViaje === 'redondo' && reserva.fechaRegreso) {
-    doc.setDrawColor(...COLORS.lineDark);
-    doc.setLineWidth(0.4);
-    doc.line(margin, y, pw - margin, y);
-    y += 7;
+  // ── REGRESO (siempre visible) ──
+  doc.setDrawColor(...COLORS.lineDark);
+  doc.setLineWidth(0.4);
+  doc.line(margin, y, pw - margin, y);
+  y += 7;
 
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(11);
+  doc.setTextColor(...COLORS.black);
+  doc.text(t.returnSection, margin, y);
+  y += 7;
+
+  const isRoundTrip = reserva.tipoViaje === 'redondo' && reserva.fechaRegreso;
+  const returnItems = [
+    { label: t.returnPickup, value: isRoundTrip ? (reserva.destino || 'N/A') : '' },
+    { label: t.returnDateTime, value: isRoundTrip ? `${reserva.fechaRegreso} / ${reserva.horaRegreso || 'N/A'} hrs` : '' },
+  ];
+
+  doc.setFontSize(9.5);
+  returnItems.forEach((item) => {
+    doc.setFillColor(...COLORS.black);
+    doc.circle(margin + 4, y - 1, 1, 'F');
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(11);
     doc.setTextColor(...COLORS.black);
-    doc.text(t.returnSection, margin, y);
-    y += 7;
-
-    const returnItems = [
-      { label: t.returnPickup, value: reserva.destino || 'N/A' },
-      { label: t.returnDateTime, value: `${reserva.fechaRegreso} / ${reserva.horaRegreso || 'N/A'} hrs` },
-    ];
-
-    doc.setFontSize(9.5);
-    returnItems.forEach((item) => {
-      doc.setFillColor(...COLORS.black);
-      doc.circle(margin + 4, y - 1, 1, 'F');
-      doc.setFont('helvetica', 'bold');
-      doc.setTextColor(...COLORS.black);
-      doc.text(`${item.label}: `, margin + 8, y);
-      const lw = doc.getStringUnitWidth(`${item.label}: `) * 9.5 / doc.internal.scaleFactor;
-      doc.setTextColor(...COLORS.blue);
-      doc.text(String(item.value), margin + 8 + lw, y);
-      y += 6.5;
-    });
-  }
+    doc.text(`${item.label}: `, margin + 8, y);
+    const lw = doc.getStringUnitWidth(`${item.label}: `) * 9.5 / doc.internal.scaleFactor;
+    doc.setTextColor(...COLORS.blue);
+    doc.text(String(item.value), margin + 8 + lw, y);
+    y += 6.5;
+  });
 
   // ── FOOTER ──
   const footerY = ph - 18;
