@@ -153,10 +153,16 @@ export default function SelectorVehiculo({ onNext, onBack }) {
                             ${vehiculo.precio.precioTotal.toLocaleString('es-MX')}
                           </p>
                           <p className="text-[11px] text-white/50 mt-0.5">MXN</p>
-                          {reserva.tipoViaje === 'redondo' && (
-                            <p className="text-[11px] text-emerald-400/60 mt-1">
-                              {t.discountIncluded || '10% desc. incluido'}
-                            </p>
+                          {/* Desglose temporal */}
+                          {vehiculo.precio.desglose && (
+                            <div className="mt-2 text-left space-y-0.5 border-t border-white/[0.06] pt-2">
+                              {vehiculo.precio.desglose.map((item, i) => (
+                                <div key={i} className={`flex justify-between gap-3 text-[10px] ${item.concepto === 'TOTAL' ? 'font-bold text-white border-t border-white/[0.1] pt-1 mt-1' : 'text-white/40'}`}>
+                                  <span>{item.concepto}</span>
+                                  <span className="tabular-nums">${item.monto.toLocaleString('es-MX')}</span>
+                                </div>
+                              ))}
+                            </div>
                           )}
                         </div>
                       ) : (
