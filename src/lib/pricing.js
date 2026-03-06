@@ -19,9 +19,9 @@ export const vehiculos = [
     capacidadEquipaje: 3,
     imagen: '/assets/images/camry.png',
     kmMinimo: 10,
-    precioPorKm: 22,
+    precioPorKm: 21,
     tarifas: [
-      { hastaKm: 150, precioPorKm: 22 },
+      { hastaKm: 150, precioPorKm: 21 },
       { hastaKm: Infinity, precioPorKm: 21 },
     ],
     banderazos: [
@@ -126,29 +126,24 @@ export const vehiculos = [
 ];
 
 /**
- * Calcula el precio por km usando tarifas escalonadas.
- * Cada tramo cobra su tarifa solo por los km de ese tramo.
- * Retorna { total, detalleTramos }
+ * Determina la tarifa por km según la distancia total.
+ * La tarifa aplica a TODOS los km del viaje (no escalonado).
+ * Se usa el bracket en el que cae la distancia total.
  */
 function calcularPrecioDistancia(km, tarifas) {
-  let restante = km;
-  let total = 0;
-  let prevLimit = 0;
-  const detalleTramos = [];
-
+  let tarifaAplicable = tarifas[0].precioPorKm;
   for (const tramo of tarifas) {
-    const kmEnTramo = Math.min(restante, tramo.hastaKm - prevLimit);
-    if (kmEnTramo <= 0) break;
-    const montoTramo = kmEnTramo * tramo.precioPorKm;
-    total += montoTramo;
-    detalleTramos.push({
-      concepto: `${kmEnTramo.toFixed(1)} km × $${tramo.precioPorKm}/km`,
-      monto: Math.round(montoTramo),
-    });
-    restante -= kmEnTramo;
-    prevLimit = tramo.hastaKm;
-    if (restante <= 0) break;
+    if (km <= tramo.hastaKm) {
+      tarifaAplicable = tramo.precioPorKm;
+      break;
+    }
   }
+
+  const total = km * tarifaAplicable;
+  const detalleTramos = [{
+    concepto: `${km.toFixed(1)} km × $${tarifaAplicable}/km`,
+    monto: Math.round(total),
+  }];
 
   return { total, detalleTramos };
 }
@@ -184,25 +179,42 @@ export function calcularPrecio({ vehiculoId, distanciaMetros, idaYVuelta }) {
 
   const desglose = [];
 
-  // 1. Precio por distancia (escalonado)
+  // Info del vehículo
+  desglose.push({ concepto: `Vehículo: ${vehiculo.nombre}`, monto: null });
+  desglose.push({ concepto: `Distancia: ${distanciaKm} km`, monto: null });
+  desglose.push({ concepto: `Km mínimo: ${vehiculo.kmMinimo} km`, monto: null });
+
+  // 1. Determinar tarifa aplicable
   const { total: precioDistancia, detalleTramos } = calcularPrecioDistancia(distanciaKm, vehiculo.tarifas);
+  const tarifaUsada = detalleTramos[0]?.concepto || '';
+  desglose.push({ concepto: '─── Cálculo ───', monto: null });
   desglose.push(...detalleTramos);
 
   // 2. Banderazo
   const banderazo = calcularBanderazo(distanciaKm, vehiculo.banderazos);
   if (banderazo > 0) {
-    desglose.push({ concepto: `Banderazo (≤${Math.ceil(distanciaKm)} km)`, monto: banderazo });
+    const maxBandKm = Math.max(...vehiculo.banderazos.map(b => b.hastaKm));
+    desglose.push({ concepto: `+ Banderazo (dist ≤ ${maxBandKm}km)`, monto: banderazo });
+  } else {
+    desglose.push({ concepto: 'Banderazo: $0 (no aplica)', monto: 0 });
   }
 
-  let precioIda = Math.round(precioDistancia + banderazo);
+  // Subtotal antes de redondeo
+  const subtotal = Math.round(precioDistancia + banderazo);
+  desglose.push({ concepto: 'Subtotal', monto: subtotal });
 
-  // Redondear al múltiplo de 50 más cercano
-  precioIda = Math.ceil(precioIda / 50) * 50;
+  // Redondear al múltiplo de 50
+  let precioIda = Math.ceil(subtotal / 50) * 50;
+  if (precioIda !== subtotal) {
+    desglose.push({ concepto: `Redondeo (→ múltiplo $50)`, monto: precioIda });
+  }
+
+  desglose.push({ concepto: 'PRECIO IDA', monto: precioIda });
 
   let precioTotal = precioIda;
   if (idaYVuelta) {
+    desglose.push({ concepto: `Ida y vuelta: $${precioIda.toLocaleString()} × 2`, monto: null });
     precioTotal = precioIda * 2;
-    desglose.push({ concepto: 'Ida y vuelta (×2)', monto: precioTotal });
   }
 
   desglose.push({ concepto: 'TOTAL', monto: precioTotal });
@@ -212,11 +224,6 @@ export function calcularPrecio({ vehiculoId, distanciaMetros, idaYVuelta }) {
     precioTotal,
     moneda: 'MXN',
     desglose,
-    detalle: {
-      distanciaKm,
-      vehiculo: vehiculo.nombre,
-      banderazo,
-    },
   };
 }
 

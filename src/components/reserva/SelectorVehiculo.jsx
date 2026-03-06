@@ -156,12 +156,16 @@ export default function SelectorVehiculo({ onNext, onBack }) {
                           {/* Desglose temporal */}
                           {vehiculo.precio.desglose && (
                             <div className="mt-2 text-left space-y-0.5 border-t border-white/[0.06] pt-2">
-                              {vehiculo.precio.desglose.map((item, i) => (
-                                <div key={i} className={`flex justify-between gap-3 text-[10px] ${item.concepto === 'TOTAL' ? 'font-bold text-white border-t border-white/[0.1] pt-1 mt-1' : 'text-white/40'}`}>
-                                  <span>{item.concepto}</span>
-                                  <span className="tabular-nums">${item.monto.toLocaleString('es-MX')}</span>
-                                </div>
-                              ))}
+                              {vehiculo.precio.desglose.map((item, i) => {
+                                const isTotal = item.concepto === 'TOTAL' || item.concepto === 'PRECIO IDA';
+                                const isSeparator = item.concepto.startsWith('───');
+                                return (
+                                  <div key={i} className={`flex justify-between gap-3 text-[10px] ${isTotal ? 'font-bold text-white border-t border-white/[0.1] pt-1 mt-1' : isSeparator ? 'text-white/20 mt-1' : 'text-white/40'}`}>
+                                    <span>{item.concepto}</span>
+                                    {item.monto !== null && <span className="tabular-nums">${item.monto.toLocaleString('es-MX')}</span>}
+                                  </div>
+                                );
+                              })}
                             </div>
                           )}
                         </div>

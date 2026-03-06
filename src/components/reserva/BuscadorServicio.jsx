@@ -190,7 +190,7 @@ export default function BuscadorServicio({ onNext, isLoaded }) {
     onNext();
   };
 
-  const inputBase = 'w-full px-4 py-3 rounded-lg bg-white/[0.04] border border-white/[0.08] text-white placeholder-white/60 text-sm focus:outline-none focus:border-blue-500/50 focus:bg-white/[0.06] transition-all duration-200';
+  const inputBase = 'w-full px-3 py-3 rounded-lg bg-white/[0.04] border border-white/[0.30] text-white placeholder-white/60 text-sm focus:outline-none focus:border-blue-500/50 focus:bg-white/[0.06] transition-all duration-200 min-w-0';
 
   return (
     <div className="max-w-lg mx-auto">
@@ -268,9 +268,10 @@ export default function BuscadorServicio({ onNext, isLoaded }) {
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="text-xs font-medium text-white/40 mb-1.5 flex items-center gap-1.5">
-                <FaCalendarAlt className="text-[10px]" /> {t.date || 'Fecha'}
+                <FaCalendarAlt className="text-[10px] " /> {t.date || 'Fecha'}
               </label>
               <input type="date" value={fechaIda} min={minDate}
+                onClick={(e) => e.target.showPicker?.()}
                 onChange={(e) => setFechaIda(e.target.value)} className={inputBase} />
             </div>
             <div>
@@ -278,6 +279,7 @@ export default function BuscadorServicio({ onNext, isLoaded }) {
                 <FaClock className="text-[10px]" /> {t.time || 'Hora'}
               </label>
               <input type="time" value={horaIda}
+                onClick={(e) => e.target.showPicker?.()}
                 onChange={(e) => setHoraIda(e.target.value)} className={inputBase} />
             </div>
           </div>
@@ -347,6 +349,7 @@ export default function BuscadorServicio({ onNext, isLoaded }) {
                   {t.returnDate || 'Fecha regreso'}
                 </label>
                 <input type="date" value={fechaRegreso} min={fechaIda || minDate}
+                  onClick={(e) => e.target.showPicker?.()}
                   onChange={(e) => setFechaRegreso(e.target.value)} className={inputBase} />
               </div>
               <div>
@@ -354,6 +357,7 @@ export default function BuscadorServicio({ onNext, isLoaded }) {
                   {t.returnTime || 'Hora regreso'}
                 </label>
                 <input type="time" value={horaRegreso}
+                  onClick={(e) => e.target.showPicker?.()}
                   onChange={(e) => setHoraRegreso(e.target.value)} className={inputBase} />
               </div>
             </motion.div>
