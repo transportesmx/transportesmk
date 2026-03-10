@@ -14,6 +14,8 @@ const clientes2 = [
   { nombre: "Cliente 8", logo: "/assets/clients2/03fb143a-527d-42c5-82e1-58969c6ff177.jpeg" },
   { nombre: "Cliente 9", logo: "/assets/clients2/9a6613de-4a68-452e-8713-801f62b87c59.jpeg" },
   { nombre: "Cliente 10", logo: "/assets/clients2/1dc967f9-14d8-4bee-a16d-d2518e327502.jpeg" },
+  { nombre: "Cliente 11", logo: "/assets/clients2/1225fa66-6274-4e42-9f5a-f39f822d5ea4.jpeg" },
+  { nombre: "Cliente 12", logo: "/assets/clients2/071684a3-9189-492d-afb5-86ce82536971.jpeg" },
 ];
 
 const ClientesCarousel2 = () => {
