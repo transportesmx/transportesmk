@@ -5,7 +5,7 @@ import "swiper/css";
 
 const clientes2 = [
   { nombre: "Cliente 1", logo: "/assets/clients2/adcb4c92-edc0-4d9b-ab9c-fd70d2697516.jpeg" },
-  { nombre: "Cliente 2", logo: "/assets/clients2/a176ce62-2346-4aa1-aaba-2ab50dd590f0.jpeg" },
+  { nombre: "Cliente 2", logo: "/assets/clients2/a176ce62-2346-4aa1-aaba-2ab50dd590f20.png" },
   { nombre: "Cliente 3", logo: "/assets/clients2/9f776189-6ad6-4f56-bd99-08e371a9d2e1.jpeg" },
   { nombre: "Cliente 4", logo: "/assets/clients2/6d980c9e-6a84-47d4-8f6d-3d9067576a88.jpeg" },
   { nombre: "Cliente 5", logo: "/assets/clients2/9b6ae373-c6a3-45aa-b3fe-2888f3a5bc11.jpeg" },

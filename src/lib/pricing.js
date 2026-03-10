@@ -107,12 +107,11 @@ export const vehiculos = [
     capacidadPasajeros: 20,
     capacidadEquipaje: 20,
     imagen: '/assets/images/sprinter.png',
-    kmMinimo: 20,
+    kmMinimo: 50,
     precioPorKm: 75,
     tarifas: [
-      { hastaKm: 80, precioPorKm: 75 },
-      { hastaKm: 150, precioPorKm: 65 },
-      { hastaKm: Infinity, precioPorKm: 60 },
+      { hastaKm: 150, precioPorKm: 75 },
+      { hastaKm: Infinity, precioPorKm: 65 },
     ],
     banderazos: [
       { hastaKm: 60, monto: 1800 },

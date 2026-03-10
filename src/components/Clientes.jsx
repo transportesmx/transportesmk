@@ -4,7 +4,6 @@ import { Autoplay } from "swiper/modules";
 import "swiper/css";
 
 const clientes = [
-  { nombre: "Empresa 1", logo: "/assets/clients/1.png" },
   { nombre: "Empresa 2", logo: "/assets/clients/2.png" },
   { nombre: "Empresa 3", logo: "/assets/clients/3.png" },
   { nombre: "Empresa 4", logo: "/assets/clients/4.png" },
