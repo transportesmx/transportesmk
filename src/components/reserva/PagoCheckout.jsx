@@ -169,7 +169,7 @@ export default function PagoCheckout({ onNext, onBack }) {
 
       <div className="flex gap-3">
         <button onClick={onBack} disabled={loading}
-          className="px-5 py-3 text-sm text-white/50 hover:text-white/70 bg-white/[0.04] hover:bg-white/[0.06] border border-white/[0.06] rounded-lg transition-all flex items-center gap-2 disabled:opacity-30">
+          className="px-5 py-3 text-sm text-white/50 hover:text-black bg-white/[0.04] hover:bg-amber-500/90 border border-white/[0.06] hover:border-amber-500 rounded-lg transition-all flex items-center gap-2 hover:font-bold disabled:opacity-30">
           <FaArrowLeft className="text-xs" /> {t.back || 'Atrás'}
         </button>
         <button onClick={handlePagar} disabled={loading}
