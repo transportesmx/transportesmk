@@ -63,8 +63,8 @@ export default async function handler(req, res) {
             .eq('id', meta.reservaId)
             .single();
 
-          if (reserva?.estado === 'confirmada') {
-            console.log('[Webhook] Ya procesado por verificar-sesion, omitiendo');
+          if (reserva?.estado === 'confirmada' || reserva?.estado === 'pagada') {
+            console.log(`[Webhook] Ya procesado (${reserva.estado}), omitiendo`);
             break;
           }
         }

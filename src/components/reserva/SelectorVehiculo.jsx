@@ -184,7 +184,7 @@ export default function SelectorVehiculo({ onNext, onBack }) {
                 </div>
               </button>
 
-              {/* Dropdown de medidas de maleta */}
+              {/* Medidas de maleta (inline en desktop) */}
               <AnimatePresence>
                 {isLuggageOpen && (
                   <motion.div
@@ -192,9 +192,9 @@ export default function SelectorVehiculo({ onNext, onBack }) {
                     animate={{ opacity: 1, height: 'auto' }}
                     exit={{ opacity: 0, height: 0 }}
                     transition={{ duration: 0.2 }}
-                    className="overflow-hidden"
+                    className="overflow-hidden hidden sm:block"
                   >
-                    <div className="mx-2 mt-1 mb-2 p-4 rounded-xl bg-white/[0.04] border border-white/[0.08] flex flex-col sm:flex-row items-center gap-4">
+                    <div className="mx-2 mt-1 mb-2 p-4 rounded-xl bg-white/[0.04] border border-white/[0.08] flex flex-row items-center gap-4">
                       <div className="flex items-center gap-3">
                         <FaSuitcaseRolling className="text-blue-400/60 text-2xl" />
                         <div>
@@ -241,6 +241,70 @@ export default function SelectorVehiculo({ onNext, onBack }) {
           <FaArrowLeft className="text-xs" /> {t.back || 'Atrás'}
         </button>
       </div>
+
+      {/* Modal de medidas de maleta — solo móvil */}
+      <AnimatePresence>
+        {luggageOpen !== null && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:hidden"
+            onClick={() => setLuggageOpen(null)}
+          >
+            <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.92, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.92, y: 20 }}
+              transition={{ duration: 0.2 }}
+              className="relative w-full max-w-sm bg-[#14141f] border border-white/[0.1] rounded-2xl p-5 shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                type="button"
+                onClick={() => setLuggageOpen(null)}
+                className="absolute top-3 right-3 w-7 h-7 rounded-full bg-white/[0.06] flex items-center justify-center text-white/40 hover:text-white transition-colors"
+              >
+                <FaTimesCircle className="text-sm" />
+              </button>
+
+              <div className="flex items-center gap-3 mb-4">
+                <FaSuitcaseRolling className="text-blue-400/70 text-2xl" />
+                <div>
+                  <p className="text-sm font-semibold text-white">
+                    {t.luggageSizeTitle || 'Tamaño máximo de maleta'}
+                  </p>
+                  {(() => {
+                    const v = vehiculosConPrecio.find((v) => v.id === luggageOpen);
+                    return v ? (
+                      <p className="text-xs text-white/40 mt-0.5">
+                        {t.luggageFits || 'Caben'} {v.capacidadEquipaje} {t.bagsInVehicle || 'maletas en este vehículo'}
+                      </p>
+                    ) : null;
+                  })()}
+                </div>
+              </div>
+
+              <div className="flex gap-3 justify-center">
+                <div className="flex-1 bg-white/[0.04] rounded-xl py-3 border border-white/[0.06] text-center">
+                  <p className="text-2xl font-bold text-white">{medidasMaleta.alto}</p>
+                  <p className="text-[10px] text-white/40 uppercase mt-1">{t.height || 'alto'} (cm)</p>
+                </div>
+                <div className="flex-1 bg-white/[0.04] rounded-xl py-3 border border-white/[0.06] text-center">
+                  <p className="text-2xl font-bold text-white">{medidasMaleta.ancho}</p>
+                  <p className="text-[10px] text-white/40 uppercase mt-1">{t.width || 'ancho'} (cm)</p>
+                </div>
+                <div className="flex-1 bg-white/[0.04] rounded-xl py-3 border border-white/[0.06] text-center">
+                  <p className="text-2xl font-bold text-white">{medidasMaleta.profundidad}</p>
+                  <p className="text-[10px] text-white/40 uppercase mt-1">{t.depth || 'prof.'} (cm)</p>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

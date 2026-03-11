@@ -35,10 +35,8 @@ async function procesarPostPago(session) {
       .single();
 
     if (reserva?.estado === 'confirmada' || reserva?.estado === 'pagada') {
-      if (reserva.estado === 'confirmada') {
-        console.log('[Verificar] Reserva ya confirmada, omitiendo');
-        return { already_processed: true };
-      }
+      console.log(`[Verificar] Reserva ya procesada (${reserva.estado}), omitiendo`);
+      return { already_processed: true };
     }
   }
 
