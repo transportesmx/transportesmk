@@ -151,72 +151,70 @@ export function generarHojaServicio(reserva, lang = 'es') {
 
   // ── LOGO ──
   try {
-    doc.addImage(LOGO_BASE64, 'PNG', margin, y, 44, 15);
+    doc.addImage(LOGO_BASE64, 'PNG', margin, y, 60, 20);
   } catch {
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(22);
+    doc.setFontSize(26);
     doc.setTextColor(...COLORS.black);
-    doc.text('TRANSPORTES MX', margin, y + 10);
+    doc.text('TRANSPORTES MX', margin, y + 14);
   }
 
   // ── Empresa info (lado izquierdo, debajo del logo) ──
-  y += 19;
-  doc.setFontSize(8);
+  y += 24;
+  doc.setFontSize(10);
   doc.setFont('helvetica', 'bold');
   doc.setTextColor(...COLORS.black);
   [t.company, t.address, t.phone, t.rfc].forEach((line) => {
     doc.text(line, margin, y);
-    y += 3.8;
+    y += 5;
   });
-  // Email como hipervínculo azul
   doc.setTextColor(...COLORS.blue);
   doc.textWithLink(t.email, margin, y, { url: `mailto:${t.email}` });
-  y += 3.8;
-  // Sitio web label en negro + URL azul
+  y += 5;
   doc.setTextColor(...COLORS.black);
   doc.setFont('helvetica', 'bold');
   doc.text(`${t.siteLabel}`, margin, y);
-  y += 3.8;
+  y += 5;
   doc.setTextColor(...COLORS.blue);
   doc.textWithLink(t.website, margin, y, { url: t.website });
-  y += 3.8;
+  y += 5;
 
   // ── Folio en RECUADRO ROJO (derecha arriba) ──
   const folio = generarFolio(reserva.id);
   const rightX = pw - margin;
   const folioText = `${t.folio}: ${folio}`;
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(10);
-  const folioW = doc.getStringUnitWidth(folioText) * 10 / doc.internal.scaleFactor + 12;
-  const folioH = 9;
+  doc.setFontSize(12);
+  const folioW = doc.getStringUnitWidth(folioText) * 12 / doc.internal.scaleFactor + 14;
+  const folioH = 10;
   const folioX = rightX - folioW;
   const folioY = margin + 2;
 
   doc.setFillColor(...COLORS.red);
   doc.roundedRect(folioX, folioY, folioW, folioH, 2, 2, 'F');
   doc.setTextColor(...COLORS.white);
-  doc.text(folioText, folioX + 6, folioY + 6.5);
+  doc.text(folioText, folioX + 7, folioY + 7);
 
   // Fecha y Pagado (debajo del folio, alineado a la derecha)
   const fechaDoc = new Date().toLocaleDateString(lang === 'en' ? 'en-US' : 'es-MX', {
     day: '2-digit', month: '2-digit', year: 'numeric',
   });
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(11);
+  doc.setFontSize(14);
   doc.setTextColor(...COLORS.black);
-  doc.text(`${t.date}: ${fechaDoc}`, rightX, folioY + folioH + 8, { align: 'right' });
-  doc.text(t.status, rightX, folioY + folioH + 15, { align: 'right' });
+  doc.text(`${t.date}: ${fechaDoc}`, rightX, folioY + folioH + 10, { align: 'right' });
+  doc.text(t.status, rightX, folioY + folioH + 18, { align: 'right' });
 
   // ── Línea separadora después del header ──
   y += 4;
   doc.setDrawColor(...COLORS.black);
   doc.setLineWidth(0.8);
   doc.line(margin, y, pw - margin, y);
-  y += 8;
+  y += 10;
 
   // ── SECCIÓN 2 COLUMNAS: Cliente (izq) + Vehículo imagen (der) ──
   const clientSectionY = y;
-  const fontSize = 12;
+  const fontSize = 14;
 
   // Columna izquierda: datos del cliente
   doc.setFontSize(fontSize);
@@ -227,7 +225,7 @@ export function generarHojaServicio(reserva, lang = 'es') {
   const clLabelW = doc.getStringUnitWidth(clLabel) * fontSize / doc.internal.scaleFactor;
   doc.setFont('helvetica', 'bold');
   doc.text(reserva.clienteNombre || 'N/A', margin + clLabelW, y);
-  y += 8;
+  y += 9;
 
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(fontSize);
@@ -236,14 +234,14 @@ export function generarHojaServicio(reserva, lang = 'es') {
   doc.text(telLabel, margin, y);
   const telLabelW = doc.getStringUnitWidth(telLabel) * fontSize / doc.internal.scaleFactor;
   doc.text(formatearTelefono(reserva.clienteTelefono), margin + telLabelW, y);
-  y += 7;
+  y += 8;
 
   const emailLabel = `${t.clientEmail}: `;
   doc.text(emailLabel, margin, y);
   const emailLabelW = doc.getStringUnitWidth(emailLabel) * fontSize / doc.internal.scaleFactor;
   doc.setTextColor(...COLORS.blue);
   doc.text(reserva.clienteEmail || 'N/A', margin + emailLabelW, y);
-  y += 4;
+  y += 5;
 
   // Columna derecha: imagen del vehículo (aspect ratio real ~2:1)
   const colHeight = y - clientSectionY + 2;
@@ -257,16 +255,16 @@ export function generarHojaServicio(reserva, lang = 'es') {
     } catch { /* no image */ }
   }
 
-  y += 8;
+  y += 10;
 
   // ── DESCRIPCIÓN DEL TRASLADO ──
   doc.setFillColor(...COLORS.dark);
-  doc.rect(margin, y, contentWidth, 8, 'F');
+  doc.rect(margin, y, contentWidth, 10, 'F');
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(10);
+  doc.setFontSize(12);
   doc.setTextColor(...COLORS.white);
-  doc.text(t.transferDesc, margin + 4, y + 5.5);
-  y += 13;
+  doc.text(t.transferDesc, margin + 5, y + 7);
+  y += 16;
 
   // Bullet points
   const bulletItems = [
@@ -294,37 +292,38 @@ export function generarHojaServicio(reserva, lang = 'es') {
   if (reserva.distancia) bulletItems.push({ label: t.distance, value: reserva.distancia });
   if (reserva.duracion) bulletItems.push({ label: t.estTime, value: reserva.duracion });
 
-  doc.setFontSize(9.5);
+  const bulletFontSize = 12;
+  doc.setFontSize(bulletFontSize);
   bulletItems.forEach((item) => {
     doc.setFillColor(...COLORS.black);
-    doc.circle(margin + 4, y - 1, 1, 'F');
+    doc.circle(margin + 4, y - 1.5, 1.2, 'F');
 
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(...COLORS.black);
-    doc.text(`${item.label}: `, margin + 8, y);
+    doc.text(`${item.label}: `, margin + 9, y);
 
-    const labelWidth = doc.getStringUnitWidth(`${item.label}: `) * 9.5 / doc.internal.scaleFactor;
+    const labelWidth = doc.getStringUnitWidth(`${item.label}: `) * bulletFontSize / doc.internal.scaleFactor;
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(...COLORS.blue);
-    const maxW = contentWidth - 8 - labelWidth - 5;
+    const maxW = contentWidth - 9 - labelWidth - 5;
     const lines = doc.splitTextToSize(String(item.value), maxW);
-    doc.text(lines, margin + 8 + labelWidth, y);
-    y += 6.5 * lines.length;
+    doc.text(lines, margin + 9 + labelWidth, y);
+    y += 8 * lines.length;
   });
 
-  y += 4;
+  y += 6;
 
   // ── REGRESO (siempre visible) ──
   doc.setDrawColor(...COLORS.lineDark);
   doc.setLineWidth(0.4);
   doc.line(margin, y, pw - margin, y);
-  y += 7;
+  y += 9;
 
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(11);
+  doc.setFontSize(14);
   doc.setTextColor(...COLORS.black);
   doc.text(t.returnSection, margin, y);
-  y += 7;
+  y += 9;
 
   const isRoundTrip = reserva.tipoViaje === 'redondo' && reserva.fechaRegreso;
   const returnItems = [
@@ -332,17 +331,17 @@ export function generarHojaServicio(reserva, lang = 'es') {
     { label: t.returnDateTime, value: isRoundTrip ? `${reserva.fechaRegreso} / ${reserva.horaRegreso || 'N/A'} hrs` : '' },
   ];
 
-  doc.setFontSize(9.5);
+  doc.setFontSize(bulletFontSize);
   returnItems.forEach((item) => {
     doc.setFillColor(...COLORS.black);
-    doc.circle(margin + 4, y - 1, 1, 'F');
+    doc.circle(margin + 4, y - 1.5, 1.2, 'F');
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(...COLORS.black);
-    doc.text(`${item.label}: `, margin + 8, y);
-    const lw = doc.getStringUnitWidth(`${item.label}: `) * 9.5 / doc.internal.scaleFactor;
+    doc.text(`${item.label}: `, margin + 9, y);
+    const lw = doc.getStringUnitWidth(`${item.label}: `) * bulletFontSize / doc.internal.scaleFactor;
     doc.setTextColor(...COLORS.blue);
-    doc.text(String(item.value), margin + 8 + lw, y);
-    y += 6.5;
+    doc.text(String(item.value), margin + 9 + lw, y);
+    y += 8;
   });
 
   // ── FOOTER ──
@@ -351,13 +350,13 @@ export function generarHojaServicio(reserva, lang = 'es') {
   doc.setLineWidth(0.3);
   doc.line(margin, footerY, pw - margin, footerY);
 
-  doc.setFontSize(8);
+  doc.setFontSize(9);
   doc.setTextColor(...COLORS.textLight);
   doc.setFont('helvetica', 'normal');
   doc.text(t.footer, pw / 2, footerY + 5, { align: 'center' });
 
   const genText = `${t.generated} ${new Date().toLocaleDateString(lang === 'en' ? 'en-US' : 'es-MX')}`;
-  doc.setFontSize(7);
+  doc.setFontSize(8);
   doc.text(genText, pw / 2, footerY + 10, { align: 'center' });
 
   return doc;

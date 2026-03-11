@@ -153,7 +153,7 @@ export default function SelectorVehiculo({ onNext, onBack }) {
                             ${vehiculo.precio.precioTotal.toLocaleString('es-MX')}
                           </p>
                           <p className="text-[11px] text-white/50 mt-0.5">MXN</p>
-                          {/* Desglose temporal */}
+                          {/* Desglose oculto — descomentar para debug
                           {vehiculo.precio.desglose && (
                             <div className="mt-2 text-left space-y-0.5 border-t border-white/[0.06] pt-2">
                               {vehiculo.precio.desglose.map((item, i) => {
@@ -168,6 +168,7 @@ export default function SelectorVehiculo({ onNext, onBack }) {
                               })}
                             </div>
                           )}
+                          */}
                         </div>
                       ) : (
                         <p className="text-white/20 text-sm">{t.unavailable || 'No disponible'}</p>
