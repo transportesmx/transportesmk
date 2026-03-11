@@ -57,9 +57,23 @@ input[type="checkbox"]:checked::before {
 input[type="date"],
 input[type="time"] {
   max-width: 100%;
+  min-width: 0;
+  width: 100%;
   box-sizing: border-box;
   overflow: hidden;
+  text-overflow: ellipsis;
   color-scheme: dark !important;
+  -webkit-appearance: none;
+  font-size: 14px !important;
+}
+
+@media (max-width: 400px) {
+  input[type="date"],
+  input[type="time"] {
+    font-size: 12px !important;
+    padding-left: 8px !important;
+    padding-right: 4px !important;
+  }
 }
 
 input[type="date"]::-webkit-calendar-picker-indicator {

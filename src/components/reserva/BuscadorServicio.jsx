@@ -266,7 +266,7 @@ export default function BuscadorServicio({ onNext, isLoaded }) {
 
           {/* Fecha y hora */}
           <div className="grid grid-cols-2 gap-3">
-            <div>
+            <div className="min-w-0 overflow-hidden">
               <label className="text-xs font-medium text-white/40 mb-1.5 flex items-center gap-1.5">
                 <FaCalendarAlt className="text-[10px] " /> {t.date || 'Fecha'}
               </label>
@@ -274,7 +274,7 @@ export default function BuscadorServicio({ onNext, isLoaded }) {
                 onClick={(e) => e.target.showPicker?.()}
                 onChange={(e) => setFechaIda(e.target.value)} className={inputBase} />
             </div>
-            <div>
+            <div className="min-w-0 overflow-hidden">
               <label className="text-xs font-medium text-white/40 mb-1.5 flex items-center gap-1.5">
                 <FaClock className="text-[10px]" /> {t.time || 'Hora'}
               </label>
@@ -344,7 +344,7 @@ export default function BuscadorServicio({ onNext, isLoaded }) {
               animate={{ opacity: 1, height: 'auto' }}
               transition={{ duration: 0.2 }}
             >
-              <div>
+              <div className="min-w-0 overflow-hidden">
                 <label className="text-xs font-medium text-white/40 mb-1.5 block">
                   {t.returnDate || 'Fecha regreso'}
                 </label>
@@ -352,7 +352,7 @@ export default function BuscadorServicio({ onNext, isLoaded }) {
                   onClick={(e) => e.target.showPicker?.()}
                   onChange={(e) => setFechaRegreso(e.target.value)} className={inputBase} />
               </div>
-              <div>
+              <div className="min-w-0 overflow-hidden">
                 <label className="text-xs font-medium text-white/40 mb-1.5 block">
                   {t.returnTime || 'Hora regreso'}
                 </label>
