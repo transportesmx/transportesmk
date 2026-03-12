@@ -170,7 +170,8 @@ const HeroCotiza = () => {
               min="1"
               max="20"
               value={pasajeros}
-              onChange={(e) => setPasajeros(parseInt(e.target.value) || 1)}
+              onChange={(e) => setPasajeros(e.target.value === '' ? '' : parseInt(e.target.value) || '')}
+              onBlur={() => setPasajeros((v) => { const n = parseInt(v); return (!n || n < 1) ? 1 : Math.min(n, 20); })}
               className={inputStyle}
             />
           </div>
@@ -184,7 +185,8 @@ const HeroCotiza = () => {
               min="0"
               max="20"
               value={maletas}
-              onChange={(e) => setMaletas(parseInt(e.target.value) || 0)}
+              onChange={(e) => setMaletas(e.target.value === '' ? '' : parseInt(e.target.value) ?? '')}
+              onBlur={() => setMaletas((v) => { const n = parseInt(v); return (isNaN(n) || n < 0) ? 0 : Math.min(n, 20); })}
               className={inputStyle}
             />
           </div>

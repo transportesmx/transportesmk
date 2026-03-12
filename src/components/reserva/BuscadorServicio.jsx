@@ -291,14 +291,18 @@ export default function BuscadorServicio({ onNext, isLoaded }) {
                 <FaUsers className="text-[10px]" /> {t.passengers || 'Pasajeros'}
               </label>
               <input type="number" min="1" max="20" value={numPasajeros}
-                onChange={(e) => setNumPasajeros(parseInt(e.target.value) || 1)} className={inputBase} />
+                onChange={(e) => setNumPasajeros(e.target.value === '' ? '' : parseInt(e.target.value) || '')}
+                onBlur={() => setNumPasajeros((v) => { const n = parseInt(v); return (!n || n < 1) ? 1 : Math.min(n, 20); })}
+                className={inputBase} />
             </div>
             <div>
               <label className="text-xs font-medium text-white/40 mb-1.5 flex items-center gap-1.5">
                 <FaSuitcase className="text-[10px]" /> {t.bags || 'Maletas'}
               </label>
               <input type="number" min="0" max="20" value={numMaletas}
-                onChange={(e) => setNumMaletas(parseInt(e.target.value) || 0)} className={inputBase} />
+                onChange={(e) => setNumMaletas(e.target.value === '' ? '' : parseInt(e.target.value) ?? '')}
+                onBlur={() => setNumMaletas((v) => { const n = parseInt(v); return (isNaN(n) || n < 0) ? 0 : Math.min(n, 20); })}
+                className={inputBase} />
             </div>
             <div>
               <label className="text-xs font-medium text-white/40 mb-1.5 flex items-center gap-1.5">
