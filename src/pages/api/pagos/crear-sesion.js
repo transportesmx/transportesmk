@@ -69,7 +69,7 @@ export default async function handler(req, res) {
             product_data: {
               name: `Traslado ${reserva.vehiculoNombre}`,
               description: `${reserva.origen} → ${reserva.destino} | ${reserva.fechaIda} ${reserva.horaIda}`,
-              images: ['https://transportesmx.org/assets/logo.png'],
+              images: ['https://transportesmx.org/assets/logonegro.png'],
             },
             unit_amount: Math.round(reserva.precioTotal * 100),
           },
