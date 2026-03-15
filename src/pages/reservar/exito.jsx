@@ -18,6 +18,13 @@ export default function Exito() {
 
   useEffect(() => {
     if (!session_id || hasVerified.current) return;
+
+    const storageKey = `verified_${session_id}`;
+    if (sessionStorage.getItem(storageKey)) {
+      setStatus('success');
+      return;
+    }
+
     hasVerified.current = true;
 
     const verificarPago = async () => {
@@ -30,6 +37,8 @@ export default function Exito() {
         });
         const data = await res.json();
         console.log('[Éxito] Verificación:', data);
+
+        sessionStorage.setItem(storageKey, '1');
 
         if (data.status === 'success' || data.already_processed) {
           setStatus('success');

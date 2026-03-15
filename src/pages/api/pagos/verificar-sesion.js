@@ -17,6 +17,8 @@ async function generarPDFBuffer(reservaData, lang = 'es') {
   }
 }
 
+const processedSessions = new Set();
+
 /**
  * Procesa las acciones post-pago (email, PDF, calendario)
  * Se llama desde la página de éxito Y desde el webhook (doble seguridad)
@@ -26,16 +28,37 @@ async function procesarPostPago(session) {
   const lang = meta.lang || 'es';
   const supabase = getServiceSupabase();
 
-  // Verificar que no se haya procesado ya
-  if (supabase && meta.reservaId) {
-    const { data: reserva } = await supabase
-      .from('reservas')
-      .select('estado')
-      .eq('id', meta.reservaId)
-      .single();
+  // Protección en memoria (misma instancia del servidor)
+  if (processedSessions.has(session.id)) {
+    console.log(`[Verificar] Sesión ${session.id} ya procesada (memoria), omitiendo`);
+    return { already_processed: true };
+  }
+
+  // Protección persistente vía Supabase
+  if (supabase) {
+    let reserva = null;
+
+    if (meta.reservaId) {
+      const { data } = await supabase
+        .from('reservas')
+        .select('estado')
+        .eq('id', meta.reservaId)
+        .single();
+      reserva = data;
+    }
+
+    if (!reserva) {
+      const { data } = await supabase
+        .from('reservas')
+        .select('estado')
+        .eq('stripe_session_id', session.id)
+        .single();
+      reserva = data;
+    }
 
     if (reserva?.estado === 'confirmada' || reserva?.estado === 'pagada') {
       console.log(`[Verificar] Reserva ya procesada (${reserva.estado}), omitiendo`);
+      processedSessions.add(session.id);
       return { already_processed: true };
     }
   }
@@ -105,6 +128,8 @@ async function procesarPostPago(session) {
   } catch (calError) {
     console.error('[Calendar] Error:', calError.message);
   }
+
+  processedSessions.add(session.id);
 
   return {
     processed: true,
