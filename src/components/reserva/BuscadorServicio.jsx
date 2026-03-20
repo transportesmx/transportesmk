@@ -157,6 +157,16 @@ export default function BuscadorServicio({ onNext, isLoaded }) {
     });
   };
 
+  const CIUDADES_PERMITIDAS = [
+    'san miguel de allende', 'san miguel', 'dolores hidalgo',
+    'guanajuato', 'querétaro', 'queretaro', 'león', 'leon',
+  ];
+
+  const esCiudadPermitida = (texto) => {
+    const lower = texto.toLowerCase();
+    return CIUDADES_PERMITIDAS.some((c) => lower.includes(c));
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     setError('');
@@ -167,6 +177,14 @@ export default function BuscadorServicio({ onNext, isLoaded }) {
     }
     if (!reserva.destinoCoords || !destinoText) {
       setError(t.errorDestination || 'Selecciona un destino válido');
+      return;
+    }
+    if (!esCiudadPermitida(origenText)) {
+      setError(t.errorOriginNotAllowed || 'El lugar de recogida debe estar en San Miguel de Allende, Dolores Hidalgo, Guanajuato, Querétaro o León.');
+      return;
+    }
+    if (!esCiudadPermitida(destinoText)) {
+      setError(t.errorDestinationNotAllowed || 'El destino debe estar en San Miguel de Allende, Dolores Hidalgo, Guanajuato, Querétaro o León.');
       return;
     }
     if (!fechaIda) {

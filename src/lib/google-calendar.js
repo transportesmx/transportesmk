@@ -88,8 +88,11 @@ export async function crearEventoCalendario(reserva, lang = 'es') {
 
     const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
 
-    const fechaInicio = new Date(`${reserva.fechaIda}T${reserva.horaIda}:00`);
-    const fechaFin = new Date(fechaInicio.getTime() + 2 * 60 * 60 * 1000);
+    const horaIda = reserva.horaIda?.length === 5 ? reserva.horaIda : '12:00';
+    const fechaInicioStr = `${reserva.fechaIda}T${horaIda}:00`;
+    const [hh, mm] = horaIda.split(':').map(Number);
+    const finHH = String((hh + 2) % 24).padStart(2, '0');
+    const fechaFinStr = `${reserva.fechaIda}T${finHH}:${String(mm).padStart(2, '0')}:00`;
 
     // Asistentes: cliente
     const attendees = [];
@@ -119,8 +122,8 @@ export async function crearEventoCalendario(reserva, lang = 'es') {
       summary: `🚗 ${t.transfer}: ${reserva.clienteNombre}`,
       description: descripcion,
       location: reserva.origen || '',
-      start: { dateTime: fechaInicio.toISOString(), timeZone: 'America/Mexico_City' },
-      end: { dateTime: fechaFin.toISOString(), timeZone: 'America/Mexico_City' },
+      start: { dateTime: fechaInicioStr, timeZone: 'America/Mexico_City' },
+      end: { dateTime: fechaFinStr, timeZone: 'America/Mexico_City' },
       colorId: '9',
       attendees,
       organizer: {
@@ -146,8 +149,11 @@ export async function crearEventoCalendario(reserva, lang = 'es') {
 
     // Evento de regreso si es viaje redondo
     if (reserva.tipoViaje === 'redondo' && reserva.fechaRegreso && reserva.horaRegreso) {
-      const fechaRegreso = new Date(`${reserva.fechaRegreso}T${reserva.horaRegreso}:00`);
-      const fechaFinRegreso = new Date(fechaRegreso.getTime() + 2 * 60 * 60 * 1000);
+      const horaRegreso = reserva.horaRegreso?.length === 5 ? reserva.horaRegreso : '12:00';
+      const fechaRegresoStr = `${reserva.fechaRegreso}T${horaRegreso}:00`;
+      const [hhR, mmR] = horaRegreso.split(':').map(Number);
+      const finHHR = String((hhR + 2) % 24).padStart(2, '0');
+      const fechaFinRegresoStr = `${reserva.fechaRegreso}T${finHHR}:${String(mmR).padStart(2, '0')}:00`;
 
       const descripcionRegreso = [
         `📅 ${t.returnDateTime}: ${reserva.fechaRegreso} ${reserva.horaRegreso}`,
@@ -168,8 +174,8 @@ export async function crearEventoCalendario(reserva, lang = 'es') {
         summary: `🔄 ${t.returnTransfer}: ${reserva.clienteNombre}`,
         description: descripcionRegreso,
         location: reserva.destino || '',
-        start: { dateTime: fechaRegreso.toISOString(), timeZone: 'America/Mexico_City' },
-        end: { dateTime: fechaFinRegreso.toISOString(), timeZone: 'America/Mexico_City' },
+        start: { dateTime: fechaRegresoStr, timeZone: 'America/Mexico_City' },
+        end: { dateTime: fechaFinRegresoStr, timeZone: 'America/Mexico_City' },
         colorId: '6',
       };
 

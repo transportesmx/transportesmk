@@ -710,7 +710,10 @@
         "errorPickup": "Select a valid pickup location",
         "errorDestination": "Select a valid destination",
         "errorDate": "Select a date",
-        "errorReturnDate": "Select a return date"
+        "errorReturnDate": "Select a return date",
+        "errorCityNotAllowed": "We only offer service in San Miguel de Allende, Dolores Hidalgo, Guanajuato, Querétaro and León.",
+        "errorOriginNotAllowed": "The pickup location must be in San Miguel de Allende, Dolores Hidalgo, Guanajuato, Querétaro or León.",
+        "errorDestinationNotAllowed": "The destination must be in San Miguel de Allende, Dolores Hidalgo, Guanajuato, Querétaro or León."
       },
       "step2": {
         "title": "Your route",

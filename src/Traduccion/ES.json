@@ -725,7 +725,10 @@
       "errorPickup": "Selecciona un lugar de recogida válido",
       "errorDestination": "Selecciona un destino válido",
       "errorDate": "Selecciona una fecha",
-      "errorReturnDate": "Selecciona fecha de regreso"
+      "errorReturnDate": "Selecciona fecha de regreso",
+      "errorCityNotAllowed": "Solo ofrecemos servicio en San Miguel de Allende, Dolores Hidalgo, Guanajuato, Querétaro y León.",
+      "errorOriginNotAllowed": "El lugar de recogida debe estar en San Miguel de Allende, Dolores Hidalgo, Guanajuato, Querétaro o León.",
+      "errorDestinationNotAllowed": "El destino debe estar en San Miguel de Allende, Dolores Hidalgo, Guanajuato, Querétaro o León."
     },
     "step2": {
       "title": "Tu ruta",
