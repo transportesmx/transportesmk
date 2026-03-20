@@ -1,6 +1,4 @@
-import { getServiceSupabase } from '@/lib/supabase';
-import { crearEventoCalendario } from '@/lib/google-calendar';
-import { enviarEmailConfirmacion } from '@/lib/email';
+import { procesarPostPago } from './verificar-sesion';
 
 export const config = {
   api: { bodyParser: false },
@@ -13,18 +11,6 @@ function readRawBody(req) {
     req.on('end', () => resolve(Buffer.concat(chunks)));
     req.on('error', reject);
   });
-}
-
-async function generarPDFBuffer(reservaData, lang = 'es') {
-  try {
-    const { generarHojaServicio } = await import('@/lib/pdf-generator');
-    const doc = generarHojaServicio(reservaData, lang);
-    const arrayBuffer = doc.output('arraybuffer');
-    return Buffer.from(arrayBuffer);
-  } catch (err) {
-    console.error('[PDF] Error generando PDF:', err.message);
-    return null;
-  }
 }
 
 export default async function handler(req, res) {
@@ -49,78 +35,14 @@ export default async function handler(req, res) {
     switch (event.type) {
       case 'checkout.session.completed': {
         const session = event.data.object;
-        const meta = session.metadata || {};
-        const lang = meta.lang || 'es';
-        console.log('[Webhook] Pago completado:', session.id, '| Idioma:', lang);
+        console.log('[Webhook] Pago completado:', session.id);
 
-        const supabase = getServiceSupabase();
+        const result = await procesarPostPago(session);
 
-        // Verificar si ya fue procesado por verificar-sesion
-        if (supabase && meta.reservaId) {
-          const { data: reserva } = await supabase
-            .from('reservas')
-            .select('estado')
-            .eq('id', meta.reservaId)
-            .single();
-
-          if (reserva?.estado === 'confirmada' || reserva?.estado === 'pagada') {
-            console.log(`[Webhook] Ya procesado (${reserva.estado}), omitiendo`);
-            break;
-          }
-        }
-
-        // Procesar post-pago
-        if (supabase && meta.reservaId) {
-          try {
-            await supabase.from('reservas').update({ estado: 'pagada' }).eq('id', meta.reservaId);
-            console.log('[Supabase] Reserva actualizada a pagada');
-          } catch (err) {
-            console.error('[Supabase] Error:', err.message);
-          }
-        }
-
-        const reservaData = {
-          id: meta.reservaId || session.id.slice(-8),
-          clienteNombre: meta.clienteNombre || '',
-          clienteEmail: session.customer_email || '',
-          clienteTelefono: meta.clienteTelefono || '',
-          origen: meta.origen || '',
-          destino: meta.destino || '',
-          fechaIda: meta.fechaIda || '',
-          horaIda: meta.horaIda || '',
-          vehiculoNombre: meta.vehiculoNombre || '',
-          vehiculoId: meta.vehiculoId || '',
-          numPasajeros: meta.numPasajeros || '',
-          precioTotal: session.amount_total / 100,
-          distancia: meta.distancia || '',
-          duracion: meta.duracion || '',
-          tipoViaje: meta.tipoViaje || 'sencillo',
-          fechaRegreso: meta.fechaRegreso || '',
-          horaRegreso: meta.horaRegreso || '',
-          numMaletas: meta.numMaletas || '',
-          aerolinea: meta.aerolinea || '',
-          numVuelo: meta.numVuelo || '',
-          metodoPago: session.payment_method_types?.[0] || 'tarjeta',
-          estadoPago: 'pagado',
-        };
-
-        const pdfBuffer = await generarPDFBuffer(reservaData, lang);
-        console.log('[PDF]', pdfBuffer ? `Generado (${pdfBuffer.length} bytes) [${lang}]` : 'No se pudo generar');
-
-        try {
-          await enviarEmailConfirmacion(reservaData, pdfBuffer, lang);
-        } catch (emailErr) {
-          console.error('[Email] Error:', emailErr.message);
-        }
-
-        try {
-          const eventId = await crearEventoCalendario(reservaData, lang);
-          if (eventId && supabase && meta.reservaId) {
-            await supabase.from('reservas').update({ estado: 'confirmada' }).eq('id', meta.reservaId);
-            console.log('[Calendar] Evento creado y reserva confirmada');
-          }
-        } catch (calError) {
-          console.error('[Calendar] Error:', calError.message);
+        if (result.already_processed) {
+          console.log('[Webhook] Ya procesado por verificar-sesion, omitiendo');
+        } else {
+          console.log('[Webhook] Post-pago procesado:', { pdf: result.pdf, email: result.email, calendar: result.calendar });
         }
 
         break;
