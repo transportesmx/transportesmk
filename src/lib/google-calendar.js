@@ -21,6 +21,8 @@ const calLabels = {
     oneWay: 'Sencillo',
     returnDate: 'Regreso',
     returnTrip: 'Viaje de regreso',
+    dateTime: 'Fecha y hora',
+    returnDateTime: 'Regreso',
   },
   en: {
     transfer: 'Transfer',
@@ -38,6 +40,8 @@ const calLabels = {
     oneWay: 'One way',
     returnDate: 'Return',
     returnTrip: 'Return trip',
+    dateTime: 'Date and time',
+    returnDateTime: 'Return',
   },
 };
 
@@ -94,7 +98,8 @@ export async function crearEventoCalendario(reserva, lang = 'es') {
     }
 
     const descripcion = [
-      `📍 ${t.route}: ${reserva.origen} → ${reserva.destino}`,
+      `📅 ${t.dateTime}: ${reserva.fechaIda} ${reserva.horaIda}`,
+      `📍 ${t.route}: ${reserva.origen} 🔴 ${reserva.destino}`,
       `🚘 ${t.vehicle}: ${reserva.vehiculoNombre}`,
       `👥 ${t.passengers}: ${reserva.numPasajeros}`,
       `📞 ${t.phone}: ${reserva.clienteTelefono}`,
@@ -102,10 +107,9 @@ export async function crearEventoCalendario(reserva, lang = 'es') {
       `💰 ${t.total}: $${reserva.precioTotal} MXN`,
       reserva.distancia ? `📏 ${t.distance}: ${reserva.distancia}` : '',
       reserva.duracion ? `⏱️ ${t.duration}: ${reserva.duracion}` : '',
-      '',
       `${t.type}: ${reserva.tipoViaje === 'redondo' ? t.roundTrip : t.oneWay}`,
       reserva.tipoViaje === 'redondo' && reserva.fechaRegreso
-        ? `${t.returnDate}: ${reserva.fechaRegreso} ${reserva.horaRegreso}`
+        ? `${t.returnDateTime}: ${reserva.fechaRegreso} ${reserva.horaRegreso}`
         : '',
       '',
       'TransportesMX - transportesmx.org',
@@ -145,10 +149,24 @@ export async function crearEventoCalendario(reserva, lang = 'es') {
       const fechaRegreso = new Date(`${reserva.fechaRegreso}T${reserva.horaRegreso}:00`);
       const fechaFinRegreso = new Date(fechaRegreso.getTime() + 2 * 60 * 60 * 1000);
 
+      const descripcionRegreso = [
+        `📅 ${t.returnDateTime}: ${reserva.fechaRegreso} ${reserva.horaRegreso}`,
+        `📍 ${t.route}: ${reserva.destino} 🔴 ${reserva.origen}`,
+        `🚘 ${t.vehicle}: ${reserva.vehiculoNombre}`,
+        `👥 ${t.passengers}: ${reserva.numPasajeros}`,
+        `📞 ${t.phone}: ${reserva.clienteTelefono}`,
+        `📧 ${t.email}: ${reserva.clienteEmail}`,
+        `💰 ${t.total}: $${reserva.precioTotal} MXN`,
+        reserva.distancia ? `📏 ${t.distance}: ${reserva.distancia}` : '',
+        reserva.duracion ? `⏱️ ${t.duration}: ${reserva.duracion}` : '',
+        '',
+        'TransportesMX - transportesmx.org',
+      ].filter(Boolean).join('\n');
+
       const eventoRegreso = {
         ...evento,
         summary: `🔄 ${t.returnTransfer}: ${reserva.clienteNombre}`,
-        description: `${t.returnTrip}\n${descripcion}`,
+        description: descripcionRegreso,
         location: reserva.destino || '',
         start: { dateTime: fechaRegreso.toISOString(), timeZone: 'America/Mexico_City' },
         end: { dateTime: fechaFinRegreso.toISOString(), timeZone: 'America/Mexico_City' },
