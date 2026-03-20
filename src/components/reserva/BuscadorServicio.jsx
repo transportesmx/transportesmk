@@ -4,8 +4,8 @@ import { useReserva } from '@/Context/ReservaContext';
 import { AppContext } from '@/Context/AppContext';
 import { Autocomplete } from '@react-google-maps/api';
 import { autocompleteOptions } from '@/lib/google-maps';
-import { motion } from 'framer-motion';
-import { FaCalendarAlt, FaClock, FaUsers, FaExchangeAlt, FaArrowRight, FaSuitcase, FaPlane, FaHashtag } from 'react-icons/fa';
+import { motion, AnimatePresence } from 'framer-motion';
+import { FaCalendarAlt, FaClock, FaUsers, FaExchangeAlt, FaArrowRight, FaSuitcase, FaPlane, FaHashtag, FaWhatsapp, FaTimesCircle } from 'react-icons/fa';
 import { HiSwitchVertical } from 'react-icons/hi';
 
 export default function BuscadorServicio({ onNext, isLoaded }) {
@@ -93,10 +93,10 @@ export default function BuscadorServicio({ onNext, isLoaded }) {
   const [fechaRegreso, setFechaRegreso] = useState(reserva.fechaRegreso || '');
   const [horaRegreso, setHoraRegreso] = useState(reserva.horaRegreso || '12:00');
   const [error, setError] = useState('');
+  const [show48hModal, setShow48hModal] = useState(false);
 
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  const minDate = tomorrow.toISOString().split('T')[0];
+  const today = new Date();
+  const minDate = today.toISOString().split('T')[0];
 
   const onOrigenLoad = (autocomplete) => { origenRef.current = autocomplete; };
   const onDestinoLoad = (autocomplete) => { destinoRef.current = autocomplete; };
@@ -193,6 +193,14 @@ export default function BuscadorServicio({ onNext, isLoaded }) {
     }
     if (tipoViaje === 'redondo' && !fechaRegreso) {
       setError(t.errorReturnDate || 'Selecciona fecha de regreso');
+      return;
+    }
+
+    const hora = horaIda?.length === 5 ? horaIda : '12:00';
+    const servicioDate = new Date(`${fechaIda}T${hora}:00`);
+    const horasRestantes = (servicioDate.getTime() - Date.now()) / (1000 * 60 * 60);
+    if (horasRestantes < 48) {
+      setShow48hModal(true);
       return;
     }
 
@@ -403,6 +411,67 @@ export default function BuscadorServicio({ onNext, isLoaded }) {
           </button>
         </form>
       </div>
+
+      {/* Modal: servicio en menos de 48hrs */}
+      <AnimatePresence>
+        {show48hModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            onClick={() => setShow48hModal(false)}
+          >
+            <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.92, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.92, y: 20 }}
+              transition={{ duration: 0.2 }}
+              className="relative w-full max-w-sm bg-[#14141f] border border-white/[0.1] rounded-2xl p-6 shadow-2xl text-center"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                type="button"
+                onClick={() => setShow48hModal(false)}
+                className="absolute top-3 right-3 w-7 h-7 rounded-full bg-white/[0.06] flex items-center justify-center text-white/40 hover:text-white transition-colors"
+              >
+                <FaTimesCircle className="text-sm" />
+              </button>
+
+              <div className="w-14 h-14 mx-auto rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mb-4">
+                <FaClock className="text-amber-400 text-xl" />
+              </div>
+
+              <h3 className="text-lg font-bold text-white mb-2">
+                {t.modal48hTitle || 'Servicio con menos de 48 hrs'}
+              </h3>
+              <p className="text-white/50 text-sm mb-5 leading-relaxed">
+                {t.modal48hMessage || 'Para servicios con menos de 48 horas de anticipación, es necesario comunicarse directamente para verificar disponibilidad.'}
+              </p>
+
+              <a
+                href="https://wa.me/524151393219?text=Hola%2C%20necesito%20un%20traslado%20para%20las%20pr%C3%B3ximas%2048%20horas"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 w-full py-3 bg-emerald-600/80 hover:bg-emerald-600 text-white font-semibold rounded-xl transition-colors"
+              >
+                <FaWhatsapp className="text-lg" />
+                {t.modal48hWhatsapp || 'Contactar por WhatsApp'}
+              </a>
+
+              <button
+                type="button"
+                onClick={() => setShow48hModal(false)}
+                className="mt-3 text-white/30 hover:text-white/60 text-xs transition-colors"
+              >
+                {t.modal48hClose || 'Cerrar'}
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

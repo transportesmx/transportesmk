@@ -713,7 +713,11 @@
         "errorReturnDate": "Select a return date",
         "errorCityNotAllowed": "We only offer service in San Miguel de Allende, Dolores Hidalgo, Guanajuato, Querétaro and León.",
         "errorOriginNotAllowed": "The pickup location must be in San Miguel de Allende, Dolores Hidalgo, Guanajuato, Querétaro or León.",
-        "errorDestinationNotAllowed": "The destination must be in San Miguel de Allende, Dolores Hidalgo, Guanajuato, Querétaro or León."
+        "errorDestinationNotAllowed": "The destination must be in San Miguel de Allende, Dolores Hidalgo, Guanajuato, Querétaro or León.",
+        "modal48hTitle": "Service within 48 hours",
+        "modal48hMessage": "For services with less than 48 hours notice, please contact us directly to verify availability.",
+        "modal48hWhatsapp": "Contact via WhatsApp",
+        "modal48hClose": "Close"
       },
       "step2": {
         "title": "Your route",

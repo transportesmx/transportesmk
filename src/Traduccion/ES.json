@@ -728,7 +728,11 @@
       "errorReturnDate": "Selecciona fecha de regreso",
       "errorCityNotAllowed": "Solo ofrecemos servicio en San Miguel de Allende, Dolores Hidalgo, Guanajuato, Querétaro y León.",
       "errorOriginNotAllowed": "El lugar de recogida debe estar en San Miguel de Allende, Dolores Hidalgo, Guanajuato, Querétaro o León.",
-      "errorDestinationNotAllowed": "El destino debe estar en San Miguel de Allende, Dolores Hidalgo, Guanajuato, Querétaro o León."
+      "errorDestinationNotAllowed": "El destino debe estar en San Miguel de Allende, Dolores Hidalgo, Guanajuato, Querétaro o León.",
+      "modal48hTitle": "Servicio con menos de 48 hrs",
+      "modal48hMessage": "Para servicios con menos de 48 horas de anticipación, es necesario comunicarse directamente para verificar disponibilidad.",
+      "modal48hWhatsapp": "Contactar por WhatsApp",
+      "modal48hClose": "Cerrar"
     },
     "step2": {
       "title": "Tu ruta",
