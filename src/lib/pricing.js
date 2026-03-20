@@ -17,7 +17,7 @@ export const vehiculos = [
     descripcion: 'Toyota Camry o similar',
     capacidadPasajeros: 3,
     capacidadEquipaje: 3,
-    imagen: '/assets/vehiculos/sedan.jpeg',
+    imagen: '/assets/autos/sedan.png',
     kmMinimo: 10,
     precioPorKm: 21,
     tarifas: [
@@ -37,7 +37,7 @@ export const vehiculos = [
     descripcion: 'Chevrolet Suburban',
     capacidadPasajeros: 6,
     capacidadEquipaje: 8,
-    imagen: '/assets/vehiculos/suburban.jpeg',
+    imagen: '/assets/autos/suburban.png',
     kmMinimo: 20,
     precioPorKm: 40,
     tarifas: [
@@ -60,7 +60,7 @@ export const vehiculos = [
     descripcion: 'Honda Odyssey o similar',
     capacidadPasajeros: 6,
     capacidadEquipaje: 8,
-    imagen: '/assets/vehiculos/minivan.jpeg',
+    imagen: '/assets/autos/van.png',
     kmMinimo: 20,
     precioPorKm: 32,
     tarifas: [
@@ -83,7 +83,7 @@ export const vehiculos = [
     descripcion: 'Toyota Hiace 8 pax',
     capacidadPasajeros: 8,
     capacidadEquipaje: 10,
-    imagen: '/assets/vehiculos/hiace.jpeg',
+    imagen: '/assets/autos/Hiace.png',
     kmMinimo: 20,
     precioPorKm: 52,
     tarifas: [
@@ -106,7 +106,7 @@ export const vehiculos = [
     descripcion: 'Mercedes Sprinter 20 pax',
     capacidadPasajeros: 20,
     capacidadEquipaje: 20,
-    imagen: '/assets/vehiculos/sprinter.jpeg',
+    imagen: '/assets/autos/sprinter.png',
     kmMinimo: 50,
     precioPorKm: 75,
     tarifas: [

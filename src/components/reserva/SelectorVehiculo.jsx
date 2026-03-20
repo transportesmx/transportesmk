@@ -95,7 +95,7 @@ export default function SelectorVehiculo({ onNext, onBack }) {
                       src={vehiculo.imagen}
                       alt={vehiculo.nombre}
                       className="max-h-32 sm:max-h-36 w-auto object-contain drop-shadow-lg group-hover:scale-[1.03] transition-transform duration-300"
-                      onError={(e) => { e.target.src = '/assets/vehiculos/suburban.jpeg'; }}
+                      onError={(e) => { e.target.src = '/assets/autos/suburban.png'; }}
                     />
                   </div>
 
