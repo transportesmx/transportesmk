@@ -179,12 +179,8 @@ export default function BuscadorServicio({ onNext, isLoaded }) {
       setError(t.errorDestination || 'Selecciona un destino válido');
       return;
     }
-    if (!esCiudadPermitida(origenText)) {
-      setError(t.errorOriginNotAllowed || 'El lugar de recogida debe estar en San Miguel de Allende, Dolores Hidalgo, Guanajuato, Querétaro o León.');
-      return;
-    }
-    if (!esCiudadPermitida(destinoText)) {
-      setError(t.errorDestinationNotAllowed || 'El destino debe estar en San Miguel de Allende, Dolores Hidalgo, Guanajuato, Querétaro o León.');
+    if (!esCiudadPermitida(origenText) && !esCiudadPermitida(destinoText)) {
+      setError(t.errorCityNotAllowed || 'El origen o destino debe estar en San Miguel de Allende, Dolores Hidalgo, Guanajuato, Querétaro o León.');
       return;
     }
     if (!fechaIda) {
