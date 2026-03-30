@@ -74,7 +74,7 @@ const HeroCotiza = () => {
         {/* Columna 1: Origen + Destino */}
         <div className="flex gap-2 sm:gap-3 flex-1 min-w-0">
           {/* Puntos + swap */}
-          <div className="flex flex-col items-center pt-7 gap-0">
+          <div className="flex flex-col items-center justify-center gap-0">
             <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 flex-shrink-0" />
             <div className="w-px h-3 bg-white/20" />
             <button
@@ -130,8 +130,8 @@ const HeroCotiza = () => {
           </div>
         </div>
 
-        {/* Columna 2 + 3 */}
-        <div className="flex gap-3 lg:gap-4">
+        {/* Columna 2 + 3: solo visible en desktop */}
+        <div className="hidden lg:flex gap-4">
           {/* Fecha + Hora */}
           <div className="flex-1 lg:w-40 lg:flex-none space-y-2 sm:space-y-3">
             <div className="min-w-0 overflow-hidden">
