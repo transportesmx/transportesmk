@@ -48,69 +48,80 @@ const Hero = () => {
     <div
     id="Hero"
     {...swipeHandlers}
-    className="relative w-full h-screen lg:h-[90vh] max-h-[730px] lg:min-h-[720px] xl:min-h-[850px] overflow-hidden  ">
-    <div className="hidden lg:block absolute left-8 top-1/2 transform -translate-y-1/2 z-10">
-  <FaChevronLeft
-    className="text-white text-4xl cursor-pointer"
-    onClick={() =>
-      setCurrentSlide((prev) =>
-        prev === 0 ? traduccion.hero.slides.length - 1 : prev - 1
-      )
-    }
-  />
-</div>
-<div className="hidden lg:block absolute right-8 top-1/2 transform -translate-y-1/2 z-10">
-          <FaChevronRight className="text-white text-4xl cursor-pointer" onClick={() => setCurrentSlide((prev) => (prev + 1) % traduccion.hero.slides.length)} />
-        </div>
-
+    className="relative w-full overflow-hidden"
+    >
+      {/* Background slides */}
       <AnimatePresence mode="wait">
         <motion.div
           key={currentSlide}
-          className="absolute inset-0 flex items-center lg:items-start justify-center lg:justify-start bg-cover bg-center px-4 lg:px-20 "
+          className="absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: `url(${traduccion.hero.slides[currentSlide].image})` }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
-        >
-          <div className="text-white lg:px-4 rounded-lg max-w-2xl  text-center md:text-left lg:mt-16">
-            <h1 className="text-[32px] lg:text-[40px] xl:text-[60px] leading-[40px] md:text-5xl font-bold mb-4">
-              {traduccion.hero.slides[currentSlide].title}
-            </h1>
-            <p className="text-lg md:text-xl md:max-w-[550px]">{traduccion.hero.slides[currentSlide].description}</p>
-            <div className="mt-6 flex justify-center md:justify-start space-x-4">
-              <button className="px-4 py-2 bg-white/15 backdrop-blur-sm hover:bg-gray-700 rounded-lg transition shadow-lg w-[150px] h-[50px]"
-              onClick={handleEmailClickCotizar}
-              >
-                {traduccion.hero.buttons.quote}
-              </button>
-              <button className="px-4 py-2 border-2 border-white/15 hover:border-white shadow-lg w-[150px] h-[50px] rounded-lg transition"
-              onClick={handleEmailClickReservar}
-              >
-               {traduccion.hero.buttons.reserve}
-              </button>
-            </div>
-            
-          </div>
-        </motion.div>
+        />
       </AnimatePresence>
+      <div className="absolute inset-0 bg-black/30" />
 
-      <div className='hidden lg:block mt-14 absolute bottom-[70px] xl:bottom-[80px] pl-24 transform space-x-2'>
-              <HeroCotiza/>
-            </div>
+      {/* Flechas navegación */}
+      <div className="hidden md:block absolute left-4 lg:left-8 top-[30%] z-10">
+        <FaChevronLeft
+          className="text-white text-3xl lg:text-4xl cursor-pointer hover:text-white/70 transition"
+          onClick={() =>
+            setCurrentSlide((prev) =>
+              prev === 0 ? traduccion.hero.slides.length - 1 : prev - 1
+            )
+          }
+        />
+      </div>
+      <div className="hidden md:block absolute right-4 lg:right-8 top-[30%] z-10">
+        <FaChevronRight
+          className="text-white text-3xl lg:text-4xl cursor-pointer hover:text-white/70 transition"
+          onClick={() => setCurrentSlide((prev) => (prev + 1) % traduccion.hero.slides.length)}
+        />
+      </div>
 
-      {/* Indicadores de slide */}
-      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-        {traduccion.hero.slides.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => setCurrentSlide(index)}
-            className={`w-3 h-3 rounded-full transition ${
-              currentSlide === index ? 'bg-white' : 'bg-gray-400'
-            }`}
-            aria-label={`Slide ${index + 1}`}
-          ></button>
-        ))}
+      {/* Contenido: texto arriba + formulario abajo */}
+      <div className="relative z-[5] flex flex-col justify-between min-h-[600px] sm:min-h-[620px] md:min-h-[650px] lg:min-h-[680px] xl:min-h-[780px] px-4 sm:px-8 md:px-12 lg:px-20 xl:px-24 pt-20 md:pt-16 pb-10">
+        {/* Texto del slide */}
+        <div className="text-white max-w-2xl mx-auto lg:mx-0 text-center lg:text-left flex-shrink-0">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentSlide}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3 }}
+            >
+              <h1 className="text-[26px] sm:text-[30px] md:text-[36px] lg:text-[40px] xl:text-[56px] leading-tight font-bold mb-2 md:mb-4">
+                {traduccion.hero.slides[currentSlide].title}
+              </h1>
+              <p className="text-sm sm:text-base md:text-lg lg:text-xl max-w-[500px] mx-auto lg:mx-0 text-white/90 leading-relaxed">
+                {traduccion.hero.slides[currentSlide].description}
+              </p>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        {/* Formulario */}
+        <div className="mt-6 lg:mt-0">
+          <HeroCotiza />
+        </div>
+
+        {/* Indicadores de slide */}
+        <div className="flex justify-center space-x-2 mt-4">
+          {traduccion.hero.slides.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentSlide(index)}
+              className={`w-2.5 h-2.5 rounded-full transition ${
+                currentSlide === index ? 'bg-white' : 'bg-white/40'
+              }`}
+              aria-label={`Slide ${index + 1}`}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );

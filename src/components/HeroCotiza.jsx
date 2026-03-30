@@ -68,10 +68,11 @@ const HeroCotiza = () => {
   const isEN = idioma.nombre === 'EN';
 
   return (
-    <div className="bg-white/15 backdrop-blur-sm rounded-2xl px-8 py-8 shadow-2xl w-full max-w-[920px] mx-auto border border-white/10">
-      <div className="flex flex-col sm:flex-row gap-4">
+    <div className="bg-black/50 backdrop-blur-md rounded-2xl px-4 py-4 sm:px-5 sm:py-4 lg:px-6 lg:py-5 shadow-2xl w-full sm:w-[85%] md:w-[75%] lg:w-[65%] mx-auto lg:mx-0 border border-white/10">
+      {/* Desktop: 3 columnas en fila | Mobile/Tablet: stacked */}
+      <div className="flex flex-col lg:flex-row gap-3 lg:gap-4">
         {/* Columna 1: Origen + Destino */}
-        <div className="flex gap-3 flex-1 min-w-0">
+        <div className="flex gap-2 sm:gap-3 flex-1 min-w-0">
           {/* Puntos + swap */}
           <div className="flex flex-col items-center pt-7 gap-0">
             <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 flex-shrink-0" />
@@ -89,7 +90,7 @@ const HeroCotiza = () => {
           </div>
 
           {/* Inputs origen/destino */}
-          <div className="flex-1 space-y-3 min-w-0">
+          <div className="flex-1 space-y-2 sm:space-y-3 min-w-0">
             <div>
               <label className="block text-white/60 font-medium text-xs mb-1">
                 {traduccion?.heroCotiza?.from || 'Recogida'}
@@ -129,66 +130,71 @@ const HeroCotiza = () => {
           </div>
         </div>
 
-        {/* Columna 2: Fecha + Hora */}
-        <div className="sm:w-40 flex-shrink-0 space-y-3">
-          <div>
-            <label className="block text-white/60 font-medium text-xs mb-1 flex items-center gap-1.5">
-              <FaCalendarAlt className="text-[10px]" />
-              {isEN ? 'Date' : 'Fecha'}
-            </label>
-            <input
-              type="date"
-              value={fecha}
-              onChange={(e) => setFecha(e.target.value)}
-              min={new Date().toISOString().split('T')[0]}
-              className={`${inputStyle} [color-scheme:dark]`}
-            />
+        {/* Columna 2 + 3 */}
+        <div className="flex gap-3 lg:gap-4">
+          {/* Fecha + Hora */}
+          <div className="flex-1 lg:w-40 lg:flex-none space-y-2 sm:space-y-3">
+            <div className="min-w-0 overflow-hidden">
+              <label className="block text-white/60 font-medium text-xs mb-1 flex items-center gap-1.5">
+                <FaCalendarAlt className="text-[10px]" />
+                {isEN ? 'Date' : 'Fecha'}
+              </label>
+              <input
+                type="date"
+                value={fecha}
+                onChange={(e) => setFecha(e.target.value)}
+                onClick={(e) => e.target.showPicker?.()}
+                min={new Date().toISOString().split('T')[0]}
+                className={inputStyle}
+              />
+            </div>
+            <div className="min-w-0 overflow-hidden">
+              <label className="block text-white/60 font-medium text-xs mb-1 flex items-center gap-1.5">
+                <FaClock className="text-[10px]" />
+                {isEN ? 'Time' : 'Hora'}
+              </label>
+              <input
+                type="time"
+                value={hora}
+                onChange={(e) => setHora(e.target.value)}
+                onClick={(e) => e.target.showPicker?.()}
+                className={inputStyle}
+              />
+            </div>
           </div>
-          <div>
-            <label className="block text-white/60 font-medium text-xs mb-1 flex items-center gap-1.5">
-              <FaClock className="text-[10px]" />
-              {isEN ? 'Time' : 'Hora'}
-            </label>
-            <input
-              type="time"
-              value={hora}
-              onChange={(e) => setHora(e.target.value)}
-              className={`${inputStyle} [color-scheme:dark]`}
-            />
-          </div>
-        </div>
 
-        {/* Columna 3: Pasajeros + Maletas */}
-        <div className="sm:w-32 flex-shrink-0 space-y-3">
-          <div>
-            <label className="block text-white/60 font-medium text-xs mb-1 flex items-center gap-1.5">
-              <FaUsers className="text-[10px]" />
-              {isEN ? 'Passengers' : 'Pasajeros'}
-            </label>
-            <input
-              type="number"
-              min="1"
-              max="20"
-              value={pasajeros}
-              onChange={(e) => setPasajeros(e.target.value === '' ? '' : parseInt(e.target.value) || '')}
-              onBlur={() => setPasajeros((v) => { const n = parseInt(v); return (!n || n < 1) ? 1 : Math.min(n, 20); })}
-              className={inputStyle}
-            />
-          </div>
-          <div>
-            <label className="block text-white/60 font-medium text-xs mb-1 flex items-center gap-1.5">
-              <FaSuitcase className="text-[10px]" />
-              {isEN ? 'Bags' : 'Maletas'}
-            </label>
-            <input
-              type="number"
-              min="0"
-              max="20"
-              value={maletas}
-              onChange={(e) => setMaletas(e.target.value === '' ? '' : parseInt(e.target.value) ?? '')}
-              onBlur={() => setMaletas((v) => { const n = parseInt(v); return (isNaN(n) || n < 0) ? 0 : Math.min(n, 20); })}
-              className={inputStyle}
-            />
+          {/* Pasajeros + Maletas */}
+          <div className="flex-1 lg:w-32 lg:flex-none space-y-2 sm:space-y-3">
+            <div>
+              <label className="block text-white/60 font-medium text-xs mb-1 flex items-center gap-1.5">
+                <FaUsers className="text-[10px]" />
+                {isEN ? 'Passengers' : 'Pasajeros'}
+              </label>
+              <input
+                type="number"
+                min="1"
+                max="20"
+                value={pasajeros}
+                onChange={(e) => setPasajeros(e.target.value === '' ? '' : parseInt(e.target.value) || '')}
+                onBlur={() => setPasajeros((v) => { const n = parseInt(v); return (!n || n < 1) ? 1 : Math.min(n, 20); })}
+                className={inputStyle}
+              />
+            </div>
+            <div>
+              <label className="block text-white/60 font-medium text-xs mb-1 flex items-center gap-1.5">
+                <FaSuitcase className="text-[10px]" />
+                {isEN ? 'Bags' : 'Maletas'}
+              </label>
+              <input
+                type="number"
+                min="0"
+                max="20"
+                value={maletas}
+                onChange={(e) => setMaletas(e.target.value === '' ? '' : parseInt(e.target.value) ?? '')}
+                onBlur={() => setMaletas((v) => { const n = parseInt(v); return (isNaN(n) || n < 0) ? 0 : Math.min(n, 20); })}
+                className={inputStyle}
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -196,7 +202,7 @@ const HeroCotiza = () => {
       {/* Botón Reservar */}
       <button
         onClick={handleReservar}
-        className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl py-3 transition-all shadow-lg flex items-center justify-center gap-2 text-sm"
+        className="mt-3 lg:mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl py-3 transition-all shadow-lg flex items-center justify-center gap-2 text-sm"
       >
         {isEN ? 'Book now' : 'Reservar'}
         <FaArrowRight className="text-xs" />

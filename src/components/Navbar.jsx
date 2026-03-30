@@ -70,12 +70,12 @@ const Navbar = () => {
     
     >
       <div className="container mx-auto flex justify-between items-center px-4 py-2">
-        <div
+        <a
+          href="/"
           className="flex items-center py-4"
-          onClick={() => window.location.reload()}
         >
           <img src="/assets/logo.png" alt="MK Logo" className="h-8 mr-4" />
-        </div>
+        </a>
 
         <nav className="hidden lg:flex items-center space-x-4">
           <a href="/#Hero" className="hover:text-blue-500 transition">
