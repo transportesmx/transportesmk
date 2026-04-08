@@ -8,8 +8,11 @@ const calLabels = {
   es: {
     transfer: 'Traslado',
     returnTransfer: 'Regreso',
-    route: 'Ruta',
+    pickup: 'Recoger en',
+    destination: 'Destino',
     vehicle: 'Vehículo',
+    clientName: 'Nombre Cliente',
+    flightAndAirline: 'Numero de Vuelo y Aerolínea',
     passengers: 'Pasajeros',
     phone: 'Tel',
     email: 'Email',
@@ -19,7 +22,6 @@ const calLabels = {
     type: 'Tipo',
     roundTrip: 'Ida y vuelta',
     oneWay: 'Sencillo',
-    returnDate: 'Regreso',
     returnTrip: 'Viaje de regreso',
     dateTime: 'Fecha y hora',
     returnDateTime: 'Regreso',
@@ -27,8 +29,11 @@ const calLabels = {
   en: {
     transfer: 'Transfer',
     returnTransfer: 'Return',
-    route: 'Route',
+    pickup: 'Pickup at',
+    destination: 'Destination',
     vehicle: 'Vehicle',
+    clientName: 'Client Name',
+    flightAndAirline: 'Flight Number and Airline',
     passengers: 'Passengers',
     phone: 'Phone',
     email: 'Email',
@@ -38,12 +43,18 @@ const calLabels = {
     type: 'Type',
     roundTrip: 'Round trip',
     oneWay: 'One way',
-    returnDate: 'Return',
     returnTrip: 'Return trip',
     dateTime: 'Date and time',
     returnDateTime: 'Return',
   },
 };
+
+function formatDateDisplay(dateStr) {
+  if (!dateStr) return 'N/A';
+  const parts = dateStr.split('-');
+  if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
+  return dateStr;
+}
 
 /**
  * @param {Object} reserva - datos de la reserva
@@ -100,10 +111,17 @@ export async function crearEventoCalendario(reserva, lang = 'es') {
       attendees.push({ email: reserva.clienteEmail, displayName: reserva.clienteNombre });
     }
 
+    const flightInfo = (reserva.aerolinea && reserva.numVuelo)
+      ? `${reserva.aerolinea}/ ${reserva.numVuelo}`
+      : (reserva.aerolinea || reserva.numVuelo || '');
+
     const descripcion = [
-      `📅 ${t.dateTime}: ${reserva.fechaIda} ${reserva.horaIda}`,
-      `📍 ${t.route}: ${reserva.origen} 🔴 ${reserva.destino}`,
+      `📍 ${t.pickup}: ${reserva.origen}`,
+      `📍 ${t.destination}: ${reserva.destino}`,
+      `📅 ${t.dateTime}: ${formatDateDisplay(reserva.fechaIda)}  ${reserva.horaIda || ''} HRS`,
+      `👤 ${t.clientName}: ${reserva.clienteNombre}`,
       `🚘 ${t.vehicle}: ${reserva.vehiculoNombre}`,
+      flightInfo ? `✈️ ${t.flightAndAirline}: ${flightInfo}` : '',
       `👥 ${t.passengers}: ${reserva.numPasajeros}`,
       `📞 ${t.phone}: ${reserva.clienteTelefono}`,
       `📧 ${t.email}: ${reserva.clienteEmail}`,
@@ -112,7 +130,7 @@ export async function crearEventoCalendario(reserva, lang = 'es') {
       reserva.duracion ? `⏱️ ${t.duration}: ${reserva.duracion}` : '',
       `${t.type}: ${reserva.tipoViaje === 'redondo' ? t.roundTrip : t.oneWay}`,
       reserva.tipoViaje === 'redondo' && reserva.fechaRegreso
-        ? `${t.returnDateTime}: ${reserva.fechaRegreso} ${reserva.horaRegreso}`
+        ? `${t.returnDateTime}: ${formatDateDisplay(reserva.fechaRegreso)} ${reserva.horaRegreso || ''} HRS`
         : '',
       '',
       'TransportesMX - transportesmx.org',
@@ -156,9 +174,12 @@ export async function crearEventoCalendario(reserva, lang = 'es') {
       const fechaFinRegresoStr = `${reserva.fechaRegreso}T${finHHR}:${String(mmR).padStart(2, '0')}:00`;
 
       const descripcionRegreso = [
-        `📅 ${t.returnDateTime}: ${reserva.fechaRegreso} ${reserva.horaRegreso}`,
-        `📍 ${t.route}: ${reserva.destino} 🔴 ${reserva.origen}`,
+        `📍 ${t.pickup}: ${reserva.destino}`,
+        `📍 ${t.destination}: ${reserva.origen}`,
+        `📅 ${t.dateTime}: ${formatDateDisplay(reserva.fechaRegreso)}  ${reserva.horaRegreso || ''} HRS`,
+        `👤 ${t.clientName}: ${reserva.clienteNombre}`,
         `🚘 ${t.vehicle}: ${reserva.vehiculoNombre}`,
+        flightInfo ? `✈️ ${t.flightAndAirline}: ${flightInfo}` : '',
         `👥 ${t.passengers}: ${reserva.numPasajeros}`,
         `📞 ${t.phone}: ${reserva.clienteTelefono}`,
         `📧 ${t.email}: ${reserva.clienteEmail}`,

@@ -3,7 +3,7 @@ import { useReserva } from '@/Context/ReservaContext';
 import { AppContext } from '@/Context/AppContext';
 import { vehiculos, calcularPrecio, filtrarVehiculosPorCapacidad, medidasMaleta } from '@/lib/pricing';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaUsers, FaSuitcase, FaArrowLeft, FaCheck, FaStar, FaTimesCircle, FaSuitcaseRolling, FaRulerCombined } from 'react-icons/fa';
+import { FaUsers, FaSuitcase, FaArrowLeft, FaCheck, FaStar, FaTimesCircle, FaSuitcaseRolling, FaRulerCombined, FaClock } from 'react-icons/fa';
 
 export default function SelectorVehiculo({ onNext, onBack }) {
   const { reserva, dispatch } = useReserva();
@@ -129,11 +129,19 @@ export default function SelectorVehiculo({ onNext, onBack }) {
                         </button>
                       </div>
 
-                      {/* Cancelación gratis + características */}
+                      {/* Info del servicio */}
+                      <p className="text-[11px] text-white/50 mt-2.5 leading-relaxed">
+                        {t.driverWaiting || 'El conductor estará listo cuando aterrice tu vuelo y te esperará en la zona de Llegadas (Arrivals)'}
+                      </p>
+
+                      {/* Cancelación gratis */}
+                      <p className="text-[11px] text-emerald-400/80 mt-1.5 flex items-start gap-1.5 font-medium">
+                        <FaClock className="text-[9px] mt-0.5 flex-shrink-0" />
+                        {t.freeCancellationFull || 'Cancelación gratis hasta 24 horas antes del inicio de viaje'}
+                      </p>
+
+                      {/* Características */}
                       <div className="flex flex-wrap gap-x-3 gap-y-1 mt-2">
-                        <span className="text-[11px] text-emerald-400/80 flex items-center gap-1 font-medium">
-                          <FaCheck className="text-[7px]" /> {t.freeCancellation || 'Cancelación gratis'}
-                        </span>
                         {vehiculo.caracteristicas.map((c, i) => (
                           <span key={i} className="text-[11px] text-white/70 flex items-center gap-1">
                             <FaCheck className="text-emerald-500/60 text-[7px]" /> {c}

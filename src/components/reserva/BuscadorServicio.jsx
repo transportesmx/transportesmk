@@ -98,6 +98,15 @@ export default function BuscadorServicio({ onNext, isLoaded }) {
   const today = new Date();
   const minDate = today.toISOString().split('T')[0];
 
+  // Default date: 3 days from now (ensures field is not empty and consistent sizing)
+  useEffect(() => {
+    if (!fechaIda) {
+      const defaultDate = new Date();
+      defaultDate.setDate(defaultDate.getDate() + 3);
+      setFechaIda(defaultDate.toISOString().split('T')[0]);
+    }
+  }, []);
+
   const onOrigenLoad = (autocomplete) => { origenRef.current = autocomplete; };
   const onDestinoLoad = (autocomplete) => { destinoRef.current = autocomplete; };
 
@@ -189,6 +198,14 @@ export default function BuscadorServicio({ onNext, isLoaded }) {
     }
     if (tipoViaje === 'redondo' && !fechaRegreso) {
       setError(t.errorReturnDate || 'Selecciona fecha de regreso');
+      return;
+    }
+    if (!aerolinea.trim()) {
+      setError(t.errorAirline || 'Ingresa la aerolínea o escribe N/A si no aplica');
+      return;
+    }
+    if (aerolinea.trim().toUpperCase() !== 'N/A' && !numVuelo.trim()) {
+      setError(t.errorFlightNumber || 'Ingresa el número de vuelo');
       return;
     }
 
@@ -338,27 +355,31 @@ export default function BuscadorServicio({ onNext, isLoaded }) {
             </div>
           </div>
 
-          {/* Aerolínea y número de vuelo (opcionales) */}
+          {/* Aerolínea y número de vuelo */}
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="text-xs font-medium text-white/40 mb-1.5 flex items-center gap-1.5">
                 <FaPlane className="text-[10px]" /> {t.airline || 'Aerolínea'}
-                <span className="text-white/20 font-normal">({t.optional || 'opcional'})</span>
+                <span className="text-red-400">*</span>
               </label>
               <input type="text" value={aerolinea}
-                onChange={(e) => setAerolinea(e.target.value)}
-                placeholder={t.airlinePlaceholder || 'Ej: Volaris, VivaAerobus'}
+                onChange={(e) => {
+                  setAerolinea(e.target.value);
+                  if (e.target.value.trim().toUpperCase() === 'N/A') setNumVuelo('');
+                }}
+                placeholder={t.airlinePlaceholder || 'Ej: Volaris, VivaAerobus o N/A'}
                 className={inputBase} />
             </div>
             <div>
               <label className="text-xs font-medium text-white/40 mb-1.5 flex items-center gap-1.5">
                 <FaHashtag className="text-[10px]" /> {t.flightNumber || 'No. Vuelo'}
-                <span className="text-white/20 font-normal">({t.optional || 'opcional'})</span>
+                <span className="text-red-400">*</span>
               </label>
               <input type="text" value={numVuelo}
                 onChange={(e) => setNumVuelo(e.target.value)}
                 placeholder={t.flightPlaceholder || 'Ej: VB1234'}
-                className={inputBase} />
+                className={inputBase}
+                disabled={aerolinea.trim().toUpperCase() === 'N/A'} />
             </div>
           </div>
 

@@ -1,29 +1,26 @@
 import jsPDF from 'jspdf';
-import { LOGO_BASE64 } from './logo-base64';
+import { LOGOPDF_BASE64 } from './logopdf-base64';
+import { QRPDF_BASE64 } from './qrpdf-base64';
 import { VEHICLE_IMAGES } from './vehicle-images-base64';
+import { EMOJI_ICONS } from './emoji-icons-base64';
 
 const COLORS = {
   black: [0, 0, 0],
   dark: [20, 20, 20],
-  text: [30, 30, 30],
-  textLight: [100, 100, 100],
   blue: [0, 51, 153],
   line: [200, 200, 200],
-  lineDark: [120, 120, 120],
   white: [255, 255, 255],
   red: [200, 30, 30],
-  bgLight: [245, 245, 245],
+  footerGray: [120, 120, 120],
 };
 
 function generarFolio(reservaId) {
-  const now = new Date();
-  const yy = String(now.getFullYear()).slice(2);
-  const mm = String(now.getMonth() + 1).padStart(2, '0');
-  const dd = String(now.getDate()).padStart(2, '0');
-  const hash = reservaId
-    ? reservaId.toString().slice(-4).toUpperCase()
-    : Math.random().toString(36).slice(2, 6).toUpperCase();
-  return `TMX-${yy}${mm}${dd}-${hash}`;
+  if (reservaId) {
+    const clean = String(reservaId).replace(/\D/g, '');
+    if (clean.length >= 4) return `MX${clean.slice(-6).padStart(6, '0')}`;
+  }
+  const n = Math.floor(100000 + Math.random() * 900000);
+  return `MX${n}`;
 }
 
 function formatearTelefono(tel) {
@@ -64,50 +61,50 @@ function getVehicleImage(vehiculoId, vehiculoNombre) {
 
 const labels = {
   es: {
-    serviceSheet: 'HOJA DE SERVICIO',
-    company: 'Grupo Turístico MX',
+    company: 'Grupo Turístico MX S. de R.L',
     rfc: 'RATG900822G16',
     address: 'San Miguel de Allende GTO.',
     phone: '+52 415 139 3219',
     email: 'contacto@transportesmx.org',
     website: 'https://transportesmx.org',
+    siteLabel: 'Sitio Web:',
     folio: 'Folio',
     date: 'Fecha',
     status: 'Pagado',
     client: 'Cliente',
-    clientPhone: 'Teléfono',
+    clientPhone: 'Telefono',
     clientEmail: 'Correo',
-    transferDesc: 'Descripción del traslado:',
-    vehicle: 'Vehículo',
+    transferDesc: 'Descripcion del traslado:',
+    vehicle: 'Vehiculo',
     clientName: 'Nombre de cliente',
     dateTime: 'Fecha y hora',
     pickupAt: 'Recoger en',
-    numPassengers: 'Número de Pasajeros',
-    numBags: 'Número de Maletas',
-    airline: 'Aerolínea',
+    flightAndAirline: 'Numero de vuelo y aerolinea',
+    airline: 'Aerolinea',
     flightNumber: 'No. Vuelo',
+    numPassengers: 'Numero de Pasajeros',
+    numBags: 'Numero de maletas',
     destination: 'Destino',
+    roundTrip: 'Ida y vuelta',
     distance: 'Distancia',
     estTime: 'Tiempo estimado',
-    roundTrip: 'Ida y vuelta',
-    yes: 'Sí',
+    yes: 'Si',
     no: 'No',
+    comments: 'Comentarios',
     returnSection: 'Regreso:',
     returnPickup: 'Recoger en',
     returnDateTime: 'Fecha y hora',
-    comments: 'Comentarios',
     footer: 'TransportesMX | transportesmx.org | +52 415 139 3219',
     generated: 'Documento generado el',
-    siteLabel: 'Sitio web:',
   },
   en: {
-    serviceSheet: 'SERVICE SHEET',
-    company: 'Grupo Turístico MX',
+    company: 'Grupo Turístico MX S. de R.L',
     rfc: 'RATG900822G16',
     address: 'San Miguel de Allende GTO.',
     phone: '+52 415 139 3219',
     email: 'contacto@transportesmx.org',
     website: 'https://transportesmx.org',
+    siteLabel: 'Website:',
     folio: 'Folio',
     date: 'Date',
     status: 'Paid',
@@ -119,25 +116,45 @@ const labels = {
     clientName: 'Client name',
     dateTime: 'Date and time',
     pickupAt: 'Pickup at',
-    numPassengers: 'Number of Passengers',
-    numBags: 'Number of Bags',
+    flightAndAirline: 'Flight number and airline',
     airline: 'Airline',
     flightNumber: 'Flight No.',
+    numPassengers: 'Number of Passengers',
+    numBags: 'Number of bags',
     destination: 'Destination',
+    roundTrip: 'Round trip',
     distance: 'Distance',
     estTime: 'Estimated time',
-    roundTrip: 'Round trip',
     yes: 'Yes',
     no: 'No',
+    comments: 'Comments',
     returnSection: 'Return:',
     returnPickup: 'Pickup at',
     returnDateTime: 'Date and time',
-    comments: 'Comments',
     footer: 'TransportesMX | transportesmx.org | +52 415 139 3219',
     generated: 'Document generated on',
-    siteLabel: 'Website:',
   },
 };
+
+const EMOJI_SIZE = 4.5;
+
+function drawEmoji(doc, emojiKey, x, y) {
+  const icon = EMOJI_ICONS[emojiKey];
+  if (icon) {
+    try {
+      doc.addImage(icon, 'PNG', x, y - EMOJI_SIZE + 0.5, EMOJI_SIZE, EMOJI_SIZE);
+      return;
+    } catch { /* fallback below */ }
+  }
+  doc.setFillColor(...COLORS.black);
+  doc.circle(x + EMOJI_SIZE / 2, y - EMOJI_SIZE / 2 + 0.5, 1.3, 'F');
+}
+
+function drawWrappedValue(doc, text, x, y, maxWidth, lineHeight) {
+  const lines = doc.splitTextToSize(String(text || ''), maxWidth);
+  doc.text(lines, x, y);
+  return y + lineHeight * (lines.length - 1);
+}
 
 export function generarHojaServicio(reserva, lang = 'es') {
   const t = labels[lang] || labels.es;
@@ -146,212 +163,262 @@ export function generarHojaServicio(reserva, lang = 'es') {
   const ph = doc.internal.pageSize.getHeight();
   const margin = 15;
   const contentWidth = pw - margin * 2;
+  const rightX = pw - margin;
 
   let y = margin;
 
+  // Calculate logo width to match company name text width
+  const companyFontSize = 10;
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(companyFontSize);
+  const companyTextW = doc.getStringUnitWidth(t.company) * companyFontSize / doc.internal.scaleFactor;
+  const logoW = companyTextW;
+  const logoH = logoW / 4.56;
+
   // ── LOGO ──
   try {
-    doc.addImage(LOGO_BASE64, 'PNG', margin, y, 60, 20);
+    doc.addImage(LOGOPDF_BASE64, 'PNG', margin, y, logoW, logoH);
   } catch {
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(26);
+    doc.setFontSize(22);
     doc.setTextColor(...COLORS.black);
-    doc.text('TRANSPORTES MX', margin, y + 14);
+    doc.text('TRANSPORTES MX', margin, y + 12);
   }
 
-  // ── Empresa info (lado izquierdo, debajo del logo) ──
-  y += 24;
-  doc.setFontSize(10);
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(...COLORS.black);
-  [t.company, t.address, t.phone, t.rfc].forEach((line) => {
-    doc.text(line, margin, y);
-    y += 5;
-  });
-  doc.setTextColor(...COLORS.blue);
-  doc.textWithLink(t.email, margin, y, { url: `mailto:${t.email}` });
-  y += 5;
-  doc.setTextColor(...COLORS.black);
-  doc.setFont('helvetica', 'bold');
-  doc.text(`${t.siteLabel}`, margin, y);
-  y += 5;
-  doc.setTextColor(...COLORS.blue);
-  doc.textWithLink(t.website, margin, y, { url: t.website });
-  y += 5;
+  // ── QR CODE (centered between logo and folio) ──
+  const qrSize = 36;
+  const qrLeftEdge = margin + logoW + 6;
+  const qrRightEdge = rightX - 50;
+  const qrX = qrLeftEdge + (qrRightEdge - qrLeftEdge - qrSize) / 2;
+  try {
+    doc.addImage(QRPDF_BASE64, 'PNG', qrX, y - 3, qrSize, qrSize);
+  } catch { /* QR not available */ }
 
-  // ── Folio en RECUADRO ROJO (derecha arriba) ──
+  // ── FOLIO box (top right, RED) ──
   const folio = generarFolio(reserva.id);
-  const rightX = pw - margin;
   const folioText = `${t.folio}: ${folio}`;
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(12);
-  const folioW = doc.getStringUnitWidth(folioText) * 12 / doc.internal.scaleFactor + 14;
-  const folioH = 10;
-  const folioX = rightX - folioW;
-  const folioY = margin + 2;
+  doc.setFontSize(11);
+  const folioTextW = doc.getStringUnitWidth(folioText) * 11 / doc.internal.scaleFactor + 12;
+  const folioH = 9;
+  const folioBoxX = rightX - folioTextW;
 
   doc.setFillColor(...COLORS.red);
-  doc.roundedRect(folioX, folioY, folioW, folioH, 2, 2, 'F');
+  doc.roundedRect(folioBoxX, y, folioTextW, folioH, 1.5, 1.5, 'F');
   doc.setTextColor(...COLORS.white);
-  doc.text(folioText, folioX + 7, folioY + 7);
+  doc.text(folioText, folioBoxX + 6, y + 6.5);
 
-  // Fecha y Pagado (debajo del folio, alineado a la derecha)
+  // Date and Status (left-aligned to folio box)
   const fechaDoc = new Date().toLocaleDateString(lang === 'en' ? 'en-US' : 'es-MX', {
     day: '2-digit', month: '2-digit', year: 'numeric',
   });
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(14);
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(11);
   doc.setTextColor(...COLORS.black);
-  doc.text(`${t.date}: ${fechaDoc}`, rightX, folioY + folioH + 10, { align: 'right' });
-  doc.text(t.status, rightX, folioY + folioH + 18, { align: 'right' });
+  doc.text(`${t.date}: ${fechaDoc}`, folioBoxX, y + folioH + 6);
+  doc.setFont('helvetica', 'bold');
+  doc.text(t.status, folioBoxX, y + folioH + 12);
 
-  // ── Línea separadora después del header ──
-  y += 4;
+  // ── Company info ──
+  y += logoH + 8;
+  doc.setFontSize(companyFontSize);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(...COLORS.black);
+  doc.text(t.company, margin, y);
+  y += 4.5;
+  doc.setFont('helvetica', 'normal');
+  doc.text(t.address, margin, y);
+  y += 4.5;
+  doc.text(t.phone, margin, y);
+  y += 4.5;
+  doc.setTextColor(...COLORS.blue);
+  doc.textWithLink(t.email, margin, y, { url: `mailto:${t.email}` });
+  y += 4.5;
+  doc.setTextColor(...COLORS.black);
+  doc.setFont('helvetica', 'normal');
+  const siteStr = `${t.siteLabel} `;
+  doc.text(siteStr, margin, y);
+  const siteLabelW = doc.getStringUnitWidth(siteStr) * companyFontSize / doc.internal.scaleFactor;
+  doc.setTextColor(...COLORS.blue);
+  doc.textWithLink(t.website, margin + siteLabelW, y, { url: t.website });
+
+  y += 8;
+
+  // ── Separator line ──
   doc.setDrawColor(...COLORS.black);
-  doc.setLineWidth(0.8);
-  doc.line(margin, y, pw - margin, y);
+  doc.setLineWidth(1.2);
+  doc.line(margin, y, rightX, y);
   y += 10;
 
-  // ── SECCIÓN 2 COLUMNAS: Cliente (izq) + Vehículo imagen (der) ──
-  const clientSectionY = y;
-  const fontSize = 14;
+  // ── CLIENT SECTION ──
+  const clientStartY = y;
+  const clientFontSize = 13;
+  doc.setFontSize(clientFontSize);
 
-  // Columna izquierda: datos del cliente
-  doc.setFontSize(fontSize);
   doc.setFont('helvetica', 'normal');
   doc.setTextColor(...COLORS.black);
   const clLabel = `${t.client}: `;
   doc.text(clLabel, margin, y);
-  const clLabelW = doc.getStringUnitWidth(clLabel) * fontSize / doc.internal.scaleFactor;
+  const clLabelW = doc.getStringUnitWidth(clLabel) * clientFontSize / doc.internal.scaleFactor;
   doc.setFont('helvetica', 'bold');
   doc.text(reserva.clienteNombre || 'N/A', margin + clLabelW, y);
-  y += 9;
+  y += 7;
 
   doc.setFont('helvetica', 'normal');
-  doc.setFontSize(fontSize);
-  doc.setTextColor(...COLORS.black);
   const telLabel = `${t.clientPhone}: `;
   doc.text(telLabel, margin, y);
-  const telLabelW = doc.getStringUnitWidth(telLabel) * fontSize / doc.internal.scaleFactor;
+  const telLabelW = doc.getStringUnitWidth(telLabel) * clientFontSize / doc.internal.scaleFactor;
+  doc.setFont('helvetica', 'bold');
   doc.text(formatearTelefono(reserva.clienteTelefono), margin + telLabelW, y);
-  y += 8;
+  y += 7;
 
-  const emailLabel = `${t.clientEmail}: `;
-  doc.text(emailLabel, margin, y);
-  const emailLabelW = doc.getStringUnitWidth(emailLabel) * fontSize / doc.internal.scaleFactor;
+  doc.setFont('helvetica', 'normal');
+  const emLabel = `${t.clientEmail}: `;
+  doc.text(emLabel, margin, y);
+  const emLabelW = doc.getStringUnitWidth(emLabel) * clientFontSize / doc.internal.scaleFactor;
   doc.setTextColor(...COLORS.blue);
-  doc.text(reserva.clienteEmail || 'N/A', margin + emailLabelW, y);
-  y += 5;
+  doc.setFont('helvetica', 'bold');
+  doc.text(reserva.clienteEmail || 'N/A', margin + emLabelW, y);
+  y += 4;
 
-  // Columna derecha: imagen del vehículo (aspect ratio real ~2:1)
-  const colHeight = y - clientSectionY + 2;
-  const imgH = colHeight;
-  const imgW = imgH * 2;
-  const imgX = pw - margin - imgW;
+  // ── Vehicle image (right column) ──
   const vehicleImg = getVehicleImage(reserva.vehiculoId, reserva.vehiculoNombre);
   if (vehicleImg) {
+    const finalW = 55;
+    const finalH = finalW / 2;
+    const imgX = rightX - finalW;
+    const imgY = clientStartY - 2;
     try {
-      doc.addImage(vehicleImg, 'PNG', imgX, clientSectionY - 2, imgW, imgH);
+      doc.addImage(vehicleImg, 'PNG', imgX, imgY, finalW, finalH);
     } catch { /* no image */ }
   }
 
   y += 10;
 
-  // ── DESCRIPCIÓN DEL TRASLADO ──
-  doc.setFillColor(...COLORS.dark);
-  doc.rect(margin, y, contentWidth, 10, 'F');
+  // ── DESCRIPTION BAR ──
+  const barH = 11;
+  doc.setFillColor(...COLORS.black);
+  doc.rect(margin, y, contentWidth, barH, 'F');
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(12);
+  doc.setFontSize(13);
   doc.setTextColor(...COLORS.white);
-  doc.text(t.transferDesc, margin + 5, y + 7);
-  y += 16;
+  doc.text(t.transferDesc, margin + 5, y + 8);
+  y += barH + 8;
 
-  // Bullet points
+  // ── BULLET ITEMS (with emoji icons) ──
   const bulletItems = [
-    { label: t.vehicle, value: reserva.vehiculoNombre || 'N/A' },
-    { label: t.clientName, value: reserva.clienteNombre || 'N/A' },
-    { label: t.dateTime, value: `${reserva.fechaIda || 'N/A'} / ${reserva.horaIda || 'N/A'} hrs` },
-    { label: t.pickupAt, value: reserva.origen || 'N/A' },
+    { emoji: 'vehicle', label: t.vehicle, value: reserva.vehiculoNombre || 'N/A' },
+    { emoji: 'person', label: t.clientName, value: reserva.clienteNombre || 'N/A' },
+    { emoji: 'calendar', label: t.dateTime, value: `${reserva.fechaIda || 'N/A'} / ${reserva.horaIda || 'N/A'} hrs` },
+    { emoji: 'location', label: t.pickupAt, value: reserva.origen || 'N/A' },
   ];
 
   if (reserva.numVuelo && reserva.aerolinea) {
-    bulletItems.push({ label: `${t.flightNumber} ${t.airline}`, value: `${reserva.aerolinea} ${reserva.numVuelo}` });
+    bulletItems.push({ emoji: 'flight', label: t.flightAndAirline, value: `${reserva.aerolinea} ${reserva.numVuelo}` });
   } else {
-    if (reserva.aerolinea) bulletItems.push({ label: t.airline, value: reserva.aerolinea });
-    if (reserva.numVuelo) bulletItems.push({ label: t.flightNumber, value: reserva.numVuelo });
+    if (reserva.aerolinea) bulletItems.push({ emoji: 'flight', label: t.airline, value: reserva.aerolinea });
+    if (reserva.numVuelo) bulletItems.push({ emoji: 'flight', label: t.flightNumber, value: reserva.numVuelo });
   }
 
   bulletItems.push(
-    { label: t.numPassengers, value: `${reserva.numPasajeros || 'N/A'} PAX` },
-    { label: t.numBags, value: `${reserva.numMaletas || '0'}` },
-    { label: t.clientPhone, value: formatearTelefono(reserva.clienteTelefono) },
-    { label: t.destination, value: reserva.destino || 'N/A' },
-    { label: t.roundTrip, value: reserva.tipoViaje === 'redondo' ? t.yes : t.no },
+    { emoji: 'passengers', label: t.numPassengers, value: `${reserva.numPasajeros || 'N/A'} PAX` },
+    { emoji: 'bags', label: t.numBags, value: `${reserva.numMaletas || '0'}` },
+    { emoji: 'phone', label: t.clientPhone, value: formatearTelefono(reserva.clienteTelefono) },
+    { emoji: 'location', label: t.destination, value: reserva.destino || 'N/A' },
+    { emoji: 'checkmark', label: t.roundTrip, value: reserva.tipoViaje === 'redondo' ? t.yes : t.no },
   );
 
-  if (reserva.distancia) bulletItems.push({ label: t.distance, value: reserva.distancia });
-  if (reserva.duracion) bulletItems.push({ label: t.estTime, value: reserva.duracion });
+  if (reserva.distancia) bulletItems.push({ emoji: 'distance', label: t.distance, value: reserva.distancia });
+  if (reserva.duracion) bulletItems.push({ emoji: 'time', label: t.estTime, value: reserva.duracion });
 
-  const bulletFontSize = 12;
+  const bulletFontSize = 13;
+  const bulletLineH = 8;
+  const textIndent = margin + EMOJI_SIZE + 3;
   doc.setFontSize(bulletFontSize);
+
   bulletItems.forEach((item) => {
-    doc.setFillColor(...COLORS.black);
-    doc.circle(margin + 4, y - 1.5, 1.2, 'F');
+    drawEmoji(doc, item.emoji, margin + 1, y);
 
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(...COLORS.black);
-    doc.text(`${item.label}: `, margin + 9, y);
+    const labelStr = `${item.label}: `;
+    doc.text(labelStr, textIndent, y);
 
-    const labelWidth = doc.getStringUnitWidth(`${item.label}: `) * bulletFontSize / doc.internal.scaleFactor;
+    const labelWidth = doc.getStringUnitWidth(labelStr) * bulletFontSize / doc.internal.scaleFactor;
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(...COLORS.blue);
-    const maxW = contentWidth - 9 - labelWidth - 5;
-    const lines = doc.splitTextToSize(String(item.value), maxW);
-    doc.text(lines, margin + 9 + labelWidth, y);
-    y += 8 * lines.length;
+    const maxW = contentWidth - (textIndent - margin) - labelWidth - 2;
+    y = drawWrappedValue(doc, item.value, textIndent + labelWidth, y, maxW, bulletLineH);
+    y += bulletLineH;
   });
+
+  // ── COMMENTS (optional) ──
+  if (reserva.comentarios) {
+    y += 4;
+    doc.setDrawColor(...COLORS.line);
+    doc.setLineWidth(0.3);
+    doc.line(margin, y, rightX, y);
+    y += 8;
+
+    drawEmoji(doc, 'comment', margin + 1, y);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(bulletFontSize);
+    doc.setTextColor(...COLORS.black);
+    const comLabel = `${t.comments}: `;
+    doc.text(comLabel, textIndent, y);
+    const comLabelW = doc.getStringUnitWidth(comLabel) * bulletFontSize / doc.internal.scaleFactor;
+    doc.setTextColor(...COLORS.blue);
+    y = drawWrappedValue(doc, reserva.comentarios, textIndent + comLabelW, y, contentWidth - (textIndent - margin) - comLabelW, bulletLineH);
+    y += bulletLineH;
+  }
 
   y += 6;
 
-  // ── REGRESO (siempre visible) ──
-  doc.setDrawColor(...COLORS.lineDark);
-  doc.setLineWidth(0.4);
-  doc.line(margin, y, pw - margin, y);
-  y += 9;
+  // ── RETURN SECTION ──
+  doc.setDrawColor(...COLORS.black);
+  doc.setLineWidth(0.5);
+  doc.line(margin, y, rightX, y);
+  y += 10;
 
+  drawEmoji(doc, 'checkmark', margin + 1, y);
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(14);
+  doc.setFontSize(15);
   doc.setTextColor(...COLORS.black);
-  doc.text(t.returnSection, margin, y);
+  doc.text(t.returnSection, textIndent, y);
   y += 9;
 
   const isRoundTrip = reserva.tipoViaje === 'redondo' && reserva.fechaRegreso;
+
   const returnItems = [
-    { label: t.returnPickup, value: isRoundTrip ? (reserva.destino || 'N/A') : '' },
-    { label: t.returnDateTime, value: isRoundTrip ? `${reserva.fechaRegreso} / ${reserva.horaRegreso || 'N/A'} hrs` : '' },
+    { emoji: 'location', label: t.returnPickup, value: isRoundTrip ? (reserva.destino || 'N/A') : '' },
+    { emoji: 'calendar', label: t.returnDateTime, value: isRoundTrip ? `${reserva.fechaRegreso} / ${reserva.horaRegreso || 'N/A'} hrs` : '' },
   ];
 
   doc.setFontSize(bulletFontSize);
   returnItems.forEach((item) => {
-    doc.setFillColor(...COLORS.black);
-    doc.circle(margin + 4, y - 1.5, 1.2, 'F');
+    drawEmoji(doc, item.emoji, margin + 1, y);
+
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(...COLORS.black);
-    doc.text(`${item.label}: `, margin + 9, y);
-    const lw = doc.getStringUnitWidth(`${item.label}: `) * bulletFontSize / doc.internal.scaleFactor;
+    const labelStr = `${item.label}: `;
+    doc.text(labelStr, textIndent, y);
+
+    const lw = doc.getStringUnitWidth(labelStr) * bulletFontSize / doc.internal.scaleFactor;
     doc.setTextColor(...COLORS.blue);
-    doc.text(String(item.value), margin + 9 + lw, y);
-    y += 8;
+    doc.setFont('helvetica', 'bold');
+    const maxW = contentWidth - (textIndent - margin) - lw;
+    y = drawWrappedValue(doc, item.value, textIndent + lw, y, maxW, bulletLineH);
+    y += bulletLineH;
   });
 
   // ── FOOTER ──
-  const footerY = ph - 18;
+  const footerY = ph - 16;
   doc.setDrawColor(...COLORS.line);
   doc.setLineWidth(0.3);
-  doc.line(margin, footerY, pw - margin, footerY);
+  doc.line(margin, footerY, rightX, footerY);
 
   doc.setFontSize(9);
-  doc.setTextColor(...COLORS.textLight);
+  doc.setTextColor(...COLORS.footerGray);
   doc.setFont('helvetica', 'normal');
   doc.text(t.footer, pw / 2, footerY + 5, { align: 'center' });
 

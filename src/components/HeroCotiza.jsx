@@ -63,12 +63,12 @@ const HeroCotiza = () => {
     router.push(`/reservar${query ? '?' + query : ''}`);
   };
 
-  const inputStyle = "bg-white/20 backdrop-blur-sm text-white rounded-lg py-3 px-6 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-white/50 text-sm";
+  const inputStyle = "bg-white/[0.08] backdrop-blur-sm text-white rounded-lg py-3 px-6 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-white/50 text-sm border border-white/[0.12]";
 
   const isEN = idioma.nombre === 'EN';
 
   return (
-    <div className="bg-black/50 backdrop-blur-md rounded-2xl px-4 py-4 sm:px-5 sm:py-4 lg:px-6 lg:py-5 shadow-2xl w-full sm:w-[85%] md:w-[75%] lg:w-[65%] mx-auto lg:mx-0 border border-white/10">
+    <div className="bg-white/[0.06] backdrop-blur-sm rounded-2xl px-4 py-4 sm:px-5 sm:py-4 lg:px-6 lg:py-5 shadow-2xl w-full sm:w-[85%] md:w-[75%] lg:w-[65%] mx-auto lg:mx-0 border border-white/[0.15]">
       {/* Desktop: 3 columnas en fila | Mobile/Tablet: stacked */}
       <div className="flex flex-col lg:flex-row gap-3 lg:gap-4">
         {/* Columna 1: Origen + Destino */}
