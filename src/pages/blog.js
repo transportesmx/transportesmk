@@ -1,4 +1,4 @@
-<div id="soro-blog"></div> -
+<div id="soro-blog"></div> 
 export default function BlogPage() {
 return (
 <>
