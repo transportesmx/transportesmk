@@ -1,5 +1,4 @@
-<div id="soro-blog"></div>
-export default function BlogPage() {
+<div id="soro-blog"></div> export default function BlogPage() {
 return (
 <>
 
