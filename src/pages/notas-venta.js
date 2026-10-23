@@ -368,41 +368,44 @@ export default function NotasVenta() {
 
 <style>
 *{box-sizing:border-box}
-@page{size:Letter;margin:8mm}
+@page{size:Letter portrait;margin:7mm}
 html,body{margin:0;padding:0;background:#fff;color:#111;font-family:Arial,Helvetica,sans-serif}
-body{font-size:9pt}
-.hoja{width:100%;max-width:194mm;margin:0 auto;min-height:0}
-.top{display:grid;grid-template-columns:1fr auto;align-items:start;gap:8px;border-bottom:2px solid #111;padding:0 0 7px}
-.empresa{display:flex;gap:10px;align-items:center;min-width:0}
-.logo{width:86px;height:60px;object-fit:contain}
-.empresa-texto{font-size:8pt;line-height:1.4}
-.empresa-texto strong{font-size:11pt;display:block;margin-bottom:2px}
-.folio{font-size:13pt;font-weight:800;color:#c82027;white-space:nowrap;text-align:right;padding-top:3px}
+body{font-size:10.5pt}
+.hoja{width:100%;max-width:196mm;margin:0 auto;min-height:0}
+.top{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:12px;border-bottom:2px solid #111;padding:0 0 10px}
+.empresa{display:flex;gap:13px;align-items:center;min-width:0}
+.logo{width:94px;height:68px;object-fit:contain;flex-shrink:0}
+.empresa-texto{font-size:9pt;line-height:1.4}
+.empresa-texto strong{font-size:12pt;display:block;margin-bottom:3px}
+.folio{font-size:15pt;font-weight:800;color:#c82027;white-space:nowrap;text-align:right;padding-top:3px}
 .contacto{color:#111;text-decoration:none}
-.cabecera-servicio{display:flex;justify-content:space-between;align-items:center;margin:9px 0 7px;gap:12px;border-bottom:1px solid #c8c8c8;padding-bottom:5px}
-.cabecera-servicio h1{font-size:13pt;margin:0;font-weight:800;letter-spacing:.2px}
-.sprinter{width:135px;height:50px;object-fit:contain}
-.datos{display:grid;grid-template-columns:1fr 1fr;gap:4px 7px}
-.dato{display:grid;grid-template-columns:42% 58%;min-height:25px;border:1px solid #202020;break-inside:avoid}
-.etiqueta{background:#e8e8e8;padding:4px 6px;font-weight:700;display:flex;align-items:center;line-height:1.15}
-.valor{background:#fff;padding:4px 6px;min-width:0;overflow-wrap:anywhere;min-height:24px}
+.cabecera-servicio{display:flex;justify-content:space-between;align-items:center;margin:11px 0 9px;gap:12px;border-bottom:1px solid #c8c8c8;padding-bottom:7px}
+.cabecera-servicio h1{font-size:16pt;margin:0;font-weight:800;letter-spacing:.2px}
+.sprinter{width:150px;height:58px;object-fit:contain}
+.datos{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:6px 8px}
+.dato{display:grid;grid-template-columns:42% 58%;min-height:32px;border:1px solid #202020;break-inside:avoid}
+.etiqueta{background:#e8e8e8;padding:7px 7px;font-weight:700;display:flex;align-items:center;line-height:1.2}
+.valor{background:#fff;padding:7px 7px;min-width:0;overflow-wrap:anywhere;min-height:30px;line-height:1.25}
 .full{grid-column:1/-1}
-.seccion{font-size:10pt;font-weight:800;background:#202020;color:#fff;padding:6px 8px;margin:8px 0 5px;letter-spacing:.15px}
-.descripcion{border:1px solid #202020;min-height:38px;padding:7px;background:#fff;overflow-wrap:anywhere;white-space:pre-wrap}
-.total-row{display:grid;grid-template-columns:42% 58%;margin-top:7px;border:1px solid #202020;min-height:32px}
-.total-label{background:#16803d;color:#fff;font-weight:800;padding:7px;text-align:right;font-size:11pt}
-.total-value{background:#fff;color:#111;padding:6px 8px;font-weight:800;font-size:12pt;min-height:30px}
-.observaciones{margin-top:7px;border:1.5px solid #222;border-radius:18px;padding:8px 12px;min-height:42px}
-.observaciones strong{display:block;margin-bottom:3px}
-.pie{border-top:1px solid #222;margin-top:8px;padding-top:5px;text-align:center;font-size:7pt;line-height:1.35;color:#333}
+.seccion{font-size:12pt;font-weight:800;background:#202020;color:#fff;padding:8px 9px;margin:10px 0 6px;letter-spacing:.15px}
+.descripcion{border:1px solid #202020;min-height:52px;padding:9px;background:#fff;overflow-wrap:anywhere;white-space:pre-wrap;line-height:1.3}
+.total-row{display:grid;grid-template-columns:42% 58%;margin-top:9px;border:1px solid #202020;min-height:40px}
+.total-label{background:#16803d;color:#fff;font-weight:800;padding:9px;text-align:right;font-size:12pt}
+.total-value{background:#fff;color:#111;padding:8px 10px;font-weight:800;font-size:14pt;min-height:38px}
+.observaciones{margin-top:9px;border:1.5px solid #222;border-radius:20px;padding:11px 13px;min-height:54px;line-height:1.3}
+.observaciones strong{display:block;margin-bottom:5px;font-size:10.5pt}
+.pie{border-top:1px solid #222;margin-top:10px;padding-top:7px;text-align:center;font-size:8pt;line-height:1.4;color:#333}
 .botones{margin:14px 0;text-align:center}
 button{padding:9px 16px;margin:3px;cursor:pointer}
 @media print{
- @page{size:Letter;margin:8mm}
+ @page{size:Letter portrait;margin:7mm}
  html,body{width:100%;height:auto;margin:0!important;padding:0!important}
  .botones{display:none!important}
  body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
  .hoja{width:100%;max-width:none;margin:0;min-height:0}
+ .empresa-texto{font-size:9pt}
+ .folio{font-size:15pt}
+ a{color:#111;text-decoration:none}
  .dato,.total-row,.observaciones,.top,.cabecera-servicio,.seccion,.descripcion,.pie{break-inside:avoid;page-break-inside:avoid}
 }
 </style>
