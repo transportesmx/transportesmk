@@ -208,9 +208,11 @@ export default function NotasVenta() {
     setMensaje("");
 
     try {
+      const importeCapturado = String(datos.importe ?? "").trim();
       const payload = {
         ...datos,
-        importe: Number(datos.importe || 0),
+        // Mantener el importe vacío si no se capturó una cantidad.
+        importe: importeCapturado === "" ? "" : Number(importeCapturado),
       };
 
       if (editando) {
@@ -252,8 +254,9 @@ export default function NotasVenta() {
         );
 
         await cargarNotas();
-        setDatos({ ...inicial });
-        setEditando(null);
+        // Mantener visible la nota recién guardada y permitir editarla sin crear otro folio.
+        setDatos(payload);
+        setEditando({ id: nueva.nota_id || nueva.id, folio: nueva.folio, datos: payload });
       }
     } catch (error) {
       setMensaje(
@@ -361,7 +364,7 @@ export default function NotasVenta() {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Hoja de servicio ${seguro(f)}</title>
+<title>Nota de venta ${seguro(f)}</title>
 
 <style>
 *{box-sizing:border-box}
@@ -395,10 +398,12 @@ body{font-size:9pt}
 .botones{margin:14px 0;text-align:center}
 button{padding:9px 16px;margin:3px;cursor:pointer}
 @media print{
+ @page{size:Letter;margin:8mm}
+ html,body{width:100%;height:auto;margin:0!important;padding:0!important}
  .botones{display:none!important}
  body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
- .hoja{max-width:none}
- .dato,.total-row,.observaciones{break-inside:avoid}
+ .hoja{width:100%;max-width:none;margin:0;min-height:0}
+ .dato,.total-row,.observaciones,.top,.cabecera-servicio,.seccion,.descripcion,.pie{break-inside:avoid;page-break-inside:avoid}
 }
 </style>
 </head>
@@ -579,7 +584,7 @@ button{padding:9px 16px;margin:3px;cursor:pointer}
               <h1 className="text-2xl font-bold text-yellow-400 sm:text-3xl">
                 Transportes MX
               </h1>
-              <p className="text-slate-300">Hoja de servicio</p>
+              <p className="text-slate-300">Nota de venta</p>
             </div>
           </div>
 
@@ -612,7 +617,7 @@ button{padding:9px 16px;margin:3px;cursor:pointer}
               <h2 className="text-xl font-semibold">
                 {editando
                   ? `Editar ${editando.folio}`
-                  : "Nueva hoja de servicio"}
+                  : "Nueva nota de venta"}
               </h2>
 
               <button
@@ -620,7 +625,7 @@ button{padding:9px 16px;margin:3px;cursor:pointer}
                 onClick={nuevaNota}
                 className="rounded-lg border border-slate-600 px-3 py-2 text-sm"
               >
-                Nueva hoja
+                Nueva nota
               </button>
             </div>
 
@@ -683,7 +688,7 @@ button{padding:9px 16px;margin:3px;cursor:pointer}
                     ? "Guardando..."
                     : editando
                     ? "Guardar cambios"
-                    : "Guardar hoja"}
+                    : "Guardar nota"}
                 </button>
 
                 <button
@@ -811,7 +816,7 @@ button{padding:9px 16px;margin:3px;cursor:pointer}
 
                 <div className="min-w-0">
                   <h3 className="text-xl font-bold sm:text-2xl">
-                    TRANSPORTES MX
+                    Grupo Turístico MX S. de R.L. de C.V.
                   </h3>
 
                   <p className="mt-1 text-sm font-semibold text-slate-600">
@@ -819,11 +824,15 @@ button{padding:9px 16px;margin:3px;cursor:pointer}
                   </p>
 
                   <p className="mt-1 break-words text-xs text-slate-500">
-                    San Miguel de Allende, Guanajuato
+                    Grupo Turístico MX S. de R.L. de C.V. · RFC: GTM2604271F2
                   </p>
-
                   <p className="break-words text-xs text-slate-500">
-                    contacto@transportesmx.org
+                    San Miguel de Allende, Guanajuato · +52 415 139 3219
+                  </p>
+                  <p className="break-words text-xs text-blue-700">
+                    <a href="mailto:contacto@transportesmx.org">contacto@transportesmx.org</a>
+                    {" · "}
+                    <a href="https://transportesmx.org">transportesmx.org</a>
                   </p>
 
                   <p className="mt-2 font-bold text-red-600">
@@ -838,17 +847,6 @@ button{padding:9px 16px;margin:3px;cursor:pointer}
                   alt="Vehículo de Transportes MX"
                   className="max-h-16 max-w-full object-contain"
                 />
-              </div>
-
-              <div className="mb-3 border-b-2 border-black pb-3 text-xs leading-5">
-                <strong className="block text-sm">
-                  Grupo Turístico MX S. de R.L. de C.V.
-                </strong>
-                RFC: GTM2604271F2
-                <br />
-                San Miguel de Allende, Guanajuato · +52 415 139 3219
-                <br />
-                contacto@transportesmx.org · transportesmx.org
               </div>
 
               <h4 className="mb-2 font-bold">
@@ -933,10 +931,14 @@ button{padding:9px 16px;margin:3px;cursor:pointer}
 
               <footer className="mt-7 border-t-2 border-black pt-3 text-center text-[10px] text-slate-500">
                 <p>
-                  San Miguel de Allende, Guanajuato
+                  San Miguel de Allende, Guanajuato · Documento generado: {new Intl.DateTimeFormat("es-MX", {
+                    day: "2-digit", month: "long", year: "numeric", timeZone: "America/Mexico_City",
+                  }).format(new Date())} · Hora {new Intl.DateTimeFormat("es-MX", {
+                    hour: "2-digit", minute: "2-digit", hour12: true, timeZone: "America/Mexico_City",
+                  }).format(new Date())}
                 </p>
                 <p>
-                  https://transportesmx.org · contacto@transportesmx.org
+                  Grupo Turístico MX S. de R.L. de C.V. · <a className="text-blue-700" href="mailto:contacto@transportesmx.org">contacto@transportesmx.org</a> · <a className="text-blue-700" href="https://transportesmx.org">transportesmx.org</a>
                 </p>
               </footer>
             </article>
