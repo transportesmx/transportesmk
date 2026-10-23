@@ -374,25 +374,25 @@ body{font-size:9pt}
 .hoja{width:100%;max-width:194mm;margin:0 auto;min-height:0}
 .top{display:grid;grid-template-columns:1fr auto;align-items:start;gap:8px;border-bottom:2px solid #111;padding:0 0 7px}
 .empresa{display:flex;gap:10px;align-items:center;min-width:0}
-.logo{width:76px;height:55px;object-fit:contain}
-.empresa-texto{font-size:8pt;line-height:1.35}
+.logo{width:86px;height:60px;object-fit:contain}
+.empresa-texto{font-size:8pt;line-height:1.4}
 .empresa-texto strong{font-size:11pt;display:block;margin-bottom:2px}
-.folio{font-size:14pt;font-weight:800;color:#c82027;white-space:nowrap}
+.folio{font-size:13pt;font-weight:800;color:#c82027;white-space:nowrap;text-align:right;padding-top:3px}
 .contacto{color:#111;text-decoration:none}
-.cabecera-servicio{display:flex;justify-content:space-between;align-items:center;margin:7px 0 5px;gap:8px}
-.cabecera-servicio h1{font-size:13pt;margin:0;font-weight:800}
-.sprinter{width:115px;height:42px;object-fit:contain}
+.cabecera-servicio{display:flex;justify-content:space-between;align-items:center;margin:9px 0 7px;gap:12px;border-bottom:1px solid #c8c8c8;padding-bottom:5px}
+.cabecera-servicio h1{font-size:13pt;margin:0;font-weight:800;letter-spacing:.2px}
+.sprinter{width:135px;height:50px;object-fit:contain}
 .datos{display:grid;grid-template-columns:1fr 1fr;gap:4px 7px}
 .dato{display:grid;grid-template-columns:42% 58%;min-height:25px;border:1px solid #202020;break-inside:avoid}
-.etiqueta{background:#e8e8e8;padding:5px 6px;font-weight:700;display:flex;align-items:center;line-height:1.15}
-.valor{background:#fff;padding:5px 6px;min-width:0;overflow-wrap:anywhere;min-height:24px}
+.etiqueta{background:#e8e8e8;padding:4px 6px;font-weight:700;display:flex;align-items:center;line-height:1.15}
+.valor{background:#fff;padding:4px 6px;min-width:0;overflow-wrap:anywhere;min-height:24px}
 .full{grid-column:1/-1}
-.seccion{font-size:10pt;font-weight:800;background:#202020;color:#fff;padding:5px 7px;margin:7px 0 4px}
-.descripcion{border:1px solid #202020;min-height:35px;padding:6px;background:#fff;overflow-wrap:anywhere}
-.total-row{display:grid;grid-template-columns:1fr 58%;margin-top:7px;border:1px solid #202020;min-height:32px}
+.seccion{font-size:10pt;font-weight:800;background:#202020;color:#fff;padding:6px 8px;margin:8px 0 5px;letter-spacing:.15px}
+.descripcion{border:1px solid #202020;min-height:38px;padding:7px;background:#fff;overflow-wrap:anywhere;white-space:pre-wrap}
+.total-row{display:grid;grid-template-columns:42% 58%;margin-top:7px;border:1px solid #202020;min-height:32px}
 .total-label{background:#16803d;color:#fff;font-weight:800;padding:7px;text-align:right;font-size:11pt}
 .total-value{background:#fff;color:#111;padding:6px 8px;font-weight:800;font-size:12pt;min-height:30px}
-.observaciones{margin-top:7px;border:1.5px solid #222;border-radius:16px;padding:7px 10px;min-height:39px}
+.observaciones{margin-top:7px;border:1.5px solid #222;border-radius:18px;padding:8px 12px;min-height:42px}
 .observaciones strong{display:block;margin-bottom:3px}
 .pie{border-top:1px solid #222;margin-top:8px;padding-top:5px;text-align:center;font-size:7pt;line-height:1.35;color:#333}
 .botones{margin:14px 0;text-align:center}
@@ -427,7 +427,7 @@ button{padding:9px 16px;margin:3px;cursor:pointer}
 </header>
 
 <div class="cabecera-servicio">
- <h1>Descripción del traslado</h1>
+ <h1>NOTA DE VENTA<br><span style="font-size:9pt;font-weight:600;letter-spacing:0">Descripción del traslado</span></h1>
  <img class="sprinter" src="/sprinter.png" alt="Vehículo">
 </div>
 
@@ -820,7 +820,7 @@ button{padding:9px 16px;margin:3px;cursor:pointer}
                   </h3>
 
                   <p className="mt-1 text-sm font-semibold text-slate-600">
-                    HOJA DE SERVICIO
+                    NOTA DE VENTA
                   </p>
 
                   <p className="mt-1 break-words text-xs text-slate-500">
@@ -841,11 +841,11 @@ button{padding:9px 16px;margin:3px;cursor:pointer}
                 </div>
               </header>
 
-              <div className="flex h-20 items-center justify-center border-b border-slate-300">
+              <div className="flex h-24 items-center justify-center border-b border-slate-300">
                 <img
                   src="/sprinter.png"
                   alt="Vehículo de Transportes MX"
-                  className="max-h-16 max-w-full object-contain"
+                  className="max-h-20 max-w-full object-contain"
                 />
               </div>
 
