@@ -65,16 +65,15 @@ const Hero = () => {
       {...swipeHandlers}
       className="relative isolate w-full overflow-hidden bg-neutral-900"
     >
-      {/* Fondo panorámico: imagen completa sin deformación */}
+      {/* Imagen de fondo a todo lo ancho */}
       <AnimatePresence mode="wait">
         <motion.div
           key={currentSlide}
-          className="absolute inset-0 bg-no-repeat"
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
             backgroundImage: `url("${activeSlide.image}")`,
-            backgroundSize: 'contain',
+            backgroundSize: 'cover',
             backgroundPosition: 'center center',
-            backgroundColor: '#171717',
           }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -83,7 +82,7 @@ const Hero = () => {
         />
       </AnimatePresence>
 
-      {/* Capa oscura para facilitar la lectura */}
+      {/* Oscurecimiento para facilitar la lectura */}
       <div className="absolute inset-0 bg-black/30 pointer-events-none" />
 
       {/* Flecha anterior */}
@@ -106,7 +105,7 @@ const Hero = () => {
         <FaChevronRight className="text-3xl lg:text-4xl" />
       </button>
 
-      {/* Banner con mayor altura */}
+      {/* Contenido del banner */}
       <div className="relative z-10 flex min-h-[700px] flex-col justify-between px-4 pt-20 pb-8 sm:min-h-[760px] sm:px-8 md:min-h-[820px] md:px-12 md:pt-16 lg:min-h-[880px] lg:px-20 xl:min-h-[920px] xl:px-24">
         {/* Título y descripción */}
         <div className="w-full max-w-2xl flex-shrink-0 text-center text-white lg:text-left">
