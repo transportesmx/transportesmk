@@ -1,91 +1,119 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useState, useEffect, useContext } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import HeroCotiza from './HeroCotiza';
-import { useContext } from 'react';
 import { AppContext } from '../Context/AppContext';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { useSwipeable } from 'react-swipeable';
 import { useRouter } from 'next/router';
 
-
 const Hero = () => {
-  
-  const {traduccion} = useContext(AppContext);
+  const { traduccion } = useContext(AppContext);
   const router = useRouter();
 
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  const slides = traduccion?.hero?.slides || [];
+
   const handleEmailClickCotizar = () => {
-    const emailAddress = "contacto@transportesmx.org";
-    const subject = "Cotización de servicio";
-    const body = "Hola, me gustaría cotizar un servicio";
-    window.location.href = `mailto:${emailAddress}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    const emailAddress = 'contacto@transportesmx.org';
+    const subject = 'Cotización de servicio';
+    const body = 'Hola, me gustaría cotizar un servicio';
+    window.location.href =
+      `mailto:${emailAddress}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   };
-  
+
   const handleEmailClickReservar = () => {
     router.push('/reservar');
   };
 
-  const [currentSlide, setCurrentSlide] = useState(0);
+  useEffect(() => {
+    if (slides.length <= 1) return;
+
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
+    }, 7000);
+
+    return () => clearInterval(interval);
+  }, [slides.length]);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % traduccion.hero.slides.length);
-    }, 7000);
-    return () => clearInterval(interval);
-  }, []);
+    if (currentSlide >= slides.length && slides.length > 0) {
+      setCurrentSlide(0);
+    }
+  }, [currentSlide, slides.length]);
 
   const swipeHandlers = useSwipeable({
-    onSwipedLeft: () => setCurrentSlide(prev => (prev + 1) % traduccion.hero.slides.length),
+    onSwipedLeft: () =>
+      slides.length > 0 &&
+      setCurrentSlide((prev) => (prev + 1) % slides.length),
     onSwipedRight: () =>
-      setCurrentSlide(prev =>
-        prev === 0 ? traduccion.hero.slides.length - 1 : prev - 1
+      slides.length > 0 &&
+      setCurrentSlide((prev) =>
+        prev === 0 ? slides.length - 1 : prev - 1
       ),
-    preventDefaultTouchmoveEvent: true,
-    trackMouse: true
+    trackMouse: true,
+    preventScrollOnSwipe: true,
   });
 
+  if (slides.length === 0) return null;
+
+  const activeSlide = slides[currentSlide];
 
   return (
     <div
-    id="Hero"
-    {...swipeHandlers}
-    className="relative w-full overflow-hidden"
+      id="Hero"
+      {...swipeHandlers}
+      className="relative isolate w-full overflow-hidden"
     >
-      {/* Background slides */}
+      {/* Fondo panorámico */}
       <AnimatePresence mode="wait">
         <motion.div
           key={currentSlide}
           className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: `url(${traduccion.hero.slides[currentSlide].image})` }}
+          style={{
+            backgroundImage: `url("${activeSlide.image}")`,
+          }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
+          transition={{ duration: 0.5 }}
         />
       </AnimatePresence>
+
+      {/* Oscurecimiento para mejorar la lectura */}
       <div className="absolute inset-0 bg-black/30" />
 
-      {/* Flechas navegación */}
-      <div className="hidden md:block absolute left-4 lg:left-8 top-[30%] z-10">
-        <FaChevronLeft
-          className="text-white text-3xl lg:text-4xl cursor-pointer hover:text-white/70 transition"
-          onClick={() =>
-            setCurrentSlide((prev) =>
-              prev === 0 ? traduccion.hero.slides.length - 1 : prev - 1
-            )
-          }
-        />
-      </div>
-      <div className="hidden md:block absolute right-4 lg:right-8 top-[30%] z-10">
-        <FaChevronRight
-          className="text-white text-3xl lg:text-4xl cursor-pointer hover:text-white/70 transition"
-          onClick={() => setCurrentSlide((prev) => (prev + 1) % traduccion.hero.slides.length)}
-        />
-      </div>
+      {/* Flecha anterior */}
+      <button
+        type="button"
+        aria-label="Imagen anterior"
+        className="hidden md:flex absolute left-4 lg:left-8 top-[30%] z-20 items-center justify-center text-white hover:text-white/70 transition"
+        onClick={() =>
+          setCurrentSlide((prev) =>
+            prev === 0 ? slides.length - 1 : prev - 1
+          )
+        }
+      >
+        <FaChevronLeft className="text-3xl lg:text-4xl" />
+      </button>
 
-      {/* Contenido: texto arriba + formulario abajo */}
-      <div className="relative z-[5] flex flex-col justify-between min-h-[600px] sm:min-h-[620px] md:min-h-[650px] lg:min-h-[680px] xl:min-h-[780px] px-4 sm:px-8 md:px-12 lg:px-20 xl:px-24 pt-20 md:pt-16 pb-10">
-        {/* Texto del slide */}
-        <div className="text-white max-w-2xl mx-auto lg:mx-0 text-center lg:text-left flex-shrink-0">
+      {/* Flecha siguiente */}
+      <button
+        type="button"
+        aria-label="Imagen siguiente"
+        className="hidden md:flex absolute right-4 lg:right-8 top-[30%] z-20 items-center justify-center text-white hover:text-white/70 transition"
+        onClick={() =>
+          setCurrentSlide((prev) => (prev + 1) % slides.length)
+        }
+      >
+        <FaChevronRight className="text-3xl lg:text-4xl" />
+      </button>
+
+      {/* Contenido del banner */}
+      <div className="relative z-10 flex min-h-[620px] flex-col justify-between px-4 pt-20 pb-8 sm:min-h-[680px] sm:px-8 md:min-h-[720px] md:px-12 md:pt-16 lg:min-h-[760px] lg:px-20 xl:min-h-[820px] xl:px-24">
+        {/* Título y descripción */}
+        <div className="w-full max-w-2xl flex-shrink-0 text-center text-white lg:text-left">
           <AnimatePresence mode="wait">
             <motion.div
               key={currentSlide}
@@ -94,31 +122,34 @@ const Hero = () => {
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.3 }}
             >
-              <h1 className="text-[26px] sm:text-[30px] md:text-[36px] lg:text-[40px] xl:text-[56px] leading-tight font-bold mb-2 md:mb-4">
-                {traduccion.hero.slides[currentSlide].title}
+              <h1 className="mb-2 text-[26px] font-bold leading-tight sm:text-[30px] md:mb-4 md:text-[36px] lg:text-[40px] xl:text-[56px]">
+                {activeSlide.title}
               </h1>
-              <p className="text-sm sm:text-base md:text-lg lg:text-xl max-w-[500px] mx-auto lg:mx-0 text-white/90 leading-relaxed">
-                {traduccion.hero.slides[currentSlide].description}
+
+              <p className="mx-auto max-w-[500px] text-sm leading-relaxed text-white/90 sm:text-base md:text-lg lg:mx-0 lg:text-xl">
+                {activeSlide.description}
               </p>
             </motion.div>
           </AnimatePresence>
         </div>
 
-        {/* Formulario */}
+        {/* Formulario de cotización */}
         <div className="mt-6 lg:mt-0">
           <HeroCotiza />
         </div>
 
-        {/* Indicadores de slide */}
-        <div className="flex justify-center space-x-2 mt-4">
-          {traduccion.hero.slides.map((_, index) => (
+        {/* Indicadores */}
+        <div className="mt-4 flex justify-center space-x-2">
+          {slides.map((_, index) => (
             <button
               key={index}
+              type="button"
               onClick={() => setCurrentSlide(index)}
-              className={`w-2.5 h-2.5 rounded-full transition ${
+              className={`h-2.5 w-2.5 rounded-full transition ${
                 currentSlide === index ? 'bg-white' : 'bg-white/40'
               }`}
-              aria-label={`Slide ${index + 1}`}
+              aria-label={`Mostrar imagen ${index + 1}`}
+              aria-current={currentSlide === index ? 'true' : undefined}
             />
           ))}
         </div>
