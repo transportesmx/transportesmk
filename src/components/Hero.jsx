@@ -8,7 +8,6 @@ import { useSwipeable } from 'react-swipeable';
 
 const Hero = () => {
   const { traduccion } = useContext(AppContext);
-
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const slides = traduccion?.hero?.slides || [];
@@ -66,7 +65,7 @@ const Hero = () => {
       {...swipeHandlers}
       className="relative isolate w-full overflow-hidden bg-neutral-900"
     >
-      {/* Imagen completa, sin recorte ni deformación */}
+      {/* Fondo panorámico: imagen completa sin deformación */}
       <AnimatePresence mode="wait">
         <motion.div
           key={currentSlide}
@@ -107,8 +106,8 @@ const Hero = () => {
         <FaChevronRight className="text-3xl lg:text-4xl" />
       </button>
 
-      {/* Contenido del banner */}
-      <div className="relative z-10 flex min-h-[620px] flex-col justify-between px-4 pt-20 pb-8 sm:min-h-[680px] sm:px-8 md:min-h-[720px] md:px-12 md:pt-16 lg:min-h-[760px] lg:px-20 xl:min-h-[820px] xl:px-24">
+      {/* Banner con mayor altura */}
+      <div className="relative z-10 flex min-h-[700px] flex-col justify-between px-4 pt-20 pb-8 sm:min-h-[760px] sm:px-8 md:min-h-[820px] md:px-12 md:pt-16 lg:min-h-[880px] lg:px-20 xl:min-h-[920px] xl:px-24">
         {/* Título y descripción */}
         <div className="w-full max-w-2xl flex-shrink-0 text-center text-white lg:text-left">
           <AnimatePresence mode="wait">
