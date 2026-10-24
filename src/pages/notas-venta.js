@@ -140,14 +140,14 @@ body{font-size:11pt;line-height:1.25}
 .folioCol{display:flex;flex-direction:column;align-items:stretch;gap:2mm}
 .folio{background:#f00000;color:#fff;font-size:12pt;font-weight:900;padding:3mm 3.5mm;min-height:11mm;overflow-wrap:anywhere}
 .sprinter{width:100%;height:34mm;object-fit:contain;object-position:center}
-.separador{height:3mm;background:#050505;margin:3mm 0 4mm;width:100%}
+.separador{display:block!important;width:100%;height:0!important;border:0;border-top:1.5mm solid #000!important;background:transparent!important;margin:3mm 0 3mm;flex:none;visibility:visible!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 .cliente{margin-top:1mm;display:grid;grid-template-columns:1fr;gap:1.8mm;padding:0 0 3mm}
 .clienteItem{font-size:11pt;overflow-wrap:anywhere;min-height:5mm}
 .clienteItem strong{font-weight:900}
 .total{display:flex;align-items:center;gap:2mm;margin:1mm 0 4mm;background:#00b050;color:#fff;width:max-content;max-width:100%;min-height:9mm;padding:2mm 3mm;font-size:12pt;font-weight:900;overflow-wrap:anywhere}
-.barra{background:#050505;color:#fff;padding:2.5mm 3mm;font-size:11pt;font-weight:900;margin:0 0 4mm;min-height:9mm}
-.datos{display:flex;flex-direction:column;gap:2.2mm}
-.dato{display:flex;align-items:flex-start;gap:2mm;min-height:6.5mm;break-inside:avoid;page-break-inside:avoid;font-size:11pt;line-height:1.3;overflow-wrap:anywhere}
+.barra{background:#050505!important;color:#fff!important;padding:2mm 3mm;font-size:11pt;font-weight:900;margin:0 0 1.5mm;min-height:8mm;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.datos{display:flex;flex-direction:column;gap:0.7mm}
+.dato{display:flex;align-items:flex-start;gap:2mm;min-height:5.3mm;margin:0;padding:0;break-inside:avoid;page-break-inside:avoid;font-size:11pt;line-height:1.18;overflow-wrap:anywhere}
 .icono{width:6mm;flex:none;font-size:11pt}
 .etiqueta{font-weight:900;flex:none}
 .valor{min-width:0;white-space:pre-wrap;overflow-wrap:anywhere}
@@ -158,7 +158,7 @@ body{font-size:11pt;line-height:1.25}
 .pie a{color:#555;text-decoration:none}
 .acciones{display:flex;justify-content:center;gap:3mm;margin:7mm 0 2mm}
 button{font-size:11pt;padding:3mm 5mm;border:1px solid #777;border-radius:2mm;background:#f4f4f4;cursor:pointer}
-@media print{.acciones{display:none!important}.hoja{width:100%;max-width:none;min-height:279.4mm;height:279.4mm;padding:10mm 12mm}.dato,.regreso,.total,.observaciones{break-inside:avoid;page-break-inside:avoid}a{color:#555;text-decoration:none}}
+@media print{.acciones{display:none!important}.hoja{width:100%;max-width:none;min-height:279.4mm;height:279.4mm;padding:10mm 12mm}.separador{display:block!important;height:0!important;border-top:1.5mm solid #000!important;background:transparent!important;visibility:visible!important;break-inside:avoid;page-break-inside:avoid}.barra{background:#000!important;color:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}.dato,.regreso,.total,.observaciones{break-inside:avoid;page-break-inside:avoid}a{color:#06c;text-decoration:underline}}
 </style></head><body><main class="hoja">
 <header class="encabezado"><div class="marca"><img class="logo" src="${origen}/logo.jpg" alt="Transportes MX"><div class="empresa"><strong>Grupo Turístico MX S. de R.L. de C.V.</strong><span>RFC: GTM2604271F2</span><br><span>San Miguel de Allende Guanajuato</span><br><span>+52 415 139 3219</span><br><a class="normal contacto-link" href="mailto:contacto@transportesmx.org">contacto@transportesmx.org</a><br><a class="normal web-link" href="https://transportesmx.org">https://transportesmx.org</a></div></div><div class="folioCol"><div class="folio">F- ${escapar(folioTexto)}</div><img class="sprinter" src="${origen}/sprinter.png" alt="Vehículo Sprinter"></div></header>
 <div class="separador"></div>
