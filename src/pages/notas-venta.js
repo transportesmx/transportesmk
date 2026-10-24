@@ -78,13 +78,22 @@ function escapar(valor) {
 
 function fechaHoraActual() {
   const ahora = new Date();
+  const partesFecha = new Intl.DateTimeFormat("es-MX", {
+    day: "2-digit", month: "long", year: "numeric", timeZone: ZONA,
+  }).formatToParts(ahora);
+  const dia = partesFecha.find((parte) => parte.type === "day")?.value || "";
+  const mesCrudo = partesFecha.find((parte) => parte.type === "month")?.value || "";
+  const mes = mesCrudo ? mesCrudo.charAt(0).toLocaleUpperCase("es-MX") + mesCrudo.slice(1) : "";
+  const anio = partesFecha.find((parte) => parte.type === "year")?.value || "";
+  const partesHora = new Intl.DateTimeFormat("en-US", {
+    hour: "2-digit", minute: "2-digit", hour12: true, timeZone: ZONA,
+  }).formatToParts(ahora);
+  const hora = partesHora.find((parte) => parte.type === "hour")?.value || "";
+  const minuto = partesHora.find((parte) => parte.type === "minute")?.value || "";
+  const periodo = (partesHora.find((parte) => parte.type === "dayPeriod")?.value || "AM").toUpperCase();
   return {
-    fecha: new Intl.DateTimeFormat("es-MX", {
-      day: "2-digit", month: "long", year: "numeric", timeZone: ZONA,
-    }).format(ahora).replace(/\b([a-záéíóúñ])/i, (letra) => letra.toLocaleUpperCase("es-MX")),
-    hora: new Intl.DateTimeFormat("es-MX", {
-      hour: "2-digit", minute: "2-digit", hour12: true, timeZone: ZONA,
-    }).format(ahora),
+    fecha: `${dia} de ${mes} de ${anio}`,
+    hora: `${hora}:${minuto} ${periodo === "PM" ? "P.M." : "A.M."}`,
   };
 }
 
@@ -149,7 +158,7 @@ body{font-size:11pt;line-height:1.25}
 .clienteItem strong{font-weight:900}
 .total{display:flex;align-items:center;gap:2mm;margin:1mm 0 4mm;background:#00b050;color:#fff;width:max-content;max-width:100%;min-height:9mm;padding:2mm 3mm;font-size:12pt;font-weight:900;overflow-wrap:anywhere}
 .barra{background:#050505!important;color:#fff!important;padding:2mm 3mm;font-size:11pt;font-weight:900;margin:0 0 1.5mm;min-height:8mm;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-.antesBarra{height:3mm;flex:none}.datos{display:flex;flex-direction:column;gap:0.7mm}
+.antesBarra{height:3mm;flex:none}.datos{display:flex;flex-direction:column;gap:0.7mm;margin-top:9mm}
 .dato{display:flex;align-items:flex-start;gap:2mm;min-height:5.3mm;margin:0;padding:0;break-inside:avoid;page-break-inside:avoid;font-size:11pt;line-height:1.18;overflow-wrap:anywhere}
 .icono{width:6mm;flex:none;font-size:11pt}
 .etiqueta{font-weight:900;flex:none}
@@ -456,12 +465,12 @@ export default function NotasVenta() {
               <div className="my-3 h-1.5 w-full bg-black" />
               <div className="mt-2 inline-block max-w-full bg-green-600 px-3 py-1 text-sm font-extrabold text-white">Total: {moneda(datos.importe)}</div>
               <div className="mt-2 h-[3mm]" aria-hidden="true" /><div className="bg-black px-2 py-1.5 text-sm font-extrabold text-white">Descripción del traslado:</div>
-              <div className="mt-2 space-y-1.5 text-sm">
+              <div className="mt-[9mm] space-y-1.5 text-sm">
                 {[["🚐", "Vehículo:", datos.unidad], ["👤", "Nombre del cliente:", datos.cliente], ["📅", "Fecha y hora:", valorFechaHora(datos)], ["📍", "Recoger en:", datos.origen], ["✈️", "Aerolínea:", datos.aerolinea || "N/A"], ["👥", "Número de pasajeros:", datos.pasajeros], ["🧳", "Número de maletas:", datos.maletas], ["☎️", "Número de teléfono:", datos.telefono], ["📍", "Destino:", datos.destino], ["🔄", "Ida y vuelta:", datos.idaVuelta], ["⏱️", "Duración:", datos.duracion]].map(([icono, etiqueta, valor]) => <p key={etiqueta} className="flex flex-wrap items-start gap-x-1"><span>{icono}</span><strong>{etiqueta}</strong><span className="break-words">{valor || ""}</span></p>)}
               </div>
               <div className="mt-5 flex items-start gap-1 text-sm"><span>↩️</span><strong>Regreso:</strong><span>{valorRegreso(datos)}</span></div>
               <div className="mt-5 min-h-16 rounded-[24px] border-2 border-black px-4 py-3 text-xs"><strong className="mb-1 block">Observaciones:</strong><span>{datos.observaciones || ""}</span></div>
-              <footer className="mt-4 border-t-2 border-black pt-3 text-center text-[9px] leading-4 text-slate-600"><p>San Miguel de Allende, Guanajuato · Documento generado: {fechaActual.fecha} · Hora: {fechaActual.hora}</p><p>Grupo Turístico MX S. de R.L. de C.V.</p></footer>
+              <footer className="mt-4 border-t-2 border-black pt-3 text-center text-[9px] leading-4 text-slate-600"><p>San Miguel de Allende, Guanajuato · Documento Generado: {fechaActual.fecha} · Hora: {fechaActual.hora}</p><p>Grupo Turístico MX S. de R.L. de C.V.</p></footer>
             </article>
             <p className="mx-auto mt-3 max-w-[760px] text-xs text-slate-600">La vista previa sigue la distribución del documento impreso. Para generar el PDF, pulsa “Imprimir / PDF”.</p>
           </section>
