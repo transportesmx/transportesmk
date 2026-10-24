@@ -124,23 +124,23 @@ function abrirImpresion(datos, folio) {
   ventana.document.open();
   ventana.document.write(`<!doctype html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Folio ${escapar(folioTexto)}</title>
+<title></title>
 <style>
 *{box-sizing:border-box}
-@page{size:Letter portrait;margin:9mm}
+@page{size:Letter portrait;margin:0}
 html,body{margin:0;padding:0;background:#fff;color:#050505;font-family:Arial,Helvetica,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 body{font-size:11pt;line-height:1.25}
-.hoja{width:100%;max-width:194mm;min-height:250mm;margin:0 auto;padding:0;display:flex;flex-direction:column}
+.hoja{width:100%;max-width:194mm;min-height:279.4mm;margin:0 auto;padding:10mm 12mm;display:flex;flex-direction:column}
 .encabezado{display:grid;grid-template-columns:minmax(0,1fr) 48mm;gap:5mm;align-items:start}
 .marca{display:block;min-width:0}
 .logo{display:block;width:60mm;height:28.5mm;object-fit:contain;margin:0 0 1.5mm 0}
 .empresa{font-size:9pt;line-height:1.42;font-weight:800;overflow-wrap:anywhere;padding-top:1mm}
 .empresa strong{display:block;font-size:10pt;margin-bottom:1mm;font-weight:900}
-.empresa .normal{font-weight:400}
+.empresa .normal{font-weight:400}.empresa a{display:inline;color:#06c;text-decoration:underline;overflow-wrap:anywhere}.empresa a:visited{color:#06c}
 .folioCol{display:flex;flex-direction:column;align-items:stretch;gap:2mm}
 .folio{background:#f00000;color:#fff;font-size:12pt;font-weight:900;padding:3mm 3.5mm;min-height:11mm;overflow-wrap:anywhere}
 .sprinter{width:100%;height:34mm;object-fit:contain;object-position:center}
-.separador{height:1.2mm;background:#050505;margin:3mm 0 4mm;width:100%}
+.separador{height:3mm;background:#050505;margin:3mm 0 4mm;width:100%}
 .cliente{margin-top:1mm;display:grid;grid-template-columns:1fr;gap:1.8mm;padding:0 0 3mm}
 .clienteItem{font-size:11pt;overflow-wrap:anywhere;min-height:5mm}
 .clienteItem strong{font-weight:900}
@@ -158,16 +158,16 @@ body{font-size:11pt;line-height:1.25}
 .pie a{color:#555;text-decoration:none}
 .acciones{display:flex;justify-content:center;gap:3mm;margin:7mm 0 2mm}
 button{font-size:11pt;padding:3mm 5mm;border:1px solid #777;border-radius:2mm;background:#f4f4f4;cursor:pointer}
-@media print{.acciones{display:none!important}.hoja{max-width:none;min-height:0;height:250mm}.dato,.regreso,.total,.observaciones{break-inside:avoid;page-break-inside:avoid}a{color:#555;text-decoration:none}}
+@media print{.acciones{display:none!important}.hoja{width:100%;max-width:none;min-height:279.4mm;height:279.4mm;padding:10mm 12mm}.dato,.regreso,.total,.observaciones{break-inside:avoid;page-break-inside:avoid}a{color:#555;text-decoration:none}}
 </style></head><body><main class="hoja">
-<header class="encabezado"><div class="marca"><img class="logo" src="${origen}/logo.jpg" alt="Transportes MX"><div class="empresa"><strong>Grupo Turístico MX S. de R.L. de C.V.</strong><span>RFC: GTM2604271F2</span><br><span>San Miguel de Allende Guanajuato</span><br><span>+52 415 139 3219</span><br><span class="normal">contacto@transportesmx.org</span><br><span class="normal">https://transportesmx.org</span></div></div><div class="folioCol"><div class="folio">F- ${escapar(folioTexto)}</div><img class="sprinter" src="${origen}/sprinter.png" alt="Vehículo Sprinter"></div></header>
+<header class="encabezado"><div class="marca"><img class="logo" src="${origen}/logo.jpg" alt="Transportes MX"><div class="empresa"><strong>Grupo Turístico MX S. de R.L. de C.V.</strong><span>RFC: GTM2604271F2</span><br><span>San Miguel de Allende Guanajuato</span><br><span>+52 415 139 3219</span><br><a class="normal contacto-link" href="mailto:contacto@transportesmx.org">contacto@transportesmx.org</a><br><a class="normal web-link" href="https://transportesmx.org">https://transportesmx.org</a></div></div><div class="folioCol"><div class="folio">F- ${escapar(folioTexto)}</div><img class="sprinter" src="${origen}/sprinter.png" alt="Vehículo Sprinter"></div></header>
 <div class="separador"></div>
 <section class="cliente"><div class="clienteItem"><strong>Cliente:</strong> ${escapar(datos.cliente || "")}</div><div class="clienteItem"><strong>Teléfono:</strong> ${escapar(datos.telefono || "")}</div><div class="clienteItem"><strong>Correo:</strong> ${escapar(datos.email || "")}</div></section>
 <div class="total">Total: ${total ? `${escapar(total)} MXN` : ""}</div>
 <div class="barra">Descripción del traslado:</div><section class="datos">${filas}</section>
 <div class="regreso"><span class="icono">↩️</span><strong>Regreso:</strong><span class="valor">${escapar(regreso)}</span></div>
 <div class="observaciones"><strong>Observaciones:</strong><span>${escapar(datos.observaciones || "")}</span></div>
-<footer class="pie">San Miguel de Allende, Guanajuato · Documento generado: ${escapar(generado.fecha)} · Hora: ${escapar(generado.hora)}<br>Grupo Turístico MX S. de R.L. de C.V. · transportesmx.org</footer>
+<footer class="pie">San Miguel de Allende, Guanajuato · Documento generado: ${escapar(generado.fecha)} · Hora: ${escapar(generado.hora)}<br>Grupo Turístico MX S. de R.L. de C.V.</footer>
 <div class="acciones"><button onclick="window.print()">Imprimir / Guardar PDF</button><button onclick="window.close()">Cerrar</button></div>
 </main></body></html>`);
   ventana.document.close();
@@ -442,11 +442,11 @@ export default function NotasVenta() {
 
           <section className="rounded-2xl bg-slate-200 p-2 text-black sm:p-4">
             <div className="mb-3 flex items-center justify-between gap-2 px-1"><h2 className="font-semibold text-slate-800">Vista previa de impresión</h2><button type="button" onClick={() => imprimir()} className="rounded-lg bg-emerald-700 px-3 py-2 text-sm font-bold text-white">Imprimir / PDF</button></div>
-            <article className="mx-auto max-w-[560px] bg-white p-5 text-black shadow-xl sm:p-7">
+            <article className="mx-auto max-w-[560px] bg-white px-8 py-5 text-black shadow-xl sm:px-10 sm:py-7">
               <div className="grid grid-cols-[minmax(0,1fr)_112px] items-start gap-3">
                 <div className="min-w-0">
                   <img src="/logo.jpg" alt="Transportes MX" className="mb-1 h-12 w-32 object-contain object-left" />
-                  <div className="min-w-0 text-[10px] font-extrabold leading-4"><strong className="block">Grupo Turístico MX S. de R.L. de C.V.</strong><span>RFC: GTM2604271F2</span><br /><span>San Miguel de Allende Guanajuato</span><br /><span>+52 415 139 3219</span><br /><span className="font-normal">contacto@transportesmx.org</span><br /><span className="font-normal">https://transportesmx.org</span></div>
+                  <div className="min-w-0 text-[10px] font-extrabold leading-4"><strong className="block">Grupo Turístico MX S. de R.L. de C.V.</strong><span>RFC: GTM2604271F2</span><br /><span>San Miguel de Allende Guanajuato</span><br /><span>+52 415 139 3219</span><br /><a className="font-normal text-blue-600 underline" href="mailto:contacto@transportesmx.org">contacto@transportesmx.org</a><br /><a className="font-normal text-blue-600 underline" href="https://transportesmx.org">https://transportesmx.org</a></div>
                 </div>
                 <div className="min-w-0"><div className="bg-red-600 px-2 py-1 text-xs font-extrabold text-white">F- {folio || "Pendiente"}</div><img src="/sprinter.png" alt="Sprinter" className="mt-2 h-20 w-full object-contain" /></div>
               </div>
@@ -459,7 +459,7 @@ export default function NotasVenta() {
               </div>
               <div className="mt-5 flex items-start gap-1 text-sm"><span>↩️</span><strong>Regreso:</strong><span>{valorRegreso(datos)}</span></div>
               <div className="mt-5 min-h-16 rounded-[24px] border-2 border-black px-4 py-3 text-xs"><strong className="mb-1 block">Observaciones:</strong><span>{datos.observaciones || ""}</span></div>
-              <footer className="mt-4 border-t-2 border-black pt-3 text-center text-[9px] leading-4 text-slate-600"><p>San Miguel de Allende, Guanajuato · Documento generado: {fechaActual.fecha} · Hora: {fechaActual.hora}</p><p>Grupo Turístico MX S. de R.L. de C.V. · contacto@transportesmx.org · transportesmx.org</p></footer>
+              <footer className="mt-4 border-t-2 border-black pt-3 text-center text-[9px] leading-4 text-slate-600"><p>San Miguel de Allende, Guanajuato · Documento generado: {fechaActual.fecha} · Hora: {fechaActual.hora}</p><p>Grupo Turístico MX S. de R.L. de C.V.</p></footer>
             </article>
             <p className="mx-auto mt-3 max-w-[760px] text-xs text-slate-600">La vista previa sigue la distribución del documento impreso. Para generar el PDF, pulsa “Imprimir / PDF”.</p>
           </section>
