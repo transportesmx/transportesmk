@@ -144,12 +144,12 @@ body{font-size:11pt;line-height:1.25}
 .folio{background:#f00000;color:#fff;font-size:12pt;font-weight:900;padding:3mm 3.5mm;min-height:11mm;overflow-wrap:anywhere}
 .sprinter{width:100%;height:34mm;object-fit:contain;object-position:center}
 .separador{display:block!important;width:100%;height:0!important;border:0;border-top:1.5mm solid #000!important;background:transparent!important;margin:3mm 0 3mm;flex:none;visibility:visible!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-.cliente{margin-top:1mm;display:grid;grid-template-columns:1fr;gap:3.2mm;padding:0 0 3mm}
+.cliente{margin-top:1mm;display:grid;grid-template-columns:1fr;gap:0.7mm;padding:0 0 3mm}
 .clienteItem{font-size:11pt;overflow-wrap:anywhere;min-height:5mm}
 .clienteItem strong{font-weight:900}
 .total{display:flex;align-items:center;gap:2mm;margin:1mm 0 4mm;background:#00b050;color:#fff;width:max-content;max-width:100%;min-height:9mm;padding:2mm 3mm;font-size:12pt;font-weight:900;overflow-wrap:anywhere}
 .barra{background:#050505!important;color:#fff!important;padding:2mm 3mm;font-size:11pt;font-weight:900;margin:0 0 1.5mm;min-height:8mm;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-.antesBarra{height:10mm;flex:none}.datos{display:flex;flex-direction:column;gap:0.7mm}
+.antesBarra{height:3mm;flex:none}.datos{display:flex;flex-direction:column;gap:0.7mm}
 .dato{display:flex;align-items:flex-start;gap:2mm;min-height:5.3mm;margin:0;padding:0;break-inside:avoid;page-break-inside:avoid;font-size:11pt;line-height:1.18;overflow-wrap:anywhere}
 .icono{width:6mm;flex:none;font-size:11pt}
 .etiqueta{font-weight:900;flex:none}
@@ -452,10 +452,10 @@ export default function NotasVenta() {
                 </div>
                 <div className="min-w-0"><div className="bg-red-600 px-2 py-1 text-xs font-extrabold text-white">F- {folio || "Pendiente"}</div><img src="/sprinter.png" alt="Sprinter" className="mt-2 h-20 w-full object-contain" /></div>
               </div>
-              <div className="mt-4 space-y-3 text-sm"><p><strong>Cliente:</strong> {datos.cliente}</p><p><strong>Teléfono:</strong> {datos.telefono}</p><p><strong>Correo:</strong> {datos.email}</p></div>
+              <div className="mt-4 space-y-1.5 text-sm"><p><strong>Cliente:</strong> {datos.cliente}</p><p><strong>Teléfono:</strong> {datos.telefono}</p><p><strong>Correo:</strong> {datos.email}</p></div>
               <div className="my-3 h-1.5 w-full bg-black" />
               <div className="mt-2 inline-block max-w-full bg-green-600 px-3 py-1 text-sm font-extrabold text-white">Total: {moneda(datos.importe)}</div>
-              <div className="mt-3 h-[10mm]" aria-hidden="true" /><div className="mt-3 bg-black px-2 py-1.5 text-sm font-extrabold text-white">Descripción del traslado:</div>
+              <div className="mt-2 h-[3mm]" aria-hidden="true" /><div className="bg-black px-2 py-1.5 text-sm font-extrabold text-white">Descripción del traslado:</div>
               <div className="mt-2 space-y-1.5 text-sm">
                 {[["🚐", "Vehículo:", datos.unidad], ["👤", "Nombre del cliente:", datos.cliente], ["📅", "Fecha y hora:", valorFechaHora(datos)], ["📍", "Recoger en:", datos.origen], ["✈️", "Aerolínea:", datos.aerolinea || "N/A"], ["👥", "Número de pasajeros:", datos.pasajeros], ["🧳", "Número de maletas:", datos.maletas], ["☎️", "Número de teléfono:", datos.telefono], ["📍", "Destino:", datos.destino], ["🔄", "Ida y vuelta:", datos.idaVuelta], ["⏱️", "Duración:", datos.duracion]].map(([icono, etiqueta, valor]) => <p key={etiqueta} className="flex flex-wrap items-start gap-x-1"><span>{icono}</span><strong>{etiqueta}</strong><span className="break-words">{valor || ""}</span></p>)}
               </div>
