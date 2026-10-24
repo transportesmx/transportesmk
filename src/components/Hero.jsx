@@ -5,27 +5,13 @@ import HeroCotiza from './HeroCotiza';
 import { AppContext } from '../Context/AppContext';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { useSwipeable } from 'react-swipeable';
-import { useRouter } from 'next/router';
 
 const Hero = () => {
   const { traduccion } = useContext(AppContext);
-  const router = useRouter();
 
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const slides = traduccion?.hero?.slides || [];
-
-  const handleEmailClickCotizar = () => {
-    const emailAddress = 'contacto@transportesmx.org';
-    const subject = 'Cotización de servicio';
-    const body = 'Hola, me gustaría cotizar un servicio';
-    window.location.href =
-      `mailto:${emailAddress}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-  };
-
-  const handleEmailClickReservar = () => {
-    router.push('/reservar');
-  };
 
   useEffect(() => {
     if (slides.length <= 1) return;
@@ -44,14 +30,18 @@ const Hero = () => {
   }, [currentSlide, slides.length]);
 
   const swipeHandlers = useSwipeable({
-    onSwipedLeft: () =>
-      slides.length > 0 &&
-      setCurrentSlide((prev) => (prev + 1) % slides.length),
-    onSwipedRight: () =>
-      slides.length > 0 &&
-      setCurrentSlide((prev) =>
-        prev === 0 ? slides.length - 1 : prev - 1
-      ),
+    onSwipedLeft: () => {
+      if (slides.length > 1) {
+        setCurrentSlide((prev) => (prev + 1) % slides.length);
+      }
+    },
+    onSwipedRight: () => {
+      if (slides.length > 1) {
+        setCurrentSlide((prev) =>
+          prev === 0 ? slides.length - 1 : prev - 1
+        );
+      }
+    },
     trackMouse: true,
     preventScrollOnSwipe: true,
   });
@@ -60,19 +50,32 @@ const Hero = () => {
 
   const activeSlide = slides[currentSlide];
 
+  const previousSlide = () => {
+    setCurrentSlide((prev) =>
+      prev === 0 ? slides.length - 1 : prev - 1
+    );
+  };
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % slides.length);
+  };
+
   return (
     <div
       id="Hero"
       {...swipeHandlers}
-      className="relative isolate w-full overflow-hidden"
+      className="relative isolate w-full overflow-hidden bg-neutral-900"
     >
-      {/* Fondo panorámico */}
+      {/* Imagen completa, sin recorte ni deformación */}
       <AnimatePresence mode="wait">
         <motion.div
           key={currentSlide}
-          className="absolute inset-0 bg-cover bg-center"
+          className="absolute inset-0 bg-no-repeat"
           style={{
             backgroundImage: `url("${activeSlide.image}")`,
+            backgroundSize: 'contain',
+            backgroundPosition: 'center center',
+            backgroundColor: '#171717',
           }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -81,19 +84,15 @@ const Hero = () => {
         />
       </AnimatePresence>
 
-      {/* Oscurecimiento para mejorar la lectura */}
-      <div className="absolute inset-0 bg-black/30" />
+      {/* Capa oscura para facilitar la lectura */}
+      <div className="absolute inset-0 bg-black/30 pointer-events-none" />
 
       {/* Flecha anterior */}
       <button
         type="button"
         aria-label="Imagen anterior"
         className="hidden md:flex absolute left-4 lg:left-8 top-[30%] z-20 items-center justify-center text-white hover:text-white/70 transition"
-        onClick={() =>
-          setCurrentSlide((prev) =>
-            prev === 0 ? slides.length - 1 : prev - 1
-          )
-        }
+        onClick={previousSlide}
       >
         <FaChevronLeft className="text-3xl lg:text-4xl" />
       </button>
@@ -103,9 +102,7 @@ const Hero = () => {
         type="button"
         aria-label="Imagen siguiente"
         className="hidden md:flex absolute right-4 lg:right-8 top-[30%] z-20 items-center justify-center text-white hover:text-white/70 transition"
-        onClick={() =>
-          setCurrentSlide((prev) => (prev + 1) % slides.length)
-        }
+        onClick={nextSlide}
       >
         <FaChevronRight className="text-3xl lg:text-4xl" />
       </button>
@@ -138,7 +135,7 @@ const Hero = () => {
           <HeroCotiza />
         </div>
 
-        {/* Indicadores */}
+        {/* Indicadores del carrusel */}
         <div className="mt-4 flex justify-center space-x-2">
           {slides.map((_, index) => (
             <button
