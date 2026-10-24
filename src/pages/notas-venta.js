@@ -48,25 +48,26 @@ function formatoFecha(valor) {
   if (!valor) return "";
   const fecha = new Date(`${valor}T12:00:00`);
   if (Number.isNaN(fecha.getTime())) return valor;
-  return new Intl.DateTimeFormat("es-MX", {
+  const texto = new Intl.DateTimeFormat("es-MX", {
     day: "2-digit", month: "long", year: "numeric", timeZone: ZONA,
   }).format(fecha);
+  return texto.replace(/\b([a-záéíóúñ])/i, (letra) => letra.toLocaleUpperCase("es-MX"));
 }
 
 function formatoHora(valor) {
   if (!valor) return "";
   const [hora, minuto] = valor.split(":").map(Number);
   if (!Number.isFinite(hora) || !Number.isFinite(minuto)) return valor;
-  return `${hora % 12 || 12}:${String(minuto).padStart(2, "0")} ${hora >= 12 ? "p. m." : "a. m."}`;
+  return `${hora % 12 || 12}:${String(minuto).padStart(2, "0")} ${hora >= 12 ? "P.M." : "A.M."}`;
 }
 
 function moneda(valor) {
   if (valor === "" || valor === null || valor === undefined) return "";
-  const numero = Number(valor);
-  if (!Number.isFinite(numero)) return "";
-  return numero.toLocaleString("es-MX", {
-    style: "currency", currency: "MXN", minimumFractionDigits: 2, maximumFractionDigits: 2,
-  });
+  const texto = String(valor).trim();
+  if (!texto) return "";
+  const numero = Number(texto);
+  if (!Number.isFinite(numero)) return texto;
+  return `$${numero.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} MXN`;
 }
 
 function escapar(valor) {
@@ -80,7 +81,7 @@ function fechaHoraActual() {
   return {
     fecha: new Intl.DateTimeFormat("es-MX", {
       day: "2-digit", month: "long", year: "numeric", timeZone: ZONA,
-    }).format(ahora),
+    }).format(ahora).replace(/\b([a-záéíóúñ])/i, (letra) => letra.toLocaleUpperCase("es-MX")),
     hora: new Intl.DateTimeFormat("es-MX", {
       hour: "2-digit", minute: "2-digit", hour12: true, timeZone: ZONA,
     }).format(ahora),
@@ -119,7 +120,9 @@ function abrirImpresion(datos, folio) {
     ["⏱️ Duración:", datos.duracion],
   ].map(([etiqueta, valor]) => htmlFila(etiqueta, valor)).join("");
   const regreso = [formatoFecha(datos.regresoFecha), formatoHora(datos.regresoHora)].filter(Boolean).join(" · ");
-  const total = datos.importe !== "" && datos.importe !== null && datos.importe !== undefined && Number.isFinite(Number(datos.importe)) ? `$${Number(datos.importe).toLocaleString("es-MX", { minimumFractionDigits: 0, maximumFractionDigits: 2 })}` : "";
+  const importeTexto = String(datos.importe ?? "").trim();
+  const importeNumero = Number(importeTexto);
+  const total = !importeTexto ? "" : Number.isFinite(importeNumero) ? `$${importeNumero.toLocaleString("es-MX", { minimumFractionDigits: 0, maximumFractionDigits: 2 })} MXN` : importeTexto;
 
   ventana.document.open();
   ventana.document.write(`<!doctype html>
@@ -141,12 +144,12 @@ body{font-size:11pt;line-height:1.25}
 .folio{background:#f00000;color:#fff;font-size:12pt;font-weight:900;padding:3mm 3.5mm;min-height:11mm;overflow-wrap:anywhere}
 .sprinter{width:100%;height:34mm;object-fit:contain;object-position:center}
 .separador{display:block!important;width:100%;height:0!important;border:0;border-top:1.5mm solid #000!important;background:transparent!important;margin:3mm 0 3mm;flex:none;visibility:visible!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-.cliente{margin-top:1mm;display:grid;grid-template-columns:1fr;gap:1.8mm;padding:0 0 3mm}
+.cliente{margin-top:1mm;display:grid;grid-template-columns:1fr;gap:3.2mm;padding:0 0 3mm}
 .clienteItem{font-size:11pt;overflow-wrap:anywhere;min-height:5mm}
 .clienteItem strong{font-weight:900}
 .total{display:flex;align-items:center;gap:2mm;margin:1mm 0 4mm;background:#00b050;color:#fff;width:max-content;max-width:100%;min-height:9mm;padding:2mm 3mm;font-size:12pt;font-weight:900;overflow-wrap:anywhere}
 .barra{background:#050505!important;color:#fff!important;padding:2mm 3mm;font-size:11pt;font-weight:900;margin:0 0 1.5mm;min-height:8mm;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-.datos{display:flex;flex-direction:column;gap:0.7mm}
+.antesBarra{height:10mm;flex:none}.datos{display:flex;flex-direction:column;gap:0.7mm}
 .dato{display:flex;align-items:flex-start;gap:2mm;min-height:5.3mm;margin:0;padding:0;break-inside:avoid;page-break-inside:avoid;font-size:11pt;line-height:1.18;overflow-wrap:anywhere}
 .icono{width:6mm;flex:none;font-size:11pt}
 .etiqueta{font-weight:900;flex:none}
@@ -163,11 +166,11 @@ button{font-size:11pt;padding:3mm 5mm;border:1px solid #777;border-radius:2mm;ba
 <header class="encabezado"><div class="marca"><img class="logo" src="${origen}/logo.jpg" alt="Transportes MX"><div class="empresa"><strong>Grupo Turístico MX S. de R.L. de C.V.</strong><span>RFC: GTM2604271F2</span><br><span>San Miguel de Allende Guanajuato</span><br><span>+52 415 139 3219</span><br><a class="normal contacto-link" href="mailto:contacto@transportesmx.org">contacto@transportesmx.org</a><br><a class="normal web-link" href="https://transportesmx.org">https://transportesmx.org</a></div></div><div class="folioCol"><div class="folio">F- ${escapar(folioTexto)}</div><img class="sprinter" src="${origen}/sprinter.png" alt="Vehículo Sprinter"></div></header>
 <div class="separador"></div>
 <section class="cliente"><div class="clienteItem"><strong>Cliente:</strong> ${escapar(datos.cliente || "")}</div><div class="clienteItem"><strong>Teléfono:</strong> ${escapar(datos.telefono || "")}</div><div class="clienteItem"><strong>Correo:</strong> ${escapar(datos.email || "")}</div></section>
-<div class="total">Total: ${total ? `${escapar(total)} MXN` : ""}</div>
-<div class="barra">Descripción del traslado:</div><section class="datos">${filas}</section>
+<div class="total">Total: ${escapar(total)}</div>
+<div class="antesBarra" aria-hidden="true"></div><div class="barra">Descripción del traslado:</div><section class="datos">${filas}</section>
 <div class="regreso"><span class="icono">↩️</span><strong>Regreso:</strong><span class="valor">${escapar(regreso)}</span></div>
 <div class="observaciones"><strong>Observaciones:</strong><span>${escapar(datos.observaciones || "")}</span></div>
-<footer class="pie">San Miguel de Allende, Guanajuato · Documento generado: ${escapar(generado.fecha)} · Hora: ${escapar(generado.hora)}<br>Grupo Turístico MX S. de R.L. de C.V.</footer>
+<footer class="pie">San Miguel de Allende, Guanajuato · Documento Generado: ${escapar(generado.fecha)} · Hora: ${escapar(generado.hora)}<br>Grupo Turístico MX S. de R.L. de C.V.</footer>
 <div class="acciones"><button onclick="window.print()">Imprimir / Guardar PDF</button><button onclick="window.close()">Cerrar</button></div>
 </main></body></html>`);
   ventana.document.close();
@@ -282,7 +285,7 @@ export default function NotasVenta() {
       const payload = {
         ...datos,
         // Mantener vacío el importe si no se capturó; no guardarlo como cero.
-        importe: datos.importe === "" ? "" : Number(datos.importe),
+        // El importe admite cantidades o texto como “Pagado”; mantenerlo como texto evita perder ese valor.
       };
       if (editando?.id) {
         const { error } = await supabase.rpc("editar_nota_venta", {
@@ -354,7 +357,7 @@ export default function NotasVenta() {
 
   const notasFiltradas = useMemo(() => {
     const termino = busqueda.toLowerCase().trim();
-    return notas.filter((nota) => `${nota.folio || ""} ${nota.datos?.cliente || ""} ${nota.datos?.servicio || ""}`.toLowerCase().includes(termino));
+    return notas.filter((nota) => `${nota.folio || ""} ${nota.datos?.cliente || ""}`.toLowerCase().includes(termino));
   }, [notas, busqueda]);
 
   const fechaActual = fechaHoraActual();
@@ -412,9 +415,8 @@ export default function NotasVenta() {
                 {CAMPOS.map(([campo, etiqueta, tipo]) => (
                   <label key={campo} className="block text-sm"><span className="font-medium text-slate-200">{etiqueta}</span><input type={tipo} min={tipo === "number" ? "0" : undefined} required={campo === "cliente"} value={datos[campo] ?? ""} onChange={(e) => cambiar(campo, e.target.value)} className="mt-1 w-full rounded-lg border border-slate-400 bg-white p-3 text-slate-900 outline-none focus:border-emerald-500" /></label>
                 ))}
-                <label className="block text-sm"><span className="font-medium text-slate-200">💰 Total (MXN)</span><input type="number" min="0" step="0.01" value={datos.importe} onChange={(e) => cambiar("importe", e.target.value)} placeholder="Dejar vacío si aún no hay importe" className="mt-1 w-full rounded-lg border border-slate-400 bg-white p-3 text-slate-900 outline-none focus:border-emerald-500" /></label>
+                <label className="block text-sm"><span className="font-medium text-slate-200">💰 Total / estado de pago</span><input type="text" inputMode="decimal" value={datos.importe} onChange={(e) => cambiar("importe", e.target.value)} placeholder="Ej. 3500 o Pagado" className="mt-1 w-full rounded-lg border border-slate-400 bg-white p-3 text-slate-900 outline-none focus:border-emerald-500" /></label>
               </div>
-              <label className="block text-sm"><span className="font-medium text-slate-200">📝 Descripción del servicio</span><textarea value={datos.servicio} onChange={(e) => cambiar("servicio", e.target.value)} rows={3} placeholder="Describe el servicio contratado" className="mt-1 w-full rounded-lg border border-slate-400 bg-white p-3 text-slate-900" /></label>
               <label className="block text-sm"><span className="font-medium text-slate-200">Observaciones</span><textarea value={datos.observaciones} onChange={(e) => cambiar("observaciones", e.target.value)} rows={2} placeholder="Escribe las observaciones del servicio" className="mt-1 w-full rounded-lg border border-slate-400 bg-white p-3 text-slate-900" /></label>
               <div className="flex flex-wrap gap-2">
                 <button type="submit" disabled={guardando} className="rounded-lg bg-emerald-600 px-5 py-3 font-bold text-white disabled:opacity-50">{guardando ? "Guardando…" : editando ? "Guardar cambios" : "Guardar nota"}</button>
@@ -450,10 +452,10 @@ export default function NotasVenta() {
                 </div>
                 <div className="min-w-0"><div className="bg-red-600 px-2 py-1 text-xs font-extrabold text-white">F- {folio || "Pendiente"}</div><img src="/sprinter.png" alt="Sprinter" className="mt-2 h-20 w-full object-contain" /></div>
               </div>
-              <div className="mt-4 space-y-1 text-sm"><p><strong>Cliente:</strong> {datos.cliente}</p><p><strong>Teléfono:</strong> {datos.telefono}</p><p><strong>Correo:</strong> {datos.email}</p></div>
+              <div className="mt-4 space-y-3 text-sm"><p><strong>Cliente:</strong> {datos.cliente}</p><p><strong>Teléfono:</strong> {datos.telefono}</p><p><strong>Correo:</strong> {datos.email}</p></div>
               <div className="my-3 h-1.5 w-full bg-black" />
-              <div className="mt-2 inline-block max-w-full bg-green-600 px-3 py-1 text-sm font-extrabold text-white">Total: {datos.importe === "" || datos.importe === null || datos.importe === undefined ? "" : `$${Number(datos.importe).toLocaleString("es-MX", { minimumFractionDigits: 0, maximumFractionDigits: 2 })} MXN`}</div>
-              <div className="mt-3 bg-black px-2 py-1.5 text-sm font-extrabold text-white">Descripción del traslado:</div>
+              <div className="mt-2 inline-block max-w-full bg-green-600 px-3 py-1 text-sm font-extrabold text-white">Total: {moneda(datos.importe)}</div>
+              <div className="mt-3 h-[10mm]" aria-hidden="true" /><div className="mt-3 bg-black px-2 py-1.5 text-sm font-extrabold text-white">Descripción del traslado:</div>
               <div className="mt-2 space-y-1.5 text-sm">
                 {[["🚐", "Vehículo:", datos.unidad], ["👤", "Nombre del cliente:", datos.cliente], ["📅", "Fecha y hora:", valorFechaHora(datos)], ["📍", "Recoger en:", datos.origen], ["✈️", "Aerolínea:", datos.aerolinea || "N/A"], ["👥", "Número de pasajeros:", datos.pasajeros], ["🧳", "Número de maletas:", datos.maletas], ["☎️", "Número de teléfono:", datos.telefono], ["📍", "Destino:", datos.destino], ["🔄", "Ida y vuelta:", datos.idaVuelta], ["⏱️", "Duración:", datos.duracion]].map(([icono, etiqueta, valor]) => <p key={etiqueta} className="flex flex-wrap items-start gap-x-1"><span>{icono}</span><strong>{etiqueta}</strong><span className="break-words">{valor || ""}</span></p>)}
               </div>
