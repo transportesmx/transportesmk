@@ -377,8 +377,11 @@ export default function NotasVenta() {
   if (!sesion) return (
     <main className="min-h-screen bg-slate-950 p-5 text-white sm:p-10">
       <form onSubmit={iniciarSesion} className="mx-auto mt-10 max-w-md rounded-2xl border border-slate-700 bg-slate-900 p-6 shadow-2xl">
-        <img src="/logo.jpg" alt="Transportes MX" className="mb-5 h-16 w-40 rounded bg-white p-2 object-contain" />
-        <h1 className="text-2xl font-bold">Sistema de notas de venta</h1>
+        <img
+          src="/logo-blanco.png"
+          alt="Transportes MX"
+          className="mb-5 h-16 w-40 object-contain object-left"
+        />
         <p className="mt-2 text-sm text-slate-300">Inicia sesión con tu cuenta autorizada.</p>
         <label className="mt-6 block text-sm">Correo electrónico
           <input type="email" required autoComplete="username" value={correo} onChange={(e) => setCorreo(e.target.value)} className="mt-1 w-full rounded-lg border border-slate-600 bg-white p-3 text-slate-900" />
