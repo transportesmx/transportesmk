@@ -163,7 +163,7 @@ body{font-size:11pt;line-height:1.25}
 .icono{width:6mm;flex:none;font-size:11pt}
 .etiqueta{font-weight:900;flex:none}
 .valor{min-width:0;white-space:pre-wrap;overflow-wrap:anywhere}
-.regreso{display:flex;align-items:flex-start;gap:2mm;margin-top:6mm;min-height:9mm;font-size:11pt;break-inside:avoid}
+.regreso{display:flex;align-items:flex-start;gap:2mm;margin-top:15mm;min-height:9mm;font-size:11pt;break-inside:avoid}
 .observaciones{border:0.5mm solid #111;border-radius:8mm;min-height:19mm;margin-top:auto;margin-bottom:4mm;padding:3mm 5mm;font-size:10pt;line-height:1.35;overflow-wrap:anywhere;break-inside:avoid}
 .observaciones strong{display:block;font-weight:900;margin-bottom:1.5mm}
 .pie{border-top:1mm solid #111;margin-top:0;padding-top:3mm;text-align:center;font-size:8pt;line-height:1.4;color:#555;overflow-wrap:anywhere}
@@ -468,7 +468,7 @@ export default function NotasVenta() {
               <div className="mt-[9mm] space-y-1.5 text-sm">
                 {[["🚐", "Vehículo:", datos.unidad], ["👤", "Nombre del cliente:", datos.cliente], ["📅", "Fecha y hora:", valorFechaHora(datos)], ["📍", "Recoger en:", datos.origen], ["✈️", "Aerolínea:", datos.aerolinea || "N/A"], ["👥", "Número de pasajeros:", datos.pasajeros], ["🧳", "Número de maletas:", datos.maletas], ["☎️", "Número de teléfono:", datos.telefono], ["📍", "Destino:", datos.destino], ["🔄", "Ida y vuelta:", datos.idaVuelta], ["⏱️", "Duración:", datos.duracion]].map(([icono, etiqueta, valor]) => <p key={etiqueta} className="flex flex-wrap items-start gap-x-1"><span>{icono}</span><strong>{etiqueta}</strong><span className="break-words">{valor || ""}</span></p>)}
               </div>
-              <div className="mt-5 flex items-start gap-1 text-sm"><span>↩️</span><strong>Regreso:</strong><span>{valorRegreso(datos)}</span></div>
+              <div className="mt-[15mm] flex items-start gap-1 text-sm"><span>↩️</span><strong>Regreso:</strong><span>{valorRegreso(datos)}</span></div>
               <div className="mt-5 min-h-16 rounded-[24px] border-2 border-black px-4 py-3 text-xs"><strong className="mb-1 block">Observaciones:</strong><span>{datos.observaciones || ""}</span></div>
               <footer className="mt-4 border-t-2 border-black pt-3 text-center text-[9px] leading-4 text-slate-600"><p>San Miguel de Allende, Guanajuato · Documento Generado: {fechaActual.fecha} · Hora: {fechaActual.hora}</p><p>Grupo Turístico MX S. de R.L. de C.V.</p></footer>
             </article>
