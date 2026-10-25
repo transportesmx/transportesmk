@@ -139,14 +139,22 @@ export function BannerStage({
           <div
             className={styles.vehicle}
             style={{
-              "--vehicle-scale": Number(config.vehicleScale || 100) / 100,
+              // Keep the animated wrapper responsible only for horizontal movement.
+              // Scaling the image itself prevents the vehicle from dropping below the banner.
+              "--vehicle-scale": 1,
               "--vehicle-speed": `${Math.max(5, Number(config.speed || 12))}s`,
+              transformOrigin: "bottom center",
             }}
           >
             <img
               className={styles.vehicleImage}
               src={dark ? "/banner/suburban-white.png" : "/banner/suburban-black.png"}
               alt=""
+              style={{
+                transform: `scale(${Math.max(0.1, Math.min(1.4, Number(config.vehicleScale || 100) / 100))})`,
+                transformOrigin: "bottom center",
+                display: "block",
+              }}
             />
           </div>
         </div>
@@ -496,15 +504,67 @@ export default function BannerEditor() {
           />
         </label>
 
-        <label className={styles.vehicleToggle}>
+        <label
+          className={styles.vehicleToggle}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 14,
+            padding: "14px 16px",
+            border: `2px solid ${config.showVehicle !== false ? "#16a34a" : "#9ca3af"}`,
+            borderRadius: 12,
+            background: config.showVehicle !== false ? "#f0fdf4" : "#f3f4f6",
+            color: config.showVehicle !== false ? "#166534" : "#374151",
+            fontSize: 17,
+            fontWeight: 800,
+            cursor: "pointer",
+          }}
+        >
+          <span style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <span
+              aria-hidden="true"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: 34,
+                height: 34,
+                flex: "0 0 34px",
+                borderRadius: "50%",
+                background: config.showVehicle !== false ? "#16a34a" : "#6b7280",
+                color: "white",
+                fontSize: 21,
+                lineHeight: 1,
+              }}
+            >
+              {config.showVehicle !== false ? "✓" : "×"}
+            </span>
+            <span>Mostrar camioneta</span>
+          </span>
+          <span
+            style={{
+              padding: "7px 12px",
+              minWidth: 48,
+              textAlign: "center",
+              borderRadius: 8,
+              background: config.showVehicle !== false ? "#16a34a" : "#6b7280",
+              color: "#fff",
+              fontSize: 16,
+              fontWeight: 900,
+            }}
+          >
+            {config.showVehicle !== false ? "SÍ" : "NO"}
+          </span>
           <input
             type="checkbox"
             checked={config.showVehicle !== false}
             onChange={(e) =>
               setConfig({ ...config, showVehicle: e.target.checked })
             }
+            aria-label="Mostrar camioneta sí o no"
+            style={{ position: "absolute", opacity: 0, width: 1, height: 1 }}
           />
-          Mostrar camioneta animada
         </label>
 
         <label>
