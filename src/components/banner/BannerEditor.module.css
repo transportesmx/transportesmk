@@ -5,19 +5,17 @@
   --line: #555;
 
   width: 100%;
-  min-height: min(82vh, 900px);
+  min-height: min(85vh, 1000px);
   position: relative;
   overflow: hidden;
   box-sizing: border-box;
-  padding: clamp(22px, 4vh, 48px) clamp(16px, 3vw, 40px);
+  padding: clamp(20px, 4vh, 48px) clamp(12px, 3vw, 42px);
   background: var(--bg);
   color: var(--fg);
   font-family: Arial, Helvetica, sans-serif;
-
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
 }
 
 .dark {
@@ -35,28 +33,25 @@
 /* LOGOTIPO MÁS GRANDE */
 .logo {
   display: block;
-  width: clamp(150px, 29vw, 370px);
-  height: clamp(75px, 15vh, 150px);
+  width: clamp(200px, 38vw, 520px);
+  height: clamp(90px, 19vh, 190px);
   object-fit: contain;
   flex-shrink: 0;
-  margin: 0 auto clamp(28px, 5vh, 58px);
+  margin: 0 auto clamp(22px, 4vh, 48px);
 }
 
-/* NOMBRE SIN RECUADRO NI FONDO */
+/* NOMBRE SIN RECUADRO */
 .namePlate {
   width: 100%;
-  min-height: clamp(65px, 10vh, 115px);
-
+  min-height: clamp(70px, 12vh, 150px);
   display: flex;
   align-items: center;
   justify-content: center;
-
+  padding: 0 8px;
+  box-sizing: border-box;
+  background: transparent;
   border: none;
   border-radius: 0;
-  padding: 0 12px;
-  box-sizing: border-box;
-
-  background: transparent;
   box-shadow: none;
   z-index: 2;
   flex-shrink: 0;
@@ -64,29 +59,28 @@
 
 .customerName {
   width: 100%;
+  font-size: clamp(20px, var(--name-size, 52px), 180px);
   font-weight: 700;
   text-align: center;
-  line-height: 1.12;
+  line-height: 1.08;
   text-transform: uppercase;
   overflow-wrap: anywhere;
-
   background: transparent;
   border: none;
   box-shadow: none;
 }
 
-/* MÁS DISTANCIA ENTRE EL NOMBRE Y LA CAMIONETA */
+/* ESPACIO ENTRE NOMBRE Y CAMIONETA */
 .road {
   position: relative;
   flex: 1;
   width: 100%;
-  min-height: 300px;
+  min-height: 280px;
   max-height: 52vh;
-  margin-top: clamp(28px, 5vh, 60px);
+  margin-top: clamp(28px, 5vh, 64px);
   overflow: hidden;
 }
 
-/* LÍNEA DE PISTA */
 .road::after {
   content: "";
   position: absolute;
@@ -95,37 +89,32 @@
   bottom: 5%;
   height: 2px;
   background: var(--line);
-  opacity: 0.7;
+  opacity: 0.65;
 }
 
-/* ESTELA DE MOVIMIENTO */
 .lightTrail {
   position: absolute;
   width: 30%;
   height: 2px;
   left: -35%;
-  bottom: 22%;
+  bottom: 23%;
   background: var(--fg);
-  opacity: 0.4;
-  animation: trail 1.5s linear infinite;
+  opacity: 0.35;
+  animation: trail 2s linear infinite;
 }
 
-/* MOVIMIENTO DE LA SUBURBAN */
 .vehicle {
   position: absolute;
   bottom: 5%;
   left: -80%;
-  width: min(78%, 1000px);
-  min-width: 300px;
-
+  width: min(80%, 1150px);
+  min-width: 280px;
   transform: scaleX(-1) scale(var(--vehicle-scale, 1));
   transform-origin: center bottom;
-
   animation: vehicleCross var(--vehicle-speed, 12s) linear infinite;
   will-change: left;
 }
 
-/* CONSERVAR LOS RINES QUE YA ESTÁN EN LA IMAGEN */
 .vehicleImage {
   width: 100%;
   height: auto;
@@ -134,22 +123,18 @@
   z-index: 1;
 }
 
-/* Ya no dibujamos ruedas artificiales encima del vehículo. */
-.wheel {
-  display: none;
-}
-
+/* No se agregan ruedas falsas */
+.wheel,
 .wheelRear,
 .wheelFront {
   display: none;
 }
 
-/* PANTALLA COMPLETA */
 .fullscreenButton {
   border: 1px solid var(--fg);
   background: var(--bg);
   color: var(--fg);
-  padding: 10px 16px;
+  padding: 11px 17px;
   border-radius: 8px;
   cursor: pointer;
   font-weight: 600;
@@ -164,13 +149,13 @@
 }
 
 .fullscreenStage .logo {
-  width: clamp(190px, 25vw, 420px);
-  height: clamp(90px, 15vh, 160px);
+  width: clamp(250px, 35vw, 600px);
+  height: clamp(100px, 18vh, 190px);
   margin-bottom: 3vh;
 }
 
 .fullscreenStage .namePlate {
-  min-height: clamp(75px, 12vh, 130px);
+  min-height: clamp(80px, 13vh, 160px);
 }
 
 .fullscreenStage .road {
@@ -181,10 +166,10 @@
 }
 
 .fullscreenStage .vehicle {
-  width: min(82%, 1250px);
+  width: min(85%, 1400px);
 }
 
-/* ACCESO */
+/* LOGIN Y ADMINISTRACIÓN */
 .loginPage,
 .adminPage {
   min-height: 100vh;
@@ -214,8 +199,8 @@
 }
 
 .loginCard img {
-  width: 150px;
-  height: 75px;
+  width: 170px;
+  height: 85px;
   object-fit: contain;
   margin: auto;
 }
@@ -243,7 +228,7 @@
   border-radius: 8px;
   padding: 12px;
   font: inherit;
-  background: white;
+  background: #fff;
   color: #111;
 }
 
@@ -319,12 +304,10 @@
   margin: 0;
 }
 
-/* LA CAMIONETA CRUZA DE IZQUIERDA A DERECHA */
 @keyframes vehicleCross {
   0% {
     left: -80%;
   }
-
   100% {
     left: 110%;
   }
@@ -336,45 +319,77 @@
   }
 }
 
-/* AJUSTES PARA CELULAR */
-@media (max-width: 600px) {
+/* TABLET */
+@media (min-width: 601px) and (max-width: 1024px) {
   .stage {
-    min-height: 65vh;
-    padding: 20px 12px;
+    min-height: 75vh;
+    padding: 24px 20px;
   }
 
   .logo {
-    width: clamp(150px, 42vw, 240px);
-    height: clamp(75px, 13vh, 115px);
-    margin-bottom: 28px;
+    width: clamp(240px, 42vw, 430px);
+    height: clamp(100px, 16vh, 160px);
+  }
+
+  .road {
+    min-height: 260px;
+    max-height: 45vh;
+  }
+
+  .vehicle {
+    width: 92%;
+    min-width: 0;
+  }
+}
+
+/* CELULAR */
+@media (max-width: 600px) {
+  .stage {
+    min-height: 70vh;
+    padding: 18px 10px;
+  }
+
+  .logo {
+    width: 75vw;
+    max-width: 340px;
+    height: clamp(90px, 14vh, 130px);
+    margin-bottom: 24px;
   }
 
   .namePlate {
-    min-height: 65px;
-    padding: 0 6px;
+    min-height: 72px;
+    padding: 0 4px;
+  }
+
+  .customerName {
+    line-height: 1.12;
   }
 
   .road {
     min-height: 220px;
-    max-height: 38vh;
-    margin-top: 35px;
+    max-height: 40vh;
+    margin-top: 32px;
   }
 
   .vehicle {
-    width: 105%;
-    min-width: 300px;
+    width: 115%;
+    min-width: 0;
   }
 
   .fullscreenStage {
     min-height: 100dvh;
     height: 100dvh;
-    padding: 3vh 12px;
+    padding: 3vh 10px;
   }
 
   .fullscreenStage .logo {
-    width: 55vw;
+    width: 82vw;
     height: 13vh;
     margin-bottom: 3vh;
+  }
+
+  .fullscreenStage .namePlate {
+    min-height: 70px;
   }
 
   .fullscreenStage .road {
@@ -383,7 +398,7 @@
   }
 
   .fullscreenStage .vehicle {
-    width: 115%;
+    width: 120%;
     min-width: 0;
   }
 
@@ -393,12 +408,18 @@
 
   .controls {
     padding: 14px;
+    grid-template-columns: 1fr;
+  }
+
+  .actions > * {
+    width: 100%;
+    box-sizing: border-box;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .vehicle,
   .lightTrail {
-    animation-duration: 10s;
+    animation-duration: 20s;
   }
 }
