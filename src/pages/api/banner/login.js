@@ -1,27 +1,52 @@
-import crypto from "crypto";
 
-function safeEqual(a, b) {
-  const aa = Buffer.from(String(a || ""));
-  const bb = Buffer.from(String(b || ""));
-  return aa.length === bb.length && crypto.timingSafeEqual(aa, bb);
-}
-function sign(payload, secret) {
-  return crypto.createHmac("sha256", secret).update(payload).digest("base64url");
-}
+import {
+  validarCredenciales,
+  firmarSesion
+} from "../../../lib/banner-auth";
+
 export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
-  if (req.method !== "POST") return res.status(405).json({ error: "Método no permitido." });
-  const { BANNER_ADMIN_EMAIL, BANNER_ADMIN_PASSWORD, BANNER_SESSION_SECRET } = process.env;
-  if (!BANNER_ADMIN_EMAIL || !BANNER_ADMIN_PASSWORD || !BANNER_SESSION_SECRET || BANNER_SESSION_SECRET.length < 32) {
-    return res.status(503).json({ error: "Faltan variables de entorno de autenticación en Vercel." });
+
+  if (req.method !== "POST") {
+    res.setHeader("Allow", "POST");
+
+    return res.status(405).json({
+      error: "Método no permitido."
+    });
   }
-  const email = String(req.body?.email || "").trim().toLowerCase();
+
+  const email = String(req.body?.email || "")
+    .trim()
+    .toLowerCase();
+
   const password = String(req.body?.password || "");
-  if (!safeEqual(email, BANNER_ADMIN_EMAIL.trim().toLowerCase()) || !safeEqual(password, BANNER_ADMIN_PASSWORD)) {
-    return res.status(401).json({ error: "Correo o contraseña incorrectos." });
+
+  if (!validarCredenciales(email, password)) {
+    return res.status(401).json({
+      error: "Correo o contraseña incorrectos, o configuración incompleta."
+    });
   }
-  const payload = Buffer.from(JSON.stringify({ email, exp: Date.now() + 8 * 60 * 60 * 1000 })).toString("base64url");
-  const token = `${payload}.${sign(payload, BANNER_SESSION_SECRET)}`;
-  res.setHeader("Set-Cookie", `tmx_banner_session=${token}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=28800`);
-  return res.status(200).json({ ok: true });
+
+  try {
+    const payload = Buffer.from(
+      JSON.stringify({
+        email,
+        exp: Date.now() + 8 * 60 * 60 * 1000
+      })
+    ).toString("base64url");
+
+    const signature = firmarSesion(payload);
+    const token = `${payload}.${signature}`;
+
+    res.setHeader(
+      "Set-Cookie",
+      `tmx_banner_session=${token}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=28800`
+    );
+
+    return res.status(200).json({ ok: true });
+  } catch {
+    return res.status(503).json({
+      error: "No se pudo generar la sesión. Revisa la configuración del servidor."
+    });
+  }
 }
