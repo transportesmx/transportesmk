@@ -7,6 +7,7 @@ const DEFAULT_CONFIG = {
   theme: "dark",
   fontSize: 52,
   vehicleScale: 100,
+  showVehicle: true,
   speed: 12,
   fontFamily: "Arial, Helvetica, sans-serif",
 };
@@ -54,38 +55,69 @@ export function BannerStage({
 }) {
   const dark = config.theme !== "light";
   const stageRef = useRef(null);
+  const [fallbackFullscreen, setFallbackFullscreen] = useState(false);
+  const [nativeFullscreen, setNativeFullscreen] = useState(false);
+  const isDisplayPage = typeof window !== "undefined" &&
+    new URLSearchParams(window.location.search).get("display") === "1";
+  const isFullscreen = fullscreen || fallbackFullscreen || nativeFullscreen;
 
-  useWakeLock(fullscreen);
+  useWakeLock(isFullscreen);
+
+  useEffect(() => {
+    const onFullscreenChange = () => {
+      const active = Boolean(document.fullscreenElement);
+      setNativeFullscreen(active);
+      if (!active && !isDisplayPage) setFallbackFullscreen(false);
+    };
+    document.addEventListener("fullscreenchange", onFullscreenChange);
+    return () => document.removeEventListener("fullscreenchange", onFullscreenChange);
+  }, [isDisplayPage]);
 
   const toggleFullscreen = useCallback(async () => {
+    if (isFullscreen) {
+      if (document.fullscreenElement) {
+        try { await document.exitFullscreen(); } catch (_) {}
+      }
+      setFallbackFullscreen(false);
+      if (isDisplayPage) {
+        window.location.href = "/banner";
+      }
+      return;
+    }
+
     try {
-      if (!document.fullscreenElement) {
-        await stageRef.current?.requestFullscreen?.();
-      } else {
-        await document.exitFullscreen?.();
+      if (stageRef.current?.requestFullscreen) {
+        await stageRef.current.requestFullscreen();
+        setNativeFullscreen(true);
+        return;
       }
     } catch (_) {}
-  }, []);
+    // Safari/iPhone and some mobile browsers do not support Element.requestFullscreen.
+    // Use a fixed-position full-screen presentation as a compatible fallback.
+    setFallbackFullscreen(true);
+  }, [isFullscreen, isDisplayPage]);
 
-  const fontSize = Math.max(
-    20,
-    Math.min(180, Number(config.fontSize) || 52)
-  );
+  const fontSize = Math.max(20, Math.min(180, Number(config.fontSize) || 52));
+  const fullscreenStyle = isFullscreen ? {
+    position: "fixed",
+    inset: 0,
+    width: "100vw",
+    height: "100dvh",
+    minHeight: "100dvh",
+    zIndex: 2147483000,
+    borderRadius: 0,
+    margin: 0,
+  } : undefined;
 
   return (
     <div
       ref={stageRef}
-      className={`${styles.stage} ${
-        dark ? styles.dark : styles.light
-      } ${fullscreen ? styles.fullscreenStage : ""}`}
+      className={`${styles.stage} ${dark ? styles.dark : styles.light} ${isFullscreen ? styles.fullscreenStage : ""}`}
+      style={fullscreenStyle}
     >
       <img
         className={styles.logo}
-        src={
-          dark
-            ? "/banner/logo-mx-white.png"
-            : "/banner/logo-mx-black.png"
-        }
+        src={dark ? "/banner/logo-mx-white.png" : "/banner/logo-mx-black.png"}
         alt="Transportes MX"
       />
 
@@ -94,45 +126,64 @@ export function BannerStage({
           className={styles.customerName}
           style={{
             "--name-size": `${fontSize}px`,
-            fontFamily:
-              config.fontFamily || DEFAULT_CONFIG.fontFamily,
+            fontFamily: config.fontFamily || DEFAULT_CONFIG.fontFamily,
           }}
         >
           {config.name || " "}
         </div>
       </div>
 
-      <div className={styles.road} aria-hidden="true">
-        <div className={styles.lightTrail} />
-
-        <div
-          className={styles.vehicle}
-          style={{
-            "--vehicle-scale":
-              Number(config.vehicleScale || 100) / 100,
-            "--vehicle-speed": `${Math.max(
-              5,
-              Number(config.speed || 12)
-            )}s`,
-          }}
-        >
-          <img
-            className={styles.vehicleImage}
-            src={
-              dark
-                ? "/banner/suburban-white.png"
-                : "/banner/suburban-black.png"
-            }
-            alt=""
-          />
+      {config.showVehicle !== false && (
+        <div className={styles.road} aria-hidden="true">
+          <div className={styles.lightTrail} />
+          <div
+            className={styles.vehicle}
+            style={{
+              "--vehicle-scale": Number(config.vehicleScale || 100) / 100,
+              "--vehicle-speed": `${Math.max(5, Number(config.speed || 12))}s`,
+            }}
+          >
+            <img
+              className={styles.vehicleImage}
+              src={dark ? "/banner/suburban-white.png" : "/banner/suburban-black.png"}
+              alt=""
+            />
+          </div>
         </div>
-      </div>
+      )}
 
-      {!fullscreen && (
+      {isFullscreen ? (
         <button
           type="button"
           className={styles.fullscreenButton}
           onClick={toggleFullscreen}
+          aria-label="Salir de pantalla completa"
+          title="Salir de pantalla completa"
+          style={{
+            position: "fixed",
+            top: "max(10px, env(safe-area-inset-top))",
+            right: "max(10px, env(safe-area-inset-right))",
+            zIndex: 2147483647,
+            width: 38,
+            height: 38,
+            minWidth: 38,
+            padding: 0,
+            borderRadius: "50%",
+            display: "grid",
+            placeItems: "center",
+            fontSize: 20,
+            lineHeight: 1,
+            opacity: 0.72,
+          }}
+        >
+          <span aria-hidden="true">×</span>
+        </button>
+      ) : (
+        <button
+          type="button"
+          className={styles.fullscreenButton}
+          onClick={toggleFullscreen}
+          aria-label="Mostrar en pantalla completa"
         >
           Mostrar en pantalla completa
         </button>
@@ -443,6 +494,17 @@ export default function BannerEditor() {
               })
             }
           />
+        </label>
+
+        <label className={styles.vehicleToggle}>
+          <input
+            type="checkbox"
+            checked={config.showVehicle !== false}
+            onChange={(e) =>
+              setConfig({ ...config, showVehicle: e.target.checked })
+            }
+          />
+          Mostrar camioneta animada
         </label>
 
         <label>
