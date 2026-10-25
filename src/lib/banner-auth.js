@@ -1,53 +1,82 @@
+import { createClient } from "@supabase/supabase-js";
+import { getServiceSupabase } from "./supabase";
 
-import crypto from "crypto";
+export const BANNER_ADMIN_EMAIL = "contacto@transportesmx.org";
 
-function safeEqual(a, b) {
-  const aa = Buffer.from(String(a || ""), "utf8");
-  const bb = Buffer.from(String(b || ""), "utf8");
+export function getBannerToken(req) {
+  const cookies = String(req.headers.cookie || "").split(";");
 
-  if (aa.length !== bb.length) return false;
+  for (const item of cookies) {
+    const cookie = item.trim();
+    const prefix = "tmx_banner_session=";
 
-  return crypto.timingSafeEqual(aa, bb);
+    if (cookie.startsWith(prefix)) {
+      return decodeURIComponent(cookie.slice(prefix.length));
+    }
+  }
+
+  return "";
 }
 
-export function validarCredenciales(email, password) {
-  const correoAdmin = process.env.BANNER_ADMIN_EMAIL;
-  const passwordAdmin = process.env.BANNER_ADMIN_PASSWORD;
+export async function validarSesionBanner(req) {
+  const token = getBannerToken(req);
+  if (!token) return false;
 
-  if (!correoAdmin || !passwordAdmin) {
+  const supabase = getServiceSupabase();
+  if (!supabase) return false;
+
+  try {
+    const { data, error } = await supabase.auth.getUser(token);
+
+    if (error || !data?.user) return false;
+
+    return (
+      String(data.user.email || "").trim().toLowerCase() ===
+      BANNER_ADMIN_EMAIL
+    );
+  } catch {
     return false;
   }
-
-  const correoIngresado = String(email || "")
-    .trim()
-    .toLowerCase();
-
-  const correoConfigurado = correoAdmin
-    .trim()
-    .toLowerCase();
-
-  const correoValido = safeEqual(
-    correoIngresado,
-    correoConfigurado
-  );
-
-  const passwordValido = safeEqual(
-    String(password || ""),
-    passwordAdmin
-  );
-
-  return correoValido && passwordValido;
 }
 
-export function firmarSesion(payload) {
-  const secret = process.env.BANNER_SESSION_SECRET;
+export async function autenticarBanner(email, password) {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-  if (!secret || secret.length < 32) {
-    throw new Error("La clave de sesión debe tener al menos 32 caracteres.");
+  if (!url || !anonKey) {
+    throw new Error("Falta la configuración pública de Supabase.");
   }
 
-  return crypto
-    .createHmac("sha256", secret)
-    .update(payload)
-    .digest("base64url");
+  const correo = String(email || "").trim().toLowerCase();
+
+  if (correo !== BANNER_ADMIN_EMAIL || !password) {
+    return null;
+  }
+
+  const client = createClient(url, anonKey, {
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+      detectSessionInUrl: false,
+    },
+  });
+
+  const { data, error } = await client.auth.signInWithPassword({
+    email: correo,
+    password,
+  });
+
+  if (
+    error ||
+    !data?.session?.access_token ||
+    String(data.user?.email || "").trim().toLowerCase() !==
+      BANNER_ADMIN_EMAIL
+  ) {
+    return null;
+  }
+
+  return {
+    token: data.session.access_token,
+    expiresIn: data.session.expires_in || 3600,
+  };
 }
