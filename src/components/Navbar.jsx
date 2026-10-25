@@ -2,7 +2,7 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   FaFacebookF,
-  FaSignInAlt,
+  FaUserCircle,
   FaInstagram,
   FaTiktok,
   FaTripadvisor,
@@ -130,7 +130,7 @@ const Navbar = () => {
             title="Acceso al sistema"
             aria-label="Acceso al sistema"
           >
-            <FaSignInAlt size={17} />
+            <FaUserCircle size={20} />
             <span>Acceso</span>
           </Link>
 
@@ -307,7 +307,7 @@ const Navbar = () => {
             onClick={closeMobileMenu}
             title="Acceso al sistema"
           >
-            <FaSignInAlt size={17} />
+            <FaUserCircle size={20} />
             <span>Acceso</span>
           </Link>
 
