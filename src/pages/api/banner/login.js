@@ -1,52 +1,46 @@
-
-import {
-  validarCredenciales,
-  firmarSesion
-} from "../../../lib/banner-auth";
+import { autenticarBanner } from "../../../lib/banner-auth";
 
 export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
 
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
-
     return res.status(405).json({
-      error: "Método no permitido."
-    });
-  }
-
-  const email = String(req.body?.email || "")
-    .trim()
-    .toLowerCase();
-
-  const password = String(req.body?.password || "");
-
-  if (!validarCredenciales(email, password)) {
-    return res.status(401).json({
-      error: "Correo o contraseña incorrectos, o configuración incompleta."
+      error: "Método no permitido.",
     });
   }
 
   try {
-    const payload = Buffer.from(
-      JSON.stringify({
-        email,
-        exp: Date.now() + 8 * 60 * 60 * 1000
-      })
-    ).toString("base64url");
+    const email = String(req.body?.email || "");
+    const password = String(req.body?.password || "");
 
-    const signature = firmarSesion(payload);
-    const token = `${payload}.${signature}`;
+    const session = await autenticarBanner(email, password);
+
+    if (!session) {
+      return res.status(401).json({
+        error: "Correo o contraseña incorrectos.",
+      });
+    }
+
+    const secure =
+      process.env.NODE_ENV === "production" ? "; Secure" : "";
 
     res.setHeader(
       "Set-Cookie",
-      `tmx_banner_session=${token}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=28800`
+      `tmx_banner_session=${encodeURIComponent(
+        session.token
+      )}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${Math.min(
+        session.expiresIn,
+        3600
+      )}${secure}`
     );
 
     return res.status(200).json({ ok: true });
-  } catch {
+  } catch (error) {
+    console.error("Error de acceso al banner:", error.message);
+
     return res.status(503).json({
-      error: "No se pudo generar la sesión. Revisa la configuración del servidor."
+      error: "No se pudo verificar el acceso. Revisa la configuración de Supabase.",
     });
   }
 }
