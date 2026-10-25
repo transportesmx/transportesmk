@@ -26,10 +26,7 @@ function useWakeLock(enabled) {
 
     const request = async () => {
       try {
-        if (
-          active &&
-          document.visibilityState === "visible"
-        ) {
+        if (active && document.visibilityState === "visible") {
           lock = await navigator.wakeLock.request("screen");
         }
       } catch (_) {}
@@ -70,6 +67,11 @@ export function BannerStage({
     } catch (_) {}
   }, []);
 
+  const fontSize = Math.max(
+    20,
+    Math.min(180, Number(config.fontSize) || 52)
+  );
+
   return (
     <div
       ref={stageRef}
@@ -91,9 +93,7 @@ export function BannerStage({
         <div
           className={styles.customerName}
           style={{
-            fontSize: `clamp(18px, ${
-              Number(config.fontSize || 52) / 12
-            }vw, ${Number(config.fontSize || 52)}px)`,
+            "--name-size": `${fontSize}px`,
             fontFamily:
               config.fontFamily || DEFAULT_CONFIG.fontFamily,
           }}
@@ -123,7 +123,7 @@ export function BannerStage({
                 ? "/banner/suburban-white.png"
                 : "/banner/suburban-black.png"
             }
-            alt="Chevrolet Suburban de Transportes MX"
+            alt=""
           />
         </div>
       </div>
@@ -192,17 +192,15 @@ export default function BannerEditor() {
       .then((data) => {
         setAuthenticated(Boolean(data.authenticated));
       })
-      .catch(() => {
-        setAuthenticated(false);
-      });
+      .catch(() => setAuthenticated(false));
   }, []);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    if (typeof window === "undefined" || !authenticated) return;
 
-    const params = new URLSearchParams(window.location.search);
-
-    if (params.get("display") === "1" || !authenticated) {
+    if (
+      new URLSearchParams(window.location.search).get("display") === "1"
+    ) {
       return;
     }
 
@@ -245,13 +243,8 @@ export default function BannerEditor() {
     try {
       const r = await fetch("/api/banner/login", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
       });
 
       const data = await r.json();
@@ -281,16 +274,13 @@ export default function BannerEditor() {
 
       const r = await fetch("/api/banner/config", {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ config }),
       });
 
       if (r.status === 503) {
         setStatus(
-          "Guardado local en este dispositivo. " +
-            "Para sincronizar entre dispositivos, configura el almacenamiento KV."
+          "Guardado local en este dispositivo. Para sincronizar entre dispositivos, configura el almacenamiento KV."
         );
       } else if (!r.ok) {
         const data = await r.json().catch(() => ({}));
@@ -330,9 +320,7 @@ export default function BannerEditor() {
   if (
     fullscreen ||
     (typeof window !== "undefined" &&
-      new URLSearchParams(window.location.search).get(
-        "display"
-      ) === "1")
+      new URLSearchParams(window.location.search).get("display") === "1")
   ) {
     return <BannerStage config={config} fullscreen />;
   }
@@ -347,9 +335,7 @@ export default function BannerEditor() {
           />
 
           <h1>Acceso al banner</h1>
-          <p>
-            Ingresa con el correo y la contraseña asignados.
-          </p>
+          <p>Ingresa con el correo y la contraseña asignados.</p>
 
           <label>
             Correo electrónico
@@ -373,9 +359,7 @@ export default function BannerEditor() {
             />
           </label>
 
-          {error && (
-            <p className={styles.error}>{error}</p>
-          )}
+          {error && <p className={styles.error}>{error}</p>}
 
           <button type="submit">Iniciar sesión</button>
         </form>
@@ -388,9 +372,7 @@ export default function BannerEditor() {
       <header className={styles.adminHeader}>
         <div>
           <h1>Banner Transportes MX</h1>
-          <p>
-            Editor de nombre, tema, tamaño y animación
-          </p>
+          <p>Editor de nombre, tema, tamaño y animación</p>
         </div>
 
         <button
@@ -409,10 +391,7 @@ export default function BannerEditor() {
             maxLength={60}
             value={config.name}
             onChange={(e) =>
-              setConfig({
-                ...config,
-                name: e.target.value,
-              })
+              setConfig({ ...config, name: e.target.value })
             }
           />
         </label>
@@ -422,10 +401,7 @@ export default function BannerEditor() {
           <select
             value={config.theme}
             onChange={(e) =>
-              setConfig({
-                ...config,
-                theme: e.target.value,
-              })
+              setConfig({ ...config, theme: e.target.value })
             }
           >
             <option value="dark">
@@ -442,7 +418,7 @@ export default function BannerEditor() {
           <input
             type="range"
             min="20"
-            max="100"
+            max="180"
             value={config.fontSize}
             onChange={(e) =>
               setConfig({
@@ -496,25 +472,15 @@ export default function BannerEditor() {
               })
             }
           >
-            <option value="Arial, Helvetica, sans-serif">
-              Arial
-            </option>
-            <option value="Helvetica, Arial, sans-serif">
-              Helvetica
-            </option>
+            <option value="Arial, Helvetica, sans-serif">Arial</option>
+            <option value="Helvetica, Arial, sans-serif">Helvetica</option>
             <option value="Georgia, serif">Georgia</option>
-            <option value="'Trebuchet MS', sans-serif">
-              Trebuchet
-            </option>
-            <option value="Verdana, sans-serif">
-              Verdana
-            </option>
+            <option value="'Trebuchet MS', sans-serif">Trebuchet</option>
+            <option value="Verdana, sans-serif">Verdana</option>
           </select>
         </label>
 
-        {error && (
-          <p className={styles.error}>{error}</p>
-        )}
+        {error && <p className={styles.error}>{error}</p>}
 
         <div className={styles.actions}>
           <button
@@ -522,9 +488,7 @@ export default function BannerEditor() {
             onClick={save}
             disabled={saving}
           >
-            {saving
-              ? "Guardando…"
-              : "Guardar configuración"}
+            {saving ? "Guardando…" : "Guardar configuración"}
           </button>
 
           <a
