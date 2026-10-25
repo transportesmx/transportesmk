@@ -1,3 +1,4 @@
+
 import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   FaFacebookF,
@@ -15,26 +16,19 @@ import { AppContext } from "@/Context/AppContext";
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const { idioma, setIdioma } = useContext(AppContext);
+  const { idioma, setIdioma, traduccion } = useContext(AppContext);
 
   const menuRef = useRef(null);
   const buttonRef = useRef(null);
 
-  // Bloquear scroll cuando el menú está abierto
   useEffect(() => {
-    if (isMenuOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
+    document.body.style.overflow = isMenuOpen ? "hidden" : "unset";
 
-    // Limpiar al desmontar el componente
     return () => {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     };
   }, [isMenuOpen]);
 
-  // Cerrar menú al hacer click fuera
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -57,52 +51,59 @@ const Navbar = () => {
   }, [isMenuOpen]);
 
   const handleCotizar = () => {
-    const phoneNumber = "524151393219"; // Reemplaza con el número de WhatsApp incluyendo el código de país (52 para México).
+    const phoneNumber = "524151393219";
     const message = "Hola, me gustaría cotizar un servicio";
-    const encodedMessage = encodeURIComponent(message);
-    const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+    const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
     window.open(whatsappURL, "_blank");
   };
 
-  const { traduccion } = useContext(AppContext);
+  const closeMobileMenu = () => {
+    setIsMenuOpen(false);
+    setIsDropdownOpen(false);
+  };
 
   return (
-    <header className="bg-black/70 shadow-md sticky top-0 z-50"
-    
-    >
+    <header className="bg-black/70 shadow-md sticky top-0 z-50">
       <div className="container mx-auto flex justify-between items-center px-4 py-2">
-        <a
-          href="/"
-          className="flex items-center py-4"
-        >
-          <img src="/assets/logo.png" alt="MK Logo" className="h-8 mr-4" />
+        <a href="/" className="flex items-center py-4">
+          <img
+            src="/assets/logo.png"
+            alt="Transportes MX"
+            className="h-8 mr-4"
+          />
         </a>
 
+        {/* MENÚ DE ESCRITORIO */}
         <nav className="hidden lg:flex items-center space-x-4">
           <a href="/#Hero" className="hover:text-blue-500 transition">
             {traduccion.navbar.home}
           </a>
+
           <a href="/#About" className="hover:text-blue-500 transition">
             {traduccion.navbar.about}
           </a>
 
           <div className="relative">
             <button
+              type="button"
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               className="flex items-center hover:text-blue-500 transition"
             >
-              {traduccion.navbar.services}{" "}
+              {traduccion.navbar.services}
               <IoMdArrowDropdown className="ml-1" />
             </button>
+
             {isDropdownOpen && (
               <div className="absolute top-8 left-0 bg-black shadow-md rounded-lg w-40 py-2">
-                <a href="/#Aeropuerto" className="block px-4 py-2 ">
+                <a href="/#Aeropuerto" className="block px-4 py-2 hover:bg-gray-600">
                   {traduccion.navbar.airport_transfer}
                 </a>
-                <a href="/#Bodas" className="block px-4 py-2 ">
+
+                <a href="/#Bodas" className="block px-4 py-2 hover:bg-gray-600">
                   {traduccion.navbar.wedding_transport}
                 </a>
-                <a href="/#Chofer" className="block px-4 py-2 ">
+
+                <a href="/#Chofer" className="block px-4 py-2 hover:bg-gray-600">
                   {traduccion.navbar.private_driver}
                 </a>
               </div>
@@ -112,15 +113,17 @@ const Navbar = () => {
           <a href="/#Tours" className="hover:text-blue-500 transition">
             {traduccion.navbar.tours}
           </a>
-          {/* ACCESO AL BLOG DE SORO SEO */}
+
+          {/* BLOG */}
           <Link
             href="/blog"
             className="flex items-center gap-2 hover:text-blue-500 transition"
             title="Blog de Transportes MX"
-            aria-label="Visitar el blog de Transportes MX"
           >
-            <span>Blog</span>
+            Blog
           </Link>
+
+          {/* ACCESO AL SISTEMA */}
           <Link
             href="/notas-venta"
             className="flex items-center gap-2 hover:text-blue-500 transition"
@@ -130,145 +133,150 @@ const Navbar = () => {
             <FaSignInAlt size={17} />
             <span>Acceso</span>
           </Link>
-          {/* <span
-            onClick={handleCotizar}
-            className="hover:text-blue-500 transition cursor-pointer"
+
+          {/* NUEVO ACCESO AL BANNER */}
+          <Link
+            href="/banner"
+            className="flex items-center gap-2 hover:text-blue-500 transition"
+            title="Banner de bienvenida"
+            aria-label="Banner de bienvenida"
           >
-            {traduccion.navbar.quote}
-          </span> */}
-          <Link href="/reservar" className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition font-semibold text-sm">
-            {idioma.nombre === 'EN' ? 'Book now' : 'Reservar'}
+            <span>Banner</span>
+          </Link>
+
+          {/* RESERVACIONES */}
+          <Link
+            href="/reservar"
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition font-semibold text-sm"
+          >
+            {idioma.nombre === "EN" ? "Book now" : "Reservar"}
           </Link>
         </nav>
-        <div className="flex items-center space-x-8">
-          <div className="hidden lg:flex items-center space-x-2">
-            <div
-              className="flex items-center  gap-2"
+
+        {/* IDIOMAS Y REDES PARA ESCRITORIO */}
+        <div className="hidden lg:flex items-center gap-5">
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
               onClick={() => setIdioma({ nombre: "ES", code: "MX" })}
+              className={`flex items-center gap-1 rounded-md ${
+                idioma.nombre === "ES" ? "p-1 bg-white text-black" : ""
+              }`}
+              aria-label="Español"
             >
-              <div
-                className={`flex items-center space-x-1  rounded-md ${
-                  idioma.nombre == "ES" && "p-1 bg-white"
-                }`}
-              >
-                <img
-                  src="/assets/icons/mexico.png"
-                  alt="Mexican Flag"
-                  className="h-5"
-                />
-              </div>
-              <a href="#" className="hover:text-blue-500 transition">
-                ESP
-              </a>
-            </div>
-            <span className="text-white ">{"/"}</span>
-            <div
-              className="flex items-center  gap-2"
+              <img
+                src="/assets/icons/mexico.png"
+                alt="México"
+                className="h-5"
+              />
+              ESP
+            </button>
+
+            <span className="text-white">/</span>
+
+            <button
+              type="button"
               onClick={() => setIdioma({ nombre: "EN", code: "US" })}
+              className={`flex items-center gap-1 rounded-md ${
+                idioma.nombre === "EN" ? "p-1 bg-white text-black" : ""
+              }`}
+              aria-label="English"
             >
-              <a href="#" className="hover:text-blue-500 transition">
-                EN
-              </a>
-              <div
-                className={`flex items-center space-x-1  rounded-md ${
-                  idioma.nombre == "EN" && "p-1 bg-white"
-                }`}
-              >
-                <img
-                  src="/assets/icons/eu.png"
-                  alt="Mexican Flag"
-                  className="h-5"
-                />
-              </div>
-            </div>
+              EN
+              <img
+                src="/assets/icons/eu.png"
+                alt="United States"
+                className="h-5"
+              />
+            </button>
           </div>
 
-          <div className=" items-center space-x-4 hidden lg:flex">
-            <Link
-              href="https://www.facebook.com/TransportesTMX/"
-              target="_blank"
-            >
+          <div className="flex items-center gap-4 text-lg">
+            <Link href="https://www.facebook.com/TransportesTMX/" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
               <FaFacebookF className="hover:text-blue-500 cursor-pointer" />
             </Link>
-            <Link
-              href="https://www.instagram.com/trans_portesmx"
-              target="_blank"
-            >
+
+            <Link href="https://www.instagram.com/trans_portesmx" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
               <FaInstagram className="hover:text-pink-500 cursor-pointer" />
             </Link>
-            <Link
-              href="https://www.tiktok.com/@transportes.mx2"
-              target="_blank"
-            >
-              <FaTiktok className="hover:text-black cursor-pointer" />
+
+            <Link href="https://www.tiktok.com/@transportes.mx2" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
+              <FaTiktok className="hover:text-gray-300 cursor-pointer" />
             </Link>
+
             <Link
               href="https://www.tripadvisor.com.mx/Attraction_Review-g151932-d25402392-Reviews-Transportes_MX-San_Miguel_de_Allende_Central_Mexico_and_Gulf_Coast.html"
               target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Tripadvisor"
             >
               <FaTripadvisor className="hover:text-green-500 cursor-pointer" />
             </Link>
           </div>
         </div>
 
+        {/* BOTÓN DEL MENÚ MÓVIL */}
         <div className="lg:hidden flex items-center gap-3">
           <Link
             href="/reservar"
             className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 rounded-lg transition font-semibold text-xs text-white whitespace-nowrap"
           >
-            {idioma.nombre === 'EN' ? 'Book now' : 'Reservar'}
+            {idioma.nombre === "EN" ? "Book now" : "Reservar"}
           </Link>
-          <button ref={buttonRef} onClick={() => setIsMenuOpen(!isMenuOpen)}>
+
+          <button
+            ref={buttonRef}
+            type="button"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            aria-label={isMenuOpen ? "Cerrar menú" : "Abrir menú"}
+            aria-expanded={isMenuOpen}
+          >
             {isMenuOpen ? <HiX size={24} /> : <HiMenu size={24} />}
           </button>
         </div>
       </div>
 
+      {/* MENÚ DESPLEGABLE PARA CELULAR */}
       {isMenuOpen && (
-        <div ref={menuRef} className="lg:hidden bg-black shadow-md">
+        <div ref={menuRef} className="lg:hidden bg-black shadow-md text-white">
           <a
             href="/#Hero"
             className="block px-4 py-2 hover:bg-gray-600"
-            onClick={() => setIsMenuOpen(false)}
+            onClick={closeMobileMenu}
           >
             {traduccion.navbar.home}
           </a>
+
           <a
             href="/#About"
-            onClick={() => setIsMenuOpen(false)}
             className="block px-4 py-2 hover:bg-gray-600"
+            onClick={closeMobileMenu}
           >
             {traduccion.navbar.about}
           </a>
 
           <div className="relative">
             <button
+              type="button"
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               className="flex w-full px-4 py-2 justify-between hover:bg-gray-600"
+              aria-expanded={isDropdownOpen}
             >
-              {traduccion.navbar.services} <IoMdArrowDropdown />
+              {traduccion.navbar.services}
+              <IoMdArrowDropdown />
             </button>
+
             {isDropdownOpen && (
-              <div className="bg-white shadow-md rounded-lg w-full">
-                <Link
-                  href="/#Aeropuerto"
-                  className="block bg-black px-4 py-2 hover:bg-gray-600"
-                  onClick={() => setIsMenuOpen(false)}
-                >
+              <div className="bg-black w-full">
+                <Link href="/#Aeropuerto" className="block px-6 py-2 hover:bg-gray-600" onClick={closeMobileMenu}>
                   {traduccion.navbar.airport_transfer}
                 </Link>
-                <Link
-                  href="/#Bodas"
-                  className="block bg-black px-4 py-2 hover:bg-gray-600"
-                  onClick={() => setIsMenuOpen(false)}
-                >
+
+                <Link href="/#Bodas" className="block px-6 py-2 hover:bg-gray-600" onClick={closeMobileMenu}>
                   {traduccion.navbar.wedding_transport}
                 </Link>
-                <Link
-                  href="/#Chofer"
-                  className="block bg-black px-4 py-2 hover:bg-gray-600"
-                  onClick={() => setIsMenuOpen(false)}
-                >
+
+                <Link href="/#Chofer" className="block px-6 py-2 hover:bg-gray-600" onClick={closeMobileMenu}>
                   {traduccion.navbar.private_driver}
                 </Link>
               </div>
@@ -278,150 +286,94 @@ const Navbar = () => {
           <a
             href="/#Tours"
             className="block px-4 py-2 hover:bg-gray-600"
-            onClick={() => setIsMenuOpen(false)}
+            onClick={closeMobileMenu}
           >
             {traduccion.navbar.tours}
           </a>
-          {/* ACCESO AL BLOG DE SORO SEO EN CELULAR */}
+
+          {/* BLOG */}
           <Link
             href="/blog"
-            className="flex items-center gap-2 px-4 py-2 hover:bg-gray-600"
-            onClick={() => setIsMenuOpen(false)}
-            title="Blog de Transportes MX"
-            aria-label="Visitar el blog de Transportes MX"
+            className="block px-4 py-2 hover:bg-gray-600"
+            onClick={closeMobileMenu}
           >
-            <span>Blog</span>
+            Blog
           </Link>
+
+          {/* ACCESO AL SISTEMA */}
           <Link
             href="/notas-venta"
             className="flex items-center gap-2 px-4 py-2 hover:bg-gray-600"
-            onClick={() => setIsMenuOpen(false)}
+            onClick={closeMobileMenu}
             title="Acceso al sistema"
-            aria-label="Acceso al sistema"
           >
             <FaSignInAlt size={17} />
             <span>Acceso</span>
           </Link>
-         {/*  <span
-            className="block px-4 py-2 hover:bg-gray-600"
-            onClick={() => {
-              setIsMenuOpen(false);
-              handleCotizar();
-            }}
+
+          {/* NUEVO ACCESO AL BANNER */}
+          <Link
+            href="/banner"
+            className="flex items-center gap-2 px-4 py-2 hover:bg-gray-600"
+            onClick={closeMobileMenu}
+            title="Banner de bienvenida"
           >
-            {traduccion.navbar.quote}
-          </span> */}
-          <div className="px-4 py-2 flex items-center space-x-2">
-            <div
-              className="flex items-center  gap-2 cursor-pointer"
-              onClick={() => {
-                setIdioma({ nombre: "ES", code: "MX" });
-              }}
-            >
-              <div
-                className={`flex items-center space-x-1  rounded-md ${
-                  idioma.nombre == "ES" && "p-1 bg-white"
-                }`}
-              >
-                <img
-                  src="/assets/icons/mexico.png"
-                  alt="Mexican Flag"
-                  className="h-5"
-                />
-              </div>
-              <span className="hover:text-blue-500">ESP</span>
-            </div>
-            <span className="text-white ">{"/"}</span>
-            <div
-              className="flex items-center  gap-2 cursor-pointer"
-              onClick={() => {
-                setIdioma({ nombre: "EN", code: "US" });
-              }}
-            >
-              <span className="hover:text-blue-500">EN</span>
-              <div
-                className={`flex items-center space-x-1  rounded-md ${
-                  idioma.nombre == "EN" && "p-1 bg-white"
-                }`}
-              >
-                <img
-                  src="/assets/icons/eu.png"
-                  alt="Mexican Flag"
-                  className="h-5"
-                />
-              </div>
-            </div>
-          </div>
+            <span>Banner</span>
+          </Link>
 
-          <div className="hidden lg:flex items-center space-x-2">
-            <div
-              className="flex items-center  gap-2"
+          {/* SELECTOR DE IDIOMA */}
+          <div className="px-4 py-3 flex items-center gap-3">
+            <button
+              type="button"
               onClick={() => setIdioma({ nombre: "ES", code: "MX" })}
+              className={`flex items-center gap-2 rounded-md ${
+                idioma.nombre === "ES" ? "p-1 bg-white text-black" : ""
+              }`}
             >
-              <div
-                className={`flex items-center space-x-1  rounded-md ${
-                  idioma.nombre == "ES" && "p-1 bg-white"
-                }`}
-              >
-                <img
-                  src="/assets/icons/mexico.png"
-                  alt="Mexican Flag"
-                  className="h-5"
-                />
-              </div>
-              <span className="hover:text-blue-500 transition">ESP</span>
-            </div>
-            <span className="text-white ">{"/"}</span>
-            <div
-              className="flex items-center  gap-2"
+              <img src="/assets/icons/mexico.png" alt="México" className="h-5" />
+              ESP
+            </button>
+
+            <span>/</span>
+
+            <button
+              type="button"
               onClick={() => setIdioma({ nombre: "EN", code: "US" })}
+              className={`flex items-center gap-2 rounded-md ${
+                idioma.nombre === "EN" ? "p-1 bg-white text-black" : ""
+              }`}
             >
-              <span className="hover:text-blue-500 transition">EN</span>
-              <div
-                className={`flex items-center space-x-1  rounded-md ${
-                  idioma.nombre == "EN" && "p-1 bg-white"
-                }`}
-              >
-                <img
-                  src="/assets/icons/eu.png"
-                  alt="Mexican Flag"
-                  className="h-5"
-                />
-              </div>
-            </div>
+              EN
+              <img src="/assets/icons/eu.png" alt="Estados Unidos" className="h-5" />
+            </button>
           </div>
 
-          <div className="px-4 py-2 flex items-center justify-center space-x-8 text-[30px]">
-            <Link
-              href="https://www.facebook.com/TransportesTMX/"
-              target="_blank"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              <FaFacebookF className="hover:text-blue-500 cursor-pointer" />
+          {/* REDES SOCIALES */}
+          <div className="px-4 py-4 flex items-center justify-center gap-7 text-2xl">
+            <Link href="https://www.facebook.com/TransportesTMX/" target="_blank" rel="noopener noreferrer" onClick={closeMobileMenu} aria-label="Facebook">
+              <FaFacebookF className="hover:text-blue-500" />
             </Link>
-            <Link
-              href="https://www.instagram.com/trans_portesmx"
-              target="_blank"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              <FaInstagram className="hover:text-pink-500 cursor-pointer" />
+
+            <Link href="https://www.instagram.com/trans_portesmx" target="_blank" rel="noopener noreferrer" onClick={closeMobileMenu} aria-label="Instagram">
+              <FaInstagram className="hover:text-pink-500" />
             </Link>
-            <Link
-              href="https://www.tiktok.com/@transportes.mx2"
-              target="_blank"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              <FaTiktok className="hover:text-black cursor-pointer" />
+
+            <Link href="https://www.tiktok.com/@transportes.mx2" target="_blank" rel="noopener noreferrer" onClick={closeMobileMenu} aria-label="TikTok">
+              <FaTiktok className="hover:text-gray-300" />
             </Link>
+
             <Link
               href="https://www.tripadvisor.com.mx/Attraction_Review-g151932-d25402392-Reviews-Transportes_MX-San_Miguel_de_Allende_Central_Mexico_and_Gulf_Coast.html"
               target="_blank"
-              onClick={() => setIsMenuOpen(false)}
+              rel="noopener noreferrer"
+              onClick={closeMobileMenu}
+              aria-label="Tripadvisor"
             >
-              <FaTripadvisor className="hover:text-green-500 cursor-pointer" />
+              <FaTripadvisor className="hover:text-green-500" />
             </Link>
-            <Link href="https://wa.me/524151393219" target="_blank">
-              <FaWhatsapp className="hover:text-green-500 cursor-pointer" />
+
+            <Link href="https://wa.me/524151393219" target="_blank" rel="noopener noreferrer" onClick={closeMobileMenu} aria-label="WhatsApp">
+              <FaWhatsapp className="hover:text-green-500" />
             </Link>
           </div>
         </div>
