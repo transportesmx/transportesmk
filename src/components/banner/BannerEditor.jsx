@@ -433,7 +433,7 @@ export default function BannerEditor() {
           Tamaño de camioneta: {config.vehicleScale}%
           <input
             type="range"
-            min="60"
+            min="10"
             max="140"
             value={config.vehicleScale}
             onChange={(e) =>
