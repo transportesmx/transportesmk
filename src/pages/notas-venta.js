@@ -141,35 +141,35 @@ function abrirImpresion(datos, folio) {
 *{box-sizing:border-box}
 @page{size:Letter portrait;margin:0}
 html,body{margin:0;padding:0;background:#fff;color:#050505;font-family:Arial,Helvetica,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-body{font-size:11pt;line-height:1.25}
+body{font-size:13pt;line-height:1.25}
 .hoja{width:100%;max-width:194mm;min-height:279.4mm;margin:0 auto;padding:10mm 12mm;display:flex;flex-direction:column}
 .encabezado{display:grid;grid-template-columns:minmax(0,1fr) 48mm;gap:5mm;align-items:start}
 .marca{display:block;min-width:0}
 .logo{display:block;width:60mm;height:28.5mm;object-fit:contain;margin:0 0 1.5mm 0}
-.empresa{font-size:9pt;line-height:1.42;font-weight:800;overflow-wrap:anywhere;padding-top:1mm}
-.empresa strong{display:block;font-size:10pt;margin-bottom:1mm;font-weight:900}
+.empresa{font-size:11pt;line-height:1.42;font-weight:800;overflow-wrap:anywhere;padding-top:1mm}
+.empresa strong{display:block;font-size:12pt;margin-bottom:1mm;font-weight:900}
 .empresa .normal{font-weight:400}.empresa a{display:inline;color:#06c;text-decoration:underline;overflow-wrap:anywhere}.empresa a:visited{color:#06c}
 .folioCol{display:flex;flex-direction:column;align-items:stretch;gap:2mm}
-.folio{background:#f00000;color:#fff;font-size:12pt;font-weight:900;padding:3mm 3.5mm;min-height:11mm;overflow-wrap:anywhere}
+.folio{background:#f00000;color:#fff;font-size:14pt;font-weight:900;padding:3mm 3.5mm;min-height:11mm;overflow-wrap:anywhere}
 .sprinter{width:100%;height:34mm;object-fit:contain;object-position:center}
 .separador{display:block!important;width:100%;height:0!important;border:0;border-top:1.5mm solid #000!important;background:transparent!important;margin:3mm 0 3mm;flex:none;visibility:visible!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 .cliente{margin-top:1mm;display:grid;grid-template-columns:1fr;gap:0.7mm;padding:0 0 3mm}
-.clienteItem{font-size:11pt;overflow-wrap:anywhere;min-height:5mm}
+.clienteItem{font-size:13pt;overflow-wrap:anywhere;min-height:5mm}
 .clienteItem strong{font-weight:900}
-.total{display:flex;align-items:center;gap:2mm;margin:1mm 0 4mm;background:#00b050;color:#fff;width:max-content;max-width:100%;min-height:9mm;padding:2mm 3mm;font-size:12pt;font-weight:900;overflow-wrap:anywhere}
-.barra{background:#050505!important;color:#fff!important;padding:2mm 3mm;font-size:11pt;font-weight:900;margin:0 0 1.5mm;min-height:8mm;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.total{display:flex;align-items:center;gap:2mm;margin:1mm 0 4mm;background:#00b050;color:#fff;width:max-content;max-width:100%;min-height:9mm;padding:2mm 3mm;font-size:14pt;font-weight:900;overflow-wrap:anywhere}
+.barra{background:#050505!important;color:#fff!important;padding:2mm 3mm;font-size:13pt;font-weight:900;margin:0 0 1.5mm;min-height:8mm;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 .antesBarra{height:3mm;flex:none}.datos{display:flex;flex-direction:column;gap:0.7mm;margin-top:9mm}
-.dato{display:flex;align-items:flex-start;gap:2mm;min-height:5.3mm;margin:0;padding:0;break-inside:avoid;page-break-inside:avoid;font-size:11pt;line-height:1.18;overflow-wrap:anywhere}
-.icono{width:6mm;flex:none;font-size:11pt}
+.dato{display:flex;align-items:flex-start;gap:2mm;min-height:5.3mm;margin:0;padding:0;break-inside:avoid;page-break-inside:avoid;font-size:13pt;line-height:1.18;overflow-wrap:anywhere}
+.icono{width:6mm;flex:none;font-size:13pt}
 .etiqueta{font-weight:900;flex:none}
 .valor{min-width:0;white-space:pre-wrap;overflow-wrap:anywhere}
-.regreso{display:flex;align-items:flex-start;gap:2mm;margin-top:15mm;min-height:9mm;font-size:11pt;break-inside:avoid}
-.observaciones{border:0.5mm solid #111;border-radius:8mm;min-height:19mm;margin-top:auto;margin-bottom:4mm;padding:3mm 5mm;font-size:10pt;line-height:1.35;overflow-wrap:anywhere;break-inside:avoid}
+.regreso{display:flex;align-items:flex-start;gap:2mm;margin-top:15mm;min-height:9mm;font-size:13pt;break-inside:avoid}
+.observaciones{border:0.5mm solid #111;border-radius:8mm;min-height:19mm;margin-top:auto;margin-bottom:4mm;padding:3mm 5mm;font-size:12pt;line-height:1.35;overflow-wrap:anywhere;break-inside:avoid}
 .observaciones strong{display:block;font-weight:900;margin-bottom:1.5mm}
-.pie{border-top:1mm solid #111;margin-top:0;padding-top:3mm;text-align:center;font-size:8pt;line-height:1.4;color:#555;overflow-wrap:anywhere}
+.pie{border-top:1mm solid #111;margin-top:0;padding-top:3mm;text-align:center;font-size:10pt;line-height:1.4;color:#555;overflow-wrap:anywhere}
 .pie a{color:#555;text-decoration:none}
 .acciones{display:flex;justify-content:center;gap:3mm;margin:7mm 0 2mm}
-button{font-size:11pt;padding:3mm 5mm;border:1px solid #777;border-radius:2mm;background:#f4f4f4;cursor:pointer}
+button{font-size:13pt;padding:3mm 5mm;border:1px solid #777;border-radius:2mm;background:#f4f4f4;cursor:pointer}
 @media print{.acciones{display:none!important}.hoja{width:100%;max-width:none;min-height:279.4mm;height:279.4mm;padding:10mm 12mm}.separador{display:block!important;height:0!important;border-top:1.5mm solid #000!important;background:transparent!important;visibility:visible!important;break-inside:avoid;page-break-inside:avoid}.barra{background:#000!important;color:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}.dato,.regreso,.total,.observaciones{break-inside:avoid;page-break-inside:avoid}a{color:#06c;text-decoration:underline}}
 </style></head><body><main class="hoja">
 <header class="encabezado"><div class="marca"><img class="logo" src="${origen}/logo.jpg" alt="Transportes MX"><div class="empresa"><strong>Grupo Turístico MX S. de R.L. de C.V.</strong><span>RFC: GTM2604271F2</span><br><span>San Miguel de Allende Guanajuato</span><br><span>+52 415 139 3219</span><br><a class="normal contacto-link" href="mailto:contacto@transportesmx.org">contacto@transportesmx.org</a><br><a class="normal web-link" href="https://transportesmx.org">https://transportesmx.org</a></div></div><div class="folioCol"><div class="folio">F- ${escapar(folioTexto)}</div><img class="sprinter" src="${origen}/sprinter.png" alt="Vehículo Sprinter"></div></header>
@@ -427,7 +427,7 @@ export default function NotasVenta() {
                 {CAMPOS.map(([campo, etiqueta, tipo]) => (
                   <label key={campo} className="block text-sm"><span className="font-medium text-slate-200">{etiqueta}</span><input type={tipo} min={tipo === "number" ? "0" : undefined} required={campo === "cliente"} value={datos[campo] ?? ""} onChange={(e) => cambiar(campo, e.target.value)} className="mt-1 w-full rounded-lg border border-slate-400 bg-white p-3 text-slate-900 outline-none focus:border-emerald-500" /></label>
                 ))}
-                <label className="block text-sm"><span className="font-medium text-slate-200">💰 Total / estado de pago</span><input type="text" inputMode="decimal" value={datos.importe} onChange={(e) => cambiar("importe", e.target.value)} placeholder="Ej. 3500 o Pagado" className="mt-1 w-full rounded-lg border border-slate-400 bg-white p-3 text-slate-900 outline-none focus:border-emerald-500" /></label>
+                <label className="block text-sm"><span className="font-medium text-slate-200">💰 Total / estado de pago</span><input type="text" inputMode="text" autoComplete="off" value={datos.importe} onChange={(e) => cambiar("importe", e.target.value)} placeholder="Ej. 3500 o Pagado" className="mt-1 w-full rounded-lg border border-slate-400 bg-white p-3 text-slate-900 outline-none focus:border-emerald-500" /></label>
               </div>
               <label className="block text-sm"><span className="font-medium text-slate-200">Observaciones</span><textarea value={datos.observaciones} onChange={(e) => cambiar("observaciones", e.target.value)} rows={2} placeholder="Escribe las observaciones del servicio" className="mt-1 w-full rounded-lg border border-slate-400 bg-white p-3 text-slate-900" /></label>
               <div className="flex flex-wrap gap-2">
@@ -460,22 +460,22 @@ export default function NotasVenta() {
               <div className="grid grid-cols-[minmax(0,1fr)_112px] items-start gap-3">
                 <div className="min-w-0">
                   <img src="/logo.jpg" alt="Transportes MX" className="mb-1 h-12 w-32 object-contain object-left" />
-                  <div className="min-w-0 text-[10px] font-extrabold leading-4"><strong className="block">Grupo Turístico MX S. de R.L. de C.V.</strong><span>RFC: GTM2604271F2</span><br /><span>San Miguel de Allende Guanajuato</span><br /><span>+52 415 139 3219</span><br /><a className="font-normal text-blue-600 underline" href="mailto:contacto@transportesmx.org">contacto@transportesmx.org</a><br /><a className="font-normal text-blue-600 underline" href="https://transportesmx.org">https://transportesmx.org</a></div>
+                  <div className="min-w-0 text-[12px] font-extrabold leading-4"><strong className="block">Grupo Turístico MX S. de R.L. de C.V.</strong><span>RFC: GTM2604271F2</span><br /><span>San Miguel de Allende Guanajuato</span><br /><span>+52 415 139 3219</span><br /><a className="font-normal text-blue-600 underline" href="mailto:contacto@transportesmx.org">contacto@transportesmx.org</a><br /><a className="font-normal text-blue-600 underline" href="https://transportesmx.org">https://transportesmx.org</a></div>
                 </div>
-                <div className="min-w-0"><div className="bg-red-600 px-2 py-1 text-xs font-extrabold text-white">F- {folio || "Pendiente"}</div><img src="/sprinter.png" alt="Sprinter" className="mt-2 h-20 w-full object-contain" /></div>
+                <div className="min-w-0"><div className="bg-red-600 px-2 py-1 text-[14px] font-extrabold text-white">F- {folio || "Pendiente"}</div><img src="/sprinter.png" alt="Sprinter" className="mt-2 h-20 w-full object-contain" /></div>
               </div>
-              <div className="mt-4 space-y-1.5 text-sm"><p><strong>Cliente:</strong> {datos.cliente}</p><p><strong>Teléfono:</strong> {datos.telefono}</p><p><strong>Correo:</strong> {datos.email}</p></div>
+              <div className="mt-4 space-y-1.5 text-[16px]"><p><strong>Cliente:</strong> {datos.cliente}</p><p><strong>Teléfono:</strong> {datos.telefono}</p><p><strong>Correo:</strong> {datos.email}</p></div>
               <div className="my-3 h-1.5 w-full bg-black" />
-              <div className="mt-2 inline-block max-w-full bg-green-600 px-3 py-1 text-sm font-extrabold text-white">Total: {moneda(datos.importe)}</div>
-              <div className="mt-2 h-[3mm]" aria-hidden="true" /><div className="bg-black px-2 py-1.5 text-sm font-extrabold text-white">Descripción del traslado:</div>
-              <div className="mt-[9mm] space-y-1.5 text-sm">
+              <div className="mt-2 inline-block max-w-full bg-green-600 px-3 py-1 text-[16px] font-extrabold text-white">Total: {moneda(datos.importe)}</div>
+              <div className="mt-2 h-[3mm]" aria-hidden="true" /><div className="bg-black px-2 py-1.5 text-[16px] font-extrabold text-white">Descripción del traslado:</div>
+              <div className="mt-[9mm] space-y-1.5 text-[16px]">
                 {[["🚐", "Vehículo:", datos.unidad], ["👤", "Nombre del cliente:", datos.cliente], ["📅", "Fecha y hora:", valorFechaHora(datos)], ["📍", "Recoger en:", datos.origen], ["✈️", "Aerolínea:", datos.aerolinea || "N/A"], ["👥", "Número de pasajeros:", datos.pasajeros], ["🧳", "Número de maletas:", datos.maletas], ["☎️", "Número de teléfono:", datos.telefono], ["📍", "Destino:", datos.destino], ["🔄", "Ida y vuelta:", datos.idaVuelta], ["⏱️", "Duración:", datos.duracion]].map(([icono, etiqueta, valor]) => <p key={etiqueta} className="flex flex-wrap items-start gap-x-1"><span>{icono}</span><strong>{etiqueta}</strong><span className="break-words">{valor || ""}</span></p>)}
               </div>
-              <div className="mt-[15mm] flex items-start gap-1 text-sm"><span>↩️</span><strong>Regreso:</strong><span>{valorRegreso(datos)}</span></div>
-              <div className="mt-5 min-h-16 rounded-[24px] border-2 border-black px-4 py-3 text-xs"><strong className="mb-1 block">Observaciones:</strong><span>{datos.observaciones || ""}</span></div>
-              <footer className="mt-4 border-t-2 border-black pt-3 text-center text-[9px] leading-4 text-slate-600"><p>San Miguel de Allende, Guanajuato · Documento Generado: {fechaActual.fecha} · Hora: {fechaActual.hora}</p><p>Grupo Turístico MX S. de R.L. de C.V.</p></footer>
+              <div className="mt-[15mm] flex items-start gap-1 text-[16px]"><span>↩️</span><strong>Regreso:</strong><span>{valorRegreso(datos)}</span></div>
+              <div className="mt-5 min-h-16 rounded-[24px] border-2 border-black px-4 py-3 text-[14px]"><strong className="mb-1 block">Observaciones:</strong><span>{datos.observaciones || ""}</span></div>
+              <footer className="mt-4 border-t-2 border-black pt-3 text-center text-[11px] leading-4 text-slate-600"><p>San Miguel de Allende, Guanajuato · Documento Generado: {fechaActual.fecha} · Hora: {fechaActual.hora}</p><p>Grupo Turístico MX S. de R.L. de C.V.</p></footer>
             </article>
-            <p className="mx-auto mt-3 max-w-[760px] text-xs text-slate-600">La vista previa sigue la distribución del documento impreso. Para generar el PDF, pulsa “Imprimir / PDF”.</p>
+            <p className="mx-auto mt-3 max-w-[760px] text-sm text-slate-600">La vista previa sigue la distribución del documento impreso. Para generar el PDF, pulsa “Imprimir / PDF”.</p>
           </section>
         </div>
       </div>
