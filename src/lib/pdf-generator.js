@@ -1,34 +1,33 @@
+
 import jsPDF from 'jspdf';
-import { LOGO_BASE64 } from './logo-base64';
+import { LOGOPDF_BASE64 } from './logopdf-base64';
+import { QRPDF_BASE64 } from './qrpdf-base64';
 import { VEHICLE_IMAGES } from './vehicle-images-base64';
+import { EMOJI_ICONS } from './emoji-icons-base64';
 
 const COLORS = {
   black: [0, 0, 0],
   dark: [20, 20, 20],
-  text: [30, 30, 30],
-  textLight: [100, 100, 100],
   blue: [0, 51, 153],
   line: [200, 200, 200],
-  lineDark: [120, 120, 120],
   white: [255, 255, 255],
   red: [200, 30, 30],
-  bgLight: [245, 245, 245],
+  footerGray: [120, 120, 120],
 };
 
 function generarFolio(reservaId) {
-  const now = new Date();
-  const yy = String(now.getFullYear()).slice(2);
-  const mm = String(now.getMonth() + 1).padStart(2, '0');
-  const dd = String(now.getDate()).padStart(2, '0');
-  const hash = reservaId
-    ? reservaId.toString().slice(-4).toUpperCase()
-    : Math.random().toString(36).slice(2, 6).toUpperCase();
-  return `TMX-${yy}${mm}${dd}-${hash}`;
+  if (reservaId) {
+    const clean = String(reservaId).replace(/\D/g, '');
+    if (clean.length >= 4) return `MX${clean.slice(-6).padStart(6, '0')}`;
+  }
+  const n = Math.floor(100000 + Math.random() * 900000);
+  return `MX${n}`;
 }
 
 function formatearTelefono(tel) {
   if (!tel) return 'N/A';
   const limpio = tel.replace(/\D/g, '');
+
   if (limpio.length === 12 && limpio.startsWith('52')) {
     return `+${limpio.slice(0, 2)} ${limpio.slice(2, 5)} ${limpio.slice(5, 8)} ${limpio.slice(8)}`;
   }
@@ -53,19 +52,20 @@ function formatearTelefono(tel) {
 
 function getVehicleImage(vehiculoId, vehiculoNombre) {
   if (vehiculoId && VEHICLE_IMAGES[vehiculoId]) return VEHICLE_IMAGES[vehiculoId];
+
   const nombre = (vehiculoNombre || '').toLowerCase();
   if (nombre.includes('sedan')) return VEHICLE_IMAGES.sedan;
   if (nombre.includes('suburban')) return VEHICLE_IMAGES.suburban;
   if (nombre.includes('minivan') || nombre.includes('van')) return VEHICLE_IMAGES.minivan;
   if (nombre.includes('hiace')) return VEHICLE_IMAGES.hiace;
   if (nombre.includes('sprinter')) return VEHICLE_IMAGES.sprinter;
+
   return null;
 }
 
 const labels = {
   es: {
-    serviceSheet: 'HOJA DE SERVICIO',
-    company: 'Grupo Turístico MX',
+    company: 'Grupo Turístico MX S. de R.L. de C.V.',
     rfc: 'RATG900822G16',
     address: 'San Miguel de Allende GTO.',
     phone: '+52 415 139 3219',
@@ -73,36 +73,32 @@ const labels = {
     website: 'https://transportesmx.org',
     folio: 'Folio',
     date: 'Fecha',
-    status: 'Pagado',
     client: 'Cliente',
-    clientPhone: 'Teléfono',
+    clientPhone: 'Telefono',
     clientEmail: 'Correo',
-    transferDesc: 'Descripción del traslado:',
-    vehicle: 'Vehículo',
+    transferDesc: 'Descripcion del traslado:',
+    vehicle: 'Vehiculo',
     clientName: 'Nombre de cliente',
     dateTime: 'Fecha y hora',
     pickupAt: 'Recoger en',
-    numPassengers: 'Número de Pasajeros',
-    numBags: 'Número de Maletas',
-    airline: 'Aerolínea',
+    flightAndAirline: 'Numero de vuelo y aerolinea',
+    airline: 'Aerolinea',
     flightNumber: 'No. Vuelo',
+    numPassengers: 'Numero de Pasajeros',
+    numBags: 'Numero de maletas',
     destination: 'Destino',
+    roundTrip: 'Ida y vuelta',
     distance: 'Distancia',
     estTime: 'Tiempo estimado',
-    roundTrip: 'Ida y vuelta',
-    yes: 'Sí',
+    yes: 'Si',
     no: 'No',
     returnSection: 'Regreso:',
     returnPickup: 'Recoger en',
     returnDateTime: 'Fecha y hora',
-    comments: 'Comentarios',
-    footer: 'TransportesMX | transportesmx.org | +52 415 139 3219',
     generated: 'Documento generado el',
-    siteLabel: 'Sitio web:',
   },
   en: {
-    serviceSheet: 'SERVICE SHEET',
-    company: 'Grupo Turístico MX',
+    company: 'Grupo Turístico MX S. de R.L. de C.V.',
     rfc: 'RATG900822G16',
     address: 'San Miguel de Allende GTO.',
     phone: '+52 415 139 3219',
@@ -110,7 +106,6 @@ const labels = {
     website: 'https://transportesmx.org',
     folio: 'Folio',
     date: 'Date',
-    status: 'Paid',
     client: 'Client',
     clientPhone: 'Phone',
     clientEmail: 'Email',
@@ -119,25 +114,47 @@ const labels = {
     clientName: 'Client name',
     dateTime: 'Date and time',
     pickupAt: 'Pickup at',
-    numPassengers: 'Number of Passengers',
-    numBags: 'Number of Bags',
+    flightAndAirline: 'Flight number and airline',
     airline: 'Airline',
     flightNumber: 'Flight No.',
+    numPassengers: 'Number of Passengers',
+    numBags: 'Number of bags',
     destination: 'Destination',
+    roundTrip: 'Round trip',
     distance: 'Distance',
     estTime: 'Estimated time',
-    roundTrip: 'Round trip',
     yes: 'Yes',
     no: 'No',
     returnSection: 'Return:',
     returnPickup: 'Pickup at',
     returnDateTime: 'Date and time',
-    comments: 'Comments',
-    footer: 'TransportesMX | transportesmx.org | +52 415 139 3219',
     generated: 'Document generated on',
-    siteLabel: 'Website:',
   },
 };
+
+const EMOJI_SIZE = 4.5;
+
+function drawEmoji(doc, emojiKey, x, y) {
+  const icon = EMOJI_ICONS[emojiKey];
+
+  if (icon) {
+    try {
+      doc.addImage(icon, 'PNG', x, y - EMOJI_SIZE + 0.5, EMOJI_SIZE, EMOJI_SIZE);
+      return;
+    } catch {
+      // Usa el círculo de respaldo si el icono falla.
+    }
+  }
+
+  doc.setFillColor(...COLORS.black);
+  doc.circle(x + EMOJI_SIZE / 2, y - EMOJI_SIZE / 2 + 0.5, 1.3, 'F');
+}
+
+function drawWrappedValue(doc, text, x, y, maxWidth, lineHeight) {
+  const lines = doc.splitTextToSize(String(text || ''), maxWidth);
+  doc.text(lines, x, y);
+  return y + lineHeight * (lines.length - 1);
+}
 
 export function generarHojaServicio(reserva, lang = 'es') {
   const t = labels[lang] || labels.es;
@@ -146,219 +163,452 @@ export function generarHojaServicio(reserva, lang = 'es') {
   const ph = doc.internal.pageSize.getHeight();
   const margin = 15;
   const contentWidth = pw - margin * 2;
+  const rightX = pw - margin;
 
   let y = margin;
 
-  // ── LOGO ──
+  // Logotipo: conserva la posición superior izquierda y aumenta su tamaño.
+  const logoW = 58;
+  const logoH = logoW / 3.18;
+
   try {
-    doc.addImage(LOGO_BASE64, 'PNG', margin, y, 44, 15);
+    doc.addImage(LOGOPDF_BASE64, 'PNG', margin, y, logoW, logoH);
   } catch {
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(22);
     doc.setTextColor(...COLORS.black);
-    doc.text('TRANSPORTES MX', margin, y + 10);
+    doc.text('TRANSPORTES MX', margin, y + 12);
   }
 
-  // ── Empresa info (lado izquierdo, debajo del logo) ──
-  y += 19;
-  doc.setFontSize(8);
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(...COLORS.black);
-  [t.company, t.address, t.phone, t.rfc].forEach((line) => {
-    doc.text(line, margin, y);
-    y += 3.8;
-  });
-  // Email como hipervínculo azul
-  doc.setTextColor(...COLORS.blue);
-  doc.textWithLink(t.email, margin, y, { url: `mailto:${t.email}` });
-  y += 3.8;
-  // Sitio web label en negro + URL azul
-  doc.setTextColor(...COLORS.black);
-  doc.setFont('helvetica', 'bold');
-  doc.text(`${t.siteLabel}`, margin, y);
-  y += 3.8;
-  doc.setTextColor(...COLORS.blue);
-  doc.textWithLink(t.website, margin, y, { url: t.website });
-  y += 3.8;
+  // Código QR, conservando su posición entre el logotipo y el folio.
+  const qrSize = 36;
+  const qrLeftEdge = margin + logoW + 6;
+  const qrRightEdge = rightX - 50;
+  const qrX = qrLeftEdge + (qrRightEdge - qrLeftEdge - qrSize) / 2;
 
-  // ── Folio en RECUADRO ROJO (derecha arriba) ──
+  try {
+    doc.addImage(QRPDF_BASE64, 'PNG', qrX, y - 3, qrSize, qrSize);
+  } catch {
+    // El QR no está disponible.
+  }
+
+  // Folio rojo.
   const folio = generarFolio(reserva.id);
-  const rightX = pw - margin;
   const folioText = `${t.folio}: ${folio}`;
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(10);
-  const folioW = doc.getStringUnitWidth(folioText) * 10 / doc.internal.scaleFactor + 12;
-  const folioH = 9;
-  const folioX = rightX - folioW;
-  const folioY = margin + 2;
 
-  doc.setFillColor(...COLORS.red);
-  doc.roundedRect(folioX, folioY, folioW, folioH, 2, 2, 'F');
-  doc.setTextColor(...COLORS.white);
-  doc.text(folioText, folioX + 6, folioY + 6.5);
-
-  // Fecha y Pagado (debajo del folio, alineado a la derecha)
-  const fechaDoc = new Date().toLocaleDateString(lang === 'en' ? 'en-US' : 'es-MX', {
-    day: '2-digit', month: '2-digit', year: 'numeric',
-  });
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(11);
-  doc.setTextColor(...COLORS.black);
-  doc.text(`${t.date}: ${fechaDoc}`, rightX, folioY + folioH + 8, { align: 'right' });
-  doc.text(t.status, rightX, folioY + folioH + 15, { align: 'right' });
 
-  // ── Línea separadora después del header ──
-  y += 4;
-  doc.setDrawColor(...COLORS.black);
-  doc.setLineWidth(0.8);
-  doc.line(margin, y, pw - margin, y);
+  const folioTextW =
+    doc.getStringUnitWidth(folioText) * 11 / doc.internal.scaleFactor + 12;
+
+  const folioH = 9;
+  const folioBoxX = rightX - folioTextW;
+
+  doc.setFillColor(...COLORS.red);
+  doc.roundedRect(folioBoxX, y, folioTextW, folioH, 1.5, 1.5, 'F');
+  doc.setTextColor(...COLORS.white);
+  doc.text(folioText, folioBoxX + 6, y + 6.5);
+
+  // Fecha debajo del folio.
+  const fechaDoc = new Date().toLocaleDateString(
+    lang === 'en' ? 'en-US' : 'es-MX',
+    { day: '2-digit', month: '2-digit', year: 'numeric' }
+  );
+
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(11);
+  doc.setTextColor(...COLORS.black);
+  doc.text(`${t.date}: ${fechaDoc}`, folioBoxX, y + folioH + 6);
+
+  // Datos de la empresa.
+  y += logoH + 8;
+
+  doc.setFontSize(10);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(...COLORS.black);
+  doc.text(t.company, margin, y);
+  y += 4.5;
+
+  doc.setFont('helvetica', 'normal');
+  doc.text(t.address, margin, y);
+  y += 4.5;
+
+  doc.text(t.phone, margin, y);
+  y += 4.5;
+
+  doc.setTextColor(...COLORS.blue);
+  doc.textWithLink(t.email, margin, y, { url: `mailto:${t.email}` });
+  y += 4.5;
+
+  // Solo se muestra la URL, sin "Sitio web:" ni "Website:".
+  doc.setTextColor(...COLORS.blue);
+  doc.textWithLink(t.website, margin, y, { url: t.website });
   y += 8;
 
-  // ── SECCIÓN 2 COLUMNAS: Cliente (izq) + Vehículo imagen (der) ──
-  const clientSectionY = y;
-  const fontSize = 12;
+  // Línea separadora.
+  doc.setDrawColor(...COLORS.black);
+  doc.setLineWidth(1.2);
+  doc.line(margin, y, rightX, y);
+  y += 10;
 
-  // Columna izquierda: datos del cliente
-  doc.setFontSize(fontSize);
+  // Datos del cliente.
+  const clientStartY = y;
+  const clientFontSize = 13;
+  doc.setFontSize(clientFontSize);
   doc.setFont('helvetica', 'normal');
   doc.setTextColor(...COLORS.black);
+
   const clLabel = `${t.client}: `;
   doc.text(clLabel, margin, y);
-  const clLabelW = doc.getStringUnitWidth(clLabel) * fontSize / doc.internal.scaleFactor;
+  const clLabelW =
+    doc.getStringUnitWidth(clLabel) * clientFontSize / doc.internal.scaleFactor;
+
   doc.setFont('helvetica', 'bold');
   doc.text(reserva.clienteNombre || 'N/A', margin + clLabelW, y);
-  y += 8;
+  y += 7;
 
   doc.setFont('helvetica', 'normal');
-  doc.setFontSize(fontSize);
-  doc.setTextColor(...COLORS.black);
   const telLabel = `${t.clientPhone}: `;
   doc.text(telLabel, margin, y);
-  const telLabelW = doc.getStringUnitWidth(telLabel) * fontSize / doc.internal.scaleFactor;
+  const telLabelW =
+    doc.getStringUnitWidth(telLabel) * clientFontSize / doc.internal.scaleFactor;
+
+  doc.setFont('helvetica', 'bold');
   doc.text(formatearTelefono(reserva.clienteTelefono), margin + telLabelW, y);
   y += 7;
 
-  const emailLabel = `${t.clientEmail}: `;
-  doc.text(emailLabel, margin, y);
-  const emailLabelW = doc.getStringUnitWidth(emailLabel) * fontSize / doc.internal.scaleFactor;
+  doc.setFont('helvetica', 'normal');
+  const emLabel = `${t.clientEmail}: `;
+  doc.text(emLabel, margin, y);
+
+  const emLabelW =
+    doc.getStringUnitWidth(emLabel) * clientFontSize / doc.internal.scaleFactor;
+
   doc.setTextColor(...COLORS.blue);
-  doc.text(reserva.clienteEmail || 'N/A', margin + emailLabelW, y);
-  y += 4;
+  doc.setFont('helvetica', 'bold');
+  doc.text(reserva.clienteEmail || 'N/A', margin + emLabelW, y);
+  y += 3;
 
-  // Columna derecha: imagen del vehículo (aspect ratio real ~2:1)
-  const colHeight = y - clientSectionY + 2;
-  const imgH = colHeight;
-  const imgW = imgH * 2;
-  const imgX = pw - margin - imgW;
-  const vehicleImg = getVehicleImage(reserva.vehiculoId, reserva.vehiculoNombre);
-  if (vehicleImg) {
-    try {
-      doc.addImage(vehicleImg, 'PNG', imgX, clientSectionY - 2, imgW, imgH);
-    } catch { /* no image */ }
-  }
+  // Estado del pago: debajo del correo del cliente.
+  const paidText = lang === 'en' ? 'PAID' : 'PAGADO';
 
-  y += 8;
-
-  // ── DESCRIPCIÓN DEL TRASLADO ──
-  doc.setFillColor(...COLORS.dark);
-  doc.rect(margin, y, contentWidth, 8, 'F');
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(10);
-  doc.setTextColor(...COLORS.white);
-  doc.text(t.transferDesc, margin + 4, y + 5.5);
-  y += 13;
 
-  // Bullet points
+  const paidW = doc.getTextWidth(paidText) + 10;
+  const paidH = 8;
+
+  doc.setFillColor(0, 182, 83);
+  doc.roundedRect(margin, y, paidW, paidH, 2, 2, 'F');
+
+  doc.setTextColor(...COLORS.white);
+  doc.text(paidText, margin + paidW / 2, y + 5.5, { align: 'center' });
+
+  y += paidH + 3;
+
+  // Imagen del vehículo, conservando la columna derecha.
+  const vehicleImg = getVehicleImage(
+    reserva.vehiculoId,
+    reserva.vehiculoNombre
+  );
+
+  if (vehicleImg) {
+    const finalW = 55;
+    const finalH = finalW / 2;
+    const imgX = rightX - finalW;
+    const imgY = clientStartY - 2;
+
+    try {
+      doc.addImage(vehicleImg, 'PNG', imgX, imgY, finalW, finalH);
+    } catch {
+      // No se pudo cargar la imagen del vehículo.
+    }
+  }
+
+  y += 10;
+
+  // Barra de descripción.
+  const barH = 11;
+  doc.setFillColor(...COLORS.black);
+  doc.rect(margin, y, contentWidth, barH, 'F');
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(13);
+  doc.setTextColor(...COLORS.white);
+  doc.text(t.transferDesc, margin + 5, y + 8);
+  y += barH + 8;
+
+  // Datos del traslado.
   const bulletItems = [
-    { label: t.vehicle, value: reserva.vehiculoNombre || 'N/A' },
-    { label: t.clientName, value: reserva.clienteNombre || 'N/A' },
-    { label: t.dateTime, value: `${reserva.fechaIda || 'N/A'} / ${reserva.horaIda || 'N/A'} hrs` },
-    { label: t.pickupAt, value: reserva.origen || 'N/A' },
+    { emoji: 'vehicle', label: t.vehicle, value: reserva.vehiculoNombre || 'N/A' },
+    { emoji: 'person', label: t.clientName, value: reserva.clienteNombre || 'N/A' },
+    {
+      emoji: 'calendar',
+      label: t.dateTime,
+      value: `${reserva.fechaIda || 'N/A'} / ${reserva.horaIda || 'N/A'} hrs`,
+    },
+    { emoji: 'location', label: t.pickupAt, value: reserva.origen || 'N/A' },
   ];
 
   if (reserva.numVuelo && reserva.aerolinea) {
-    bulletItems.push({ label: `${t.flightNumber} ${t.airline}`, value: `${reserva.aerolinea} ${reserva.numVuelo}` });
+    bulletItems.push({
+      emoji: 'flight',
+      label: t.flightAndAirline,
+      value: `${reserva.aerolinea} ${reserva.numVuelo}`,
+    });
   } else {
-    if (reserva.aerolinea) bulletItems.push({ label: t.airline, value: reserva.aerolinea });
-    if (reserva.numVuelo) bulletItems.push({ label: t.flightNumber, value: reserva.numVuelo });
+    if (reserva.aerolinea) {
+      bulletItems.push({
+        emoji: 'flight',
+        label: t.airline,
+        value: reserva.aerolinea,
+      });
+    }
+
+    if (reserva.numVuelo) {
+      bulletItems.push({
+        emoji: 'flight',
+        label: t.flightNumber,
+        value: reserva.numVuelo,
+      });
+    }
   }
 
   bulletItems.push(
-    { label: t.numPassengers, value: `${reserva.numPasajeros || 'N/A'} PAX` },
-    { label: t.numBags, value: `${reserva.numMaletas || '0'}` },
-    { label: t.clientPhone, value: formatearTelefono(reserva.clienteTelefono) },
-    { label: t.destination, value: reserva.destino || 'N/A' },
-    { label: t.roundTrip, value: reserva.tipoViaje === 'redondo' ? t.yes : t.no },
+    {
+      emoji: 'passengers',
+      label: t.numPassengers,
+      value: `${reserva.numPasajeros || 'N/A'} PAX`,
+    },
+    {
+      emoji: 'bags',
+      label: t.numBags,
+      value: `${reserva.numMaletas || '0'}`,
+    },
+    {
+      emoji: 'phone',
+      label: t.clientPhone,
+      value: formatearTelefono(reserva.clienteTelefono),
+    },
+    {
+      emoji: 'location',
+      label: t.destination,
+      value: reserva.destino || 'N/A',
+    },
+    {
+      emoji: 'checkmark',
+      label: t.roundTrip,
+      value: reserva.tipoViaje === 'redondo' ? t.yes : t.no,
+    }
   );
 
-  if (reserva.distancia) bulletItems.push({ label: t.distance, value: reserva.distancia });
-  if (reserva.duracion) bulletItems.push({ label: t.estTime, value: reserva.duracion });
+  if (reserva.distancia) {
+    bulletItems.push({
+      emoji: 'distance',
+      label: t.distance,
+      value: reserva.distancia,
+    });
+  }
 
-  doc.setFontSize(9.5);
+  if (reserva.duracion) {
+    bulletItems.push({
+      emoji: 'time',
+      label: t.estTime,
+      value: reserva.duracion,
+    });
+  }
+
+  const bulletFontSize = 13;
+  const bulletLineH = 8;
+  const textIndent = margin + EMOJI_SIZE + 3;
+  doc.setFontSize(bulletFontSize);
+
   bulletItems.forEach((item) => {
-    doc.setFillColor(...COLORS.black);
-    doc.circle(margin + 4, y - 1, 1, 'F');
+    drawEmoji(doc, item.emoji, margin + 1, y);
 
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(...COLORS.black);
-    doc.text(`${item.label}: `, margin + 8, y);
 
-    const labelWidth = doc.getStringUnitWidth(`${item.label}: `) * 9.5 / doc.internal.scaleFactor;
+    const labelStr = `${item.label}: `;
+    doc.text(labelStr, textIndent, y);
+
+    const labelWidth =
+      doc.getStringUnitWidth(labelStr) *
+      bulletFontSize /
+      doc.internal.scaleFactor;
+
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(...COLORS.blue);
-    const maxW = contentWidth - 8 - labelWidth - 5;
-    const lines = doc.splitTextToSize(String(item.value), maxW);
-    doc.text(lines, margin + 8 + labelWidth, y);
-    y += 6.5 * lines.length;
+
+    const maxW =
+      contentWidth - (textIndent - margin) - labelWidth - 2;
+
+    y = drawWrappedValue(
+      doc,
+      item.value,
+      textIndent + labelWidth,
+      y,
+      maxW,
+      bulletLineH
+    );
+
+    y += bulletLineH;
   });
 
+  // Recuadro de observaciones.
   y += 4;
 
-  // ── REGRESO (siempre visible) ──
-  doc.setDrawColor(...COLORS.lineDark);
+  const observationText = String(
+    reserva.observaciones || reserva.comentarios || ''
+  ).trim();
+
+  const observationLabel =
+    lang === 'en' ? 'Observations:' : 'Observaciones:';
+
+  const observationValue =
+    observationText ||
+    (lang === 'en'
+      ? 'Write any special instructions'
+      : 'Anote alguna indicación especial');
+
+  const observationLines = doc.splitTextToSize(
+    observationValue,
+    contentWidth - 12
+  );
+
+  const observationBoxH = Math.max(
+    19,
+    12 + observationLines.length * 5
+  );
+
+  doc.setDrawColor(...COLORS.line);
   doc.setLineWidth(0.4);
-  doc.line(margin, y, pw - margin, y);
-  y += 7;
+  doc.setFillColor(255, 255, 255);
+  doc.roundedRect(
+    margin,
+    y,
+    contentWidth,
+    observationBoxH,
+    3,
+    3,
+    'FD'
+  );
 
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(11);
+  doc.setFontSize(10);
   doc.setTextColor(...COLORS.black);
-  doc.text(t.returnSection, margin, y);
-  y += 7;
+  doc.text(observationLabel, margin + 5, y + 6);
 
-  const isRoundTrip = reserva.tipoViaje === 'redondo' && reserva.fechaRegreso;
+  doc.setFont('helvetica', observationText ? 'normal' : 'italic');
+  doc.setFontSize(9);
+  doc.setTextColor(
+    ...(observationText ? COLORS.black : COLORS.footerGray)
+  );
+  doc.text(observationLines, margin + 5, y + 12);
+
+  y += observationBoxH + 8;
+
+  // Regreso.
+  doc.setDrawColor(...COLORS.black);
+  doc.setLineWidth(0.5);
+  doc.line(margin, y, rightX, y);
+  y += 10;
+
+  drawEmoji(doc, 'checkmark', margin + 1, y);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(15);
+  doc.setTextColor(...COLORS.black);
+  doc.text(t.returnSection, textIndent, y);
+  y += 9;
+
+  const isRoundTrip =
+    reserva.tipoViaje === 'redondo' && reserva.fechaRegreso;
+
   const returnItems = [
-    { label: t.returnPickup, value: isRoundTrip ? (reserva.destino || 'N/A') : '' },
-    { label: t.returnDateTime, value: isRoundTrip ? `${reserva.fechaRegreso} / ${reserva.horaRegreso || 'N/A'} hrs` : '' },
+    {
+      emoji: 'location',
+      label: t.returnPickup,
+      value: isRoundTrip ? (reserva.destino || 'N/A') : '',
+    },
+    {
+      emoji: 'calendar',
+      label: t.returnDateTime,
+      value: isRoundTrip
+        ? `${reserva.fechaRegreso} / ${reserva.horaRegreso || 'N/A'} hrs`
+        : '',
+    },
   ];
 
-  doc.setFontSize(9.5);
+  doc.setFontSize(bulletFontSize);
+
   returnItems.forEach((item) => {
-    doc.setFillColor(...COLORS.black);
-    doc.circle(margin + 4, y - 1, 1, 'F');
+    drawEmoji(doc, item.emoji, margin + 1, y);
+
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(...COLORS.black);
-    doc.text(`${item.label}: `, margin + 8, y);
-    const lw = doc.getStringUnitWidth(`${item.label}: `) * 9.5 / doc.internal.scaleFactor;
+
+    const labelStr = `${item.label}: `;
+    doc.text(labelStr, textIndent, y);
+
+    const lw =
+      doc.getStringUnitWidth(labelStr) *
+      bulletFontSize /
+      doc.internal.scaleFactor;
+
     doc.setTextColor(...COLORS.blue);
-    doc.text(String(item.value), margin + 8 + lw, y);
-    y += 6.5;
+    doc.setFont('helvetica', 'bold');
+
+    const maxW = contentWidth - (textIndent - margin) - lw;
+
+    y = drawWrappedValue(
+      doc,
+      item.value,
+      textIndent + lw,
+      y,
+      maxW,
+      bulletLineH
+    );
+
+    y += bulletLineH;
   });
 
-  // ── FOOTER ──
-  const footerY = ph - 18;
+  // Pie de página gris.
+  const footerY = ph - 20;
+
   doc.setDrawColor(...COLORS.line);
   doc.setLineWidth(0.3);
-  doc.line(margin, footerY, pw - margin, footerY);
+  doc.line(margin, footerY, rightX, footerY);
 
   doc.setFontSize(8);
-  doc.setTextColor(...COLORS.textLight);
+  doc.setTextColor(...COLORS.footerGray);
   doc.setFont('helvetica', 'normal');
-  doc.text(t.footer, pw / 2, footerY + 5, { align: 'center' });
 
-  const genText = `${t.generated} ${new Date().toLocaleDateString(lang === 'en' ? 'en-US' : 'es-MX')}`;
-  doc.setFontSize(7);
-  doc.text(genText, pw / 2, footerY + 10, { align: 'center' });
+  doc.text(
+    'San Miguel de Allende, Guanajuato',
+    pw / 2,
+    footerY + 4,
+    { align: 'center' }
+  );
+
+  const now = new Date();
+  const locale = lang === 'en' ? 'en-US' : 'es-MX';
+  const genDate = now.toLocaleDateString(locale);
+  const genTime = now.toLocaleTimeString(locale, {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+
+  const genText = `${t.generated} ${genDate} · ${genTime}`;
+
+  doc.text(genText, pw / 2, footerY + 8, { align: 'center' });
+
+  doc.text(
+    'Grupo Turístico MX S. de R.L. de C.V.',
+    pw / 2,
+    footerY + 12,
+    { align: 'center' }
+  );
 
   return doc;
 }
