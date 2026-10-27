@@ -436,3 +436,4 @@ export function generarHojaServicio(reserva, lang = 'es') {
   doc.text(t.company, pw / 2, footerY + 10, { align: 'center' });
 
   return doc;
+}
