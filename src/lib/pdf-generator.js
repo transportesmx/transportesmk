@@ -12,6 +12,8 @@ const COLORS = {
   white: [255, 255, 255],
   red: [200, 30, 30],
   footerGray: [120, 120, 120],
+  green: [35, 145, 75],
+  placeholderGray: [155, 155, 155],
 };
 
 function generarFolio(reservaId) {
@@ -67,7 +69,6 @@ const labels = {
     phone: '+52 415 139 3219',
     email: 'contacto@transportesmx.org',
     website: 'https://transportesmx.org',
-    siteLabel: '',
     folio: 'Folio',
     date: 'Fecha',
     status: 'Pagado',
@@ -94,8 +95,10 @@ const labels = {
     returnSection: 'Regreso:',
     returnPickup: 'Recoger en',
     returnDateTime: 'Fecha y hora',
-    footer: 'San Miguel de Allende, Guanajuato · Grupo Turístico MX S. de R.L. de C.V.',
-    generated: 'Documento generado el',
+    footer: 'San Miguel de Allende, Guanajuato',
+    generated: 'Documento Generado:',
+    timeLabel: 'Hora:',
+    observationsPlaceholder: 'Anote alguna indicación especial',
   },
   en: {
     company: 'Grupo Turístico MX S. de R.L. de C.V.',
@@ -104,7 +107,6 @@ const labels = {
     phone: '+52 415 139 3219',
     email: 'contacto@transportesmx.org',
     website: 'https://transportesmx.org',
-    siteLabel: '',
     folio: 'Folio',
     date: 'Date',
     status: 'Paid',
@@ -131,8 +133,10 @@ const labels = {
     returnSection: 'Return:',
     returnPickup: 'Pickup at',
     returnDateTime: 'Date and time',
-    footer: 'San Miguel de Allende, Guanajuato · Grupo Turístico MX S. de R.L. de C.V.',
-    generated: 'Document generated on',
+    footer: 'San Miguel de Allende, Guanajuato',
+    generated: 'Document generated:',
+    timeLabel: 'Time:',
+    observationsPlaceholder: 'Add any special instructions',
   },
 };
 
@@ -172,9 +176,8 @@ export function generarHojaServicio(reserva, lang = 'es') {
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(companyFontSize);
   const companyTextW = doc.getStringUnitWidth(t.company) * companyFontSize / doc.internal.scaleFactor;
-  // Logo TMX proporcionado por el usuario: mantener proporción y evitar invadir el QR/folio.
-  const logoW = Math.min(68, Math.max(58, companyTextW * 1.25));
-  const logoH = logoW / 3.0;
+  const logoW = companyTextW * 1.15;
+  const logoH = logoW / 4.56;
 
   // ── LOGO ──
   try {
@@ -217,6 +220,16 @@ export function generarHojaServicio(reserva, lang = 'es') {
   doc.setFontSize(11);
   doc.setTextColor(...COLORS.black);
   doc.text(`${t.date}: ${fechaDoc}`, folioBoxX, y + folioH + 6);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(10);
+  const statusW = doc.getStringUnitWidth(t.status) * 10 / doc.internal.scaleFactor + 10;
+  const statusH = 7;
+  const statusY = y + folioH + 8;
+  doc.setFillColor(...COLORS.green);
+  doc.roundedRect(folioBoxX, statusY, statusW, statusH, 2, 2, 'F');
+  doc.setTextColor(...COLORS.white);
+  doc.text(t.status, folioBoxX + 5, statusY + 4.8);
+  doc.setTextColor(...COLORS.black);
 
   // ── Company info ──
   y += logoH + 8;
@@ -274,19 +287,7 @@ export function generarHojaServicio(reserva, lang = 'es') {
   doc.setTextColor(...COLORS.blue);
   doc.setFont('helvetica', 'bold');
   doc.text(reserva.clienteEmail || 'N/A', margin + emLabelW, y);
-  y += 3;
-
-  // ── PAID badge directly below client email ──
-  const paidText = lang === 'en' ? 'PAID' : 'PAGADO';
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(10);
-  const paidW = doc.getTextWidth(paidText) + 10;
-  const paidH = 8;
-  doc.setFillColor(0, 182, 83);
-  doc.roundedRect(margin, y, paidW, paidH, 2, 2, 'F');
-  doc.setTextColor(...COLORS.white);
-  doc.text(paidText, margin + paidW / 2, y + 5.5, { align: 'center' });
-  y += paidH + 3;
+  y += 4;
 
   // ── Vehicle image (right column) ──
   const vehicleImg = getVehicleImage(reserva.vehiculoId, reserva.vehiculoNombre);
@@ -361,26 +362,27 @@ export function generarHojaServicio(reserva, lang = 'es') {
 
   // ── OBSERVATIONS BOX ──
   y += 4;
-  const observationText = String(reserva.observaciones || reserva.comentarios || '').trim();
-  const observationLabel = lang === 'en' ? 'Observations:' : 'Observaciones:';
-  const observationValue = observationText || (lang === 'en'
-    ? 'Write any special instructions'
-    : 'Anote alguna indicación especial');
-  const observationLines = doc.splitTextToSize(observationValue, contentWidth - 12);
-  const observationBoxH = Math.max(19, 12 + observationLines.length * 5);
+  const obsBoxH = 17;
   doc.setDrawColor(...COLORS.line);
   doc.setLineWidth(0.4);
-  doc.setFillColor(255, 255, 255);
-  doc.roundedRect(margin, y, contentWidth, observationBoxH, 3, 3, 'FD');
+  doc.roundedRect(margin, y, contentWidth, obsBoxH, 2, 2, 'S');
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(10);
   doc.setTextColor(...COLORS.black);
-  doc.text(observationLabel, margin + 5, y + 6);
-  doc.setFont('helvetica', observationText ? 'normal' : 'italic');
+  doc.text(t.comments + ':', margin + 4, y + 5);
+  doc.setFont('helvetica', 'normal');
   doc.setFontSize(9);
-  doc.setTextColor(...(observationText ? COLORS.black : COLORS.footerGray));
-  doc.text(observationLines, margin + 5, y + 12);
-  y += observationBoxH + 2;
+  const observationText = reserva.comentarios && String(reserva.comentarios).trim()
+    ? String(reserva.comentarios).trim()
+    : t.observationsPlaceholder;
+  if (reserva.comentarios && String(reserva.comentarios).trim()) {
+    doc.setTextColor(...COLORS.blue);
+  } else {
+    doc.setTextColor(...COLORS.placeholderGray);
+  }
+  const obsLines = doc.splitTextToSize(observationText, contentWidth - 8);
+  doc.text(obsLines.slice(0, 2), margin + 4, y + 10);
+  y += obsBoxH;
 
   y += 6;
 
@@ -422,23 +424,26 @@ export function generarHojaServicio(reserva, lang = 'es') {
   });
 
   // ── FOOTER ──
-  const footerY = ph - 20;
+  const footerY = ph - 19;
   doc.setDrawColor(...COLORS.line);
   doc.setLineWidth(0.3);
   doc.line(margin, footerY, rightX, footerY);
 
-  doc.setFontSize(8);
-  doc.setTextColor(...COLORS.footerGray);
-  doc.setFont('helvetica', 'normal');
-  doc.text('San Miguel de Allende, Guanajuato', pw / 2, footerY + 4, { align: 'center' });
-
   const now = new Date();
   const locale = lang === 'en' ? 'en-US' : 'es-MX';
-  const genDate = now.toLocaleDateString(locale);
-  const genTime = now.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
-  const genText = `${t.generated} ${genDate} · ${genTime}`;
-  doc.text(genText, pw / 2, footerY + 8, { align: 'center' });
-  doc.text('Grupo Turístico MX S. de R.L. de C.V.', pw / 2, footerY + 12, { align: 'center' });
+  const footerDate = now.toLocaleDateString(locale, {
+    day: '2-digit', month: '2-digit', year: 'numeric'
+  });
+  const footerTime = now.toLocaleTimeString(locale, {
+    hour: '2-digit', minute: '2-digit', hour12: true
+  });
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(8);
+  doc.setTextColor(...COLORS.footerGray);
+  const footerLine1 = `${t.footer} · ${t.generated} ${footerDate} · ${t.timeLabel} ${footerTime}`;
+  doc.text(footerLine1, pw / 2, footerY + 5, { align: 'center', maxWidth: contentWidth });
+  doc.setFontSize(8);
+  doc.text(t.company, pw / 2, footerY + 10, { align: 'center' });
 
   return doc;
 }
