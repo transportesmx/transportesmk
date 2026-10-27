@@ -1,6 +1,5 @@
 import jsPDF from 'jspdf';
 import { LOGOPDF_BASE64 } from './logopdf-base64';
-import { QRPDF_BASE64 } from './qrpdf-base64';
 import { VEHICLE_IMAGES } from './vehicle-images-base64';
 import { EMOJI_ICONS } from './emoji-icons-base64';
 
@@ -188,15 +187,6 @@ export function generarHojaServicio(reserva, lang = 'es') {
     doc.setTextColor(...COLORS.black);
     doc.text('TRANSPORTES MX', margin, y + 12);
   }
-
-  // ── QR CODE (centered between logo and folio) ──
-  const qrSize = 36;
-  const qrLeftEdge = margin + logoW + 6;
-  const qrRightEdge = rightX - 50;
-  const qrX = qrLeftEdge + (qrRightEdge - qrLeftEdge - qrSize) / 2;
-  try {
-    doc.addImage(QRPDF_BASE64, 'PNG', qrX, y - 3, qrSize, qrSize);
-  } catch { /* QR not available */ }
 
   // ── FOLIO box (top right, RED) ──
   const folio = generarFolio(reserva.id);
@@ -446,4 +436,3 @@ export function generarHojaServicio(reserva, lang = 'es') {
   doc.text(t.company, pw / 2, footerY + 10, { align: 'center' });
 
   return doc;
-}
