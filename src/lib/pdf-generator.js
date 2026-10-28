@@ -1,6 +1,6 @@
-
 import jsPDF from 'jspdf';
 import { LOGOPDF_BASE64 } from './logopdf-base64';
+import { QRPDF_BASE64 } from './qrpdf-base64';
 import { VEHICLE_IMAGES } from './vehicle-images-base64';
 import { EMOJI_ICONS } from './emoji-icons-base64';
 
@@ -12,8 +12,6 @@ const COLORS = {
   white: [255, 255, 255],
   red: [200, 30, 30],
   footerGray: [120, 120, 120],
-  green: [35, 145, 75],
-  placeholderGray: [155, 155, 155],
 };
 
 function generarFolio(reservaId) {
@@ -63,12 +61,13 @@ function getVehicleImage(vehiculoId, vehiculoNombre) {
 
 const labels = {
   es: {
-    company: 'Grupo Turístico MX S. de R.L. de C.V.',
+    company: 'Grupo Turístico MX S. de R.L',
     rfc: 'RATG900822G16',
     address: 'San Miguel de Allende GTO.',
     phone: '+52 415 139 3219',
     email: 'contacto@transportesmx.org',
     website: 'https://transportesmx.org',
+    siteLabel: 'Sitio Web:',
     folio: 'Folio',
     date: 'Fecha',
     status: 'Pagado',
@@ -91,22 +90,21 @@ const labels = {
     estTime: 'Tiempo estimado',
     yes: 'Si',
     no: 'No',
-    comments: 'Observaciones',
+    comments: 'Comentarios',
     returnSection: 'Regreso:',
     returnPickup: 'Recoger en',
     returnDateTime: 'Fecha y hora',
-    footer: 'San Miguel de Allende, Guanajuato',
-    generated: 'Documento Generado:',
-    timeLabel: 'Hora:',
-    observationsPlaceholder: 'Anote alguna indicación especial',
+    footer: 'TransportesMX | transportesmx.org | +52 415 139 3219',
+    generated: 'Documento generado el',
   },
   en: {
-    company: 'Grupo Turístico MX S. de R.L. de C.V.',
+    company: 'Grupo Turístico MX S. de R.L',
     rfc: 'RATG900822G16',
     address: 'San Miguel de Allende GTO.',
     phone: '+52 415 139 3219',
     email: 'contacto@transportesmx.org',
     website: 'https://transportesmx.org',
+    siteLabel: 'Website:',
     folio: 'Folio',
     date: 'Date',
     status: 'Paid',
@@ -129,14 +127,12 @@ const labels = {
     estTime: 'Estimated time',
     yes: 'Yes',
     no: 'No',
-    comments: 'Observations',
+    comments: 'Comments',
     returnSection: 'Return:',
     returnPickup: 'Pickup at',
     returnDateTime: 'Date and time',
-    footer: 'San Miguel de Allende, Guanajuato',
-    generated: 'Document generated:',
-    timeLabel: 'Time:',
-    observationsPlaceholder: 'Add any special instructions',
+    footer: 'TransportesMX | transportesmx.org | +52 415 139 3219',
+    generated: 'Document generated on',
   },
 };
 
@@ -148,9 +144,7 @@ function drawEmoji(doc, emojiKey, x, y) {
     try {
       doc.addImage(icon, 'PNG', x, y - EMOJI_SIZE + 0.5, EMOJI_SIZE, EMOJI_SIZE);
       return;
-    } catch {
-      // Continúa con el indicador alternativo.
-    }
+    } catch { /* fallback below */ }
   }
   doc.setFillColor(...COLORS.black);
   doc.circle(x + EMOJI_SIZE / 2, y - EMOJI_SIZE / 2 + 0.5, 1.3, 'F');
@@ -173,14 +167,15 @@ export function generarHojaServicio(reserva, lang = 'es') {
 
   let y = margin;
 
-  // Logo
+  // Calculate logo width to match company name text width
   const companyFontSize = 10;
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(companyFontSize);
   const companyTextW = doc.getStringUnitWidth(t.company) * companyFontSize / doc.internal.scaleFactor;
-  const logoW = companyTextW * 1.15;
+  const logoW = companyTextW;
   const logoH = logoW / 4.56;
 
+  // ── LOGO ──
   try {
     doc.addImage(LOGOPDF_BASE64, 'PNG', margin, y, logoW, logoH);
   } catch {
@@ -190,7 +185,16 @@ export function generarHojaServicio(reserva, lang = 'es') {
     doc.text('TRANSPORTES MX', margin, y + 12);
   }
 
-  // Folio
+  // ── QR CODE (centered between logo and folio) ──
+  const qrSize = 36;
+  const qrLeftEdge = margin + logoW + 6;
+  const qrRightEdge = rightX - 50;
+  const qrX = qrLeftEdge + (qrRightEdge - qrLeftEdge - qrSize) / 2;
+  try {
+    doc.addImage(QRPDF_BASE64, 'PNG', qrX, y - 3, qrSize, qrSize);
+  } catch { /* QR not available */ }
+
+  // ── FOLIO box (top right, RED) ──
   const folio = generarFolio(reserva.id);
   const folioText = `${t.folio}: ${folio}`;
   doc.setFont('helvetica', 'bold');
@@ -204,57 +208,49 @@ export function generarHojaServicio(reserva, lang = 'es') {
   doc.setTextColor(...COLORS.white);
   doc.text(folioText, folioBoxX + 6, y + 6.5);
 
-  // Fecha y estado
+  // Date and Status (left-aligned to folio box)
   const fechaDoc = new Date().toLocaleDateString(lang === 'en' ? 'en-US' : 'es-MX', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
+    day: '2-digit', month: '2-digit', year: 'numeric',
   });
-
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(11);
   doc.setTextColor(...COLORS.black);
   doc.text(`${t.date}: ${fechaDoc}`, folioBoxX, y + folioH + 6);
-
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(10);
-  const statusW = doc.getStringUnitWidth(t.status) * 10 / doc.internal.scaleFactor + 10;
-  const statusH = 7;
-  const statusY = y + folioH + 8;
-  doc.setFillColor(...COLORS.green);
-  doc.roundedRect(folioBoxX, statusY, statusW, statusH, 2, 2, 'F');
-  doc.setTextColor(...COLORS.white);
-  doc.text(t.status, folioBoxX + 5, statusY + 4.8);
-  doc.setTextColor(...COLORS.black);
+  doc.text(t.status, folioBoxX, y + folioH + 12);
 
-  // Información de la empresa
+  // ── Company info ──
   y += logoH + 8;
   doc.setFontSize(companyFontSize);
   doc.setFont('helvetica', 'bold');
   doc.setTextColor(...COLORS.black);
   doc.text(t.company, margin, y);
   y += 4.5;
-
   doc.setFont('helvetica', 'normal');
   doc.text(t.address, margin, y);
   y += 4.5;
   doc.text(t.phone, margin, y);
   y += 4.5;
-
   doc.setTextColor(...COLORS.blue);
   doc.textWithLink(t.email, margin, y, { url: `mailto:${t.email}` });
   y += 4.5;
-  doc.textWithLink(t.website, margin, y, { url: t.website });
+  doc.setTextColor(...COLORS.black);
+  doc.setFont('helvetica', 'normal');
+  const siteStr = `${t.siteLabel} `;
+  doc.text(siteStr, margin, y);
+  const siteLabelW = doc.getStringUnitWidth(siteStr) * companyFontSize / doc.internal.scaleFactor;
+  doc.setTextColor(...COLORS.blue);
+  doc.textWithLink(t.website, margin + siteLabelW, y, { url: t.website });
 
   y += 8;
 
-  // Línea separadora
+  // ── Separator line ──
   doc.setDrawColor(...COLORS.black);
   doc.setLineWidth(1.2);
   doc.line(margin, y, rightX, y);
   y += 10;
 
-  // Datos del cliente
+  // ── CLIENT SECTION ──
   const clientStartY = y;
   const clientFontSize = 13;
   doc.setFontSize(clientFontSize);
@@ -285,7 +281,7 @@ export function generarHojaServicio(reserva, lang = 'es') {
   doc.text(reserva.clienteEmail || 'N/A', margin + emLabelW, y);
   y += 4;
 
-  // Imagen del vehículo
+  // ── Vehicle image (right column) ──
   const vehicleImg = getVehicleImage(reserva.vehiculoId, reserva.vehiculoNombre);
   if (vehicleImg) {
     const finalW = 55;
@@ -294,14 +290,12 @@ export function generarHojaServicio(reserva, lang = 'es') {
     const imgY = clientStartY - 2;
     try {
       doc.addImage(vehicleImg, 'PNG', imgX, imgY, finalW, finalH);
-    } catch {
-      // La hoja puede generarse aunque la imagen no esté disponible.
-    }
+    } catch { /* no image */ }
   }
 
   y += 10;
 
-  // Barra de descripción
+  // ── DESCRIPTION BAR ──
   const barH = 11;
   doc.setFillColor(...COLORS.black);
   doc.rect(margin, y, contentWidth, barH, 'F');
@@ -311,7 +305,7 @@ export function generarHojaServicio(reserva, lang = 'es') {
   doc.text(t.transferDesc, margin + 5, y + 8);
   y += barH + 8;
 
-  // Datos principales del servicio
+  // ── BULLET ITEMS (with emoji icons) ──
   const bulletItems = [
     { emoji: 'vehicle', label: t.vehicle, value: reserva.vehiculoNombre || 'N/A' },
     { emoji: 'person', label: t.clientName, value: reserva.clienteNombre || 'N/A' },
@@ -320,18 +314,10 @@ export function generarHojaServicio(reserva, lang = 'es') {
   ];
 
   if (reserva.numVuelo && reserva.aerolinea) {
-    bulletItems.push({
-      emoji: 'flight',
-      label: t.flightAndAirline,
-      value: `${reserva.aerolinea} ${reserva.numVuelo}`,
-    });
+    bulletItems.push({ emoji: 'flight', label: t.flightAndAirline, value: `${reserva.aerolinea} ${reserva.numVuelo}` });
   } else {
-    if (reserva.aerolinea) {
-      bulletItems.push({ emoji: 'flight', label: t.airline, value: reserva.aerolinea });
-    }
-    if (reserva.numVuelo) {
-      bulletItems.push({ emoji: 'flight', label: t.flightNumber, value: reserva.numVuelo });
-    }
+    if (reserva.aerolinea) bulletItems.push({ emoji: 'flight', label: t.airline, value: reserva.aerolinea });
+    if (reserva.numVuelo) bulletItems.push({ emoji: 'flight', label: t.flightNumber, value: reserva.numVuelo });
   }
 
   bulletItems.push(
@@ -342,12 +328,8 @@ export function generarHojaServicio(reserva, lang = 'es') {
     { emoji: 'checkmark', label: t.roundTrip, value: reserva.tipoViaje === 'redondo' ? t.yes : t.no },
   );
 
-  if (reserva.distancia) {
-    bulletItems.push({ emoji: 'distance', label: t.distance, value: reserva.distancia });
-  }
-  if (reserva.duracion) {
-    bulletItems.push({ emoji: 'time', label: t.estTime, value: reserva.duracion });
-  }
+  if (reserva.distancia) bulletItems.push({ emoji: 'distance', label: t.distance, value: reserva.distancia });
+  if (reserva.duracion) bulletItems.push({ emoji: 'time', label: t.estTime, value: reserva.duracion });
 
   const bulletFontSize = 13;
   const bulletLineH = 8;
@@ -370,38 +352,29 @@ export function generarHojaServicio(reserva, lang = 'es') {
     y += bulletLineH;
   });
 
-  // ── RECUADRO DE OBSERVACIONES ──
-  y += 4;
+  // ── COMMENTS (optional) ──
+  if (reserva.comentarios) {
+    y += 4;
+    doc.setDrawColor(...COLORS.line);
+    doc.setLineWidth(0.3);
+    doc.line(margin, y, rightX, y);
+    y += 8;
 
-  const observationValue = reserva.observaciones || reserva.comentarios || '';
-  const observationText = String(observationValue).trim();
-  const obsBoxH = observationText ? 25 : 17;
-
-  doc.setDrawColor(...COLORS.line);
-  doc.setLineWidth(0.4);
-  doc.roundedRect(margin, y, contentWidth, obsBoxH, 2, 2, 'S');
-
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(10);
-  doc.setTextColor(...COLORS.black);
-  doc.text('Observaciones:', margin + 4, y + 5);
-
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(9);
-
-  if (observationText) {
+    drawEmoji(doc, 'comment', margin + 1, y);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(bulletFontSize);
+    doc.setTextColor(...COLORS.black);
+    const comLabel = `${t.comments}: `;
+    doc.text(comLabel, textIndent, y);
+    const comLabelW = doc.getStringUnitWidth(comLabel) * bulletFontSize / doc.internal.scaleFactor;
     doc.setTextColor(...COLORS.blue);
-    const obsLines = doc.splitTextToSize(observationText, contentWidth - 8);
-    doc.text(obsLines.slice(0, 3), margin + 4, y + 10);
-  } else {
-    doc.setTextColor(...COLORS.placeholderGray);
-    doc.text(t.observationsPlaceholder, margin + 4, y + 10);
+    y = drawWrappedValue(doc, reserva.comentarios, textIndent + comLabelW, y, contentWidth - (textIndent - margin) - comLabelW, bulletLineH);
+    y += bulletLineH;
   }
 
-  y += obsBoxH;
   y += 6;
 
-  // Sección de regreso
+  // ── RETURN SECTION ──
   doc.setDrawColor(...COLORS.black);
   doc.setLineWidth(0.5);
   doc.line(margin, y, rightX, y);
@@ -417,16 +390,8 @@ export function generarHojaServicio(reserva, lang = 'es') {
   const isRoundTrip = reserva.tipoViaje === 'redondo' && reserva.fechaRegreso;
 
   const returnItems = [
-    {
-      emoji: 'location',
-      label: t.returnPickup,
-      value: isRoundTrip ? (reserva.destino || 'N/A') : '',
-    },
-    {
-      emoji: 'calendar',
-      label: t.returnDateTime,
-      value: isRoundTrip ? `${reserva.fechaRegreso} / ${reserva.horaRegreso || 'N/A'} hrs` : '',
-    },
+    { emoji: 'location', label: t.returnPickup, value: isRoundTrip ? (reserva.destino || 'N/A') : '' },
+    { emoji: 'calendar', label: t.returnDateTime, value: isRoundTrip ? `${reserva.fechaRegreso} / ${reserva.horaRegreso || 'N/A'} hrs` : '' },
   ];
 
   doc.setFontSize(bulletFontSize);
@@ -446,36 +411,20 @@ export function generarHojaServicio(reserva, lang = 'es') {
     y += bulletLineH;
   });
 
-  // Pie de página
-  const footerY = ph - 19;
+  // ── FOOTER ──
+  const footerY = ph - 16;
   doc.setDrawColor(...COLORS.line);
   doc.setLineWidth(0.3);
   doc.line(margin, footerY, rightX, footerY);
 
-  const now = new Date();
-  const locale = lang === 'en' ? 'en-US' : 'es-MX';
-  const footerDate = now.toLocaleDateString(locale, {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  });
-  const footerTime = now.toLocaleTimeString(locale, {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: true,
-  });
-
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(8);
+  doc.setFontSize(9);
   doc.setTextColor(...COLORS.footerGray);
-  const footerLine1 = `${t.footer} · ${t.generated} ${footerDate} · ${t.timeLabel} ${footerTime}`;
-  doc.text(footerLine1, pw / 2, footerY + 5, {
-    align: 'center',
-    maxWidth: contentWidth,
-  });
+  doc.setFont('helvetica', 'normal');
+  doc.text(t.footer, pw / 2, footerY + 5, { align: 'center' });
 
+  const genText = `${t.generated} ${new Date().toLocaleDateString(lang === 'en' ? 'en-US' : 'es-MX')}`;
   doc.setFontSize(8);
-  doc.text(t.company, pw / 2, footerY + 10, { align: 'center' });
+  doc.text(genText, pw / 2, footerY + 10, { align: 'center' });
 
   return doc;
 }
