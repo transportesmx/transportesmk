@@ -1,65 +1,48 @@
+import { Fragment, useContext } from "react";
+import About from "@/components/About";
+import Aeropuerto from "@/components/Aeropuerto";
+import Boda from "@/components/Bodas";
+import Chofer from "@/components/Chofer";
+import Ejecutivo from "@/components/Ejecutivo";
+import Faqs from "@/components/Faqs";
+import Galeria from "@/components/Galeria";
+import Hero from "@/components/Hero";
+import Testimonios from "@/components/Testimonios";
+import Tours from "@/components/Tours";
+import Autobus from "@/components/Autobus";
+import Clientes from "@/components/Clientes";
+import Clientes2 from "@/components/Clientes2";
+import Head from "next/head";
 import { AppContext } from "@/Context/AppContext";
-import Image from "next/image";
-import React, { useContext, useState } from "react";
 
-const BodasModal = () => {
+export default function Home() {
+const { idioma, setIdioma } = useContext(AppContext);
 
-  const {traduccion} = useContext(AppContext);
+return (
+<Fragment>
+<Head>
+<title>
+Transportes MX - Traslados Seguros y Confiables en San Miguel de Allende
+</title>
+</Head>
 
-  const [isOpen, setIsOpen] = useState(true);
+  <Hero />
+  <About />
 
-  const closeModal = () => {
-    setIsOpen(false);
-  };
+  {/* <Aeropuerto /> */}
 
-  return (
-    isOpen && (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div className="bg-white rounded-lg shadow-lg max-w-md w-full mx-4 md:max-w-lg lg:max-w-xl">
-          {/* Modal Header */}
-          <div className="relative">
-            <div className="h-[300px] w-full">
+  <Boda />
 
-            <Image
-              src="/assets/images/bodasModal.png"
-              alt="Traslados para bodas"
-              layout="fill"
-              objectFit="cover"
-              className="w-full h-64 object-cover rounded-t-lg"
-              />
-              </div>
-            <button
-              onClick={closeModal}
-              className="absolute top-4 right-4 bg-white rounded-full px-2 py-1 text-gray-600 hover:bg-gray-200"
-            >
-              ✕
-            </button>
-          </div>
+  <Chofer />
+  <Ejecutivo />
+  <Autobus />
+  <Tours />
+  <Testimonios />
+  <Galeria />
+  <Faqs />
+  <Clientes />
+  <Clientes2 />
+</Fragment>
 
-          {/* Modal Content */}
-          <div className="p-6 text-center">
-            <h2 className="text-xl font-bold mb-4 text-gray-800">
-              {traduccion.bodasModal.title}
-            </h2>
-            <p className="text-gray-600 mb-6">
-              {traduccion.bodasModal.description}
-            </p>
-            <button
-              onClick={() =>
-                window.open(
-                  "https://wa.me/524151393219?text=Hola, me gustaría cotizar un servicio de traslado para bodas",
-                  "_blank"
-                )
-              }
-              className="px-6 py-3 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition shadow-lg"
-            >
-              {traduccion.bodasModal.button}
-            </button>
-          </div>
-        </div>
-      </div>
-    )
-  );
-};
-
-export default BodasModal;
+);
+}
