@@ -1,9 +1,14 @@
+
 import { useState, useEffect, useRef, Fragment } from "react";
 
 import Head from "next/head";
 
 import About from "@/components/About";
 import Boda from "@/components/Bodas";
+import Chofer from "@/components/Chofer";
+import Ejecutivo from "@/components/Ejecutivo";
+import Faqs from "@/components/Faqs";
+import Galeria from "@/components/Galeria";
 import Hero from "@/components/Hero";
 import Testimonios from "@/components/Testimonios";
 import Tours from "@/components/Tours";
@@ -11,9 +16,6 @@ import BodasModal from "@/components/BodasModal";
 import Autobus from "@/components/Autobus";
 import Clientes from "@/components/Clientes";
 import Clientes2 from "@/components/Clientes2";
-import Chofer from "@/components/Chofer";
-import Ejecutivo from "@/components/Ejecutivo";
-import Faqs from "@/components/Faqs";
 
 export default function Home() {
   const [isBodasModalVisible, setIsBodasModalVisible] = useState(false);
@@ -21,6 +23,7 @@ export default function Home() {
 
   const bodasRef = useRef(null);
 
+  // Mostrar modal cuando la sección de Bodas entra en pantalla
   useEffect(() => {
     if (bodasModalShown) return;
 
@@ -77,7 +80,6 @@ export default function Home() {
       <Clientes2 />
 
       {isBodasModalVisible && <BodasModal />}
-
     </Fragment>
   );
 }
