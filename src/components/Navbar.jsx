@@ -19,7 +19,6 @@ import { IoMdArrowDropdown } from "react-icons/io";
 import { HiMenu, HiX } from "react-icons/hi";
 import Link from "next/link";
 import { AppContext } from "@/Context/AppContext";
-import CatrinaAnimada from "@/components/CatrinaAnimada";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -30,14 +29,20 @@ const Navbar = () => {
   const menuRef = useRef(null);
   const buttonRef = useRef(null);
 
+  // Control del desplazamiento móvil
   useEffect(() => {
-    document.body.style.overflow = isMenuOpen ? "hidden" : "unset";
+    const previousOverflow = document.body.style.overflow;
+
+    document.body.style.overflow = isMenuOpen
+      ? "hidden"
+      : previousOverflow;
 
     return () => {
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = previousOverflow;
     };
   }, [isMenuOpen]);
 
+  // Cerrar menú al pulsar fuera
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -47,6 +52,7 @@ const Navbar = () => {
         !buttonRef.current.contains(event.target)
       ) {
         setIsMenuOpen(false);
+        setIsDropdownOpen(false);
       }
     };
 
@@ -55,53 +61,87 @@ const Navbar = () => {
     }
 
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener(
+        "mousedown",
+        handleClickOutside
+      );
     };
   }, [isMenuOpen]);
-
-  const handleCotizar = () => {
-    const phoneNumber = "524151393219";
-    const message = "Hola, me gustaría cotizar un servicio";
-
-    const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(
-      message
-    )}`;
-
-    window.open(whatsappURL, "_blank");
-  };
 
   const closeMobileMenu = () => {
     setIsMenuOpen(false);
     setIsDropdownOpen(false);
   };
 
+  const handleCotizar = () => {
+    const phoneNumber = "524151393219";
+    const message = "Hola, me gustaría cotizar un servicio";
+
+    window.open(
+      `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`,
+      "_blank",
+      "noopener,noreferrer"
+    );
+  };
+
+  const socialLinks = [
+    {
+      href: "https://www.facebook.com/TransportesTMX/",
+      label: "Facebook",
+      icon: <FaFacebookF />,
+      hover: "hover:text-blue-500",
+    },
+    {
+      href: "https://www.instagram.com/trans_portesmx",
+      label: "Instagram",
+      icon: <FaInstagram />,
+      hover: "hover:text-pink-500",
+    },
+    {
+      href: "https://www.tiktok.com/@transportes.mx2",
+      label: "TikTok",
+      icon: <FaTiktok />,
+      hover: "hover:text-gray-300",
+    },
+    {
+      href: "https://www.tripadvisor.com.mx/Attraction_Review-g151932-d25402392-Reviews-Transportes_MX-San_Miguel_de_Allende_Central_Mexico_and_Gulf_Coast.html",
+      label: "Tripadvisor",
+      icon: <FaTripadvisor />,
+      hover: "hover:text-green-500",
+    },
+  ];
+
   return (
     <header className="bg-black/70 shadow-md sticky top-0 z-50 text-white">
+
       <div className="container mx-auto flex justify-between items-center px-4 py-2">
 
         {/* LOGOTIPO Y CATRINA */}
         <a
           href="/"
-          className="flex items-center gap-2 sm:gap-3 py-2 shrink-0"
-          aria-label="Transportes MX - Inicio"
+          className="flex items-center py-2 gap-2"
+          aria-label="Transportes MX inicio"
         >
           <img
             src="/assets/logo.png"
             alt="Transportes MX"
-            className="h-8 sm:h-9 w-auto object-contain"
+            className="h-8 w-auto"
+            loading="eager"
           />
 
-          <span className="flex items-center justify-center">
-            <CatrinaAnimada
-              size={42}
-              image="/assets/catrina-3d.png"
-              activa={true}
-            />
-          </span>
+          {/* CATRINA MEXICANA */}
+          <img
+            src="/assets/catrina-3d.png"
+            alt="Catrina mexicana Transportes MX"
+            className="h-12 w-auto object-contain transition-transform duration-300 hover:scale-110"
+            loading="eager"
+            decoding="async"
+          />
         </a>
 
         {/* MENÚ DE ESCRITORIO */}
         <nav className="hidden lg:flex items-center space-x-4">
+
           <a href="/#Hero" className="hover:text-blue-500 transition">
             {traduccion.navbar.home}
           </a>
@@ -110,7 +150,9 @@ const Navbar = () => {
             {traduccion.navbar.about}
           </a>
 
+          {/* SERVICIOS */}
           <div className="relative">
+
             <button
               type="button"
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -123,6 +165,7 @@ const Navbar = () => {
 
             {isDropdownOpen && (
               <div className="absolute top-8 left-0 bg-black shadow-md rounded-lg w-40 py-2 z-50">
+
                 <a
                   href="/#Aeropuerto"
                   className="block px-4 py-2 hover:bg-gray-600"
@@ -143,6 +186,7 @@ const Navbar = () => {
                 >
                   {traduccion.navbar.private_driver}
                 </a>
+
               </div>
             )}
           </div>
@@ -154,13 +198,12 @@ const Navbar = () => {
           {/* BLOG */}
           <Link
             href="/blog"
-            className="flex items-center gap-2 hover:text-blue-500 transition"
-            title="Blog de Transportes MX"
+            className="hover:text-blue-500 transition"
           >
             Blog
           </Link>
 
-          {/* ACCESO AL SISTEMA */}
+          {/* ACCESO */}
           <Link
             href="/notas-venta"
             className="flex items-center gap-2 hover:text-blue-500 transition"
@@ -171,14 +214,13 @@ const Navbar = () => {
             <span>Acceso</span>
           </Link>
 
-          {/* ACCESO AL BANNER */}
+          {/* BANNER */}
           <Link
             href="/banner"
-            className="flex items-center gap-2 hover:text-blue-500 transition"
+            className="hover:text-blue-500 transition"
             title="Banner de bienvenida"
-            aria-label="Banner de bienvenida"
           >
-            <span>Banner</span>
+            Banner
           </Link>
 
           {/* RESERVACIONES */}
@@ -188,16 +230,24 @@ const Navbar = () => {
           >
             {idioma.nombre === "EN" ? "Book now" : "Reservar"}
           </Link>
+
         </nav>
 
-        {/* IDIOMAS Y REDES PARA ESCRITORIO */}
+        {/* IDIOMAS Y REDES DE ESCRITORIO */}
         <div className="hidden lg:flex items-center gap-5">
+
+          {/* IDIOMAS */}
           <div className="flex items-center gap-2">
+
             <button
               type="button"
-              onClick={() => setIdioma({ nombre: "ES", code: "MX" })}
+              onClick={() =>
+                setIdioma({ nombre: "ES", code: "MX" })
+              }
               className={`flex items-center gap-1 rounded-md ${
-                idioma.nombre === "ES" ? "p-1 bg-white text-black" : ""
+                idioma.nombre === "ES"
+                  ? "p-1 bg-white text-black"
+                  : ""
               }`}
               aria-label="Español"
             >
@@ -209,66 +259,52 @@ const Navbar = () => {
               ESP
             </button>
 
-            <span className="text-white">/</span>
+            <span>/</span>
 
             <button
               type="button"
-              onClick={() => setIdioma({ nombre: "EN", code: "US" })}
+              onClick={() =>
+                setIdioma({ nombre: "EN", code: "US" })
+              }
               className={`flex items-center gap-1 rounded-md ${
-                idioma.nombre === "EN" ? "p-1 bg-white text-black" : ""
+                idioma.nombre === "EN"
+                  ? "p-1 bg-white text-black"
+                  : ""
               }`}
               aria-label="English"
             >
               EN
               <img
                 src="/assets/icons/eu.png"
-                alt="United States"
+                alt="Estados Unidos"
                 className="h-5"
               />
             </button>
+
           </div>
 
+          {/* REDES */}
           <div className="flex items-center gap-4 text-lg">
-            <Link
-              href="https://www.facebook.com/TransportesTMX/"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Facebook"
-            >
-              <FaFacebookF className="hover:text-blue-500 cursor-pointer" />
-            </Link>
 
-            <Link
-              href="https://www.instagram.com/trans_portesmx"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Instagram"
-            >
-              <FaInstagram className="hover:text-pink-500 cursor-pointer" />
-            </Link>
+            {socialLinks.map((social) => (
+              <Link
+                key={social.label}
+                href={social.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={social.label}
+                className={social.hover}
+              >
+                {social.icon}
+              </Link>
+            ))}
 
-            <Link
-              href="https://www.tiktok.com/@transportes.mx2"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="TikTok"
-            >
-              <FaTiktok className="hover:text-gray-300 cursor-pointer" />
-            </Link>
-
-            <Link
-              href="https://www.tripadvisor.com.mx/Attraction_Review-g151932-d25402392-Reviews-Transportes_MX-San_Miguel_de_Allende_Central_Mexico_and_Gulf_Coast.html"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Tripadvisor"
-            >
-              <FaTripadvisor className="hover:text-green-500 cursor-pointer" />
-            </Link>
           </div>
         </div>
 
-        {/* BOTÓN DEL MENÚ MÓVIL */}
+        {/* BOTÓN MÓVIL */}
         <div className="lg:hidden flex items-center gap-3">
+
           <Link
             href="/reservar"
             className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 rounded-lg transition font-semibold text-xs text-white whitespace-nowrap"
@@ -280,20 +316,29 @@ const Navbar = () => {
             ref={buttonRef}
             type="button"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            aria-label={isMenuOpen ? "Cerrar menú" : "Abrir menú"}
+            aria-label={
+              isMenuOpen ? "Cerrar menú" : "Abrir menú"
+            }
             aria-expanded={isMenuOpen}
           >
-            {isMenuOpen ? <HiX size={24} /> : <HiMenu size={24} />}
+            {isMenuOpen ? (
+              <HiX size={24} />
+            ) : (
+              <HiMenu size={24} />
+            )}
           </button>
+
         </div>
+
       </div>
 
-      {/* MENÚ DESPLEGABLE PARA CELULAR */}
+      {/* MENÚ DESPLEGABLE MÓVIL */}
       {isMenuOpen && (
         <div
           ref={menuRef}
           className="lg:hidden bg-black shadow-md text-white"
         >
+
           <a
             href="/#Hero"
             className="block px-4 py-2 hover:bg-gray-600"
@@ -310,10 +355,14 @@ const Navbar = () => {
             {traduccion.navbar.about}
           </a>
 
-          <div className="relative">
+          {/* SERVICIOS MÓVIL */}
+          <div>
+
             <button
               type="button"
-              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              onClick={() =>
+                setIsDropdownOpen(!isDropdownOpen)
+              }
               className="flex w-full px-4 py-2 justify-between hover:bg-gray-600"
               aria-expanded={isDropdownOpen}
             >
@@ -323,6 +372,7 @@ const Navbar = () => {
 
             {isDropdownOpen && (
               <div className="bg-black w-full">
+
                 <Link
                   href="/#Aeropuerto"
                   className="block px-6 py-2 hover:bg-gray-600"
@@ -346,6 +396,7 @@ const Navbar = () => {
                 >
                   {traduccion.navbar.private_driver}
                 </Link>
+
               </div>
             )}
           </div>
@@ -367,34 +418,37 @@ const Navbar = () => {
             Blog
           </Link>
 
-          {/* ACCESO AL SISTEMA */}
+          {/* ACCESO */}
           <Link
             href="/notas-venta"
             className="flex items-center gap-2 px-4 py-2 hover:bg-gray-600"
             onClick={closeMobileMenu}
-            title="Acceso al sistema"
           >
             <FaUserCircle size={20} />
             <span>Acceso</span>
           </Link>
 
-          {/* ACCESO AL BANNER */}
+          {/* BANNER */}
           <Link
             href="/banner"
             className="flex items-center gap-2 px-4 py-2 hover:bg-gray-600"
             onClick={closeMobileMenu}
-            title="Banner de bienvenida"
           >
-            <span>Banner</span>
+            Banner
           </Link>
 
-          {/* SELECTOR DE IDIOMA */}
+          {/* IDIOMAS */}
           <div className="px-4 py-3 flex items-center gap-3">
+
             <button
               type="button"
-              onClick={() => setIdioma({ nombre: "ES", code: "MX" })}
+              onClick={() =>
+                setIdioma({ nombre: "ES", code: "MX" })
+              }
               className={`flex items-center gap-2 rounded-md ${
-                idioma.nombre === "ES" ? "p-1 bg-white text-black" : ""
+                idioma.nombre === "ES"
+                  ? "p-1 bg-white text-black"
+                  : ""
               }`}
             >
               <img
@@ -409,9 +463,13 @@ const Navbar = () => {
 
             <button
               type="button"
-              onClick={() => setIdioma({ nombre: "EN", code: "US" })}
+              onClick={() =>
+                setIdioma({ nombre: "EN", code: "US" })
+              }
               className={`flex items-center gap-2 rounded-md ${
-                idioma.nombre === "EN" ? "p-1 bg-white text-black" : ""
+                idioma.nombre === "EN"
+                  ? "p-1 bg-white text-black"
+                  : ""
               }`}
             >
               EN
@@ -421,49 +479,25 @@ const Navbar = () => {
                 className="h-5"
               />
             </button>
+
           </div>
 
           {/* REDES SOCIALES */}
           <div className="px-4 py-4 flex items-center justify-center gap-7 text-2xl">
-            <Link
-              href="https://www.facebook.com/TransportesTMX/"
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={closeMobileMenu}
-              aria-label="Facebook"
-            >
-              <FaFacebookF className="hover:text-blue-500" />
-            </Link>
 
-            <Link
-              href="https://www.instagram.com/trans_portesmx"
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={closeMobileMenu}
-              aria-label="Instagram"
-            >
-              <FaInstagram className="hover:text-pink-500" />
-            </Link>
-
-            <Link
-              href="https://www.tiktok.com/@transportes.mx2"
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={closeMobileMenu}
-              aria-label="TikTok"
-            >
-              <FaTiktok className="hover:text-gray-300" />
-            </Link>
-
-            <Link
-              href="https://www.tripadvisor.com.mx/Attraction_Review-g151932-d25402392-Reviews-Transportes_MX-San_Miguel_de_Allende_Central_Mexico_and_Gulf_Coast.html"
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={closeMobileMenu}
-              aria-label="Tripadvisor"
-            >
-              <FaTripadvisor className="hover:text-green-500" />
-            </Link>
+            {socialLinks.map((social) => (
+              <Link
+                key={social.label}
+                href={social.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={closeMobileMenu}
+                aria-label={social.label}
+                className={social.hover}
+              >
+                {social.icon}
+              </Link>
+            ))}
 
             <Link
               href="https://wa.me/524151393219"
@@ -471,12 +505,16 @@ const Navbar = () => {
               rel="noopener noreferrer"
               onClick={closeMobileMenu}
               aria-label="WhatsApp"
+              className="hover:text-green-500"
             >
-              <FaWhatsapp className="hover:text-green-500" />
+              <FaWhatsapp />
             </Link>
+
           </div>
+
         </div>
       )}
+
     </header>
   );
 };
