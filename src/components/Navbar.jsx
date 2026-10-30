@@ -1,4 +1,11 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+
+import React, {
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+
 import {
   FaFacebookF,
   FaUserCircle,
@@ -7,6 +14,7 @@ import {
   FaTripadvisor,
   FaWhatsapp,
 } from "react-icons/fa";
+
 import { IoMdArrowDropdown } from "react-icons/io";
 import { HiMenu, HiX } from "react-icons/hi";
 import Link from "next/link";
@@ -15,6 +23,7 @@ import { AppContext } from "@/Context/AppContext";
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
   const { idioma, setIdioma, traduccion } = useContext(AppContext);
 
   const menuRef = useRef(null);
@@ -52,7 +61,11 @@ const Navbar = () => {
   const handleCotizar = () => {
     const phoneNumber = "524151393219";
     const message = "Hola, me gustaría cotizar un servicio";
-    const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+
+    const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(
+      message
+    )}`;
+
     window.open(whatsappURL, "_blank");
   };
 
@@ -63,7 +76,10 @@ const Navbar = () => {
 
   return (
     <header className="bg-black/70 shadow-md sticky top-0 z-50">
+
       <div className="container mx-auto flex justify-between items-center px-4 py-2">
+
+        {/* LOGOTIPO */}
         <a href="/" className="flex items-center py-4">
           <img
             src="/assets/logo.png"
@@ -74,6 +90,7 @@ const Navbar = () => {
 
         {/* MENÚ DE ESCRITORIO */}
         <nav className="hidden lg:flex items-center space-x-4">
+
           <a href="/#Hero" className="hover:text-blue-500 transition">
             {traduccion.navbar.home}
           </a>
@@ -82,7 +99,9 @@ const Navbar = () => {
             {traduccion.navbar.about}
           </a>
 
+          {/* SERVICIOS */}
           <div className="relative">
+
             <button
               type="button"
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -94,17 +113,28 @@ const Navbar = () => {
 
             {isDropdownOpen && (
               <div className="absolute top-8 left-0 bg-black shadow-md rounded-lg w-40 py-2">
-                <a href="/#Aeropuerto" className="block px-4 py-2 hover:bg-gray-600">
+
+                <a
+                  href="/#Aeropuerto"
+                  className="block px-4 py-2 hover:bg-gray-600"
+                >
                   {traduccion.navbar.airport_transfer}
                 </a>
 
-                <a href="/#Bodas" className="block px-4 py-2 hover:bg-gray-600">
+                <a
+                  href="/#Bodas"
+                  className="block px-4 py-2 hover:bg-gray-600"
+                >
                   {traduccion.navbar.wedding_transport}
                 </a>
 
-                <a href="/#Chofer" className="block px-4 py-2 hover:bg-gray-600">
+                <a
+                  href="/#Chofer"
+                  className="block px-4 py-2 hover:bg-gray-600"
+                >
                   {traduccion.navbar.private_driver}
                 </a>
+
               </div>
             )}
           </div>
@@ -133,7 +163,7 @@ const Navbar = () => {
             <span>Acceso</span>
           </Link>
 
-          {/* NUEVO ACCESO AL BANNER */}
+          {/* ACCESO AL BANNER */}
           <Link
             href="/banner"
             className="flex items-center gap-2 hover:text-blue-500 transition"
@@ -150,11 +180,15 @@ const Navbar = () => {
           >
             {idioma.nombre === "EN" ? "Book now" : "Reservar"}
           </Link>
+
         </nav>
 
         {/* IDIOMAS Y REDES PARA ESCRITORIO */}
         <div className="hidden lg:flex items-center gap-5">
+
+          {/* IDIOMAS */}
           <div className="flex items-center gap-2">
+
             <button
               type="button"
               onClick={() => setIdioma({ nombre: "ES", code: "MX" })}
@@ -188,18 +222,36 @@ const Navbar = () => {
                 className="h-5"
               />
             </button>
+
           </div>
 
+          {/* REDES SOCIALES */}
           <div className="flex items-center gap-4 text-lg">
-            <Link href="https://www.facebook.com/TransportesTMX/" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+
+            <Link
+              href="https://www.facebook.com/TransportesTMX/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Facebook"
+            >
               <FaFacebookF className="hover:text-blue-500 cursor-pointer" />
             </Link>
 
-            <Link href="https://www.instagram.com/trans_portesmx" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+            <Link
+              href="https://www.instagram.com/trans_portesmx"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Instagram"
+            >
               <FaInstagram className="hover:text-pink-500 cursor-pointer" />
             </Link>
 
-            <Link href="https://www.tiktok.com/@transportes.mx2" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
+            <Link
+              href="https://www.tiktok.com/@transportes.mx2"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="TikTok"
+            >
               <FaTiktok className="hover:text-gray-300 cursor-pointer" />
             </Link>
 
@@ -211,11 +263,13 @@ const Navbar = () => {
             >
               <FaTripadvisor className="hover:text-green-500 cursor-pointer" />
             </Link>
+
           </div>
         </div>
 
         {/* BOTÓN DEL MENÚ MÓVIL */}
         <div className="lg:hidden flex items-center gap-3">
+
           <Link
             href="/reservar"
             className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 rounded-lg transition font-semibold text-xs text-white whitespace-nowrap"
@@ -232,12 +286,19 @@ const Navbar = () => {
           >
             {isMenuOpen ? <HiX size={24} /> : <HiMenu size={24} />}
           </button>
+
         </div>
+
       </div>
 
       {/* MENÚ DESPLEGABLE PARA CELULAR */}
       {isMenuOpen && (
-        <div ref={menuRef} className="lg:hidden bg-black shadow-md text-white">
+
+        <div
+          ref={menuRef}
+          className="lg:hidden bg-black shadow-md text-white"
+        >
+
           <a
             href="/#Hero"
             className="block px-4 py-2 hover:bg-gray-600"
@@ -254,7 +315,9 @@ const Navbar = () => {
             {traduccion.navbar.about}
           </a>
 
+          {/* SERVICIOS MÓVIL */}
           <div className="relative">
+
             <button
               type="button"
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -267,17 +330,31 @@ const Navbar = () => {
 
             {isDropdownOpen && (
               <div className="bg-black w-full">
-                <Link href="/#Aeropuerto" className="block px-6 py-2 hover:bg-gray-600" onClick={closeMobileMenu}>
+
+                <Link
+                  href="/#Aeropuerto"
+                  className="block px-6 py-2 hover:bg-gray-600"
+                  onClick={closeMobileMenu}
+                >
                   {traduccion.navbar.airport_transfer}
                 </Link>
 
-                <Link href="/#Bodas" className="block px-6 py-2 hover:bg-gray-600" onClick={closeMobileMenu}>
+                <Link
+                  href="/#Bodas"
+                  className="block px-6 py-2 hover:bg-gray-600"
+                  onClick={closeMobileMenu}
+                >
                   {traduccion.navbar.wedding_transport}
                 </Link>
 
-                <Link href="/#Chofer" className="block px-6 py-2 hover:bg-gray-600" onClick={closeMobileMenu}>
+                <Link
+                  href="/#Chofer"
+                  className="block px-6 py-2 hover:bg-gray-600"
+                  onClick={closeMobileMenu}
+                >
                   {traduccion.navbar.private_driver}
                 </Link>
+
               </div>
             )}
           </div>
@@ -310,7 +387,7 @@ const Navbar = () => {
             <span>Acceso</span>
           </Link>
 
-          {/* NUEVO ACCESO AL BANNER */}
+          {/* ACCESO AL BANNER */}
           <Link
             href="/banner"
             className="flex items-center gap-2 px-4 py-2 hover:bg-gray-600"
@@ -322,6 +399,7 @@ const Navbar = () => {
 
           {/* SELECTOR DE IDIOMA */}
           <div className="px-4 py-3 flex items-center gap-3">
+
             <button
               type="button"
               onClick={() => setIdioma({ nombre: "ES", code: "MX" })}
@@ -329,7 +407,11 @@ const Navbar = () => {
                 idioma.nombre === "ES" ? "p-1 bg-white text-black" : ""
               }`}
             >
-              <img src="/assets/icons/mexico.png" alt="México" className="h-5" />
+              <img
+                src="/assets/icons/mexico.png"
+                alt="México"
+                className="h-5"
+              />
               ESP
             </button>
 
@@ -343,21 +425,45 @@ const Navbar = () => {
               }`}
             >
               EN
-              <img src="/assets/icons/eu.png" alt="Estados Unidos" className="h-5" />
+              <img
+                src="/assets/icons/eu.png"
+                alt="Estados Unidos"
+                className="h-5"
+              />
             </button>
+
           </div>
 
           {/* REDES SOCIALES */}
           <div className="px-4 py-4 flex items-center justify-center gap-7 text-2xl">
-            <Link href="https://www.facebook.com/TransportesTMX/" target="_blank" rel="noopener noreferrer" onClick={closeMobileMenu} aria-label="Facebook">
+
+            <Link
+              href="https://www.facebook.com/TransportesTMX/"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={closeMobileMenu}
+              aria-label="Facebook"
+            >
               <FaFacebookF className="hover:text-blue-500" />
             </Link>
 
-            <Link href="https://www.instagram.com/trans_portesmx" target="_blank" rel="noopener noreferrer" onClick={closeMobileMenu} aria-label="Instagram">
+            <Link
+              href="https://www.instagram.com/trans_portesmx"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={closeMobileMenu}
+              aria-label="Instagram"
+            >
               <FaInstagram className="hover:text-pink-500" />
             </Link>
 
-            <Link href="https://www.tiktok.com/@transportes.mx2" target="_blank" rel="noopener noreferrer" onClick={closeMobileMenu} aria-label="TikTok">
+            <Link
+              href="https://www.tiktok.com/@transportes.mx2"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={closeMobileMenu}
+              aria-label="TikTok"
+            >
               <FaTiktok className="hover:text-gray-300" />
             </Link>
 
@@ -371,12 +477,20 @@ const Navbar = () => {
               <FaTripadvisor className="hover:text-green-500" />
             </Link>
 
-            <Link href="https://wa.me/524151393219" target="_blank" rel="noopener noreferrer" onClick={closeMobileMenu} aria-label="WhatsApp">
+            <Link
+              href="https://wa.me/524151393219"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={closeMobileMenu}
+              aria-label="WhatsApp"
+            >
               <FaWhatsapp className="hover:text-green-500" />
             </Link>
+
           </div>
         </div>
       )}
+
     </header>
   );
 };
