@@ -1,4 +1,3 @@
-
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/lib/supabase";
 
@@ -1173,12 +1172,28 @@ export default function NotasVenta() {
                     </span>
 
                     {tipo === "select" ? (
-                      <select
-                        required
-                        value={datos[campo] ?? ""}
-                        onChange={(e) => cambiar(campo, e.target.value)}
-                        className="mt-1 w-full rounded-lg border border-slate-400 bg-white p-3 text-slate-900 outline-none focus:border-emerald-500"
-                      >
+                      <div className="relative mt-1 w-full">
+                        <select
+                          required
+                          value={datos[campo] ?? ""}
+                          onChange={(e) => cambiar(campo, e.target.value)}
+                          aria-label="Seleccionar vehículo"
+                          style={{
+                            appearance: "auto",
+                            WebkitAppearance: "menulist",
+                            MozAppearance: "menulist",
+                            display: "block",
+                            width: "100%",
+                            minHeight: "48px",
+                            padding: "12px 42px 12px 12px",
+                            backgroundColor: "#ffffff",
+                            color: "#111827",
+                            border: "1px solid #94a3b8",
+                            borderRadius: "8px",
+                            cursor: "pointer",
+                          }}
+                          className="vehicle-select outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
+                        >
                         <option value="">
                           Selecciona un vehículo
                         </option>
@@ -1195,7 +1210,8 @@ export default function NotasVenta() {
                               {datos[campo]} (registro existente)
                             </option>
                           )}
-                      </select>
+                        </select>
+                      </div>
                     ) : (
                       <input
                         type={tipo}
