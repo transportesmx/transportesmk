@@ -236,7 +236,6 @@ const labels = {
     estTime: 'Tiempo estimado',
     yes: 'Si',
     no: 'No',
-    comments: 'Comentarios',
     returnSection: 'Regreso:',
     returnPickup: 'Recoger en',
     returnDateTime: 'Fecha y hora',
@@ -274,7 +273,6 @@ const labels = {
     estTime: 'Estimated time',
     yes: 'Yes',
     no: 'No',
-    comments: 'Comments',
     returnSection: 'Return:',
     returnPickup: 'Pickup at',
     returnDateTime: 'Date and time',
@@ -615,7 +613,7 @@ export async function generarHojaServicio(reserva, lang = 'es') {
     y
   );
 
-  y += 7;
+  y += 5.5;
 
   // TELEFONO
 
@@ -638,7 +636,7 @@ export async function generarHojaServicio(reserva, lang = 'es') {
     y
   );
 
-  y += 7;
+  y += 5.5;
 
   // CORREO
 
@@ -701,7 +699,7 @@ export async function generarHojaServicio(reserva, lang = 'es') {
     }
   }
 
-  y += 10;
+  y += 7;
 
   // ===================================================
   // BARRA DESCRIPCION
@@ -729,7 +727,7 @@ export async function generarHojaServicio(reserva, lang = 'es') {
     y + 8
   );
 
-  y += barH + 8;
+  y += barH + 5;
 
   // ===================================================
   // DATOS DEL TRASLADO
@@ -828,8 +826,8 @@ export async function generarHojaServicio(reserva, lang = 'es') {
     });
   }
 
-  const bulletFontSize = 13;
-  const bulletLineH = 8;
+  const bulletFontSize = 11.5;
+  const bulletLineH = 6.2;
 
   const textIndent = margin + EMOJI_SIZE + 3;
 
@@ -875,55 +873,7 @@ export async function generarHojaServicio(reserva, lang = 'es') {
     y += bulletLineH;
   });
 
-  // ===================================================
-  // COMENTARIOS
-  // ===================================================
-
-  if (reserva.comentarios) {
-    y += 4;
-
-    doc.setDrawColor(...COLORS.line);
-    doc.setLineWidth(0.3);
-
-    doc.line(margin, y, rightX, y);
-
-    y += 8;
-
-    drawEmoji(
-      doc,
-      'comment',
-      margin + 1,
-      y
-    );
-
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(bulletFontSize);
-    doc.setTextColor(...COLORS.black);
-
-    const comLabel = `${t.comments}: `;
-
-    doc.text(comLabel, textIndent, y);
-
-    const comLabelW =
-      doc.getStringUnitWidth(comLabel) *
-      bulletFontSize /
-      doc.internal.scaleFactor;
-
-    doc.setTextColor(...COLORS.blue);
-
-    y = drawWrappedValue(
-      doc,
-      reserva.comentarios,
-      textIndent + comLabelW,
-      y,
-      contentWidth - (textIndent - margin) - comLabelW,
-      bulletLineH
-    );
-
-    y += bulletLineH;
-  }
-
-  y += 6;
+  // Comentarios se elimina; se utiliza únicamente Observaciones.
 
   // ===================================================
   // REGRESO
@@ -934,7 +884,7 @@ export async function generarHojaServicio(reserva, lang = 'es') {
 
   doc.line(margin, y, rightX, y);
 
-  y += 10;
+  y += 7;
 
   drawEmoji(
     doc,
@@ -944,7 +894,7 @@ export async function generarHojaServicio(reserva, lang = 'es') {
   );
 
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(15);
+  doc.setFontSize(13);
   doc.setTextColor(...COLORS.black);
 
   doc.text(
@@ -953,7 +903,7 @@ export async function generarHojaServicio(reserva, lang = 'es') {
     y
   );
 
-  y += 9;
+  y += 6;
 
   const isRoundTrip =
     reserva.tipoViaje === 'redondo' &&
@@ -1019,28 +969,28 @@ export async function generarHojaServicio(reserva, lang = 'es') {
   });
 
   // ===================================================
-  // OBSERVACIONES (SIEMPRE VISIBLE)
+  // OBSERVACIONES (AL FINAL, SIEMPRE VISIBLE)
   // ===================================================
 
   const observaciones = String(reserva.observaciones || '').trim();
-  const footerY = ph - 23;
+
+  // Pie de página compacto de dos renglones, como en la referencia enviada.
+  const footerTop = ph - 17;
   const boxX = margin;
-  const boxY = y + 3;
   const boxW = contentWidth;
   const boxPadding = 4;
   const obsFontSize = 9;
   const obsLineHeight = 4.2;
 
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(obsFontSize);
-
   const obsLines = observaciones
     ? doc.splitTextToSize(observaciones, boxW - boxPadding * 2)
     : [];
 
-  const availableHeight = Math.max(12, footerY - boxY - 5);
-  const desiredHeight = 14 + Math.max(1, obsLines.length) * obsLineHeight;
-  const boxH = Math.min(desiredHeight, availableHeight);
+  const boxH = 14 + Math.max(1, obsLines.length) * obsLineHeight;
+  const boxY = footerTop - boxH - 4;
+
+  // El apartado de regreso se imprime antes de este recuadro,
+  // que queda anclado al fondo para mantener visible Observaciones.
 
   doc.setDrawColor(...COLORS.black);
   doc.setLineWidth(0.35);
@@ -1054,20 +1004,11 @@ export async function generarHojaServicio(reserva, lang = 'es') {
   if (obsLines.length) {
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(obsFontSize);
-
-    const maxLines = Math.max(1, Math.floor((boxH - 15) / obsLineHeight));
-    let visibleLines = obsLines.slice(0, maxLines);
-
-    if (obsLines.length > maxLines && visibleLines.length) {
-      const lastIndex = visibleLines.length - 1;
-      visibleLines[lastIndex] = `${visibleLines[lastIndex].slice(0, 85)}...`;
-    }
-
-    doc.text(visibleLines, boxX + boxPadding, boxY + 12);
+    doc.text(obsLines, boxX + boxPadding, boxY + 13);
   }
 
-  // Línea divisoria debajo del recuadro.
-  const obsBottomY = boxY + boxH + 3;
+  // Línea negra debajo del recuadro.
+  const obsBottomY = boxY + boxH + 2;
 
   doc.setDrawColor(...COLORS.black);
   doc.setLineWidth(0.35);
@@ -1077,47 +1018,54 @@ export async function generarHojaServicio(reserva, lang = 'es') {
   // PIE DE PAGINA
   // ===================================================
 
-  doc.setDrawColor(...COLORS.line);
-  doc.setLineWidth(0.3);
-
-  doc.line(margin, footerY, rightX, footerY);
-
   doc.setFont('helvetica', 'normal');
   doc.setTextColor(...COLORS.footerGray);
   doc.setFontSize(8);
 
-  doc.text(
-    'San Miguel de Allende, Gto.',
-    pw / 2,
-    footerY + 5,
-    { align: 'center' }
-  );
+  const ahora = new Date();
 
-  const fechaHora = new Date().toLocaleString(
+  const hora = ahora.toLocaleTimeString(
     lang === 'en' ? 'en-US' : 'es-MX',
-    {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true,
-    }
-  );
+    { hour: '2-digit', minute: '2-digit', hour12: true }
+  )
+    .replace(' a. m.', ' A.M.')
+    .replace(' p. m.', ' P.M.');
 
+  const fecha = lang === 'en'
+    ? ahora.toLocaleDateString('en-US', {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric'
+      })
+    : `${String(ahora.getDate()).padStart(2, '0')} de ${
+        [
+          'enero', 'febrero', 'marzo', 'abril',
+          'mayo', 'junio', 'julio', 'agosto',
+          'septiembre', 'octubre', 'noviembre', 'diciembre'
+        ][ahora.getMonth()]
+      } de ${ahora.getFullYear()}`;
+
+  const footerLine1 = lang === 'en'
+    ? `San Miguel de Allende, Guanajuato · Document Generated: ${fecha} · Time: ${hora}`
+    : `San Miguel de Allende, Guanajuato · Documento Generado: ${fecha} · Hora: ${hora}`;
+
+  const footerLines = doc.splitTextToSize(footerLine1, contentWidth);
+
+  doc.setFontSize(7.5);
   doc.text(
-    `${t.generated} ${fechaHora}`,
+    footerLines,
     pw / 2,
-    footerY + 9,
+    ph - 11,
     { align: 'center' }
   );
 
   doc.setFont('helvetica', 'bold');
+  doc.setFontSize(8);
 
   doc.text(
     'Grupo Turístico MX S. de R.L. de C.V.',
     pw / 2,
-    footerY + 13,
+    ph - 4,
     { align: 'center' }
   );
 
