@@ -23,10 +23,7 @@ export default function ConfirmacionReserva() {
 
   const lang = idioma?.nombre === 'EN' ? 'en' : 'es';
 
-  // ==========================================
   // DESCARGAR PDF
-  // ==========================================
-
   const handleDescargarPDF = async () => {
     if (pdfLoading) return;
 
@@ -66,32 +63,22 @@ export default function ConfirmacionReserva() {
           reserva.maletas ||
           0,
 
-        comentarios:
-          reserva.comentarios ||
-          reserva.observaciones ||
-          '',
+        // Se mantienen separados los comentarios y las observaciones
+        comentarios: reserva.comentarios || '',
+        observaciones: reserva.observaciones || '',
 
         precioTotal: reserva.precioTotal,
         metodoPago: reserva.metodoPago,
         estadoPago: reserva.estadoPago || 'pagado',
       };
 
-      // Esperar la generación completa del PDF
-      const doc = await generarHojaServicio(
-        datosReserva,
-        lang
-      );
+      const doc = await generarHojaServicio(datosReserva, lang);
 
       if (!doc || typeof doc.save !== 'function') {
-        throw new Error(
-          'El generador no devolvió un PDF válido'
-        );
+        throw new Error('El generador no devolvió un PDF válido');
       }
 
-      // Descargar documento
-      doc.save(
-        `TransportesMX-Reserva-${datosReserva.id}.pdf`
-      );
+      doc.save(`TransportesMX-Reserva-${datosReserva.id}.pdf`);
 
     } catch (err) {
       console.error('Error PDF:', err);
@@ -105,18 +92,12 @@ export default function ConfirmacionReserva() {
     }
   };
 
-  // ==========================================
   // NUEVA RESERVA
-  // ==========================================
-
   const handleNuevaReserva = () => {
     dispatch({ type: 'RESET' });
   };
 
-  // ==========================================
   // WHATSAPP
-  // ==========================================
-
   const whatsappMsg = encodeURIComponent(
     lang === 'en'
       ? `Hi! I just booked a transfer:\n📍 ${reserva.origen} → ${reserva.destino}\n📅 ${reserva.fechaIda} at ${reserva.horaIda}\n🚗 ${reserva.vehiculoNombre}`
@@ -128,10 +109,7 @@ export default function ConfirmacionReserva() {
     reserva.stripeSessionId?.slice(-8) ||
     String(Date.now()).slice(-8);
 
-  // ==========================================
-  // PANTALLA DE CONFIRMACION
-  // ==========================================
-
+  // PANTALLA DE CONFIRMACIÓN
   return (
     <div className="max-w-lg mx-auto">
 
@@ -176,9 +154,7 @@ export default function ConfirmacionReserva() {
 
       </motion.div>
 
-      {/* ======================================
-          RESUMEN DE RESERVACION
-      ====================================== */}
+      {/* RESUMEN DE RESERVACIÓN */}
 
       <div className="bg-white/[0.03] border border-white/[0.06] rounded-2xl p-5 mb-5 space-y-4">
 
@@ -274,9 +250,7 @@ export default function ConfirmacionReserva() {
 
       </div>
 
-      {/* ======================================
-          BOTONES PDF Y WHATSAPP
-      ====================================== */}
+      {/* BOTONES PDF Y WHATSAPP */}
 
       <div className="grid grid-cols-2 gap-2 mb-4">
 
@@ -305,9 +279,7 @@ export default function ConfirmacionReserva() {
 
       </div>
 
-      {/* ======================================
-          NUEVA RESERVA E INICIO
-      ====================================== */}
+      {/* NUEVA RESERVA E INICIO */}
 
       <div className="flex gap-3">
 
