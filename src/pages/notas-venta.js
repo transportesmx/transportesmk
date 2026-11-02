@@ -15,6 +15,7 @@ const INICIAL = {
   origen: "",
   destino: "",
   unidad: "",
+  imagenUnidad: "/sprinter.png",
   pasajeros: "",
   importe: "",
   observaciones: "",
@@ -27,7 +28,8 @@ const INICIAL = {
 };
 
 const CAMPOS = [
-  ["unidad", "🚐 Vehículo", "select"],
+  ["imagenUnidad", "🖼️ Seleccionar imagen del vehículo", "select"],
+  ["unidad", "✏️ Nombre del vehículo (manual)", "text"],
   ["cliente", "👤 Nombre del cliente", "text"],
   ["fecha", "📅 Fecha del servicio", "date"],
   ["hora", "🕒 Hora del servicio", "time"],
@@ -45,44 +47,49 @@ const CAMPOS = [
 ];
 
 const VEHICULOS = [
-  "Mercedes-Benz Sprinter",
-  "Honda Odyssey",
-  "Volkswagen Jetta (Sedán)",
-  "Chevrolet Suburban",
-  "Toyota Hiace",
+  { nombre: "Mercedes-Benz Sprinter", imagen: "/sprinter.png" },
+  { nombre: "Honda Odyssey", imagen: "/odyssey.png" },
+  { nombre: "Volkswagen Jetta / Sedán", imagen: "/sedan.png" },
+  { nombre: "Chevrolet Suburban", imagen: "/suburban.png" },
+  { nombre: "Toyota Hiace", imagen: "/hiace.png" },
 ];
 
 const IMAGENES_VEHICULOS = {
-  sprinter: "/sprinter.png",
-  odyssey: "/odyssey.png",
-  sedan: "/sedan.png",
-  suburban: "/suburban.png",
-  hiace: "/hiace.png",
+  "/sprinter.png": "/sprinter.png",
+  "/odyssey.png": "/odyssey.png",
+  "/sedan.png": "/sedan.png",
+  "/suburban.png": "/suburban.png",
+  "/hiace.png": "/hiace.png",
 };
 
-function imagenVehiculo(unidad) {
-  const nombre = String(unidad || "")
+function imagenVehiculo(imagenUnidad, nombreManual = "") {
+  const imagen = String(imagenUnidad || "").trim();
+
+  // Priorizar la imagen seleccionada manualmente. Es una ruta pública
+  // existente en /public, por ejemplo /odyssey.png.
+  if (IMAGENES_VEHICULOS[imagen]) {
+    return IMAGENES_VEHICULOS[imagen];
+  }
+
+  // Compatibilidad con notas antiguas que solo guardaban el nombre del vehículo.
+  const nombre = String(nombreManual || imagenUnidad || "")
     .toLowerCase()
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "");
 
   if (nombre.includes("odyssey") || nombre.includes("minivan")) {
-    return IMAGENES_VEHICULOS.odyssey;
+    return IMAGENES_VEHICULOS["/odyssey.png"];
   }
-
   if (nombre.includes("jetta") || nombre.includes("sedan")) {
-    return IMAGENES_VEHICULOS.sedan;
+    return IMAGENES_VEHICULOS["/sedan.png"];
   }
-
   if (nombre.includes("suburban")) {
-    return IMAGENES_VEHICULOS.suburban;
+    return IMAGENES_VEHICULOS["/suburban.png"];
   }
-
   if (nombre.includes("hiace")) {
-    return IMAGENES_VEHICULOS.hiace;
+    return IMAGENES_VEHICULOS["/hiace.png"];
   }
-
-  return IMAGENES_VEHICULOS.sprinter;
+  return IMAGENES_VEHICULOS["/sprinter.png"];
 }
 
 function formatoFecha(valor) {
@@ -263,7 +270,7 @@ function abrirImpresion(datos, folio) {
         })} MXN`
       : importeTexto;
 
-  const imagenSeleccionada = imagenVehiculo(datos.unidad);
+  const imagenSeleccionada = imagenVehiculo(datos.imagenUnidad, datos.unidad);
 
   ventana.document.open();
 
@@ -626,7 +633,7 @@ button{
     <img
       class="imagenVehiculo"
       src="${origen}${imagenSeleccionada}"
-      alt="Vehículo ${escapar(datos.unidad || "Sprinter")}"
+      alt="Vehículo ${escapar(datos.unidad || "seleccionado")}"
     >
 
   </div>
@@ -1172,51 +1179,41 @@ export default function NotasVenta() {
                     </span>
 
                     {tipo === "select" ? (
-                      <div className="relative mt-1 w-full">
-                        <select
-                          required
-                          value={datos[campo] ?? ""}
-                          onChange={(e) => cambiar(campo, e.target.value)}
-                          aria-label="Seleccionar vehículo"
-                          style={{
-                            appearance: "auto",
-                            WebkitAppearance: "menulist",
-                            MozAppearance: "menulist",
-                            display: "block",
-                            width: "100%",
-                            minHeight: "48px",
-                            padding: "12px 42px 12px 12px",
-                            backgroundColor: "#ffffff",
-                            color: "#111827",
-                            border: "1px solid #94a3b8",
-                            borderRadius: "8px",
-                            cursor: "pointer",
-                          }}
-                          className="vehicle-select outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
-                        >
+                      <select
+                        required
+                        value={datos[campo] ?? ""}
+                        onChange={(e) => cambiar(campo, e.target.value)}
+                        style={{
+                          appearance: "auto",
+                          WebkitAppearance: "menulist",
+                          MozAppearance: "menulist",
+                          display: "block",
+                          width: "100%",
+                          minHeight: "48px",
+                          padding: "12px",
+                          backgroundColor: "#ffffff",
+                          color: "#111827",
+                          border: "1px solid #94a3b8",
+                          borderRadius: "8px",
+                          cursor: "pointer",
+                        }}
+                        className="mt-1 w-full outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
+                      >
                         <option value="">
                           Selecciona un vehículo
                         </option>
 
                         {VEHICULOS.map((vehiculo) => (
-                          <option key={vehiculo} value={vehiculo}>
-                            {vehiculo}
+                          <option key={vehiculo.imagen} value={vehiculo.imagen}>
+                            {vehiculo.nombre}
                           </option>
                         ))}
-
-                        {datos[campo] &&
-                          !VEHICULOS.includes(datos[campo]) && (
-                            <option value={datos[campo]}>
-                              {datos[campo]} (registro existente)
-                            </option>
-                          )}
-                        </select>
-                      </div>
+                      </select>
                     ) : (
                       <input
                         type={tipo}
                         min={tipo === "number" ? "0" : undefined}
-                        required={campo === "cliente"}
+                        required={campo === "cliente" || campo === "unidad"}
                         value={datos[campo] ?? ""}
                         onChange={(e) => cambiar(campo, e.target.value)}
                         className="mt-1 w-full rounded-lg border border-slate-400 bg-white p-3 text-slate-900 outline-none focus:border-emerald-500"
@@ -1465,7 +1462,7 @@ export default function NotasVenta() {
                   </div>
 
                   <img
-                    src={imagenVehiculo(datos.unidad)}
+                    src={imagenVehiculo(datos.imagenUnidad, datos.unidad)}
                     alt={datos.unidad || "Vehículo"}
                     className="mt-2 h-20 w-full object-contain"
                   />
