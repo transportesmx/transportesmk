@@ -207,13 +207,13 @@ function formatearTelefono(tel) {
 
 const labels = {
   es: {
-    company: 'Grupo Turístico MX S. de R.L',
+    company: 'Grupo Turístico MX S. de R.L de C.V',
     rfc: 'RATG900822G16',
     address: 'San Miguel de Allende GTO.',
     phone: '+52 415 139 3219',
     email: 'contacto@transportesmx.org',
     website: 'https://transportesmx.org',
-    siteLabel: 'Sitio Web:',
+    siteLabel: '',
     folio: 'Folio',
     date: 'Fecha',
     status: 'Pagado',
