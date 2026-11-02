@@ -103,8 +103,7 @@ function imagenVehiculo(imagenUnidad, nombreManual = "") {
 function formatoFecha(valor) {
   if (!valor) return "";
 
-  const fecha = new Date(`${valor}T12:00:00`);
-
+const fecha = new Date(String(valor) + "T12:00:00");
   if (Number.isNaN(fecha.getTime())) return valor;
 
   const texto = new Intl.DateTimeFormat("es-MX", {
