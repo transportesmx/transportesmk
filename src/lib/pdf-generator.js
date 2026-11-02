@@ -1,7 +1,5 @@
 
 import jsPDF from 'jspdf';
-import { LOGOPDF_BASE64 } from './logopdf-base64';
-import { QRPDF_BASE64 } from './qrpdf-base64';
 import { EMOJI_ICONS } from './emoji-icons-base64';
 
 const COLORS = {
@@ -15,8 +13,79 @@ const COLORS = {
 };
 
 // =====================================================
+// CARGADOR DE IMAGENES PUBLICAS
+// =====================================================
+
+async function cargarImagenPublica(ruta) {
+  try {
+    const respuesta = await fetch(
+      `${ruta}?v=${Date.now()}`,
+      { cache: 'no-store' }
+    );
+
+    if (!respuesta.ok) {
+      throw new Error(`No se encontró: ${ruta}`);
+    }
+
+    const blob = await respuesta.blob();
+
+    return await new Promise((resolve, reject) => {
+      const lector = new FileReader();
+
+      lector.onload = () => resolve(lector.result);
+      lector.onerror = () => reject(
+        new Error('No se pudo leer la imagen')
+      );
+
+      lector.readAsDataURL(blob);
+    });
+  } catch (error) {
+    console.error('Error cargando imagen:', ruta, error);
+    return null;
+  }
+}
+
+// Detectar formato de imagen
+function obtenerFormatoImagen(imagen) {
+  if (!imagen) return null;
+
+  if (
+    imagen.startsWith('data:image/jpeg') ||
+    imagen.startsWith('data:image/jpg')
+  ) {
+    return 'JPEG';
+  }
+
+  if (imagen.startsWith('data:image/png')) {
+    return 'PNG';
+  }
+
+  if (imagen.startsWith('data:image/webp')) {
+    return 'WEBP';
+  }
+
+  return null;
+}
+
+// Obtener dimensiones originales
+function calcularDimensionesImagen(doc, imagen, maxW, maxH) {
+  const propiedades = doc.getImageProperties(imagen);
+
+  const proporcion = propiedades.width / propiedades.height;
+
+  let width = maxW;
+  let height = width / proporcion;
+
+  if (height > maxH) {
+    height = maxH;
+    width = height * proporcion;
+  }
+
+  return { width, height };
+}
+
+// =====================================================
 // IMAGENES DE VEHICULOS
-// Se leen directamente desde public/assets/vehiculos/
 // =====================================================
 
 const VEHICLE_IMAGE_FILES = {
@@ -34,53 +103,47 @@ function getVehicleImageFile(vehiculoId, vehiculoNombre) {
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '');
 
-  if (nombre.includes('suburban')) return VEHICLE_IMAGE_FILES.suburban;
-  if (nombre.includes('sprinter')) return VEHICLE_IMAGE_FILES.sprinter;
-  if (nombre.includes('hiace')) return VEHICLE_IMAGE_FILES.hiace;
-  if (nombre.includes('minivan') || nombre.includes('odyssey')) {
+  if (nombre.includes('suburban')) {
+    return VEHICLE_IMAGE_FILES.suburban;
+  }
+
+  if (nombre.includes('sprinter')) {
+    return VEHICLE_IMAGE_FILES.sprinter;
+  }
+
+  if (nombre.includes('hiace')) {
+    return VEHICLE_IMAGE_FILES.hiace;
+  }
+
+  if (
+    nombre.includes('minivan') ||
+    nombre.includes('odyssey')
+  ) {
     return VEHICLE_IMAGE_FILES.minivan;
   }
-  if (nombre.includes('sedan') || nombre.includes('jetta')) {
+
+  if (
+    nombre.includes('sedan') ||
+    nombre.includes('jetta')
+  ) {
     return VEHICLE_IMAGE_FILES.sedan;
   }
 
   return null;
 }
 
-// Cargar imagen actual desde GitHub/Vercel
+// Cargar vehículo desde public/assets/vehiculos/
 async function cargarImagenVehiculo(vehiculoId, vehiculoNombre) {
-  const archivo = getVehicleImageFile(vehiculoId, vehiculoNombre);
+  const archivo = getVehicleImageFile(
+    vehiculoId,
+    vehiculoNombre
+  );
 
   if (!archivo) return null;
 
-  try {
-    const url = `/assets/vehiculos/${archivo}?v=${Date.now()}`;
-
-    const respuesta = await fetch(url, {
-      cache: 'no-store',
-    });
-
-    if (!respuesta.ok) {
-      console.error('No se encontró la imagen:', archivo);
-      return null;
-    }
-
-    const blob = await respuesta.blob();
-
-    return await new Promise((resolve, reject) => {
-      const lector = new FileReader();
-
-      lector.onload = () => resolve(lector.result);
-      lector.onerror = () => reject(
-        new Error('No se pudo leer la imagen')
-      );
-
-      lector.readAsDataURL(blob);
-    });
-  } catch (error) {
-    console.error('Error cargando imagen:', error);
-    return null;
-  }
+  return await cargarImagenPublica(
+    `/assets/vehiculos/${archivo}`
+  );
 }
 
 // =====================================================
@@ -97,6 +160,7 @@ function generarFolio(reservaId) {
   }
 
   const n = Math.floor(100000 + Math.random() * 900000);
+
   return `MX${n}`;
 }
 
@@ -238,6 +302,7 @@ function drawEmoji(doc, emojiKey, x, y) {
         EMOJI_SIZE,
         EMOJI_SIZE
       );
+
       return;
     } catch {
       // Continuar con icono alternativo
@@ -271,7 +336,6 @@ function drawWrappedValue(doc, text, x, y, maxWidth, lineHeight) {
 
 // =====================================================
 // GENERAR HOJA DE SERVICIO
-// IMPORTANTE: AHORA ES ASYNC
 // =====================================================
 
 export async function generarHojaServicio(reserva, lang = 'es') {
@@ -289,6 +353,19 @@ export async function generarHojaServicio(reserva, lang = 'es') {
   let y = margin;
 
   // ===================================================
+  // CARGAR IMAGENES ACTUALIZADAS
+  // ===================================================
+
+  const [logoActual, qrActual, vehicleImg] = await Promise.all([
+    cargarImagenPublica('/logo.jpg'),
+    cargarImagenPublica('/assets/qrpdf.png'),
+    cargarImagenVehiculo(
+      reserva.vehiculoId,
+      reserva.vehiculoNombre
+    ),
+  ]);
+
+  // ===================================================
   // LOGOTIPO
   // ===================================================
 
@@ -303,18 +380,38 @@ export async function generarHojaServicio(reserva, lang = 'es') {
     doc.internal.scaleFactor;
 
   const logoW = companyTextW;
-  const logoH = logoW / 4.56;
+  let logoH = logoW / 4.56;
 
-  try {
-    doc.addImage(
-      LOGOPDF_BASE64,
-      'PNG',
-      margin,
-      y,
-      logoW,
-      logoH
-    );
-  } catch {
+  if (logoActual) {
+    try {
+      const formatoLogo = obtenerFormatoImagen(logoActual);
+
+      const dimensionesLogo = calcularDimensionesImagen(
+        doc,
+        logoActual,
+        logoW,
+        22
+      );
+
+      logoH = dimensionesLogo.height;
+
+      doc.addImage(
+        logoActual,
+        formatoLogo,
+        margin,
+        y,
+        dimensionesLogo.width,
+        dimensionesLogo.height
+      );
+    } catch (error) {
+      console.error('Error insertando logotipo:', error);
+
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(22);
+      doc.setTextColor(...COLORS.black);
+      doc.text('TRANSPORTES MX', margin, y + 12);
+    }
+  } else {
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(22);
     doc.setTextColor(...COLORS.black);
@@ -334,17 +431,23 @@ export async function generarHojaServicio(reserva, lang = 'es') {
     qrLeftEdge +
     (qrRightEdge - qrLeftEdge - qrSize) / 2;
 
-  try {
-    doc.addImage(
-      QRPDF_BASE64,
-      'PNG',
-      qrX,
-      y - 3,
-      qrSize,
-      qrSize
-    );
-  } catch {
-    // QR no disponible
+  if (qrActual) {
+    try {
+      const formatoQR = obtenerFormatoImagen(qrActual);
+
+      doc.addImage(
+        qrActual,
+        formatoQR,
+        qrX,
+        y - 3,
+        qrSize,
+        qrSize
+      );
+    } catch (error) {
+      console.error('Error insertando QR:', error);
+    }
+  } else {
+    console.error('No se pudo cargar el QR del PDF');
   }
 
   // ===================================================
@@ -562,39 +665,37 @@ export async function generarHojaServicio(reserva, lang = 'es') {
   y += 4;
 
   // ===================================================
-  // IMAGEN DEL VEHICULO ACTUAL
+  // IMAGEN DEL VEHICULO SIN DEFORMAR
   // ===================================================
 
-  const vehicleImg = await cargarImagenVehiculo(
-    reserva.vehiculoId,
-    reserva.vehiculoNombre
-  );
-
   if (vehicleImg) {
-    const finalW = 55;
-    const finalH = finalW / 2;
-
-    const imgX = rightX - finalW;
-    const imgY = clientStartY - 2;
-
     try {
-      const formatoImagen =
-        vehicleImg.startsWith('data:image/jpeg') ||
-        vehicleImg.startsWith('data:image/jpg')
-          ? 'JPEG'
-          : 'PNG';
+      const formatoImagen = obtenerFormatoImagen(vehicleImg);
+
+      const maxW = 55;
+      const maxH = 27.5;
+
+      const dimensiones = calcularDimensionesImagen(
+        doc,
+        vehicleImg,
+        maxW,
+        maxH
+      );
+
+      const imgX = rightX - dimensiones.width;
+      const imgY = clientStartY - 2;
 
       doc.addImage(
         vehicleImg,
         formatoImagen,
         imgX,
         imgY,
-        finalW,
-        finalH
+        dimensiones.width,
+        dimensiones.height
       );
     } catch (error) {
       console.error(
-        'Error insertando imagen en PDF:',
+        'Error insertando imagen del vehículo:',
         error
       );
     }
