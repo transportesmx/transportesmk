@@ -1,3 +1,4 @@
+// PRUEBA DE DESPLIEGUE VERCEL - 02 NOVIEMBRE 2026
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/lib/supabase";
 
