@@ -46,50 +46,58 @@ const CAMPOS = [
   ["email", "✉️ Correo electrónico", "email"],
 ];
 
+// Rutas de imágenes que existen actualmente en la carpeta /public del repositorio.
+// En GitHub se observa que suburban.png no está presente; temporalmente se usa
+// sprinter.png como imagen de respaldo para evitar que la nota muestre una imagen rota.
 const VEHICULOS = [
   { nombre: "Mercedes-Benz Sprinter", imagen: "/sprinter.png" },
   { nombre: "Honda Odyssey", imagen: "/odyssey.png" },
   { nombre: "Volkswagen Jetta / Sedán", imagen: "/sedan.png" },
-  { nombre: "Chevrolet Suburban", imagen: "/suburban.png" },
+  { nombre: "Chevrolet Suburban", imagen: "/sprinter.png" },
   { nombre: "Toyota Hiace", imagen: "/hiace.png" },
 ];
 
 const IMAGENES_VEHICULOS = {
   "/sprinter.png": "/sprinter.png",
   "/odyssey.png": "/odyssey.png",
+  "/odissey.png": "/odyssey.png", // compatibilidad con el nombre mal escrito antiguo
   "/sedan.png": "/sedan.png",
-  "/suburban.png": "/suburban.png",
+  "/suburban.png": "/sprinter.png", // archivo suburban.png no existe actualmente en /public
   "/hiace.png": "/hiace.png",
 };
 
 function imagenVehiculo(imagenUnidad, nombreManual = "") {
-  const imagen = String(imagenUnidad || "").trim();
+  const imagenOriginal = String(imagenUnidad || "").trim();
+  const imagen = imagenOriginal.toLowerCase().replace(/^\/public(?=\/)/, "");
 
-  // Priorizar la imagen seleccionada manualmente. Es una ruta pública
-  // existente en /public, por ejemplo /odyssey.png.
+  // Acepta rutas guardadas anteriormente, incluyendo /public/... y variantes de Odyssey.
   if (IMAGENES_VEHICULOS[imagen]) {
     return IMAGENES_VEHICULOS[imagen];
   }
 
-  // Compatibilidad con notas antiguas que solo guardaban el nombre del vehículo.
-  const nombre = String(nombreManual || imagenUnidad || "")
+  const nombre = String(nombreManual || imagenOriginal || "")
     .toLowerCase()
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "");
 
-  if (nombre.includes("odyssey") || nombre.includes("minivan")) {
-    return IMAGENES_VEHICULOS["/odyssey.png"];
+  if (nombre.includes("odyssey") || nombre.includes("odissey") || nombre.includes("minivan")) {
+    return "/odyssey.png";
   }
-  if (nombre.includes("jetta") || nombre.includes("sedan")) {
-    return IMAGENES_VEHICULOS["/sedan.png"];
+  if (nombre.includes("jetta") || nombre.includes("sedan") || nombre.includes("sedán")) {
+    return "/sedan.png";
   }
   if (nombre.includes("suburban")) {
-    return IMAGENES_VEHICULOS["/suburban.png"];
+    return "/sprinter.png"; // respaldo temporal hasta subir suburban.png
   }
   if (nombre.includes("hiace")) {
-    return IMAGENES_VEHICULOS["/hiace.png"];
+    return "/hiace.png";
   }
-  return IMAGENES_VEHICULOS["/sprinter.png"];
+  if (nombre.includes("sprinter") || nombre.includes("mercedes")) {
+    return "/sprinter.png";
+  }
+
+  // Valor inesperado (por ejemplo un código como QWW): usar imagen válida de respaldo.
+  return "/sprinter.png";
 }
 
 function formatoFecha(valor) {
@@ -626,6 +634,7 @@ button{
   class="imagenVehiculo"
   src="${origen}${imagenSeleccionada}"
   alt="Vehículo ${escapar(datos.unidad || "seleccionado")}"
+  onerror="this.onerror=null;this.src='${origen}/sprinter.png';"
 >
   </div>
 
@@ -1442,6 +1451,12 @@ return notas.filter((nota) =>
               <img
                 src={imagenVehiculo(datos.imagenUnidad, datos.unidad)}
                 alt={datos.unidad || "Vehículo"}
+                onError={(event) => {
+                  if (event.currentTarget.src !== `${window.location.origin}/sprinter.png`) {
+                    event.currentTarget.onerror = null;
+                    event.currentTarget.src = "/sprinter.png";
+                  }
+                }}
                 className="mt-[36px] h-[150px] w-full max-w-[190px] object-contain object-center"
               />
 
