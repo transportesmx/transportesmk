@@ -25,7 +25,6 @@ export default function ConfirmacionReserva() {
 
   // ==========================================
   // DESCARGAR PDF
-  // Ahora espera a que cargue la imagen.
   // ==========================================
 
   const handleDescargarPDF = async () => {
@@ -41,6 +40,7 @@ export default function ConfirmacionReserva() {
           'N/A',
 
         vehiculoId: reserva.vehiculoId,
+        vehiculoNombre: reserva.vehiculoNombre,
 
         clienteNombre: reserva.clienteNombre,
         clienteEmail: reserva.clienteEmail,
@@ -59,10 +59,12 @@ export default function ConfirmacionReserva() {
         distancia: reserva.distancia,
         duracion: reserva.duracion,
 
-        vehiculoNombre: reserva.vehiculoNombre,
-
         numPasajeros: reserva.numPasajeros,
-        numMaletas: reserva.numMaletas || reserva.maletas || 0,
+
+        numMaletas:
+          reserva.numMaletas ||
+          reserva.maletas ||
+          0,
 
         comentarios:
           reserva.comentarios ||
@@ -74,14 +76,16 @@ export default function ConfirmacionReserva() {
         estadoPago: reserva.estadoPago || 'pagado',
       };
 
-      // Esperar a que termine de cargar la fotografía
+      // Esperar la generación completa del PDF
       const doc = await generarHojaServicio(
         datosReserva,
         lang
       );
 
       if (!doc || typeof doc.save !== 'function') {
-        throw new Error('El generador no devolvió un PDF válido');
+        throw new Error(
+          'El generador no devolvió un PDF válido'
+        );
       }
 
       // Descargar documento
@@ -308,6 +312,7 @@ export default function ConfirmacionReserva() {
       <div className="flex gap-3">
 
         <button
+          type="button"
           onClick={handleNuevaReserva}
           className="flex-1 py-3 bg-white text-[#0a0a0f] font-semibold rounded-lg text-sm hover:bg-white/90 active:scale-[0.99] transition-all flex items-center justify-center gap-2"
         >
