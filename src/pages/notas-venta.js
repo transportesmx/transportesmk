@@ -95,7 +95,7 @@ function imagenVehiculo(imagenUnidad, nombreManual = "") {
 function formatoFecha(valor) {
   if (!valor) return "";
 
-  const fecha = new Date(`${valor}T12:00:00`);
+  const fecha = new Date(${valor}T12:00:00);
 
   if (Number.isNaN(fecha.getTime())) return valor;
 
@@ -120,9 +120,7 @@ function formatoHora(valor) {
     return valor;
   }
 
-  return `${hora % 12 || 12}:${String(minuto).padStart(2, "0")} ${
-    hora >= 12 ? "P.M." : "A.M."
-  }`;
+  return ${hora % 12 || 12}:${String(minuto).padStart(2, "0")} ${     hora >= 12 ? "P.M." : "A.M."   };
 }
 
 function moneda(valor) {
@@ -138,19 +136,16 @@ function moneda(valor) {
 
   if (!Number.isFinite(numero)) return texto;
 
-  return `$${numero.toLocaleString("es-MX", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  })} MXN`;
+  return $${numero.toLocaleString("es-MX", {     minimumFractionDigits: 2,     maximumFractionDigits: 2,   })} MXN;
 }
 
 function escapar(valor) {
   return String(valor ?? "").replace(/[&<>"']/g, (caracter) => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#39;",
+    "&": "&",
+    "<": "<",
+    ">": ">",
+    '"': """,
+    "'": "'",
   })[caracter]);
 }
 
@@ -196,8 +191,8 @@ function fechaHoraActual() {
   ).toUpperCase();
 
   return {
-    fecha: `${dia} de ${mes} de ${anio}`,
-    hora: `${hora}:${minuto} ${periodo === "PM" ? "P.M." : "A.M."}`,
+    fecha: ${dia} de ${mes} de ${anio},
+    hora: ${hora}:${minuto} ${periodo === "PM" ? "P.M." : "A.M."},
   };
 }
 
@@ -217,13 +212,7 @@ function valorRegreso(datos) {
 }
 
 function htmlFila(etiqueta, valor, clase = "") {
-  return `<div class="dato ${clase}">
-    <span class="icono">${escapar(etiqueta.split(" ")[0])}</span>
-    <strong class="etiqueta">${escapar(
-      etiqueta.replace(/^\S+\s*/, "")
-    )}</strong>
-    <span class="valor">${escapar(valor || "")}</span>
-  </div>`;
+  return <div class="dato ${clase}">     <span class="icono">${escapar(etiqueta.split(" ")[0])}</span>     <strong class="etiqueta">${escapar(       etiqueta.replace(/^\S+\s*/, "")     )}</strong>     <span class="valor">${escapar(valor || "")}</span>   </div>;
 }
 
 function abrirImpresion(datos, folio) {
@@ -264,10 +253,7 @@ function abrirImpresion(datos, folio) {
   const total = !importeTexto
     ? ""
     : Number.isFinite(importeNumero)
-      ? `$${importeNumero.toLocaleString("es-MX", {
-          minimumFractionDigits: 0,
-          maximumFractionDigits: 2,
-        })} MXN`
+      ? $${importeNumero.toLocaleString("es-MX", {           minimumFractionDigits: 0,           maximumFractionDigits: 2,         })} MXN
       : importeTexto;
 
   const imagenSeleccionada = imagenVehiculo(datos.imagenUnidad, datos.unidad);
@@ -379,10 +365,13 @@ body{
 }
 
 .imagenVehiculo{
+  display:block;
   width:100%;
-  height:34mm;
+  height:40mm;
+  margin-top:10mm;
   object-fit:contain;
-  object-position:center
+  object-position:center;
+  max-width:48mm
 }
 
 .separador{
@@ -599,43 +588,41 @@ button{
 
   <div class="marca">
 
-    <img
-      class="logo"
-      src="${origen}/logo.jpg"
-      alt="Transportes MX"
-    >
+<img
+  class="logo"
+  src="${origen}/logo.jpg"
+  alt="Transportes MX"
+>
 
-    <div class="empresa">
-      <strong>Grupo Turístico MX S. de R.L. de C.V.</strong>
-      <span>RFC: GTM2604271F2</span><br>
-      <span>San Miguel de Allende Guanajuato</span><br>
-      <span>+52 415 139 3219</span><br>
+<div class="empresa">
+  <strong>Grupo Turístico MX S. de R.L. de C.V.</strong>
+  <span>RFC: GTM2604271F2</span><br>
+  <span>San Miguel de Allende Guanajuato</span><br>
+  <span>+52 415 139 3219</span><br>
 
-      <a
-        class="normal contacto-link"
-        href="mailto:contacto@transportesmx.org"
-      >contacto@transportesmx.org</a><br>
+  <a
+    class="normal contacto-link"
+    href="mailto:contacto@transportesmx.org"
+  >contacto@transportesmx.org</a><br>
 
-      <a
-        class="normal web-link"
-        href="https://transportesmx.org"
-      >https://transportesmx.org</a>
-    </div>
-
+  <a
+    class="normal web-link"
+    href="https://transportesmx.org"
+  >https://transportesmx.org</a>
+</div>
   </div>
 
   <div class="folioCol">
 
-    <div class="folio">
-      F- ${escapar(folioTexto)}
-    </div>
+<div class="folio">
+  F- ${escapar(folioTexto)}
+</div>
 
-    <img
-      class="imagenVehiculo"
-      src="${origen}${imagenSeleccionada}"
-      alt="Vehículo ${escapar(datos.unidad || "seleccionado")}"
-    >
-
+<img
+  class="imagenVehiculo"
+  src="${origen}${imagenSeleccionada}"
+  alt="Vehículo ${escapar(datos.unidad || "seleccionado")}"
+>
   </div>
 
 </header>
@@ -732,92 +719,87 @@ export default function NotasVenta() {
       setCargando(false);
       return undefined;
     }
+let activo = true;
 
-    let activo = true;
+supabase.auth.getSession().then(({ data, error }) => {
+  if (!activo) return;
 
-    supabase.auth.getSession().then(({ data, error }) => {
-      if (!activo) return;
+  if (error) {
+    setMensaje("No se pudo comprobar la sesión.");
+  }
 
-      if (error) {
-        setMensaje("No se pudo comprobar la sesión.");
-      }
+  setSesion(data?.session ?? null);
+  setCargando(false);
+}).catch(() => {
+  if (activo) {
+    setMensaje("No se pudo comprobar la sesión.");
+    setCargando(false);
+  }
+});
 
-      setSesion(data?.session ?? null);
-      setCargando(false);
-    }).catch(() => {
-      if (activo) {
-        setMensaje("No se pudo comprobar la sesión.");
-        setCargando(false);
-      }
-    });
+const { data: listener } =
+  supabase.auth.onAuthStateChange((_evento, nuevaSesion) =>
+    setSesion(nuevaSesion)
+  );
 
-    const { data: listener } =
-      supabase.auth.onAuthStateChange((_evento, nuevaSesion) =>
-        setSesion(nuevaSesion)
-      );
-
-    return () => {
-      activo = false;
-      listener.subscription.unsubscribe();
-    };
+return () => {
+  activo = false;
+  listener.subscription.unsubscribe();
+};
   }, []);
 
   useEffect(() => {
     if (sesion && autorizado) cargarNotas();
-
-    // cargarNotas se invoca al cambiar la sesión/permiso.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+// cargarNotas se invoca al cambiar la sesión/permiso.
+// eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sesion, autorizado]);
 
   async function cargarNotas() {
     if (!supabase) return;
+const { data, error } = await supabase
+  .from("notas_venta")
+  .select("id, folio, datos, creado_en, actualizado_en")
+  .order("creado_en", { ascending: false });
 
-    const { data, error } = await supabase
-      .from("notas_venta")
-      .select("id, folio, datos, creado_en, actualizado_en")
-      .order("creado_en", { ascending: false });
+if (error) {
+  setMensaje(
+    "No se pudieron cargar las notas. Revisa los permisos de Supabase."
+  );
+  return;
+}
 
-    if (error) {
-      setMensaje(
-        "No se pudieron cargar las notas. Revisa los permisos de Supabase."
-      );
-      return;
-    }
-
-    setNotas(data || []);
+setNotas(data || []);
   }
 
   async function iniciarSesion(evento) {
     evento.preventDefault();
     setMensaje("");
+if (!supabase) {
+  setMensaje("No está configurada la conexión con Supabase.");
+  return;
+}
 
-    if (!supabase) {
-      setMensaje("No está configurada la conexión con Supabase.");
-      return;
-    }
+const { data, error } = await supabase.auth.signInWithPassword({
+  email: correo.trim(),
+  password: contrasena,
+});
 
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: correo.trim(),
-      password: contrasena,
-    });
+if (error) {
+  setMensaje(
+    "No se pudo iniciar sesión. Revisa el correo y la contraseña."
+  );
+  return;
+}
 
-    if (error) {
-      setMensaje(
-        "No se pudo iniciar sesión. Revisa el correo y la contraseña."
-      );
-      return;
-    }
-
-    setSesion(data.session);
-    setContrasena("");
+setSesion(data.session);
+setContrasena("");
   }
 
   async function cerrarSesion() {
     if (supabase) await supabase.auth.signOut();
-
-    setSesion(null);
-    setNotas([]);
-    nuevaNota();
+setSesion(null);
+setNotas([]);
+nuevaNota();
   }
 
   function cambiar(campo, valor) {
@@ -836,79 +818,78 @@ export default function NotasVenta() {
 
   async function guardar(evento) {
     evento.preventDefault();
+if (!supabase || !autorizado || guardando) return;
 
-    if (!supabase || !autorizado || guardando) return;
+if (!datos.cliente.trim()) {
+  setMensaje("Captura el nombre del cliente antes de guardar.");
+  return;
+}
 
-    if (!datos.cliente.trim()) {
-      setMensaje("Captura el nombre del cliente antes de guardar.");
+setGuardando(true);
+setMensaje("");
+
+try {
+  const payload = {
+    ...datos,
+    // Mantener vacío el importe si no se capturó.
+    // El importe admite cantidades o texto como “Pagado”.
+  };
+
+  if (editando?.id) {
+    const { error } = await supabase.rpc("editar_nota_venta", {
+      p_id: editando.id,
+      p_datos: payload,
+    });
+
+    if (error) throw error;
+
+    setMensaje(`La nota ${editando.folio} se actualizó correctamente.`);
+    setDatos(payload);
+    setFolio(editando.folio);
+
+    await cargarNotas();
+  } else {
+    const { data, error } = await supabase.rpc(
+      "crear_nota_venta",
+      { p_datos: payload }
+    );
+
+    if (error) throw error;
+
+    const nueva = Array.isArray(data) ? data[0] : data;
+
+    if (!nueva?.folio || !nueva?.nota_id) {
+      setMensaje(
+        "Supabase no devolvió el folio o identificador. Revisa el historial antes de volver a guardar."
+      );
+
+      await cargarNotas();
       return;
     }
 
-    setGuardando(true);
-    setMensaje("");
+    setFolio(nueva.folio);
 
-    try {
-      const payload = {
-        ...datos,
-        // Mantener vacío el importe si no se capturó.
-        // El importe admite cantidades o texto como “Pagado”.
-      };
+    setEditando({
+      id: nueva.nota_id,
+      folio: nueva.folio,
+    });
 
-      if (editando?.id) {
-        const { error } = await supabase.rpc("editar_nota_venta", {
-          p_id: editando.id,
-          p_datos: payload,
-        });
+    setDatos(payload);
 
-        if (error) throw error;
+    setMensaje(
+      `Nota guardada con folio ${nueva.folio}. Puedes imprimirla o seguir editándola.`
+    );
 
-        setMensaje(`La nota ${editando.folio} se actualizó correctamente.`);
-        setDatos(payload);
-        setFolio(editando.folio);
-
-        await cargarNotas();
-      } else {
-        const { data, error } = await supabase.rpc(
-          "crear_nota_venta",
-          { p_datos: payload }
-        );
-
-        if (error) throw error;
-
-        const nueva = Array.isArray(data) ? data[0] : data;
-
-        if (!nueva?.folio || !nueva?.nota_id) {
-          setMensaje(
-            "Supabase no devolvió el folio o identificador. Revisa el historial antes de volver a guardar."
-          );
-
-          await cargarNotas();
-          return;
-        }
-
-        setFolio(nueva.folio);
-
-        setEditando({
-          id: nueva.nota_id,
-          folio: nueva.folio,
-        });
-
-        setDatos(payload);
-
-        setMensaje(
-          `Nota guardada con folio ${nueva.folio}. Puedes imprimirla o seguir editándola.`
-        );
-
-        await cargarNotas();
-      }
-    } catch (error) {
-      setMensaje(
-        "No se pudo guardar la nota: " +
-        (error?.message || "Error desconocido.")
-      );
-    } finally {
-      setGuardando(false);
-    }
+    await cargarNotas();
+  }
+} catch (error) {
+  setMensaje(
+    "No se pudo guardar la nota: " +
+    (error?.message || "Error desconocido.")
+  );
+} finally {
+  setGuardando(false);
+}
   }
 
   function editar(nota) {
@@ -916,22 +897,21 @@ export default function NotasVenta() {
       id: nota.id,
       folio: nota.folio,
     });
+setDatos({
+  ...INICIAL,
+  ...(nota.datos || {}),
+});
 
-    setDatos({
-      ...INICIAL,
-      ...(nota.datos || {}),
-    });
+setFolio(nota.folio);
 
-    setFolio(nota.folio);
+setMensaje(`Editando la nota ${nota.folio}.`);
 
-    setMensaje(`Editando la nota ${nota.folio}.`);
-
-    if (typeof window !== "undefined") {
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth",
-      });
-    }
+if (typeof window !== "undefined") {
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth",
+  });
+}
   }
 
   async function eliminar(nota) {
@@ -939,61 +919,58 @@ export default function NotasVenta() {
       setMensaje("Solo el Administrador 1 puede eliminar notas.");
       return;
     }
+if (
+  !window.confirm(
+    `¿Eliminar la nota ${nota.folio}? Esta acción no se puede deshacer.`
+  )
+) {
+  return;
+}
 
-    if (
-      !window.confirm(
-        `¿Eliminar la nota ${nota.folio}? Esta acción no se puede deshacer.`
-      )
-    ) {
-      return;
-    }
+const { error } = await supabase.rpc(
+  "eliminar_nota_venta",
+  { p_id: nota.id }
+);
 
-    const { error } = await supabase.rpc(
-      "eliminar_nota_venta",
-      { p_id: nota.id }
-    );
+if (error) {
+  setMensaje("No se pudo eliminar: " + error.message);
+  return;
+}
 
-    if (error) {
-      setMensaje("No se pudo eliminar: " + error.message);
-      return;
-    }
+setMensaje(`La nota ${nota.folio} fue eliminada.`);
 
-    setMensaje(`La nota ${nota.folio} fue eliminada.`);
+if (editando?.id === nota.id) {
+  nuevaNota();
+}
 
-    if (editando?.id === nota.id) {
-      nuevaNota();
-    }
-
-    await cargarNotas();
+await cargarNotas();
   }
 
   function imprimir(nota = null) {
     const d = nota?.datos
       ? { ...INICIAL, ...nota.datos }
       : datos;
+const f = nota?.folio || folio;
 
-    const f = nota?.folio || folio;
+if (!d.cliente.trim()) {
+  setMensaje("Captura el nombre del cliente antes de imprimir.");
+  return;
+}
 
-    if (!d.cliente.trim()) {
-      setMensaje("Captura el nombre del cliente antes de imprimir.");
-      return;
-    }
-
-    if (!abrirImpresion(d, f)) {
-      setMensaje(
-        "El navegador bloqueó la ventana de impresión. Permite las ventanas emergentes para este sitio."
-      );
-    }
+if (!abrirImpresion(d, f)) {
+  setMensaje(
+    "El navegador bloqueó la ventana de impresión. Permite las ventanas emergentes para este sitio."
+  );
+}
   }
 
   const notasFiltradas = useMemo(() => {
     const termino = busqueda.toLowerCase().trim();
-
-    return notas.filter((nota) =>
-      `${nota.folio || ""} ${nota.datos?.cliente || ""}`
-        .toLowerCase()
-        .includes(termino)
-    );
+return notas.filter((nota) =>
+  `${nota.folio || ""} ${nota.datos?.cliente || ""}`
+    .toLowerCase()
+    .includes(termino)
+);
   }, [notas, busqueda]);
 
   const fechaActual = fechaHoraActual();
@@ -1019,52 +996,51 @@ export default function NotasVenta() {
             alt="Transportes MX"
             className="mb-5 h-16 w-40 object-contain object-left"
           />
+      <p className="mt-2 text-sm text-slate-300">
+        Inicia sesión con tu cuenta autorizada.
+      </p>
 
-          <p className="mt-2 text-sm text-slate-300">
-            Inicia sesión con tu cuenta autorizada.
-          </p>
+      <label className="mt-6 block text-sm">
+        Correo electrónico
 
-          <label className="mt-6 block text-sm">
-            Correo electrónico
+        <input
+          type="email"
+          required
+          autoComplete="username"
+          value={correo}
+          onChange={(e) => setCorreo(e.target.value)}
+          className="mt-1 w-full rounded-lg border border-slate-600 bg-white p-3 text-slate-900"
+        />
+      </label>
 
-            <input
-              type="email"
-              required
-              autoComplete="username"
-              value={correo}
-              onChange={(e) => setCorreo(e.target.value)}
-              className="mt-1 w-full rounded-lg border border-slate-600 bg-white p-3 text-slate-900"
-            />
-          </label>
+      <label className="mt-4 block text-sm">
+        Contraseña
 
-          <label className="mt-4 block text-sm">
-            Contraseña
+        <input
+          type="password"
+          required
+          autoComplete="current-password"
+          value={contrasena}
+          onChange={(e) => setContrasena(e.target.value)}
+          className="mt-1 w-full rounded-lg border border-slate-600 bg-white p-3 text-slate-900"
+        />
+      </label>
 
-            <input
-              type="password"
-              required
-              autoComplete="current-password"
-              value={contrasena}
-              onChange={(e) => setContrasena(e.target.value)}
-              className="mt-1 w-full rounded-lg border border-slate-600 bg-white p-3 text-slate-900"
-            />
-          </label>
+      <button className="mt-5 w-full rounded-lg bg-emerald-600 p-3 font-bold text-white hover:bg-emerald-700">
+        Entrar
+      </button>
 
-          <button className="mt-5 w-full rounded-lg bg-emerald-600 p-3 font-bold text-white hover:bg-emerald-700">
-            Entrar
-          </button>
-
-          {mensaje && (
-            <p
-              role="alert"
-              className="mt-4 rounded bg-red-950 p-3 text-sm text-red-200"
-            >
-              {mensaje}
-            </p>
-          )}
-        </form>
-      </main>
-    );
+      {mensaje && (
+        <p
+          role="alert"
+          className="mt-4 rounded bg-red-950 p-3 text-sm text-red-200"
+        >
+          {mensaje}
+        </p>
+      )}
+    </form>
+  </main>
+);
   }
 
   if (!autorizado) {
@@ -1073,504 +1049,502 @@ export default function NotasVenta() {
         <h1 className="text-2xl font-bold">
           Acceso no autorizado
         </h1>
+    <p className="mt-3">
+      Esta cuenta no tiene permisos para las notas de venta.
+    </p>
 
-        <p className="mt-3">
-          Esta cuenta no tiene permisos para las notas de venta.
-        </p>
-
-        <button
-          onClick={cerrarSesion}
-          className="mt-5 rounded border border-slate-600 p-3"
-        >
-          Cerrar sesión
-        </button>
-      </main>
-    );
+    <button
+      onClick={cerrarSesion}
+      className="mt-5 rounded border border-slate-600 p-3"
+    >
+      Cerrar sesión
+    </button>
+  </main>
+);
   }
 
   return (
     <main className="min-h-screen bg-slate-950 p-3 text-white sm:p-6">
       <div className="mx-auto max-w-7xl">
+    <header className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-700 pb-5">
 
-        <header className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-700 pb-5">
+      <div className="flex items-center gap-4">
+        <img
+          src="/logo.jpg"
+          alt="Transportes MX"
+          className="h-16 w-28 rounded bg-white p-2 object-contain"
+        />
 
-          <div className="flex items-center gap-4">
-            <img
-              src="/logo.jpg"
-              alt="Transportes MX"
-              className="h-16 w-28 rounded bg-white p-2 object-contain"
-            />
+        <div>
+          <h1 className="text-2xl font-bold sm:text-3xl">
+            Transportes MX
+          </h1>
 
-            <div>
-              <h1 className="text-2xl font-bold sm:text-3xl">
-                Transportes MX
-              </h1>
-
-              <p className="text-slate-300">
-                Sistema de notas de venta
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <span className="text-sm text-slate-300">
-              {admin1 ? "Administrador 1" : "Administrador 2"}
-            </span>
-
-            <button
-              onClick={cerrarSesion}
-              className="rounded-lg border border-slate-600 px-3 py-2 text-sm hover:bg-slate-800"
-            >
-              Cerrar sesión
-            </button>
-          </div>
-
-        </header>
-
-        {mensaje && (
-          <p
-            role="status"
-            className="my-4 rounded-lg border border-slate-700 bg-slate-900 p-3 text-sm"
-          >
-            {mensaje}
+          <p className="text-slate-300">
+            Sistema de notas de venta
           </p>
-        )}
-
-        <div className="grid items-start gap-5 py-5 xl:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]">
-
-          <section className="rounded-2xl border border-slate-700 bg-slate-900 p-4 sm:p-5">
-
-            <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-
-              <div>
-                <h2 className="text-xl font-semibold">
-                  {editando
-                    ? `Editar nota ${editando.folio}`
-                    : "Nueva nota de venta"}
-                </h2>
-
-                <p className="mt-1 text-sm text-slate-400">
-                  Folio:{" "}
-                  <span className="font-bold text-red-400">
-                    {folioVisible}
-                  </span>
-                </p>
-              </div>
-
-              <button
-                type="button"
-                onClick={nuevaNota}
-                className="rounded-lg border border-slate-600 px-3 py-2 text-sm hover:bg-slate-800"
-              >
-                Nueva nota
-              </button>
-
-            </div>
-
-            <form onSubmit={guardar} className="space-y-4">
-
-              <div className="grid gap-3 sm:grid-cols-2">
-
-                {CAMPOS.map(([campo, etiqueta, tipo]) => (
-                  <label key={campo} className="block text-sm">
-
-                    <span className="font-medium text-slate-200">
-                      {etiqueta}
-                    </span>
-
-                    {tipo === "select" ? (
-                      <select
-                        required
-                        value={datos[campo] ?? ""}
-                        onChange={(e) => cambiar(campo, e.target.value)}
-                        style={{
-                          appearance: "auto",
-                          WebkitAppearance: "menulist",
-                          MozAppearance: "menulist",
-                          display: "block",
-                          width: "100%",
-                          minHeight: "48px",
-                          padding: "12px",
-                          backgroundColor: "#ffffff",
-                          color: "#111827",
-                          border: "1px solid #94a3b8",
-                          borderRadius: "8px",
-                          cursor: "pointer",
-                        }}
-                        className="mt-1 w-full outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
-                      >
-                        <option value="">
-                          Selecciona un vehículo
-                        </option>
-
-                        {VEHICULOS.map((vehiculo) => (
-                          <option key={vehiculo.imagen} value={vehiculo.imagen}>
-                            {vehiculo.nombre}
-                          </option>
-                        ))}
-                      </select>
-                    ) : (
-                      <input
-                        type={tipo}
-                        min={tipo === "number" ? "0" : undefined}
-                        required={campo === "cliente" || campo === "unidad"}
-                        value={datos[campo] ?? ""}
-                        onChange={(e) => cambiar(campo, e.target.value)}
-                        className="mt-1 w-full rounded-lg border border-slate-400 bg-white p-3 text-slate-900 outline-none focus:border-emerald-500"
-                      />
-                    )}
-
-                  </label>
-                ))}
-
-                <label className="block text-sm">
-
-                  <span className="font-medium text-slate-200">
-                    💰 Total / estado de pago
-                  </span>
-
-                  <input
-                    type="text"
-                    inputMode="text"
-                    autoComplete="off"
-                    value={datos.importe}
-                    onChange={(e) => cambiar("importe", e.target.value)}
-                    placeholder="Ej. 3500 o Pagado"
-                    className="mt-1 w-full rounded-lg border border-slate-400 bg-white p-3 text-slate-900 outline-none focus:border-emerald-500"
-                  />
-
-                </label>
-
-              </div>
-
-              <label className="block text-sm">
-
-                <span className="font-medium text-slate-200">
-                  Observaciones
-                </span>
-
-                <textarea
-                  value={datos.observaciones}
-                  onChange={(e) => cambiar("observaciones", e.target.value)}
-                  rows={2}
-                  placeholder="Escribe las observaciones del servicio"
-                  className="mt-1 w-full rounded-lg border border-slate-400 bg-white p-3 text-slate-900"
-                />
-
-              </label>
-
-              <div className="flex flex-wrap gap-2">
-
-                <button
-                  type="submit"
-                  disabled={guardando}
-                  className="rounded-lg bg-emerald-600 px-5 py-3 font-bold text-white disabled:opacity-50"
-                >
-                  {guardando
-                    ? "Guardando…"
-                    : editando
-                      ? "Guardar cambios"
-                      : "Guardar nota"}
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => imprimir()}
-                  className="rounded-lg border border-slate-500 px-4 py-3 hover:bg-slate-800"
-                >
-                  Imprimir / PDF
-                </button>
-
-                {editando && (
-                  <button
-                    type="button"
-                    onClick={nuevaNota}
-                    className="rounded-lg border border-slate-500 px-4 py-3 hover:bg-slate-800"
-                  >
-                    Cancelar edición
-                  </button>
-                )}
-
-              </div>
-
-            </form>
-
-            <div className="mt-7 border-t border-slate-700 pt-5">
-
-              <h3 className="mb-3 text-lg font-semibold">
-                Historial de notas
-              </h3>
-
-              <input
-                type="search"
-                value={busqueda}
-                onChange={(e) => setBusqueda(e.target.value)}
-                placeholder="Buscar por folio, cliente o servicio…"
-                className="mb-4 w-full rounded-lg border border-slate-600 bg-slate-950 p-3 text-white"
-              />
-
-              {notasFiltradas.length === 0 ? (
-                <p className="text-sm text-slate-400">
-                  No hay registros que coincidan con la búsqueda.
-                </p>
-              ) : (
-                <div className="max-h-[520px] space-y-3 overflow-y-auto pr-1">
-
-                  {notasFiltradas.map((nota) => (
-                    <article
-                      key={nota.id}
-                      className="rounded-xl border border-slate-700 bg-slate-950 p-3"
-                    >
-
-                      <div className="flex flex-wrap items-start justify-between gap-3">
-
-                        <div className="min-w-0">
-
-                          <p className="font-bold text-red-400">
-                            {nota.folio}
-                          </p>
-
-                          <p className="break-words">
-                            {nota.datos?.cliente || "Sin cliente"}
-                          </p>
-
-                          <p className="break-words text-sm text-slate-400">
-                            {nota.datos?.servicio || ""}
-                          </p>
-
-                          {nota.datos?.importe !== "" &&
-                            nota.datos?.importe !== null &&
-                            nota.datos?.importe !== undefined && (
-                              <p className="mt-1 font-semibold text-emerald-400">
-                                {moneda(nota.datos.importe)}
-                              </p>
-                            )}
-
-                        </div>
-
-                        <div className="flex flex-wrap gap-2">
-
-                          <button
-                            type="button"
-                            onClick={() => imprimir(nota)}
-                            className="rounded border border-slate-600 px-3 py-2 text-sm"
-                          >
-                            PDF
-                          </button>
-
-                          <button
-                            type="button"
-                            onClick={() => editar(nota)}
-                            className="rounded border border-slate-600 px-3 py-2 text-sm"
-                          >
-                            Editar
-                          </button>
-
-                          {admin1 && (
-                            <button
-                              type="button"
-                              onClick={() => eliminar(nota)}
-                              className="rounded border border-red-800 px-3 py-2 text-sm text-red-300"
-                            >
-                              Eliminar
-                            </button>
-                          )}
-
-                        </div>
-
-                      </div>
-
-                    </article>
-                  ))}
-
-                </div>
-              )}
-
-            </div>
-
-          </section>
-
-          <section className="rounded-2xl bg-slate-200 p-2 text-black sm:p-4">
-
-            <div className="mb-3 flex items-center justify-between gap-2 px-1">
-
-              <h2 className="font-semibold text-slate-800">
-                Vista previa de impresión
-              </h2>
-
-              <button
-                type="button"
-                onClick={() => imprimir()}
-                className="rounded-lg bg-emerald-700 px-3 py-2 text-sm font-bold text-white"
-              >
-                Imprimir / PDF
-              </button>
-
-            </div>
-
-            <article className="mx-auto max-w-[560px] bg-white px-8 py-5 text-black shadow-xl sm:px-10 sm:py-7">
-
-              <div className="grid grid-cols-[minmax(0,1fr)_112px] items-start gap-3">
-
-                <div className="min-w-0">
-
-                  <img
-                    src="/logo.jpg"
-                    alt="Transportes MX"
-                    className="mb-1 h-12 w-32 object-contain object-left"
-                  />
-
-                  <div className="min-w-0 text-[12px] font-extrabold leading-4">
-
-                    <strong className="block">
-                      Grupo Turístico MX S. de R.L. de C.V.
-                    </strong>
-
-                    <span>RFC: GTM2604271F2</span>
-                    <br />
-
-                    <span>San Miguel de Allende Guanajuato</span>
-                    <br />
-
-                    <span>+52 415 139 3219</span>
-                    <br />
-
-                    <a
-                      className="font-normal text-blue-600 underline"
-                      href="mailto:contacto@transportesmx.org"
-                    >
-                      contacto@transportesmx.org
-                    </a>
-
-                    <br />
-
-                    <a
-                      className="font-normal text-blue-600 underline"
-                      href="https://transportesmx.org"
-                    >
-                      https://transportesmx.org
-                    </a>
-
-                  </div>
-
-                </div>
-
-                <div className="min-w-0">
-
-                  <div className="bg-red-600 px-2 py-1 text-[14px] font-extrabold text-white">
-                    F- {folio || "Pendiente"}
-                  </div>
-
-                  <img
-                    src={imagenVehiculo(datos.imagenUnidad, datos.unidad)}
-                    alt={datos.unidad || "Vehículo"}
-                    className="mt-2 h-20 w-full object-contain"
-                  />
-
-                </div>
-
-              </div>
-
-              <div className="mt-4 space-y-1.5 text-[16px]">
-
-                <p>
-                  <strong>Cliente:</strong> {datos.cliente}
-                </p>
-
-                <p>
-                  <strong>Teléfono:</strong> {datos.telefono}
-                </p>
-
-                <p>
-                  <strong>Correo:</strong> {datos.email}
-                </p>
-
-              </div>
-
-              <div className="my-3 h-1.5 w-full bg-black" />
-
-              <div className="mt-2 inline-block max-w-full bg-green-600 px-3 py-1 text-[16px] font-extrabold text-white">
-                Total: {moneda(datos.importe)}
-              </div>
-
-              <div className="mt-2 h-[3mm]" aria-hidden="true" />
-
-              <div className="bg-black px-2 py-1.5 text-[16px] font-extrabold text-white">
-                Descripción del traslado:
-              </div>
-
-              <div className="mt-[9mm] space-y-1.5 text-[16px]">
-
-                {[
-                  ["🚐", "Vehículo:", datos.unidad],
-                  ["👤", "Nombre del cliente:", datos.cliente],
-                  ["📅", "Fecha y hora:", valorFechaHora(datos)],
-                  ["📍", "Recoger en:", datos.origen],
-                  ["✈️", "Aerolínea:", datos.aerolinea || "N/A"],
-                  ["👥", "Número de pasajeros:", datos.pasajeros],
-                  ["🧳", "Número de maletas:", datos.maletas],
-                  ["☎️", "Número de teléfono:", datos.telefono],
-                  ["📍", "Destino:", datos.destino],
-                  ["🔄", "Ida y vuelta:", datos.idaVuelta],
-                  ["⏱️", "Duración:", datos.duracion],
-                ].map(([icono, etiqueta, valor]) => (
-                  <p
-                    key={etiqueta}
-                    className="flex flex-wrap items-start gap-x-1"
-                  >
-                    <span>{icono}</span>
-                    <strong>{etiqueta}</strong>
-                    <span className="break-words">{valor || ""}</span>
-                  </p>
-                ))}
-
-              </div>
-
-              <div className="mt-[15mm] flex items-start gap-1 text-[16px]">
-
-                <span>↩️</span>
-
-                <strong>Regreso:</strong>
-
-                <span>{valorRegreso(datos)}</span>
-
-              </div>
-
-              <div className="mt-5 min-h-16 rounded-[24px] border-2 border-black px-4 py-3 text-[14px]">
-
-                <strong className="mb-1 block">
-                  Observaciones:
-                </strong>
-
-                <span>{datos.observaciones || ""}</span>
-
-              </div>
-
-              <footer className="mt-4 border-t-2 border-black pt-3 text-center text-[11px] leading-4 text-slate-600">
-
-                <p>
-                  San Miguel de Allende, Guanajuato · Documento Generado:{" "}
-                  {fechaActual.fecha} · Hora: {fechaActual.hora}
-                </p>
-
-                <p>
-                  Grupo Turístico MX S. de R.L. de C.V.
-                </p>
-
-              </footer>
-
-            </article>
-
-            <p className="mx-auto mt-3 max-w-[760px] text-sm text-slate-600">
-              La vista previa sigue la distribución del documento impreso.
-              Para generar el PDF, pulsa “Imprimir / PDF”.
+        </div>
+      </div>
+
+      <div className="flex items-center gap-3">
+        <span className="text-sm text-slate-300">
+          {admin1 ? "Administrador 1" : "Administrador 2"}
+        </span>
+
+        <button
+          onClick={cerrarSesion}
+          className="rounded-lg border border-slate-600 px-3 py-2 text-sm hover:bg-slate-800"
+        >
+          Cerrar sesión
+        </button>
+      </div>
+
+    </header>
+
+    {mensaje && (
+      <p
+        role="status"
+        className="my-4 rounded-lg border border-slate-700 bg-slate-900 p-3 text-sm"
+      >
+        {mensaje}
+      </p>
+    )}
+
+    <div className="grid items-start gap-5 py-5 xl:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]">
+
+      <section className="rounded-2xl border border-slate-700 bg-slate-900 p-4 sm:p-5">
+
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+
+          <div>
+            <h2 className="text-xl font-semibold">
+              {editando
+                ? `Editar nota ${editando.folio}`
+                : "Nueva nota de venta"}
+            </h2>
+
+            <p className="mt-1 text-sm text-slate-400">
+              Folio:{" "}
+              <span className="font-bold text-red-400">
+                {folioVisible}
+              </span>
             </p>
+          </div>
 
-          </section>
+          <button
+            type="button"
+            onClick={nuevaNota}
+            className="rounded-lg border border-slate-600 px-3 py-2 text-sm hover:bg-slate-800"
+          >
+            Nueva nota
+          </button>
 
         </div>
 
-      </div>
-    </main>
+        <form onSubmit={guardar} className="space-y-4">
+
+          <div className="grid gap-3 sm:grid-cols-2">
+
+            {CAMPOS.map(([campo, etiqueta, tipo]) => (
+              <label key={campo} className="block text-sm">
+
+                <span className="font-medium text-slate-200">
+                  {etiqueta}
+                </span>
+
+                {tipo === "select" ? (
+                  <select
+                    required
+                    value={datos[campo] ?? ""}
+                    onChange={(e) => cambiar(campo, e.target.value)}
+                    style={{
+                      appearance: "auto",
+                      WebkitAppearance: "menulist",
+                      MozAppearance: "menulist",
+                      display: "block",
+                      width: "100%",
+                      minHeight: "48px",
+                      padding: "12px",
+                      backgroundColor: "#ffffff",
+                      color: "#111827",
+                      border: "1px solid #94a3b8",
+                      borderRadius: "8px",
+                      cursor: "pointer",
+                    }}
+                    className="mt-1 w-full outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
+                  >
+                    <option value="">
+                      Selecciona un vehículo
+                    </option>
+
+                    {VEHICULOS.map((vehiculo) => (
+                      <option key={vehiculo.imagen} value={vehiculo.imagen}>
+                        {vehiculo.nombre}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <input
+                    type={tipo}
+                    min={tipo === "number" ? "0" : undefined}
+                    required={campo === "cliente" || campo === "unidad"}
+                    value={datos[campo] ?? ""}
+                    onChange={(e) => cambiar(campo, e.target.value)}
+                    className="mt-1 w-full rounded-lg border border-slate-400 bg-white p-3 text-slate-900 outline-none focus:border-emerald-500"
+                  />
+                )}
+
+              </label>
+            ))}
+
+            <label className="block text-sm">
+
+              <span className="font-medium text-slate-200">
+                💰 Total / estado de pago
+              </span>
+
+              <input
+                type="text"
+                inputMode="text"
+                autoComplete="off"
+                value={datos.importe}
+                onChange={(e) => cambiar("importe", e.target.value)}
+                placeholder="Ej. 3500 o Pagado"
+                className="mt-1 w-full rounded-lg border border-slate-400 bg-white p-3 text-slate-900 outline-none focus:border-emerald-500"
+              />
+
+            </label>
+
+          </div>
+
+          <label className="block text-sm">
+
+            <span className="font-medium text-slate-200">
+              Observaciones
+            </span>
+
+            <textarea
+              value={datos.observaciones}
+              onChange={(e) => cambiar("observaciones", e.target.value)}
+              rows={2}
+              placeholder="Escribe las observaciones del servicio"
+              className="mt-1 w-full rounded-lg border border-slate-400 bg-white p-3 text-slate-900"
+            />
+
+          </label>
+
+          <div className="flex flex-wrap gap-2">
+
+            <button
+              type="submit"
+              disabled={guardando}
+              className="rounded-lg bg-emerald-600 px-5 py-3 font-bold text-white disabled:opacity-50"
+            >
+              {guardando
+                ? "Guardando…"
+                : editando
+                  ? "Guardar cambios"
+                  : "Guardar nota"}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => imprimir()}
+              className="rounded-lg border border-slate-500 px-4 py-3 hover:bg-slate-800"
+            >
+              Imprimir / PDF
+            </button>
+
+            {editando && (
+              <button
+                type="button"
+                onClick={nuevaNota}
+                className="rounded-lg border border-slate-500 px-4 py-3 hover:bg-slate-800"
+              >
+                Cancelar edición
+              </button>
+            )}
+
+          </div>
+
+        </form>
+
+        <div className="mt-7 border-t border-slate-700 pt-5">
+
+          <h3 className="mb-3 text-lg font-semibold">
+            Historial de notas
+          </h3>
+
+          <input
+            type="search"
+            value={busqueda}
+            onChange={(e) => setBusqueda(e.target.value)}
+            placeholder="Buscar por folio, cliente o servicio…"
+            className="mb-4 w-full rounded-lg border border-slate-600 bg-slate-950 p-3 text-white"
+          />
+
+          {notasFiltradas.length === 0 ? (
+            <p className="text-sm text-slate-400">
+              No hay registros que coincidan con la búsqueda.
+            </p>
+          ) : (
+            <div className="max-h-[520px] space-y-3 overflow-y-auto pr-1">
+
+              {notasFiltradas.map((nota) => (
+                <article
+                  key={nota.id}
+                  className="rounded-xl border border-slate-700 bg-slate-950 p-3"
+                >
+
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+
+                    <div className="min-w-0">
+
+                      <p className="font-bold text-red-400">
+                        {nota.folio}
+                      </p>
+
+                      <p className="break-words">
+                        {nota.datos?.cliente || "Sin cliente"}
+                      </p>
+
+                      <p className="break-words text-sm text-slate-400">
+                        {nota.datos?.servicio || ""}
+                      </p>
+
+                      {nota.datos?.importe !== "" &&
+                        nota.datos?.importe !== null &&
+                        nota.datos?.importe !== undefined && (
+                          <p className="mt-1 font-semibold text-emerald-400">
+                            {moneda(nota.datos.importe)}
+                          </p>
+                        )}
+
+                    </div>
+
+                    <div className="flex flex-wrap gap-2">
+
+                      <button
+                        type="button"
+                        onClick={() => imprimir(nota)}
+                        className="rounded border border-slate-600 px-3 py-2 text-sm"
+                      >
+                        PDF
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => editar(nota)}
+                        className="rounded border border-slate-600 px-3 py-2 text-sm"
+                      >
+                        Editar
+                      </button>
+
+                      {admin1 && (
+                        <button
+                          type="button"
+                          onClick={() => eliminar(nota)}
+                          className="rounded border border-red-800 px-3 py-2 text-sm text-red-300"
+                        >
+                          Eliminar
+                        </button>
+                      )}
+
+                    </div>
+
+                  </div>
+
+                </article>
+              ))}
+
+            </div>
+          )}
+
+        </div>
+
+      </section>
+
+      <section className="rounded-2xl bg-slate-200 p-2 text-black sm:p-4">
+
+        <div className="mb-3 flex items-center justify-between gap-2 px-1">
+
+          <h2 className="font-semibold text-slate-800">
+            Vista previa de impresión
+          </h2>
+
+          <button
+            type="button"
+            onClick={() => imprimir()}
+            className="rounded-lg bg-emerald-700 px-3 py-2 text-sm font-bold text-white"
+          >
+            Imprimir / PDF
+          </button>
+
+        </div>
+
+        <article className="mx-auto max-w-[560px] bg-white px-8 py-5 text-black shadow-xl sm:px-10 sm:py-7">
+
+          <div className="grid grid-cols-[minmax(0,1fr)_112px] items-start gap-3">
+
+            <div className="min-w-0">
+
+              <img
+                src="/logo.jpg"
+                alt="Transportes MX"
+                className="mb-1 h-12 w-32 object-contain object-left"
+              />
+
+              <div className="min-w-0 text-[12px] font-extrabold leading-4">
+
+                <strong className="block">
+                  Grupo Turístico MX S. de R.L. de C.V.
+                </strong>
+
+                <span>RFC: GTM2604271F2</span>
+                <br />
+
+                <span>San Miguel de Allende Guanajuato</span>
+                <br />
+
+                <span>+52 415 139 3219</span>
+                <br />
+
+                <a
+                  className="font-normal text-blue-600 underline"
+                  href="mailto:contacto@transportesmx.org"
+                >
+                  contacto@transportesmx.org
+                </a>
+
+                <br />
+
+                <a
+                  className="font-normal text-blue-600 underline"
+                  href="https://transportesmx.org"
+                >
+                  https://transportesmx.org
+                </a>
+
+              </div>
+
+            </div>
+
+            <div className="min-w-0">
+
+              <div className="bg-red-600 px-2 py-1 text-[14px] font-extrabold text-white">
+                F- {folio || "Pendiente"}
+              </div>
+
+              <img
+                src={imagenVehiculo(datos.imagenUnidad, datos.unidad)}
+                alt={datos.unidad || "Vehículo"}
+                className="mt-[36px] h-[150px] w-full max-w-[190px] object-contain object-center"
+              />
+
+            </div>
+
+          </div>
+
+          <div className="mt-4 space-y-1.5 text-[16px]">
+
+            <p>
+              <strong>Cliente:</strong> {datos.cliente}
+            </p>
+
+            <p>
+              <strong>Teléfono:</strong> {datos.telefono}
+            </p>
+
+            <p>
+              <strong>Correo:</strong> {datos.email}
+            </p>
+
+          </div>
+
+          <div className="my-3 h-1.5 w-full bg-black" />
+
+          <div className="mt-2 inline-block max-w-full bg-green-600 px-3 py-1 text-[16px] font-extrabold text-white">
+            Total: {moneda(datos.importe)}
+          </div>
+
+          <div className="mt-2 h-[3mm]" aria-hidden="true" />
+
+          <div className="bg-black px-2 py-1.5 text-[16px] font-extrabold text-white">
+            Descripción del traslado:
+          </div>
+
+          <div className="mt-[9mm] space-y-1.5 text-[16px]">
+
+            {[
+              ["🚐", "Vehículo:", datos.unidad],
+              ["👤", "Nombre del cliente:", datos.cliente],
+              ["📅", "Fecha y hora:", valorFechaHora(datos)],
+              ["📍", "Recoger en:", datos.origen],
+              ["✈️", "Aerolínea:", datos.aerolinea || "N/A"],
+              ["👥", "Número de pasajeros:", datos.pasajeros],
+              ["🧳", "Número de maletas:", datos.maletas],
+              ["☎️", "Número de teléfono:", datos.telefono],
+              ["📍", "Destino:", datos.destino],
+              ["🔄", "Ida y vuelta:", datos.idaVuelta],
+              ["⏱️", "Duración:", datos.duracion],
+            ].map(([icono, etiqueta, valor]) => (
+              <p
+                key={etiqueta}
+                className="flex flex-wrap items-start gap-x-1"
+              >
+                <span>{icono}</span>
+                <strong>{etiqueta}</strong>
+                <span className="break-words">{valor || ""}</span>
+              </p>
+            ))}
+
+          </div>
+
+          <div className="mt-[15mm] flex items-start gap-1 text-[16px]">
+
+            <span>↩️</span>
+
+            <strong>Regreso:</strong>
+
+            <span>{valorRegreso(datos)}</span>
+
+          </div>
+
+          <div className="mt-5 min-h-16 rounded-[24px] border-2 border-black px-4 py-3 text-[14px]">
+
+            <strong className="mb-1 block">
+              Observaciones:
+            </strong>
+
+            <span>{datos.observaciones || ""}</span>
+
+          </div>
+
+          <footer className="mt-4 border-t-2 border-black pt-3 text-center text-[11px] leading-4 text-slate-600">
+
+            <p>
+              San Miguel de Allende, Guanajuato · Documento Generado:{" "}
+              {fechaActual.fecha} · Hora: {fechaActual.hora}
+            </p>
+
+            <p>
+              Grupo Turístico MX S. de R.L. de C.V.
+            </p>
+
+          </footer>
+
+        </article>
+
+        <p className="mx-auto mt-3 max-w-[760px] text-sm text-slate-600">
+          La vista previa sigue la distribución del documento impreso.
+          Para generar el PDF, pulsa “Imprimir / PDF”.
+        </p>
+
+      </section>
+
+    </div>
+
+  </div>
+</main>
   );
 }
