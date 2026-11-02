@@ -1,3 +1,4 @@
+
 import { getServiceSupabase } from '@/lib/supabase';
 
 export default async function handler(req, res) {
@@ -9,7 +10,9 @@ export default async function handler(req, res) {
   const { reserva } = req.body;
 
   if (!reserva) {
-    return res.status(400).json({ message: 'Faltan datos de la reserva' });
+    return res.status(400).json({
+      message: 'Faltan datos de la reserva',
+    });
   }
 
   try {
@@ -17,29 +20,48 @@ export default async function handler(req, res) {
     let reservaId = null;
     const supabase = getServiceSupabase();
 
+    const observaciones = String(
+      reserva.observaciones || ''
+    ).trim().slice(0, 500);
+
     if (supabase) {
-      const { data, error } = await supabase.from('reservas').insert({
-        estado: 'pendiente',
-        cliente_nombre: reserva.clienteNombre,
-        cliente_email: reserva.clienteEmail,
-        cliente_telefono: reserva.clienteTelefono,
-        origen: reserva.origen,
-        destino: reserva.destino,
-        fecha_ida: reserva.fechaIda,
-        hora_ida: reserva.horaIda,
-        tipo_viaje: reserva.tipoViaje,
-        fecha_regreso: reserva.tipoViaje === 'redondo' ? reserva.fechaRegreso : null,
-        hora_regreso: reserva.tipoViaje === 'redondo' ? reserva.horaRegreso : null,
-        num_pasajeros: reserva.numPasajeros,
-        distancia: reserva.distancia,
-        duracion: reserva.duracion,
-        vehiculo_id: reserva.vehiculoId,
-        vehiculo_nombre: reserva.vehiculoNombre,
-        precio_total: reserva.precioTotal,
-      }).select().single();
+      const { data, error } = await supabase
+        .from('reservas')
+        .insert({
+          estado: 'pendiente',
+          cliente_nombre: reserva.clienteNombre,
+          cliente_email: reserva.clienteEmail,
+          cliente_telefono: reserva.clienteTelefono,
+          observaciones: observaciones,
+
+          origen: reserva.origen,
+          destino: reserva.destino,
+          fecha_ida: reserva.fechaIda,
+          hora_ida: reserva.horaIda,
+          tipo_viaje: reserva.tipoViaje,
+          fecha_regreso:
+            reserva.tipoViaje === 'redondo'
+              ? reserva.fechaRegreso
+              : null,
+          hora_regreso:
+            reserva.tipoViaje === 'redondo'
+              ? reserva.horaRegreso
+              : null,
+          num_pasajeros: reserva.numPasajeros,
+          distancia: reserva.distancia,
+          duracion: reserva.duracion,
+          vehiculo_id: reserva.vehiculoId,
+          vehiculo_nombre: reserva.vehiculoNombre,
+          precio_total: reserva.precioTotal,
+        })
+        .select()
+        .single();
 
       if (error) {
-        console.error('[Supabase] Error guardando reserva:', error);
+        console.error(
+          '[Supabase] Error guardando reserva:',
+          error
+        );
       } else {
         reservaId = data.id;
         console.log('[Supabase] Reserva guardada:', reservaId);
@@ -49,6 +71,7 @@ export default async function handler(req, res) {
     // 2. Si no hay Stripe configurado → modo demo
     if (!process.env.STRIPE_SECRET_KEY) {
       console.log('[API] Stripe no configurado — modo demo');
+
       return res.status(200).json({
         sessionId: `demo_${Date.now()}`,
         reservaId,
@@ -62,6 +85,7 @@ export default async function handler(req, res) {
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card', 'oxxo'],
+
       line_items: [
         {
           price_data: {
@@ -69,17 +93,25 @@ export default async function handler(req, res) {
             product_data: {
               name: `Traslado ${reserva.vehiculoNombre}`,
               description: `${reserva.origen} → ${reserva.destino} | ${reserva.fechaIda} ${reserva.horaIda}`,
-              images: ['https://transportesmx.org/assets/logonegro.png'],
+              images: [
+                'https://transportesmx.org/assets/logonegro.png',
+              ],
             },
-            unit_amount: Math.round(reserva.precioTotal * 100),
+            unit_amount: Math.round(
+              reserva.precioTotal * 100
+            ),
           },
           quantity: 1,
         },
       ],
+
       mode: 'payment',
+
       success_url: `${req.headers.origin}/reservar/exito?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${req.headers.origin}/reservar?canceled=true`,
+
       customer_email: reserva.clienteEmail,
+
       metadata: {
         reservaId: reservaId || '',
         clienteNombre: reserva.clienteNombre,
@@ -100,21 +132,41 @@ export default async function handler(req, res) {
         numMaletas: String(reserva.numMaletas || 0),
         aerolinea: reserva.aerolinea || '',
         numVuelo: reserva.numVuelo || '',
+        observaciones: observaciones,
         lang: reserva.lang || 'es',
       },
     });
 
     // 4. Actualizar reserva con el session ID de Stripe
     if (supabase && reservaId) {
-      await supabase.from('reservas').update({
-        stripe_session_id: session.id,
-      }).eq('id', reservaId);
+      const { error: updateError } = await supabase
+        .from('reservas')
+        .update({
+          stripe_session_id: session.id,
+        })
+        .eq('id', reservaId);
+
+      if (updateError) {
+        console.error(
+          '[Supabase] Error actualizando sesión Stripe:',
+          updateError
+        );
+      }
     }
 
     console.log('[Stripe] Sesión creada:', session.id);
-    return res.status(200).json({ url: session.url, sessionId: session.id, reservaId });
+
+    return res.status(200).json({
+      url: session.url,
+      sessionId: session.id,
+      reservaId,
+    });
+
   } catch (error) {
     console.error('Error creando sesión de pago:', error);
-    return res.status(500).json({ message: error.message });
+
+    return res.status(500).json({
+      message: error.message,
+    });
   }
 }
