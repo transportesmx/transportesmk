@@ -1019,45 +1019,105 @@ export async function generarHojaServicio(reserva, lang = 'es') {
   });
 
   // ===================================================
-  // PIE DE PAGINA
+  // OBSERVACIONES (SIEMPRE VISIBLE)
   // ===================================================
 
-  const footerY = ph - 16;
+  const observaciones = String(reserva.observaciones || '').trim();
+  const footerY = ph - 23;
+  const boxX = margin;
+  const boxY = y + 3;
+  const boxW = contentWidth;
+  const boxPadding = 4;
+  const obsFontSize = 9;
+  const obsLineHeight = 4.2;
+
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(obsFontSize);
+
+  const obsLines = observaciones
+    ? doc.splitTextToSize(observaciones, boxW - boxPadding * 2)
+    : [];
+
+  const availableHeight = Math.max(12, footerY - boxY - 5);
+  const desiredHeight = 14 + Math.max(1, obsLines.length) * obsLineHeight;
+  const boxH = Math.min(desiredHeight, availableHeight);
+
+  doc.setDrawColor(...COLORS.black);
+  doc.setLineWidth(0.35);
+  doc.roundedRect(boxX, boxY, boxW, boxH, 2, 2, 'S');
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(10);
+  doc.setTextColor(...COLORS.black);
+  doc.text('Observaciones', boxX + boxPadding, boxY + 6);
+
+  if (obsLines.length) {
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(obsFontSize);
+
+    const maxLines = Math.max(1, Math.floor((boxH - 15) / obsLineHeight));
+    let visibleLines = obsLines.slice(0, maxLines);
+
+    if (obsLines.length > maxLines && visibleLines.length) {
+      const lastIndex = visibleLines.length - 1;
+      visibleLines[lastIndex] = `${visibleLines[lastIndex].slice(0, 85)}...`;
+    }
+
+    doc.text(visibleLines, boxX + boxPadding, boxY + 12);
+  }
+
+  // Línea divisoria debajo del recuadro.
+  const obsBottomY = boxY + boxH + 3;
+
+  doc.setDrawColor(...COLORS.black);
+  doc.setLineWidth(0.35);
+  doc.line(margin, obsBottomY, rightX, obsBottomY);
+
+  // ===================================================
+  // PIE DE PAGINA
+  // ===================================================
 
   doc.setDrawColor(...COLORS.line);
   doc.setLineWidth(0.3);
 
-  doc.line(
-    margin,
-    footerY,
-    rightX,
-    footerY
-  );
+  doc.line(margin, footerY, rightX, footerY);
 
-  doc.setFontSize(9);
-  doc.setTextColor(...COLORS.footerGray);
   doc.setFont('helvetica', 'normal');
+  doc.setTextColor(...COLORS.footerGray);
+  doc.setFontSize(8);
 
   doc.text(
-    t.footer,
+    'San Miguel de Allende, Gto.',
     pw / 2,
     footerY + 5,
     { align: 'center' }
   );
 
-  const genText =
-    `${t.generated} ${
-      new Date().toLocaleDateString(
-        lang === 'en' ? 'en-US' : 'es-MX'
-      )
-    }`;
-
-  doc.setFontSize(8);
+  const fechaHora = new Date().toLocaleString(
+    lang === 'en' ? 'en-US' : 'es-MX',
+    {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
+    }
+  );
 
   doc.text(
-    genText,
+    `${t.generated} ${fechaHora}`,
     pw / 2,
-    footerY + 10,
+    footerY + 9,
+    { align: 'center' }
+  );
+
+  doc.setFont('helvetica', 'bold');
+
+  doc.text(
+    'Grupo Turístico MX S. de R.L. de C.V.',
+    pw / 2,
+    footerY + 13,
     { align: 'center' }
   );
 
