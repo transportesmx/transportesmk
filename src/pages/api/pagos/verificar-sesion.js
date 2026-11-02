@@ -1,3 +1,4 @@
+
 import { getServiceSupabase } from '@/lib/supabase';
 import { crearEventoCalendario } from '@/lib/google-calendar';
 import { enviarEmailConfirmacion } from '@/lib/email';
@@ -8,8 +9,11 @@ import { enviarEmailConfirmacion } from '@/lib/email';
 async function generarPDFBuffer(reservaData, lang = 'es') {
   try {
     const { generarHojaServicio } = await import('@/lib/pdf-generator');
-    const doc = generarHojaServicio(reservaData, lang);
+
+    const doc = await generarHojaServicio(reservaData, lang);
+
     const arrayBuffer = doc.output('arraybuffer');
+
     return Buffer.from(arrayBuffer);
   } catch (err) {
     console.error('[PDF] Error generando PDF:', err.message);
@@ -21,57 +25,94 @@ const processedSessions = new Set();
 
 /**
  * Procesa las acciones post-pago (email, PDF, calendario)
- * Se llama desde la página de éxito Y desde el webhook (doble seguridad)
+ * Se llama desde la página de éxito Y desde el webhook.
  */
 async function procesarPostPago(session) {
   const meta = session.metadata || {};
   const lang = meta.lang || 'es';
   const supabase = getServiceSupabase();
 
-  // Protección en memoria (misma instancia del servidor)
+  let observaciones = meta.observaciones || '';
+  let reservaEncontrada = null;
+
+  // Protección en memoria
   if (processedSessions.has(session.id)) {
-    console.log(`[Verificar] Sesión ${session.id} ya procesada (memoria), omitiendo`);
+    console.log(
+      `[Verificar] Sesión ${session.id} ya procesada (memoria), omitiendo`
+    );
     return { already_processed: true };
   }
 
-  // Protección persistente vía Supabase
+  // Protección persistente y recuperación de observaciones vía Supabase
   if (supabase) {
-    let reserva = null;
-
     if (meta.reservaId) {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('reservas')
-        .select('estado')
+        .select('estado, observaciones')
         .eq('id', meta.reservaId)
-        .single();
-      reserva = data;
+        .maybeSingle();
+
+      if (error) {
+        console.error('[Supabase] Error consultando reserva:', error.message);
+      }
+
+      reservaEncontrada = data;
     }
 
-    if (!reserva) {
-      const { data } = await supabase
+    if (!reservaEncontrada) {
+      const { data, error } = await supabase
         .from('reservas')
-        .select('estado')
+        .select('estado, observaciones')
         .eq('stripe_session_id', session.id)
-        .single();
-      reserva = data;
+        .maybeSingle();
+
+      if (error) {
+        console.error('[Supabase] Error buscando sesión:', error.message);
+      }
+
+      reservaEncontrada = data;
     }
 
-    if (reserva?.estado === 'confirmada' || reserva?.estado === 'pagada') {
-      console.log(`[Verificar] Reserva ya procesada (${reserva.estado}), omitiendo`);
+    if (reservaEncontrada?.observaciones != null) {
+      observaciones = reservaEncontrada.observaciones;
+    }
+
+    if (
+      reservaEncontrada?.estado === 'confirmada' ||
+      reservaEncontrada?.estado === 'pagada'
+    ) {
+      console.log(
+        `[Verificar] Reserva ya procesada (${reservaEncontrada.estado}), omitiendo`
+      );
+
       processedSessions.add(session.id);
+
       return { already_processed: true };
     }
   }
 
-  console.log('[Verificar] Procesando post-pago para sesión:', session.id, '| Idioma:', lang);
+  console.log(
+    '[Verificar] Procesando post-pago para sesión:',
+    session.id,
+    '| Idioma:',
+    lang
+  );
 
-  // 1. Actualizar reserva en Supabase a "pagada"
+  // 1. Actualizar reserva en Supabase a pagada
   if (supabase && meta.reservaId) {
     try {
-      await supabase.from('reservas').update({
-        estado: 'pagada',
-      }).eq('id', meta.reservaId);
-      console.log('[Supabase] Reserva actualizada a pagada');
+      const { error } = await supabase
+        .from('reservas')
+        .update({
+          estado: 'pagada',
+        })
+        .eq('id', meta.reservaId);
+
+      if (error) {
+        console.error('[Supabase] Error actualizando estado:', error.message);
+      } else {
+        console.log('[Supabase] Reserva actualizada a pagada');
+      }
     } catch (err) {
       console.error('[Supabase] Error:', err.message);
     }
@@ -81,8 +122,14 @@ async function procesarPostPago(session) {
   const reservaData = {
     id: meta.reservaId || session.id.slice(-8),
     clienteNombre: meta.clienteNombre || '',
-    clienteEmail: session.customer_email || session.customer_details?.email || '',
+    clienteEmail:
+      session.customer_email ||
+      session.customer_details?.email ||
+      '',
     clienteTelefono: meta.clienteTelefono || '',
+
+    observaciones,
+
     origen: meta.origen || '',
     destino: meta.destino || '',
     fechaIda: meta.fechaIda || '',
@@ -103,27 +150,48 @@ async function procesarPostPago(session) {
     estadoPago: 'pagado',
   };
 
-  // 2. Generar PDF en el idioma correspondiente
+  // 2. Generar PDF
   const pdfBuffer = await generarPDFBuffer(reservaData, lang);
-  console.log('[PDF]', pdfBuffer ? `Generado (${pdfBuffer.length} bytes) [${lang}]` : 'No se pudo generar');
 
-  // 3. Enviar emails en el idioma correspondiente
+  console.log(
+    '[PDF]',
+    pdfBuffer
+      ? `Generado (${pdfBuffer.length} bytes) [${lang}]`
+      : 'No se pudo generar'
+  );
+
+  // 3. Enviar email
   let emailResult = null;
+
   try {
-    emailResult = await enviarEmailConfirmacion(reservaData, pdfBuffer, lang);
+    emailResult = await enviarEmailConfirmacion(
+      reservaData,
+      pdfBuffer,
+      lang
+    );
   } catch (emailErr) {
     console.error('[Email] Error:', emailErr.message);
   }
 
-  // 4. Crear evento en Google Calendar en el idioma correspondiente
+  // 4. Crear evento en Google Calendar
   let calendarEventId = null;
+
   try {
     calendarEventId = await crearEventoCalendario(reservaData, lang);
+
     if (calendarEventId && supabase && meta.reservaId) {
-      await supabase.from('reservas').update({
-        estado: 'confirmada',
-      }).eq('id', meta.reservaId);
-      console.log('[Calendar] Evento creado y reserva confirmada');
+      const { error } = await supabase
+        .from('reservas')
+        .update({
+          estado: 'confirmada',
+        })
+        .eq('id', meta.reservaId);
+
+      if (error) {
+        console.error('[Supabase] Error confirmando reserva:', error.message);
+      } else {
+        console.log('[Calendar] Evento creado y reserva confirmada');
+      }
     }
   } catch (calError) {
     console.error('[Calendar] Error:', calError.message);
@@ -149,11 +217,16 @@ export default async function handler(req, res) {
   const { sessionId } = req.body;
 
   if (!sessionId) {
-    return res.status(400).json({ error: 'sessionId es requerido' });
+    return res.status(400).json({
+      error: 'sessionId es requerido',
+    });
   }
 
   if (!process.env.STRIPE_SECRET_KEY) {
-    return res.status(200).json({ status: 'demo', message: 'Stripe no configurado' });
+    return res.status(200).json({
+      status: 'demo',
+      message: 'Stripe no configurado',
+    });
   }
 
   try {
@@ -165,7 +238,9 @@ export default async function handler(req, res) {
     });
 
     if (!session) {
-      return res.status(404).json({ error: 'Sesión no encontrada' });
+      return res.status(404).json({
+        error: 'Sesión no encontrada',
+      });
     }
 
     if (session.payment_status !== 'paid') {
@@ -185,7 +260,10 @@ export default async function handler(req, res) {
     });
   } catch (error) {
     console.error('[Verificar] Error:', error.message);
-    return res.status(500).json({ error: error.message });
+
+    return res.status(500).json({
+      error: error.message,
+    });
   }
 }
 
