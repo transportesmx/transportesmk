@@ -455,7 +455,7 @@ body{
   display:flex;
   flex-direction:column;
   gap:0.7mm;
-  margin-top:9mm
+  margin-top:4mm
 }
 
 .dato{
@@ -493,7 +493,7 @@ body{
   display:flex;
   align-items:flex-start;
   gap:2mm;
-  margin-top:15mm;
+  margin-top:5mm;
   min-height:9mm;
   font-size:14pt;
   break-inside:avoid
@@ -1489,7 +1489,7 @@ return notas.filter((nota) =>
             Descripción del traslado:
           </div>
 
-          <div className="mt-[9mm] space-y-1.5 text-[16px]">
+          <div className="mt-[4mm] space-y-1.5 text-[16px]">
 
             {[
               ["🚐", "Vehículo:", datos.unidad],
@@ -1516,7 +1516,7 @@ return notas.filter((nota) =>
 
           </div>
 
-          <div className="mt-[15mm] flex items-start gap-1 text-[16px]">
+          <div className="mt-[5mm] flex items-start gap-1 text-[16px]">
 
             <span>↩️</span>
 
