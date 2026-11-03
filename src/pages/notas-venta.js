@@ -46,13 +46,14 @@ const CAMPOS = [
   ["email", "✉️ Correo electrónico", "email"],
 ];
 
-// Rutas de imágenes de vehículos publicadas en /public.
-// Deben coincidir exactamente con los nombres de archivos (incluyendo minúsculas).
+// Rutas de imágenes que existen actualmente en la carpeta /public del repositorio.
+// En GitHub se observa que suburban.png no está presente; temporalmente se usa
+// sprinter.png como imagen de respaldo para evitar que la nota muestre una imagen rota.
 const VEHICULOS = [
   { nombre: "Mercedes-Benz Sprinter", imagen: "/sprinter.png" },
   { nombre: "Honda Odyssey", imagen: "/odyssey.png" },
   { nombre: "Volkswagen Jetta / Sedán", imagen: "/sedan.png" },
-  { nombre: "Chevrolet Suburban", imagen: "/suburban.png" },
+  { nombre: "Chevrolet Suburban", imagen: "/sprinter.png" },
   { nombre: "Toyota Hiace", imagen: "/hiace.png" },
 ];
 
@@ -61,7 +62,7 @@ const IMAGENES_VEHICULOS = {
   "/odyssey.png": "/odyssey.png",
   "/odissey.png": "/odyssey.png", // compatibilidad con el nombre mal escrito antiguo
   "/sedan.png": "/sedan.png",
-  "/suburban.png": "/suburban.png",
+  "/suburban.png": "/sprinter.png", // archivo suburban.png no existe actualmente en /public
   "/hiace.png": "/hiace.png",
 };
 
@@ -86,7 +87,7 @@ function imagenVehiculo(imagenUnidad, nombreManual = "") {
     return "/sedan.png";
   }
   if (nombre.includes("suburban")) {
-    return "/suburban.png";
+    return "/sprinter.png"; // respaldo temporal hasta subir suburban.png
   }
   if (nombre.includes("hiace")) {
     return "/hiace.png";
@@ -102,7 +103,7 @@ function imagenVehiculo(imagenUnidad, nombreManual = "") {
 function formatoFecha(valor) {
   if (!valor) return "";
 
-  const fecha = new Date(`${valor}T12:00:00`);
+  const fecha = new Date(String(valor).trim() + "T12:00:00");
 
   if (Number.isNaN(fecha.getTime())) return valor;
 
@@ -294,7 +295,7 @@ html,body{
 }
 
 body{
-  font-size:13pt;
+  font-size:14pt;
   line-height:1.25
 }
 
@@ -329,7 +330,7 @@ body{
 }
 
 .empresa{
-  font-size:11pt;
+  font-size:12pt;
   line-height:1.42;
   font-weight:800;
   overflow-wrap:anywhere;
@@ -338,7 +339,7 @@ body{
 
 .empresa strong{
   display:block;
-  font-size:12pt;
+  font-size:13pt;
   margin-bottom:1mm;
   font-weight:900
 }
@@ -368,7 +369,7 @@ body{
 .folio{
   background:#f00000;
   color:#fff;
-  font-size:14pt;
+  font-size:15pt;
   font-weight:900;
   padding:3mm 3.5mm;
   min-height:11mm;
@@ -408,7 +409,7 @@ body{
 }
 
 .clienteItem{
-  font-size:13pt;
+  font-size:14pt;
   overflow-wrap:anywhere;
   min-height:5mm
 }
@@ -428,7 +429,7 @@ body{
   max-width:100%;
   min-height:9mm;
   padding:2mm 3mm;
-  font-size:14pt;
+  font-size:15pt;
   font-weight:900;
   overflow-wrap:anywhere
 }
@@ -437,7 +438,7 @@ body{
   background:#050505!important;
   color:#fff!important;
   padding:2mm 3mm;
-  font-size:13pt;
+  font-size:14pt;
   font-weight:900;
   margin:0 0 1.5mm;
   min-height:8mm;
@@ -466,15 +467,15 @@ body{
   padding:0;
   break-inside:avoid;
   page-break-inside:avoid;
-  font-size:13pt;
-  line-height:1.18;
+  font-size:14pt;
+  line-height:1.2;
   overflow-wrap:anywhere
 }
 
 .icono{
   width:6mm;
   flex:none;
-  font-size:13pt
+  font-size:14pt
 }
 
 .etiqueta{
@@ -494,18 +495,16 @@ body{
   gap:2mm;
   margin-top:15mm;
   min-height:9mm;
-  font-size:13pt;
+  font-size:14pt;
   break-inside:avoid
-}
-
-.observaciones{
+}.observaciones{
   border:0.5mm solid #111;
   border-radius:8mm;
   min-height:19mm;
   margin-top:auto;
   margin-bottom:4mm;
   padding:3mm 5mm;
-  font-size:12pt;
+  font-size:13pt;
   line-height:1.35;
   overflow-wrap:anywhere;
   break-inside:avoid
@@ -522,7 +521,7 @@ body{
   margin-top:0;
   padding-top:3mm;
   text-align:center;
-  font-size:10pt;
+  font-size:11pt;
   line-height:1.4;
   color:#555;
   overflow-wrap:anywhere
@@ -541,7 +540,7 @@ body{
 }
 
 button{
-  font-size:13pt;
+  font-size:14pt;
   padding:3mm 5mm;
   border:1px solid #777;
   border-radius:2mm;
@@ -996,8 +995,7 @@ return notas.filter((nota) =>
     );
   }
 
-  if (!sesion) {
-    return (
+  if (!sesion) {    return (
       <main className="min-h-screen bg-slate-950 p-5 text-white sm:p-10">
         <form
           onSubmit={iniciarSesion}
