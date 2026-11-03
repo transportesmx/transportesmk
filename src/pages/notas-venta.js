@@ -46,14 +46,13 @@ const CAMPOS = [
   ["email", "✉️ Correo electrónico", "email"],
 ];
 
-// Rutas de imágenes que existen actualmente en la carpeta /public del repositorio.
-// En GitHub se observa que suburban.png no está presente; temporalmente se usa
-// sprinter.png como imagen de respaldo para evitar que la nota muestre una imagen rota.
+// Rutas de imágenes de vehículos publicadas en /public.
+// Deben coincidir exactamente con los nombres de archivos (incluyendo minúsculas).
 const VEHICULOS = [
   { nombre: "Mercedes-Benz Sprinter", imagen: "/sprinter.png" },
   { nombre: "Honda Odyssey", imagen: "/odyssey.png" },
   { nombre: "Volkswagen Jetta / Sedán", imagen: "/sedan.png" },
-  { nombre: "Chevrolet Suburban", imagen: "/sprinter.png" },
+  { nombre: "Chevrolet Suburban", imagen: "/suburban.png" },
   { nombre: "Toyota Hiace", imagen: "/hiace.png" },
 ];
 
@@ -62,7 +61,7 @@ const IMAGENES_VEHICULOS = {
   "/odyssey.png": "/odyssey.png",
   "/odissey.png": "/odyssey.png", // compatibilidad con el nombre mal escrito antiguo
   "/sedan.png": "/sedan.png",
-  "/suburban.png": "/sprinter.png", // archivo suburban.png no existe actualmente en /public
+  "/suburban.png": "/suburban.png",
   "/hiace.png": "/hiace.png",
 };
 
@@ -87,7 +86,7 @@ function imagenVehiculo(imagenUnidad, nombreManual = "") {
     return "/sedan.png";
   }
   if (nombre.includes("suburban")) {
-    return "/sprinter.png"; // respaldo temporal hasta subir suburban.png
+    return "/suburban.png";
   }
   if (nombre.includes("hiace")) {
     return "/hiace.png";
