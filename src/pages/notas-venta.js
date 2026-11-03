@@ -1,4 +1,3 @@
-// PRUEBA DE DESPLIEGUE VERCEL - 02 NOVIEMBRE 2026
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/lib/supabase";
 
@@ -47,21 +46,23 @@ const CAMPOS = [
   ["email", "✉️ Correo electrónico", "email"],
 ];
 
-// Rutas de imágenes existentes en la carpeta /public del repositorio.
+// Rutas de imágenes que existen actualmente en la carpeta /public del repositorio.
+// En GitHub se observa que suburban.png no está presente; temporalmente se usa
+// sprinter.png como imagen de respaldo para evitar que la nota muestre una imagen rota.
 const VEHICULOS = [
   { nombre: "Mercedes-Benz Sprinter", imagen: "/sprinter.png" },
   { nombre: "Honda Odyssey", imagen: "/odyssey.png" },
   { nombre: "Volkswagen Jetta / Sedán", imagen: "/sedan.png" },
-  { nombre: "Chevrolet Suburban", imagen: "/suburban.png" },
+  { nombre: "Chevrolet Suburban", imagen: "/sprinter.png" },
   { nombre: "Toyota Hiace", imagen: "/hiace.png" },
 ];
 
 const IMAGENES_VEHICULOS = {
   "/sprinter.png": "/sprinter.png",
   "/odyssey.png": "/odyssey.png",
-  "/odissey.png": "/odyssey.png", // compatibilidad con el nombre antiguo
+  "/odissey.png": "/odyssey.png", // compatibilidad con el nombre mal escrito antiguo
   "/sedan.png": "/sedan.png",
-  "/suburban.png": "/suburban.png",
+  "/suburban.png": "/sprinter.png", // archivo suburban.png no existe actualmente en /public
   "/hiace.png": "/hiace.png",
 };
 
@@ -86,7 +87,7 @@ function imagenVehiculo(imagenUnidad, nombreManual = "") {
     return "/sedan.png";
   }
   if (nombre.includes("suburban")) {
-    return "/suburban.png";
+    return "/sprinter.png"; // respaldo temporal hasta subir suburban.png
   }
   if (nombre.includes("hiace")) {
     return "/hiace.png";
@@ -102,7 +103,7 @@ function imagenVehiculo(imagenUnidad, nombreManual = "") {
 function formatoFecha(valor) {
   if (!valor) return "";
 
-  const fecha = new Date(String(valor).trim() + "T12:00:00");
+  const fecha = new Date(`${valor}T12:00:00`);
 
   if (Number.isNaN(fecha.getTime())) return valor;
 
@@ -496,7 +497,9 @@ body{
   min-height:9mm;
   font-size:13pt;
   break-inside:avoid
-}.observaciones{
+}
+
+.observaciones{
   border:0.5mm solid #111;
   border-radius:8mm;
   min-height:19mm;
@@ -994,7 +997,8 @@ return notas.filter((nota) =>
     );
   }
 
-  if (!sesion) {    return (
+  if (!sesion) {
+    return (
       <main className="min-h-screen bg-slate-950 p-5 text-white sm:p-10">
         <form
           onSubmit={iniciarSesion}
