@@ -295,7 +295,7 @@ html,body{
 }
 
 body{
-  font-size:14pt;
+  font-size:13pt;
   line-height:1.25
 }
 
@@ -330,7 +330,7 @@ body{
 }
 
 .empresa{
-  font-size:12pt;
+  font-size:11pt;
   line-height:1.42;
   font-weight:800;
   overflow-wrap:anywhere;
@@ -339,7 +339,7 @@ body{
 
 .empresa strong{
   display:block;
-  font-size:13pt;
+  font-size:12pt;
   margin-bottom:1mm;
   font-weight:900
 }
@@ -369,7 +369,7 @@ body{
 .folio{
   background:#f00000;
   color:#fff;
-  font-size:15pt;
+  font-size:14pt;
   font-weight:900;
   padding:3mm 3.5mm;
   min-height:11mm;
@@ -409,7 +409,7 @@ body{
 }
 
 .clienteItem{
-  font-size:14pt;
+  font-size:13pt;
   overflow-wrap:anywhere;
   min-height:5mm
 }
@@ -429,7 +429,7 @@ body{
   max-width:100%;
   min-height:9mm;
   padding:2mm 3mm;
-  font-size:15pt;
+  font-size:14pt;
   font-weight:900;
   overflow-wrap:anywhere
 }
@@ -438,7 +438,7 @@ body{
   background:#050505!important;
   color:#fff!important;
   padding:2mm 3mm;
-  font-size:14pt;
+  font-size:13pt;
   font-weight:900;
   margin:0 0 1.5mm;
   min-height:8mm;
@@ -455,7 +455,7 @@ body{
   display:flex;
   flex-direction:column;
   gap:0.7mm;
-  margin-top:4mm
+  margin-top:9mm
 }
 
 .dato{
@@ -467,15 +467,15 @@ body{
   padding:0;
   break-inside:avoid;
   page-break-inside:avoid;
-  font-size:14pt;
-  line-height:1.2;
+  font-size:13pt;
+  line-height:1.18;
   overflow-wrap:anywhere
 }
 
 .icono{
   width:6mm;
   flex:none;
-  font-size:14pt
+  font-size:13pt
 }
 
 .etiqueta{
@@ -493,9 +493,9 @@ body{
   display:flex;
   align-items:flex-start;
   gap:2mm;
-  margin-top:5mm;
+  margin-top:15mm;
   min-height:9mm;
-  font-size:14pt;
+  font-size:13pt;
   break-inside:avoid
 }.observaciones{
   border:0.5mm solid #111;
@@ -504,7 +504,7 @@ body{
   margin-top:auto;
   margin-bottom:4mm;
   padding:3mm 5mm;
-  font-size:13pt;
+  font-size:12pt;
   line-height:1.35;
   overflow-wrap:anywhere;
   break-inside:avoid
@@ -521,7 +521,7 @@ body{
   margin-top:0;
   padding-top:3mm;
   text-align:center;
-  font-size:11pt;
+  font-size:10pt;
   line-height:1.4;
   color:#555;
   overflow-wrap:anywhere
@@ -540,7 +540,7 @@ body{
 }
 
 button{
-  font-size:14pt;
+  font-size:13pt;
   padding:3mm 5mm;
   border:1px solid #777;
   border-radius:2mm;
@@ -1080,9 +1080,10 @@ return notas.filter((nota) =>
 
       <div className="flex items-center gap-4">
         <img
-          src="/logo.jpg"
+          src="/logo-blanco.png"
           alt="Transportes MX"
-          className="h-16 w-28 rounded bg-white p-2 object-contain"
+          className="h-16 w-28 object-contain"
+          style={{ background: "transparent", border: "none", boxShadow: "none" }}
         />
 
         <div>
@@ -1489,7 +1490,7 @@ return notas.filter((nota) =>
             Descripción del traslado:
           </div>
 
-          <div className="mt-[4mm] space-y-1.5 text-[16px]">
+          <div className="mt-[9mm] space-y-1.5 text-[16px]">
 
             {[
               ["🚐", "Vehículo:", datos.unidad],
@@ -1516,7 +1517,7 @@ return notas.filter((nota) =>
 
           </div>
 
-          <div className="mt-[5mm] flex items-start gap-1 text-[16px]">
+          <div className="mt-[15mm] flex items-start gap-1 text-[16px]">
 
             <span>↩️</span>
 
