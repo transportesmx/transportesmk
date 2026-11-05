@@ -880,6 +880,65 @@ try {
 
     setFolio(nueva.folio);
 
+    // Crear evento en Google Calendar al guardar una nota nueva.
+    // La nota ya quedó guardada en Supabase; si Calendar falla,
+    // no se cancela ni se pierde la nota.
+    try {
+      if (payload.fecha && payload.hora) {
+        const textoIdaVuelta = String(payload.idaVuelta || "")
+          .toLowerCase()
+          .normalize("NFD")
+          .replace(/[\\u0300-\\u036f]/g, "");
+
+        const esRedondo =
+          textoIdaVuelta.includes("si") ||
+          textoIdaVuelta.includes("redondo") ||
+          textoIdaVuelta.includes("ida y vuelta");
+
+        const reservaCalendar = {
+          clienteNombre: payload.cliente || "",
+          clienteTelefono: payload.telefono || "",
+          clienteEmail: payload.email || "",
+          fechaIda: payload.fecha || "",
+          horaIda: payload.hora || "",
+          origen: payload.origen || "",
+          destino: payload.destino || "",
+          vehiculoNombre: payload.unidad || "",
+          numPasajeros: payload.pasajeros || "",
+          precioTotal: payload.importe || "",
+          aerolinea: payload.aerolinea || "",
+          tipoViaje: esRedondo ? "redondo" : "sencillo",
+          fechaRegreso: payload.regresoFecha || "",
+          horaRegreso: payload.regresoHora || "",
+          observaciones: `Folio: ${nueva.folio}\\n${payload.observaciones || ""}`,
+        };
+
+        const respuestaCalendar = await fetch("/api/google-calendar", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ reserva: reservaCalendar }),
+        });
+
+        if (!respuestaCalendar.ok) {
+          console.error(
+            "La nota se guardó, pero Google Calendar respondió con error:",
+            await respuestaCalendar.text()
+          );
+        } else {
+          const resultadoCalendar = await respuestaCalendar.json();
+          console.log(
+            "Evento de nota de venta enviado a Google Calendar:",
+            resultadoCalendar.eventId
+          );
+        }
+      }
+    } catch (errorCalendar) {
+      console.error(
+        "La nota se guardó correctamente, pero no se pudo conectar con Google Calendar:",
+        errorCalendar
+      );
+    }
+
     setEditando({
       id: nueva.nota_id,
       folio: nueva.folio,
