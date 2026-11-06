@@ -70,7 +70,7 @@ function buildCalendarAttachment(nota) {
 
 function buildHtml(nota) {
   const roundTrip = nota.tipoViaje === 'redondo' || nota.idaVuelta === 'redondo';
-  const logo = `${SITE_URL}/logo.jpg`;
+  const logoWhite = `${SITE_URL}/logo-email-white.png`;\n  const logoBlack = `${SITE_URL}/logo-email-black.png`;
   const customer = esc(nota.cliente || 'Cliente');
   const folio = esc(nota.folio || '—');
   const email = esc(nota.email || '—');
@@ -134,27 +134,28 @@ function buildHtml(nota) {
 <meta name="supported-color-schemes" content="light dark">
 <style>
   :root { color-scheme: light dark; supported-color-schemes: light dark; }
-  body, .page-bg { background-color:#f1f4f8 !important; }
+  body, .page-bg { background-color:#080b12 !important; }
   .email-shell { width:100%; max-width:720px; margin:0 auto; }
-  .outer-card { background:#ffffff; border:1px solid #dce2eb; border-radius:22px; overflow:hidden; }
-  .brand-header { background:#dce9f8; background-image:linear-gradient(135deg,#c7d9f2,#e8f0fb); }
-  .header-subtitle { color:#52647b; }
-  .main-content { background:#ffffff; }
-  .title { color:#101827; }
-  .folio { color:#7a8494; }
-  .info-card { background:#f8fafc; border:1px solid #dce2eb; }
-  .divider { border-color:#e2e7ef !important; }
-  .field-label { color:#b58b37; }
-  .field-value, .detail-value, .route-text, .return-route, .observations-value { color:#263244; }
-  .muted, .route-stats { color:#7b8798; }
-  .total-card { background:#e8f8f0; border:1px solid #9bd8bb; }
-  .total-value { color:#079b69; }
-  .footer { background:#f8fafc; color:#8993a2; }
-  .route-arrow { color:#b58b37; font-weight:bold; }
-  .section-cell { padding:18px 22px; border-top:1px solid #e2e7ef; }
+  .outer-card { background:#171923 !important; border:1px solid #2c303b !important; border-radius:22px; overflow:hidden; }
+  .brand-header { background:#15304e !important; background-image:linear-gradient(135deg,#1c3a5d,#10253e) !important; }
+  .header-subtitle { color:#a6b2c3 !important; }
+  .main-content { background:#191a24 !important; }
+  .title { color:#f8fafc !important; }
+  .folio, .muted, .route-stats { color:#9296a2 !important; }
+  .info-card { background:#22232d !important; border:1px solid #343640 !important; }
+  .divider, .section-cell, .detail-cell { border-color:#343640 !important; }
+  .field-value, .detail-value, .route-text, .return-route, .observations-value { color:#e2e4e9 !important; }
+  .field-label { color:#d7b56d !important; }
+  .total-card { background:#06291f !important; border:1px solid #176b47 !important; }
+  .total-value { color:#16c78b !important; }
+  .footer { background:#11121a !important; color:#777d8b !important; }
+  .route-arrow { color:#d7b56d !important; font-weight:bold; }
+  .brand-logo-light { display:block !important; }
+  .brand-logo-dark { display:none !important; }
+  .section-cell { padding:18px 22px; border-top:1px solid #343640; }
   .field-label { font-size:11px; line-height:1.4; letter-spacing:1.5px; font-weight:700; }
   .field-value { font-size:20px; line-height:1.4; font-weight:700; margin-top:6px; }
-  .detail-cell { padding:16px 12px; border-top:1px solid #e2e7ef; }
+  .detail-cell { padding:16px 12px; border-top:1px solid #343640; }
   .detail-value { font-size:15px; line-height:1.45; margin-top:7px; overflow-wrap:anywhere; }
   .route-text { font-size:17px; line-height:1.55; margin-top:8px; overflow-wrap:anywhere; }
   .return-route { font-size:16px; line-height:1.5; margin-top:7px; overflow-wrap:anywhere; }
@@ -176,24 +177,25 @@ function buildHtml(nota) {
     .route-stats { padding:15px 16px !important; }
   }
   @media (prefers-color-scheme: dark) {
-    body, .page-bg { background-color:#080b12 !important; }
-    .outer-card { background:#171923 !important; border-color:#2c303b !important; }
-    .brand-header { background:#15304e !important; background-image:linear-gradient(135deg,#1c3a5d,#10253e) !important; }
-    .header-subtitle { color:#a6b2c3 !important; }
-    .main-content { background:#191a24 !important; }
-    .title { color:#f8fafc !important; }
-    .card-title { color:#f8fafc !important; }
-    .paid-badge { background:#063b2b !important; border-color:#176b47 !important; color:#36dc8a !important; }
-    .manual-accent { color:#d7b56d !important; }
-    .folio, .muted, .route-stats { color:#9296a2 !important; }
-    .info-card { background:#22232d !important; border-color:#343640 !important; }
-    .divider, .section-cell, .detail-cell { border-color:#343640 !important; }
-    .field-value, .detail-value, .route-text, .return-route, .observations-value { color:#e2e4e9 !important; }
-    .field-label { color:#d7b56d !important; }
-    .total-card { background:#06291f !important; border-color:#176b47 !important; }
-    .total-value { color:#16c78b !important; }
-    .footer { background:#11121a !important; color:#777d8b !important; }
-    .route-arrow { color:#d7b56d !important; }
+    body, .page-bg { background-color:#f1f4f8 !important; }
+    .outer-card { background:#ffffff !important; border-color:#dce2eb !important; }
+    .brand-header { background:#dce9f8 !important; background-image:linear-gradient(135deg,#c7d9f2,#e8f0fb) !important; }
+    .header-subtitle { color:#52647b !important; }
+    .main-content { background:#ffffff !important; }
+    .title, .card-title { color:#101827 !important; }
+    .paid-badge { background:#e6f8ef !important; border-color:#9bd8bb !important; color:#079b69 !important; }
+    .manual-accent { color:#b58b37 !important; }
+    .folio, .muted, .route-stats { color:#7a8494 !important; }
+    .info-card { background:#f8fafc !important; border-color:#dce2eb !important; }
+    .divider, .section-cell, .detail-cell { border-color:#e2e7ef !important; }
+    .field-value, .detail-value, .route-text, .return-route, .observations-value { color:#263244 !important; }
+    .field-label { color:#b58b37 !important; }
+    .total-card { background:#e8f8f0 !important; border-color:#9bd8bb !important; }
+    .total-value { color:#079b69 !important; }
+    .footer { background:#f8fafc !important; color:#8993a2 !important; }
+    .route-arrow { color:#b58b37 !important; }
+    .brand-logo-light { display:none !important; }
+    .brand-logo-dark { display:block !important; }
   }
 </style>
 </head>
@@ -205,7 +207,8 @@ function buildHtml(nota) {
 <tr><td class="outer-card" style="background:#fff;border:1px solid #dce2eb;border-radius:22px;overflow:hidden">
 <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
 <tr><td class="brand-header" align="center" style="background:#dce9f8;background-image:linear-gradient(135deg,#c7d9f2,#e8f0fb);padding:34px 20px 28px">
-<img class="brand-logo" src="${logo}" alt="TMX · Transportes MX" width="190" style="display:block;width:190px;max-width:70%;height:auto;margin:0 auto 15px;border:0">
+<img class="brand-logo brand-logo-light" src="${logoWhite}" alt="TMX · Transportes MX" width="190" style="display:block;width:190px;max-width:70%;height:auto;margin:0 auto 15px;border:0;background:transparent">
+<img class="brand-logo brand-logo-dark" src="${logoBlack}" alt="TMX · Transportes MX" width="190" style="display:none;width:190px;max-width:70%;height:auto;margin:0 auto 15px;border:0;background:transparent">
 <div class="header-subtitle" style="font-size:17px;font-weight:700;color:#52647b">Panel de reservas</div>
 </td></tr>
 <tr><td class="main-content" style="background:#fff;padding:28px 22px 0">
