@@ -1,16 +1,13 @@
 
 /**
  * Google Calendar - Notas de Venta Transportes MX
- * Integración independiente del sistema de reservaciones y Stripe.
- *
- * Crea eventos de Google Calendar para las notas de venta.
+ * API exclusiva para notas de venta.
  * Soporta viajes sencillos e ida y vuelta.
  */
 
 import { crearEventoCalendario } from '@/lib/google-calendar';
 
 export default async function handler(req, res) {
-  // Solo aceptar solicitudes POST
   if (req.method !== 'POST') {
     res.setHeader('Allow', ['POST']);
 
@@ -21,7 +18,6 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Recibir datos de la nota de venta
     const nota = req.body?.nota || req.body;
 
     if (!nota || typeof nota !== 'object') {
@@ -31,7 +27,7 @@ export default async function handler(req, res) {
       });
     }
 
-    // Detectar si el viaje es ida y vuelta
+    // Detectar viaje sencillo o redondo
     const idaVueltaTexto = String(
       nota.idaVuelta || nota.tipoViaje || ''
     )
@@ -40,13 +36,15 @@ export default async function handler(req, res) {
       .replace(/[\u0300-\u036f]/g, '')
       .trim();
 
-    const esRedondo =
-      idaVueltaTexto.includes('si') ||
-      idaVueltaTexto.includes('redondo') ||
-      idaVueltaTexto.includes('ida y vuelta') ||
-      idaVueltaTexto.includes('round trip');
+    const esRedondo = [
+      'si',
+      'sí',
+      'redondo',
+      'ida y vuelta',
+      'round trip',
+    ].some((valor) => idaVueltaTexto === valor ||
+      idaVueltaTexto.includes(valor));
 
-    // Preparar datos para Google Calendar
     const reservaCalendar = {
       clienteNombre:
         nota.cliente || nota.clienteNombre || '',
@@ -80,7 +78,6 @@ export default async function handler(req, res) {
 
       tipoViaje: esRedondo ? 'redondo' : 'sencillo',
 
-      // Datos del regreso
       fechaRegreso:
         nota.regresoFecha || nota.fechaRegreso || '',
 
@@ -90,6 +87,9 @@ export default async function handler(req, res) {
       aerolinea:
         nota.aerolinea || '',
 
+      numVuelo:
+        nota.numVuelo || '',
+
       observaciones:
         nota.observaciones || '',
 
@@ -97,7 +97,6 @@ export default async function handler(req, res) {
       duracion: '',
     };
 
-    // Validar fecha de ida
     if (!reservaCalendar.fechaIda) {
       return res.status(400).json({
         success: false,
@@ -105,40 +104,68 @@ export default async function handler(req, res) {
       });
     }
 
-    // Validar fecha de regreso si es viaje redondo
     if (
       reservaCalendar.tipoViaje === 'redondo' &&
       !reservaCalendar.fechaRegreso
     ) {
       return res.status(400).json({
         success: false,
-        message:
-          'La fecha de regreso es obligatoria para un viaje de ida y vuelta',
+        message: 'La fecha de regreso es obligatoria',
       });
     }
 
-    // Crear evento(s) en Google Calendar
-    const eventId = await crearEventoCalendario(
+    // Crear eventos en Google Calendar
+    const resultado = await crearEventoCalendario(
       reservaCalendar
     );
 
-    if (!eventId) {
+    if (!resultado) {
       return res.status(500).json({
         success: false,
         message:
-          'No se pudo crear el evento en Google Calendar',
+          'Google Calendar no pudo crear el evento. Revisa las variables OAuth.',
       });
     }
 
-    // Respuesta exitosa
+    // Compatibilidad con la versión anterior que devolvía un string
+    const eventIdIda =
+      typeof resultado === 'string'
+        ? resultado
+        : resultado.eventIdIda;
+
+    const eventIdRegreso =
+      typeof resultado === 'object'
+        ? resultado.eventIdRegreso || null
+        : null;
+
+    if (!eventIdIda) {
+      return res.status(500).json({
+        success: false,
+        message: 'No se recibió el ID del evento de ida',
+      });
+    }
+
+    if (
+      reservaCalendar.tipoViaje === 'redondo' &&
+      !eventIdRegreso
+    ) {
+      return res.status(500).json({
+        success: false,
+        message:
+          'Se creó la ida, pero no se confirmó el evento de regreso',
+        eventIdIda,
+      });
+    }
+
     return res.status(200).json({
       success: true,
-      eventId,
+      eventIdIda,
+      eventIdRegreso,
       tipoViaje: reservaCalendar.tipoViaje,
       message:
         reservaCalendar.tipoViaje === 'redondo'
-          ? 'Viaje de ida y vuelta enviado correctamente a Google Calendar'
-          : 'Evento creado correctamente en Google Calendar',
+          ? 'Eventos de ida y regreso creados correctamente'
+          : 'Evento de ida creado correctamente',
     });
   } catch (error) {
     console.error(
@@ -150,7 +177,7 @@ export default async function handler(req, res) {
       success: false,
       message:
         error.message ||
-        'Error al crear el evento en Google Calendar',
+        'Error al crear los eventos en Google Calendar',
     });
   }
 }
