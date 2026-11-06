@@ -14,20 +14,10 @@ function esc(value = '') {
   }[char]));
 }
 function money(value) {
-  const raw = String(value ?? '').trim();
-  if (!raw) return 'Por confirmar';
-
-  // Preserve text statuses (e.g. "Pagado") instead of parsing them as $0.00.
-  const hasNumericAmount = /\d/.test(raw);
-  const numericText = raw.replace(/[^0-9.,-]/g, '').replace(/,/g, '');
-  if (!hasNumericAmount || !numericText || !/^-?\d+(?:\.\d+)?$/.test(numericText)) {
-    return esc(raw);
-  }
-
-  const numeric = Number(numericText);
+  const numeric = Number(String(value ?? '').replace(/[^0-9.]/g, ''));
   return Number.isFinite(numeric)
     ? new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(numeric)
-    : esc(raw);
+    : esc(value || 'Por confirmar');
 }
 function dateDisplay(value) {
   if (!value) return 'Por confirmar';
@@ -80,8 +70,6 @@ function buildCalendarAttachment(nota) {
 
 function buildHtml(nota) {
   const roundTrip = nota.tipoViaje === 'redondo' || nota.idaVuelta === 'redondo';
-  // This archive has the current logo.jpg. Blend modes remove its white JPG canvas
-  // in supporting email clients; transparent white/black logo variants are ideal later.
   const logo = `${SITE_URL}/logo.jpg`;
   const customer = esc(nota.cliente || 'Cliente');
   const folio = esc(nota.folio || '—');
@@ -90,38 +78,51 @@ function buildHtml(nota) {
   const origin = esc(nota.origen || 'Origen por confirmar');
   const destination = esc(nota.destino || 'Destino por confirmar');
   const route = `${origin} <span class="route-arrow">→</span> ${destination}`;
-  const amount = money(nota.importe);
-  const amountIsText = !/\d/.test(String(nota.importe ?? '').trim());
-  const totalLabel = amountIsText ? 'ESTADO DE PAGO' : 'TOTAL';
+
+  // Si el campo importe contiene texto (p. ej. "Pagado"), mostrarlo literalmente.
+  // Solo formatear como moneda cuando realmente sea un importe numérico.
+  const rawAmount = String(nota.importe ?? '').trim();
+  const cleanedAmount = rawAmount.replace(/[^0-9.,-]/g, '').replace(/,/g, '');
+  const isNumericAmount = rawAmount !== '' && /^-?\d+(?:\.\d+)?$/.test(cleanedAmount);
+  const totalValue = isNumericAmount
+    ? money(cleanedAmount)
+    : esc(rawAmount || 'Por confirmar');
+  const totalLabel = isNumericAmount ? 'TOTAL' : 'ESTADO DE PAGO';
 
   const returnBlock = roundTrip ? `
-    <tr><td colspan="2" class="section-cell return-cell">
-      <div class="field-label">↩ REGRESO</div>
-      <div class="field-value">${destination} <span class="route-arrow">→</span> ${origin}</div>
-      <div class="field-subvalue">${dateDisplay(nota.regresoFecha || nota.fechaRegreso)} · ${esc(nota.regresoHora || nota.horaRegreso || 'Hora por confirmar')}</div>
-    </td></tr>` : '';
+    <tr>
+      <td class="section-cell return-section" colspan="4">
+        <div class="field-label">🔄 REGRESO</div>
+        <div class="return-route">${destination} <span class="route-arrow">→</span> ${origin}</div>
+        <div class="muted return-date">${dateDisplay(nota.regresoFecha || nota.fechaRegreso)} · ${esc(nota.regresoHora || nota.horaRegreso || 'Hora por confirmar')}</div>
+      </td>
+    </tr>` : '';
 
-  const detailRows = [
-    ['FECHA Y HORA', `${dateDisplay(nota.fecha)} · ${esc(nota.hora || 'Por confirmar')}`],
-    ['TIPO DE VIAJE', roundTrip ? 'Ida y vuelta' : esc(nota.tipoViajeTexto || nota.tipoServicio || 'Sencillo')],
-    ['VEHÍCULO', esc(nota.unidad || nota.vehiculo || 'Por confirmar')],
-    ['PASAJEROS', esc(nota.pasajeros || nota.pax || 'Por confirmar')],
+  const detailItems = [
+    ['📅 FECHA Y HORA', `${dateDisplay(nota.fecha)} · ${esc(nota.hora || 'Por confirmar')}`],
+    ['🧭 TIPO DE VIAJE', roundTrip ? 'Ida y vuelta' : esc(nota.tipoViaje || 'Sencillo')],
+    ['🚘 VEHÍCULO', esc(nota.unidad || 'Por confirmar')],
+    ['👥 PASAJEROS', esc(nota.pasajeros || 'Por confirmar')],
   ];
-  const detailsHtml = detailRows.map(([label, value]) => `
-    <td class="detail-cell">
+  const detailsHtml = detailItems.map(([label, value]) => `
+    <td class="detail-cell" width="25%" valign="top">
       <div class="field-label">${label}</div>
-      <div class="field-value">${value}</div>
+      <div class="detail-value">${value}</div>
     </td>`).join('');
 
-  const distance = nota.distancia ? `<span>📏 Distancia: ${esc(nota.distancia)}</span>` : '';
-  const duration = nota.duracion || nota.duracionTexto || nota.tiempoEstimado
-    ? `<span>⏱ Duración: ${esc(nota.duracion || nota.duracionTexto || nota.tiempoEstimado)}</span>` : '';
-  const metrics = distance || duration ? `
-    <div class="metrics">${[distance, duration].filter(Boolean).join('<span class="metric-dot"> · </span>')}</div>` : '';
+  const distanceValue = nota.distancia || nota.distanciaKm || nota.km || '';
+  const distance = distanceValue ? `<span>📏 Distancia: ${esc(distanceValue)}${String(distanceValue).toLowerCase().includes('km') ? '' : ' km'}</span>` : '';
+  const durationValue = nota.duracion || nota.duracionTexto || nota.tiempo || '';
+  const duration = durationValue ? `<span>⏱️ ${esc(durationValue)}</span>` : '';
+  const routeStats = distance || duration ? `
+    <tr><td class="route-stats">
+      ${distance}${distance && duration ? '<span class="stats-separator"> · </span>' : ''}${duration}
+    </td></tr>` : '';
+
   const observations = nota.observaciones ? `
-    <tr><td colspan="2" class="section-cell observations">
-      <div class="field-label">OBSERVACIONES</div>
-      <div class="field-value">${esc(nota.observaciones)}</div>
+    <tr><td class="section-cell observations">
+      <div class="field-label">📝 OBSERVACIONES</div>
+      <div class="observations-value">${esc(nota.observaciones)}</div>
     </td></tr>` : '';
 
   return `<!doctype html>
@@ -133,106 +134,117 @@ function buildHtml(nota) {
 <meta name="supported-color-schemes" content="light dark">
 <style>
   :root { color-scheme: light dark; supported-color-schemes: light dark; }
-  body, .email-bg { background:#f2f5f9 !important; color:#182235 !important; }
-  .shell { background:#ffffff !important; }
-  .booking-card { background:#ffffff !important; border-color:#d8dee8 !important; }
-  .heading-main { color:#111827 !important; }
-  .field-value { color:#202938 !important; }
-  .field-subvalue, .metrics { color:#687386 !important; }
-  .field-label { color:#9a762b !important; }
-  .section-cell, .detail-cell, .booking-head { border-color:#e1e6ee !important; }
-  .total-box { background:#e9f8f0 !important; border-color:#16a36a !important; }
-  .total-value { color:#07884f !important; }
-  .help-panel { background:#f7f8fb !important; border-color:#d8dee8 !important; }
-  .logo-img { mix-blend-mode:multiply; }
-  @media (prefers-color-scheme: dark) {
-    body, .email-bg { background:#080d18 !important; color:#f4f6fa !important; }
-    .shell { background:#080d18 !important; }
-    .booking-card { background:#0c1322 !important; border-color:#354052 !important; }
-    .heading-main { color:#ffffff !important; }
-    .field-value { color:#f4f6fa !important; }
-    .field-subvalue, .metrics { color:#b9c1d0 !important; }
-    .field-label { color:#d7b56d !important; }
-    .section-cell, .detail-cell, .booking-head { border-color:#273247 !important; }
-    .total-box { background:#06291f !important; border-color:#176b47 !important; }
-    .total-value { color:#36dc8a !important; }
-    .help-panel { background:#101b2d !important; border-color:#354052 !important; }
-    .logo-img { filter:invert(1); mix-blend-mode:screen; }
-  }
+  body, .page-bg { background-color:#f1f4f8 !important; }
+  .email-shell { width:100%; max-width:720px; margin:0 auto; }
+  .outer-card { background:#ffffff; border:1px solid #dce2eb; border-radius:22px; overflow:hidden; }
+  .brand-header { background:#dce9f8; background-image:linear-gradient(135deg,#c7d9f2,#e8f0fb); }
+  .header-subtitle { color:#52647b; }
+  .main-content { background:#ffffff; }
+  .title { color:#101827; }
+  .folio { color:#7a8494; }
+  .info-card { background:#f8fafc; border:1px solid #dce2eb; }
+  .divider { border-color:#e2e7ef !important; }
+  .field-label { color:#b58b37; }
+  .field-value, .detail-value, .route-text, .return-route, .observations-value { color:#263244; }
+  .muted, .route-stats { color:#7b8798; }
+  .total-card { background:#e8f8f0; border:1px solid #9bd8bb; }
+  .total-value { color:#079b69; }
+  .footer { background:#f8fafc; color:#8993a2; }
+  .route-arrow { color:#b58b37; font-weight:bold; }
+  .section-cell { padding:18px 22px; border-top:1px solid #e2e7ef; }
+  .field-label { font-size:11px; line-height:1.4; letter-spacing:1.5px; font-weight:700; }
+  .field-value { font-size:20px; line-height:1.4; font-weight:700; margin-top:6px; }
+  .detail-cell { padding:16px 12px; border-top:1px solid #e2e7ef; }
+  .detail-value { font-size:15px; line-height:1.45; margin-top:7px; overflow-wrap:anywhere; }
+  .route-text { font-size:17px; line-height:1.55; margin-top:8px; overflow-wrap:anywhere; }
+  .return-route { font-size:16px; line-height:1.5; margin-top:7px; overflow-wrap:anywhere; }
+  .return-date { font-size:14px; margin-top:6px; }
+  .route-stats { padding:18px 22px; font-size:14px; line-height:1.5; font-weight:600; }
+  .total-card { border-radius:14px; padding:18px 20px; }
+  .total-value { font-size:34px; line-height:1.25; font-weight:800; margin-top:6px; overflow-wrap:anywhere; }
+  .observations-value { font-size:14px; line-height:1.55; margin-top:7px; white-space:pre-line; }
   @media only screen and (max-width:600px) {
-    .outer-pad { padding:18px 8px !important; }
-    .detail-cell { display:block !important; width:auto !important; padding:12px 18px !important; border-top:1px solid #e1e6ee !important; }
-    .customer-contact-cell { display:block !important; width:auto !important; }
-    .heading-main { font-size:23px !important; }
-    .total-value { font-size:28px !important; }
+    .page-pad { padding:12px 8px !important; }
+    .outer-card { border-radius:16px !important; }
+    .brand-logo { width:170px !important; max-width:65% !important; }
+    .headline { font-size:23px !important; line-height:1.25 !important; }
+    .section-cell { padding:15px 16px !important; }
+    .detail-cell { display:block !important; width:auto !important; padding:13px 16px !important; }
+    .detail-value { font-size:15px !important; }
+    .field-value { font-size:18px !important; }
+    .total-value { font-size:29px !important; }
+    .route-stats { padding:15px 16px !important; }
+  }
+  @media (prefers-color-scheme: dark) {
+    body, .page-bg { background-color:#080b12 !important; }
+    .outer-card { background:#171923 !important; border-color:#2c303b !important; }
+    .brand-header { background:#15304e !important; background-image:linear-gradient(135deg,#1c3a5d,#10253e) !important; }
+    .header-subtitle { color:#a6b2c3 !important; }
+    .main-content { background:#191a24 !important; }
+    .title { color:#f8fafc !important; }
+    .card-title { color:#f8fafc !important; }
+    .paid-badge { background:#063b2b !important; border-color:#176b47 !important; color:#36dc8a !important; }
+    .manual-accent { color:#d7b56d !important; }
+    .folio, .muted, .route-stats { color:#9296a2 !important; }
+    .info-card { background:#22232d !important; border-color:#343640 !important; }
+    .divider, .section-cell, .detail-cell { border-color:#343640 !important; }
+    .field-value, .detail-value, .route-text, .return-route, .observations-value { color:#e2e4e9 !important; }
+    .field-label { color:#d7b56d !important; }
+    .total-card { background:#06291f !important; border-color:#176b47 !important; }
+    .total-value { color:#16c78b !important; }
+    .footer { background:#11121a !important; color:#777d8b !important; }
+    .route-arrow { color:#d7b56d !important; }
   }
 </style>
 </head>
-<body style="margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;background:#f2f5f9;color:#182235">
-<div class="email-bg" style="background:#f2f5f9;padding:0;margin:0">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;background:#f2f5f9">
-    <tr><td align="center" class="outer-pad" style="padding:28px 14px">
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" class="shell" style="max-width:680px;border-collapse:collapse;background:#fff">
-        <tr><td align="center" style="padding:16px 12px 24px">
-          <img class="logo-img" src="${logo}" alt="Transportes MX" width="190" style="display:block;width:190px;max-width:70%;height:auto;margin:0 auto 18px;mix-blend-mode:multiply">
-          <div style="font-size:12px;letter-spacing:3px;color:#b18a3d;font-weight:700">TRANSPORTES MX</div>
-          <div class="heading-main" style="font-size:28px;line-height:1.25;font-weight:800;margin-top:10px;color:#111827">🚗 NUEVA RESERVA <span style="color:#b18a3d">MANUAL</span></div>
-          <div style="display:inline-block;margin-top:14px;padding:8px 18px;border-radius:22px;background:#e5f8ef;border:1px solid #0b9b61;color:#07884f;font-size:14px;font-weight:700">✓ RESERVA PAGADA</div>
-        </td></tr>
-        <tr><td>
-          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" class="booking-card" style="border:1px solid #d8dee8;border-radius:16px;overflow:hidden;background:#fff;border-collapse:separate">
-            <tr><td colspan="2" class="booking-head" style="padding:20px;border-bottom:1px solid #e1e6ee">
-              <table role="presentation" cellpadding="0" cellspacing="0" width="100%"><tr>
-                <td width="36" valign="middle" style="font-size:25px;color:#b18a3d">✦</td>
-                <td><div style="font-size:18px;font-weight:700;color:#111827">Nueva Reserva Pagada</div><div style="font-size:14px;color:#687386;margin-top:5px">Folio ${folio}</div></td>
-              </tr></table>
-            </td></tr>
-            <tr><td colspan="2" class="section-cell" style="padding:18px 20px;border-bottom:1px solid #e1e6ee">
-              <div class="field-label" style="font-size:11px;letter-spacing:1.5px;color:#9a762b;font-weight:700">CLIENTE</div>
-              <div class="field-value" style="font-size:22px;font-weight:700;color:#202938;margin-top:7px">${customer}</div>
-            </td></tr>
-            <tr>
-              <td width="50%" class="section-cell customer-contact-cell" style="padding:14px 20px;border-bottom:1px solid #e1e6ee;vertical-align:top">
-                <div class="field-label" style="font-size:11px;letter-spacing:1.5px;color:#9a762b;font-weight:700">✉ EMAIL</div>
-                <div class="field-value" style="font-size:15px;color:#202938;margin-top:6px;word-break:break-word">${email}</div>
-              </td>
-              <td width="50%" class="section-cell customer-contact-cell" style="padding:14px 20px;border-bottom:1px solid #e1e6ee;vertical-align:top">
-                <div class="field-label" style="font-size:11px;letter-spacing:1.5px;color:#9a762b;font-weight:700">☎ TELÉFONO</div>
-                <div class="field-value" style="font-size:15px;color:#202938;margin-top:6px;word-break:break-word">${phone}</div>
-              </td>
-            </tr>
-            <tr><td colspan="2" class="section-cell" style="padding:16px 20px;border-bottom:1px solid #e1e6ee">
-              <div class="field-label" style="font-size:11px;letter-spacing:1.5px;color:#9a762b;font-weight:700">📍 RUTA</div>
-              <div class="field-value" style="font-size:16px;line-height:1.55;color:#202938;margin-top:7px;word-break:break-word">${route}</div>
-            </td></tr>
-            ${returnBlock}
-            <tr>${detailsHtml}</tr>
-            <tr><td colspan="2" style="padding:16px 20px">
-              <div class="total-box" style="border:1px solid #16a36a;border-radius:12px;background:#e9f8f0;padding:16px 18px">
-                <div class="field-label" style="font-size:11px;letter-spacing:1.5px;color:#9a762b;font-weight:700">${totalLabel}</div>
-                <div class="total-value" style="font-size:32px;line-height:1.3;font-weight:800;color:#07884f;margin-top:5px">${amount}</div>
-                ${amountIsText ? '' : '<div class="field-subvalue" style="font-size:12px;color:#687386;margin-top:3px">MXN</div>'}
-              </div>
-            </td></tr>
-            ${observations}
-          </table>
-          ${metrics}
-        </td></tr>
-        <tr><td style="padding-top:18px">
-          <div class="help-panel" style="padding:16px 20px;border:1px solid #d8dee8;border-radius:12px;background:#f7f8fb">
-            <div style="font-size:15px;font-weight:700;color:#b18a3d">📅 Agrega tu traslado a tu calendario</div>
-            <div class="field-value" style="font-size:13px;line-height:1.5;color:#202938;margin-top:7px">Adjuntamos un archivo de calendario (.ics) con la fecha, hora, origen, destino y folio del servicio. Abre el archivo para agregar la cita a Google Calendar, Apple Calendar u Outlook.</div>
-          </div>
-        </td></tr>
-        <tr><td align="center" style="padding:24px 8px 18px;border-bottom:1px solid #b18a3d">
-          <div class="field-value" style="font-size:14px;color:#202938">¿Necesitas ayuda?</div>
-          <a href="mailto:contacto@transportesmx.org" style="display:inline-block;margin-top:7px;color:#b18a3d;text-decoration:none;font-weight:700">contacto@transportesmx.org</a><br>
-          <a href="https://transportesmx.org" style="display:inline-block;margin-top:9px;color:#b18a3d;text-decoration:none">https://transportesmx.org</a>
-        </td></tr>
-        <tr><td align="center" style="padding-top:16px;font-size:11px;line-height:1.6;color:#7f8a9d">Grupo Turístico MX S. de R.L. de C.V.<br>Confirmación de Nota de Venta · Transportes MX</td></tr>
-      </table>
-    </td></tr>
-  </table>
+<body style="margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;background:#f1f4f8;color:#263244">
+<div class="page-bg" style="width:100%;background:#f1f4f8;padding:22px 0">
+<table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
+<tr><td align="center" class="page-pad" style="padding:18px 12px">
+<table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" class="email-shell" style="width:100%;max-width:720px">
+<tr><td class="outer-card" style="background:#fff;border:1px solid #dce2eb;border-radius:22px;overflow:hidden">
+<table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
+<tr><td class="brand-header" align="center" style="background:#dce9f8;background-image:linear-gradient(135deg,#c7d9f2,#e8f0fb);padding:34px 20px 28px">
+<img class="brand-logo" src="${logo}" alt="TMX · Transportes MX" width="190" style="display:block;width:190px;max-width:70%;height:auto;margin:0 auto 15px;border:0">
+<div class="header-subtitle" style="font-size:17px;font-weight:700;color:#52647b">Panel de reservas</div>
+</td></tr>
+<tr><td class="main-content" style="background:#fff;padding:28px 22px 0">
+<div class="headline title" style="font-size:30px;line-height:1.25;font-weight:800;color:#101827">🚗 NUEVA RESERVA <span class="manual-accent" style="color:#b58b37">MANUAL</span></div>
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-top:14px"><tr><td class="paid-badge" style="background:#e6f8ef;border:1px solid #9bd8bb;border-radius:30px;padding:8px 16px;color:#079b69;font-size:14px;font-weight:800">✓ RESERVA PAGADA</td></tr></table>
+</td></tr>
+<tr><td class="main-content" style="background:#fff;padding:22px">
+<table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" class="info-card" style="background:#f8fafc;border:1px solid #dce2eb;border-radius:16px;overflow:hidden">
+<tr><td class="section-cell card-heading" style="padding:20px 22px;border-top:0">
+<table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td valign="middle" style="font-size:24px;color:#b58b37;padding-right:14px">✦</td><td valign="middle"><div class="card-title" style="font-size:18px;font-weight:800;color:#263244">Nueva Reserva Pagada</div><div class="folio" style="font-size:14px;color:#7a8494;margin-top:5px">Folio ${folio}</div></td></tr></table>
+</td></tr>
+<tr><td class="section-cell" style="padding:20px 22px;border-top:0">
+<div class="field-label">CLIENTE</div><div class="field-value" style="font-size:20px;font-weight:800;color:#263244;margin-top:6px">${customer}</div>
+</td></tr>
+<tr><td class="section-cell divider" style="padding:18px 22px;border-top:1px solid #e2e7ef">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+<td width="58%" valign="top" style="padding:0 12px 0 0"><div class="field-label">📧 EMAIL</div><div class="detail-value" style="font-size:15px;line-height:1.5;margin-top:6px;overflow-wrap:anywhere"><a href="mailto:${email}" class="field-value-link" style="color:#2879d8;text-decoration:underline">${email}</a></div></td>
+<td width="42%" valign="top" style="padding:0"><div class="field-label">📞 TELÉFONO</div><div class="detail-value" style="font-size:15px;line-height:1.5;margin-top:6px;overflow-wrap:anywhere">${phone}</div></td>
+</tr></table>
+</td></tr>
+<tr><td class="section-cell divider" style="padding:18px 22px;border-top:1px solid #e2e7ef">
+<div class="field-label">📍 RUTA</div><div class="route-text" style="font-size:17px;line-height:1.55;color:#263244;margin-top:8px">${route}</div>
+</td></tr>
+${returnBlock}
+<tr>${detailsHtml}</tr>
+<tr><td class="section-cell" style="padding:18px 22px;border-top:1px solid #e2e7ef">
+<table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0"><tr><td class="total-card" style="background:#e8f8f0;border:1px solid #9bd8bb;border-radius:14px;padding:18px 20px">
+<div class="field-label">${totalLabel}</div><div class="total-value" style="font-size:34px;line-height:1.25;font-weight:800;color:#079b69;margin-top:6px">${totalValue}</div>
+${isNumericAmount ? '<div class="muted" style="font-size:12px;color:#7b8798;margin-top:3px">MXN</div>' : ''}
+</td></tr></table>
+</td></tr>
+${observations}
+</table>
+</td></tr>
+${routeStats}
+<tr><td class="footer" align="center" style="padding:18px 12px;background:#f8fafc;color:#8993a2;font-size:14px;font-weight:600">TransportesMX · Panel de administración</td></tr>
+</table>
+</td></tr>
+</table>
 </div>
 </body></html>`;
 }
