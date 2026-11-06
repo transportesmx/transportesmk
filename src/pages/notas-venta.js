@@ -932,6 +932,39 @@ try {
       );
     }
 
+    // Enviar correo transaccional con diseño premium negro/dorado mediante Brevo.
+    // El envío es independiente: un fallo de correo no cancela la nota ni Calendar.
+    let estadoCorreo = "pendiente";
+    try {
+      if (payload.email && payload.email.trim()) {
+        const respuestaCorreo = await fetch("/api/notas-venta-correo", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            nota: {
+              ...payload,
+              folio: nueva.folio,
+              tipoViaje: payload.idaVuelta === "redondo" ? "redondo" : "sencillo",
+            },
+          }),
+        });
+
+        const resultadoCorreo = await respuestaCorreo.json().catch(() => ({}));
+        if (!respuestaCorreo.ok || !resultadoCorreo.success) {
+          estadoCorreo = "error";
+          console.error("La nota se guardó, pero falló el envío del correo:", resultadoCorreo);
+        } else {
+          estadoCorreo = "enviado";
+          console.log("Correo de confirmación enviado con Brevo:", resultadoCorreo.messageId);
+        }
+      } else {
+        estadoCorreo = "sin-correo-cliente";
+      }
+    } catch (errorCorreo) {
+      estadoCorreo = "error";
+      console.error("La nota se guardó, pero no se pudo enviar el correo:", errorCorreo);
+    }
+
     setEditando({
       id: nueva.nota_id,
       folio: nueva.folio,
@@ -940,7 +973,11 @@ try {
     setDatos(payload);
 
     setMensaje(
-      `Nota guardada con folio ${nueva.folio}. Puedes imprimirla o seguir editándola.`
+      estadoCorreo === "enviado"
+        ? `Nota guardada con folio ${nueva.folio}. Correo de confirmación enviado al cliente y a contacto@transportesmx.org.`
+        : estadoCorreo === "error"
+          ? `Nota guardada con folio ${nueva.folio}, pero no se pudo enviar el correo. Revisa la configuración de Brevo.`
+          : `Nota guardada con folio ${nueva.folio}. No se envió correo porque falta el correo del cliente.`
     );
 
     await cargarNotas();
