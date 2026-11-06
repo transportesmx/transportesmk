@@ -1,10 +1,8 @@
-
 /**
  * Google Calendar - Notas de Venta Transportes MX
  * Integración independiente del sistema de reservaciones y Stripe.
  *
- * Este archivo crea eventos de Google Calendar
- * exclusivamente para las notas de venta.
+ * Envía los datos de ida y regreso a Google Calendar.
  */
 
 import { crearEventoCalendario } from '@/lib/google-calendar';
@@ -15,21 +13,38 @@ export default async function handler(req, res) {
     res.setHeader('Allow', ['POST']);
 
     return res.status(405).json({
+      success: false,
       message: 'Método no permitido',
     });
   }
 
   try {
-    // Recibir los datos de la nota de venta
+    // Recibir datos de la nota de venta
     const nota = req.body?.nota || req.body;
 
     if (!nota) {
       return res.status(400).json({
+        success: false,
         message: 'Faltan los datos de la nota de venta',
       });
     }
 
-    // Adaptar los datos de la nota al formato de Google Calendar
+    // Detectar si es viaje redondo
+    const tipoViajeTexto = String(
+      nota.idaVuelta ||
+      nota.tipoViaje ||
+      ''
+    )
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '');
+
+    const esRedondo =
+      tipoViajeTexto.includes('si') ||
+      tipoViajeTexto.includes('redondo') ||
+      tipoViajeTexto.includes('ida y vuelta');
+
+    // Adaptar los datos al formato de Google Calendar
     const reservaCalendar = {
       clienteNombre:
         nota.cliente || nota.clienteNombre || '',
@@ -61,39 +76,70 @@ export default async function handler(req, res) {
       precioTotal:
         nota.importe || nota.precioTotal || 0,
 
-      tipoViaje: 'sencillo',
+      tipoViaje: esRedondo ? 'redondo' : 'sencillo',
+
+      // Datos del regreso
+      fechaRegreso:
+        nota.regresoFecha || nota.fechaRegreso || '',
+
+      horaRegreso:
+        nota.regresoHora || nota.horaRegreso || '12:00',
+
+      // Información adicional
+      aerolinea:
+        nota.aerolinea || '',
+
+      observaciones:
+        nota.observaciones || '',
 
       distancia: '',
       duracion: '',
     };
 
-    // Validar que exista la fecha
+    // Validar fecha de ida
     if (!reservaCalendar.fechaIda) {
       return res.status(400).json({
-        message: 'La fecha de la nota de venta es obligatoria',
+        success: false,
+        message: 'La fecha de ida es obligatoria',
       });
     }
 
-    // Crear evento en Google Calendar
+    // Validar fecha de regreso cuando sea viaje redondo
+    if (
+      reservaCalendar.tipoViaje === 'redondo' &&
+      !reservaCalendar.fechaRegreso
+    ) {
+      return res.status(400).json({
+        success: false,
+        message:
+          'La fecha de regreso es obligatoria para un viaje redondo',
+      });
+    }
+
+    // Crear evento(s) en Google Calendar
     const eventId = await crearEventoCalendario(
       reservaCalendar
     );
 
     if (!eventId) {
       return res.status(500).json({
+        success: false,
         message:
           'No se pudo crear el evento en Google Calendar',
       });
     }
 
-    // Respuesta exitosa
     return res.status(200).json({
       success: true,
       eventId,
+      tipoViaje: reservaCalendar.tipoViaje,
+      fechaIda: reservaCalendar.fechaIda,
+      fechaRegreso: reservaCalendar.fechaRegreso,
       message:
-        'Evento creado correctamente en Google Calendar',
+        reservaCalendar.tipoViaje === 'redondo'
+          ? 'Datos de ida y regreso enviados correctamente a Google Calendar'
+          : 'Evento de ida creado correctamente en Google Calendar',
     });
-
   } catch (error) {
     console.error(
       '[Google Calendar - Notas de Venta]',
@@ -101,8 +147,10 @@ export default async function handler(req, res) {
     );
 
     return res.status(500).json({
+      success: false,
       message:
         'Error al crear el evento en Google Calendar',
+      error: error.message,
     });
   }
 }
