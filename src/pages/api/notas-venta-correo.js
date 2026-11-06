@@ -4,7 +4,9 @@
  * Requiere BREVO_API_KEY, BREVO_SENDER_EMAIL y (opcional) BREVO_SENDER_NAME.
  */
 const ADMIN_EMAIL = 'contacto@transportesmx.org';
-export const config = { api: { bodyParser: { sizeLimit: '8mb' } } };\n\nconst SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'https://transportesmx.org').replace(/\/$/, '');
+export const config = { api: { bodyParser: { sizeLimit: '8mb' } } };
+
+const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'https://transportesmx.org').replace(/\/$/, '');
 
 function esc(value = '') {
   return String(value).replace(/[&<>"']/g, (char) => ({
