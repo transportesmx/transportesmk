@@ -154,6 +154,12 @@ function buildHtml(nota) {
   .total-card { background:#06291f !important; border:1px solid #176b47 !important; }
   .total-value { color:#16c78b !important; }
   .footer { background:#11121a !important; color:#777d8b !important; }
+  .calendar-help-wrap, .contact-help { background:#191a24 !important; }
+  .calendar-help { background:#22232d !important; border-color:#343640 !important; }
+  .calendar-help-title, .contact-gold { color:#d7b56d !important; }
+  .calendar-help-text, .contact-help-title { color:#e2e4e9 !important; }
+  .gold-divider { border-color:#d7b56d !important; }
+  .company-footer { color:#9296a2 !important; }
   .route-arrow { color:#d7b56d !important; font-weight:bold; }
   .brand-logo-light { display:block !important; }
   .brand-logo-dark { display:none !important; }
@@ -190,6 +196,11 @@ function buildHtml(nota) {
     .total-value { font-size:25px !important; }
     .total-card { padding:10px 12px !important; }
     .route-stats { padding:10px 12px !important; font-size:11px !important; }
+  .calendar-help-title { font-size:19px !important; }
+  .calendar-help-text { font-size:15px !important; line-height:1.55 !important; }
+  .contact-help-title { font-size:19px !important; }
+  .contact-gold { font-size:17px !important; overflow-wrap:anywhere; }
+  .company-footer { font-size:14px !important; }
   }
   @media (prefers-color-scheme: dark) {
     body, .page-bg { background-color:#f1f4f8 !important; }
@@ -209,6 +220,12 @@ function buildHtml(nota) {
     .total-card { background:#e8f8f0 !important; border-color:#9bd8bb !important; }
     .total-value { color:#079b69 !important; }
     .footer { background:#f8fafc !important; color:#8993a2 !important; }
+    .calendar-help-wrap, .contact-help { background:#ffffff !important; }
+    .calendar-help { background:#f8fafc !important; border-color:#dce2eb !important; }
+    .calendar-help-title, .contact-gold { color:#b58b37 !important; }
+    .calendar-help-text, .contact-help-title { color:#263244 !important; }
+    .gold-divider { border-color:#b58b37 !important; }
+    .company-footer { color:#8993a2 !important; }
     .route-arrow { color:#b58b37 !important; }
     .brand-logo-light { display:none !important; }
     .brand-logo-dark { display:block !important; }
@@ -228,7 +245,7 @@ function buildHtml(nota) {
 <div class="header-subtitle" style="font-size:17px;font-weight:700;color:#52647b">Panel de reservas</div>
 </td></tr>
 <tr><td class="main-content" style="background:#fff;padding:18px 16px 0">
-<div class="headline title" style="font-size:25px;line-height:1.2;font-weight:800;color:#101827">🚗 NUEVA RESERVA <span class="manual-accent" style="color:#ffffff !important">MANUAL</span></div>
+<div class="headline title" style="font-size:25px;line-height:1.2;font-weight:800;color:#b58b37 !important">🚗 Nueva Reserva Manual</div>
 
 </td></tr>
 <tr><td class="main-content" style="background:#fff;padding:14px 16px">
@@ -260,6 +277,21 @@ ${observations}
 </table>
 </td></tr>
 ${routeStats}
+<tr><td class="calendar-help-wrap" style="padding:22px 16px 10px;background:#ffffff">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="calendar-help" style="background:#f8fafc;border:1px solid #dce2eb;border-radius:18px">
+<tr><td style="padding:22px 20px 20px">
+<div class="calendar-help-title" style="font-size:23px;line-height:1.35;font-weight:800;color:#b58b37;margin-bottom:14px">📅 Agrega tu traslado a tu calendario</div>
+<div class="calendar-help-text" style="font-size:18px;line-height:1.65;color:#263244">Adjuntamos un archivo de calendario (.ics) con la fecha, hora, origen, destino y folio del servicio. Abre el archivo para agregar la cita a Google Calendar, Apple Calendar u Outlook.</div>
+</td></tr>
+</table>
+</td></tr>
+<tr><td class="contact-help" align="center" style="padding:22px 16px 18px;background:#ffffff;color:#263244">
+<div class="contact-help-title" style="font-size:22px;line-height:1.4;color:#263244;margin-bottom:12px">¿Necesitas ayuda?</div>
+<div style="font-size:21px;line-height:1.5;font-weight:800;margin-bottom:12px"><a href="mailto:contacto@transportesmx.org" class="contact-gold" style="color:#b58b37;text-decoration:none">contacto@transportesmx.org</a></div>
+<div style="font-size:21px;line-height:1.5;margin-bottom:20px"><a href="https://transportesmx.org" class="contact-gold" style="color:#b58b37;text-decoration:none">https://transportesmx.org</a></div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td class="gold-divider" style="border-top:2px solid #b58b37"></td></tr></table>
+<div class="company-footer" style="font-size:17px;line-height:1.65;color:#8993a2;margin-top:20px">Grupo Turístico MX S. de R.L. de C.V.<br>Confirmación de Nota de Venta · Transportes MX</div>
+</td></tr>
 <tr><td class="footer" align="center" style="padding:18px 12px;background:#f8fafc;color:#8993a2;font-size:14px;font-weight:600">TransportesMX · Panel de administración</td></tr>
 </table>
 </td></tr>
