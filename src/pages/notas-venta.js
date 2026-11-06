@@ -300,13 +300,17 @@ body{
 }
 
 .hoja{
-  width:100%;
-  max-width:194mm;
+  /* Tamaño exacto Carta: las medidas incluyen el padding (box-sizing). */
+  box-sizing:border-box;
+  width:215.9mm;
+  max-width:215.9mm;
+  height:279.4mm;
   min-height:279.4mm;
   margin:0 auto;
   padding:10mm 12mm;
   display:flex;
-  flex-direction:column
+  flex-direction:column;
+  overflow:hidden
 }
 
 .encabezado{
@@ -323,9 +327,13 @@ body{
 
 .logo{
   display:block;
+  box-sizing:border-box;
   width:60mm;
-  height:28.5mm;
+  max-width:60mm;
+  height:auto;
+  max-height:28.5mm;
   object-fit:contain;
+  object-position:left center;
   margin:0 0 1.5mm 0
 }
 
@@ -378,12 +386,14 @@ body{
 
 .imagenVehiculo{
   display:block;
-  width:100%;
-  height:40mm;
+  box-sizing:border-box;
+  width:48mm;
+  max-width:48mm;
+  height:auto;
+  max-height:40mm;
   margin-top:10mm;
   object-fit:contain;
-  object-position:center;
-  max-width:48mm
+  object-position:center
 }
 
 .separador{
@@ -539,6 +549,13 @@ body{
   margin:7mm 0 2mm
 }
 
+ .hoja.modoPdf .acciones{
+  display:none!important;
+  height:0!important;
+  margin:0!important;
+  padding:0!important;
+}
+
 button{
   font-size:13pt;
   padding:3mm 5mm;
@@ -554,11 +571,14 @@ button{
   }
 
   .hoja{
-    width:100%;
-    max-width:none;
+    box-sizing:border-box;
+    width:215.9mm;
+    max-width:215.9mm;
     min-height:279.4mm;
     height:279.4mm;
-    padding:10mm 12mm
+    margin:0;
+    padding:10mm 12mm;
+    overflow:hidden
   }
 
   .separador{
@@ -731,6 +751,21 @@ async function generarPdfNotaVentaBase64(datos, folio) {
     const hoja = doc.querySelector(".hoja") || doc.querySelector("main");
     if (!hoja) throw new Error("No se encontró el contenido de la Nota de Venta para convertirlo a PDF.");
 
+    // Captura una página Carta exacta y saca los controles fuera del documento PDF.
+    hoja.classList.add("modoPdf");
+    hoja.querySelectorAll(".acciones, button").forEach((elemento) => {
+      elemento.style.setProperty("display", "none", "important");
+      elemento.style.setProperty("height", "0", "important");
+      elemento.style.setProperty("margin", "0", "important");
+      elemento.style.setProperty("padding", "0", "important");
+    });
+    hoja.style.setProperty("box-sizing", "border-box", "important");
+    hoja.style.setProperty("width", "215.9mm", "important");
+    hoja.style.setProperty("max-width", "215.9mm", "important");
+    hoja.style.setProperty("height", "279.4mm", "important");
+    hoja.style.setProperty("min-height", "279.4mm", "important");
+    hoja.style.setProperty("overflow", "hidden", "important");
+
     // Esperar imágenes (logo y vehículo) para que aparezcan en el PDF.
     await Promise.all(Array.from(doc.images || []).map((img) => {
       if (img.complete) return Promise.resolve();
@@ -745,9 +780,16 @@ async function generarPdfNotaVentaBase64(datos, folio) {
         margin: 0,
         filename: `Nota-de-Venta-${folio || "TMX"}.pdf`,
         image: { type: "jpeg", quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true, backgroundColor: "#ffffff" },
+        html2canvas: {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: "#ffffff",
+          logging: false,
+          windowWidth: 816,
+          windowHeight: 1056
+        },
         jsPDF: { unit: "mm", format: "letter", orientation: "portrait" },
-        pagebreak: { mode: ["css", "legacy"] }
+        // No añadir reglas de pagebreak: el elemento ya tiene dimensiones Carta exactas.
       })
       .from(hoja)
       .outputPdf("blob");
