@@ -913,10 +913,10 @@ try {
           observaciones: `Folio: ${nueva.folio}\\n${payload.observaciones || ""}`,
         };
 
-        const respuestaCalendar = await fetch("/api/google-calendar", {
+        const respuestaCalendar = await fetch("/api/calendario-notas", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ reserva: reservaCalendar }),
+          body: JSON.stringify({ nota: reservaCalendar }),
         });
 
         if (!respuestaCalendar.ok) {
