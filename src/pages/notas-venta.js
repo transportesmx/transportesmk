@@ -39,7 +39,7 @@ const CAMPOS = [
   ["maletas", "🧳 Número de maletas", "number"],
   ["telefono", "☎️ Número de teléfono", "tel"],
   ["destino", "📍 Destino", "text"],
-  ["idaVuelta", "🔄 Ida y vuelta", "text"],
+  ["idaVuelta", "🔄 Tipo de viaje", "viaje"],
   ["duracion", "⏱️ Duración", "text"],
   ["regresoFecha", "↩️ Fecha de regreso", "date"],
   ["regresoHora", "🕒 Hora de regreso", "time"],
@@ -246,7 +246,7 @@ function abrirImpresion(datos, folio) {
     ["🧳 Número de maletas:", datos.maletas],
     ["☎️ Número de teléfono:", datos.telefono],
     ["📍 Destino:", datos.destino],
-    ["🔄 Ida y vuelta:", datos.idaVuelta],
+    ["🔄 Tipo de viaje:", datos.idaVuelta === "redondo" ? "Ida y vuelta" : datos.idaVuelta === "sencillo" ? "Sencillo" : ""],
     ["⏱️ Duración:", datos.duracion],
   ]
     .map(([etiqueta, valor]) => htmlFila(etiqueta, valor))
@@ -885,15 +885,8 @@ try {
     // no se cancela ni se pierde la nota.
     try {
       if (payload.fecha && payload.hora) {
-        const textoIdaVuelta = String(payload.idaVuelta || "")
-          .toLowerCase()
-          .normalize("NFD")
-          .replace(/[\\u0300-\\u036f]/g, "");
-
-        const esRedondo =
-          textoIdaVuelta.includes("si") ||
-          textoIdaVuelta.includes("redondo") ||
-          textoIdaVuelta.includes("ida y vuelta");
+        // El menú desplegable envía valores explícitos y estables.
+        const esRedondo = payload.idaVuelta === "redondo";
 
         const reservaCalendar = {
           clienteNombre: payload.cliente || "",
@@ -1215,14 +1208,34 @@ return notas.filter((nota) =>
 
           <div className="grid gap-3 sm:grid-cols-2">
 
-            {CAMPOS.map(([campo, etiqueta, tipo]) => (
+            {CAMPOS.map(([campo, etiqueta, tipo]) => {
+              // Los campos de regreso solo se muestran para viaje redondo.
+              if (
+                (campo === "regresoFecha" || campo === "regresoHora") &&
+                datos.idaVuelta !== "redondo"
+              ) {
+                return null;
+              }
+
+              return (
               <label key={campo} className="block text-sm">
 
                 <span className="font-medium text-slate-200">
                   {etiqueta}
                 </span>
 
-                {tipo === "select" ? (
+                {tipo === "viaje" ? (
+                  <select
+                    required
+                    value={datos[campo] ?? ""}
+                    onChange={(e) => cambiar(campo, e.target.value)}
+                    className="mt-1 w-full rounded-lg border border-slate-400 bg-white p-3 text-slate-900 outline-none focus:border-emerald-500"
+                  >
+                    <option value="">Selecciona el tipo de viaje</option>
+                    <option value="sencillo">Sencillo</option>
+                    <option value="redondo">Ida y vuelta</option>
+                  </select>
+                ) : tipo === "select" ? (
                   <select
                     required
                     value={datos[campo] ?? ""}
@@ -1265,7 +1278,8 @@ return notas.filter((nota) =>
                 )}
 
               </label>
-            ))}
+              );
+            })}
 
             <label className="block text-sm">
 
@@ -1561,7 +1575,7 @@ return notas.filter((nota) =>
               ["🧳", "Número de maletas:", datos.maletas],
               ["☎️", "Número de teléfono:", datos.telefono],
               ["📍", "Destino:", datos.destino],
-              ["🔄", "Ida y vuelta:", datos.idaVuelta],
+              ["🔄", "Tipo de viaje:", datos.idaVuelta === "redondo" ? "Ida y vuelta" : datos.idaVuelta === "sencillo" ? "Sencillo" : ""],
               ["⏱️", "Duración:", datos.duracion],
             ].map(([icono, etiqueta, valor]) => (
               <p
