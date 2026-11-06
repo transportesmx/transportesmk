@@ -24,6 +24,50 @@ function dateDisplay(value) {
   const parts = String(value).split('-');
   return parts.length === 3 ? `${parts[2]}/${parts[1]}/${parts[0]}` : esc(value);
 }
+function icsEscape(value = '') {
+  return String(value).replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/,/g, '\\,').replace(/;/g, '\\;');
+}
+function toIcsDate(date, time) {
+  if (!date || !/^\d{4}-\d{2}-\d{2}$/.test(String(date))) return null;
+  const safeTime = /^\d{2}:\d{2}$/.test(String(time || '')) ? time : '12:00';
+  return `${String(date).replace(/-/g, '')}T${safeTime.replace(':', '')}00`;
+}
+function buildCalendarAttachment(nota) {
+  const start = toIcsDate(nota.fecha, nota.hora);
+  if (!start) return null;
+  const startDate = new Date(`${nota.fecha}T${/^\d{2}:\d{2}$/.test(String(nota.hora || '')) ? nota.hora : '12:00'}:00`);
+  if (Number.isNaN(startDate.getTime())) return null;
+  const durationHours = Math.max(1, Math.min(24, Number(nota.duracionHoras || 2)));
+  const endDate = new Date(startDate.getTime() + durationHours * 3600000);
+  const toLocalIcs = (date) => `${date.getFullYear()}${String(date.getMonth()+1).padStart(2,'0')}${String(date.getDate()).padStart(2,'0')}T${String(date.getHours()).padStart(2,'0')}${String(date.getMinutes()).padStart(2,'0')}00`;
+  const events = [{
+    uid: `${icsEscape(nota.folio)}-ida@transportesmx.org`,
+    summary: `Traslado Transportes MX - ${nota.cliente || 'Cliente'}`,
+    start: toLocalIcs(startDate), end: toLocalIcs(endDate),
+    location: nota.origen || '',
+    description: `Folio: ${nota.folio}\nCliente: ${nota.cliente}\nOrigen: ${nota.origen || ''}\nDestino: ${nota.destino || ''}\nPasajeros: ${nota.pasajeros || ''}\nVehículo: ${nota.unidad || ''}\nTeléfono: ${nota.telefono || ''}\nObservaciones: ${nota.observaciones || ''}`,
+  }];
+  const roundTrip = nota.tipoViaje === 'redondo' || nota.idaVuelta === 'redondo';
+  const returnDate = nota.regresoFecha || nota.fechaRegreso;
+  const returnTime = nota.regresoHora || nota.horaRegreso;
+  if (roundTrip && toIcsDate(returnDate, returnTime)) {
+    const returnStart = new Date(`${returnDate}T${/^\d{2}:\d{2}$/.test(String(returnTime || '')) ? returnTime : '12:00'}:00`);
+    const returnEnd = new Date(returnStart.getTime() + durationHours * 3600000);
+    events.push({
+      uid: `${icsEscape(nota.folio)}-regreso@transportesmx.org`,
+      summary: `Regreso Transportes MX - ${nota.cliente || 'Cliente'}`,
+      start: toLocalIcs(returnStart), end: toLocalIcs(returnEnd),
+      location: nota.destino || '',
+      description: `Folio: ${nota.folio}\nCliente: ${nota.cliente}\nOrigen: ${nota.destino || ''}\nDestino: ${nota.origen || ''}\nPasajeros: ${nota.pasajeros || ''}\nVehículo: ${nota.unidad || ''}`,
+    });
+  }
+  const stamp = new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+  const lines = ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Transportes MX//Reserva//ES','CALSCALE:GREGORIAN','METHOD:PUBLISH'];
+  for (const event of events) lines.push('BEGIN:VEVENT', `UID:${event.uid}`, `DTSTAMP:${stamp}`, `DTSTART;TZID=America/Mexico_City:${event.start}`, `DTEND;TZID=America/Mexico_City:${event.end}`, `SUMMARY:${icsEscape(event.summary)}`, `LOCATION:${icsEscape(event.location)}`, `DESCRIPTION:${icsEscape(event.description)}`, 'END:VEVENT');
+  lines.push('END:VCALENDAR');
+  return Buffer.from(lines.join('\r\n')).toString('base64');
+}
+
 function buildHtml(nota) {
   const roundTrip = nota.tipoViaje === 'redondo' || nota.idaVuelta === 'redondo';
   const logo = `${SITE_URL}/logo.jpg`;
@@ -67,6 +111,7 @@ function buildHtml(nota) {
         ${nota.observaciones ? `<tr><td colspan="3" style="padding:14px 20px;border-top:1px solid #273247"><div style="font-size:10px;letter-spacing:1.5px;color:#d7b56d;font-weight:700">OBSERVACIONES</div><div style="font-size:14px;color:#e4e8ef;line-height:1.5;margin-top:6px">${esc(nota.observaciones)}</div></td></tr>` : ''}
       </table>
     </div>
+    <div style="margin-top:18px;padding:16px 20px;border:1px solid #354052;border-radius:12px;background:#101b2d"><div style="font-size:15px;font-weight:700;color:#d7b56d">📅 Agrega tu traslado a tu calendario</div><div style="font-size:13px;line-height:1.5;color:#e4e8ef;margin-top:7px">Adjuntamos un archivo de calendario (.ics) con la fecha, hora, origen, destino y folio de tu servicio. Abre el archivo para agregar la cita a Google Calendar, Apple Calendar u Outlook.</div></div>
     <div style="text-align:center;padding:24px 8px 18px;border-bottom:1px solid #d7b56d"><div style="font-size:14px;color:#e4e8ef">¿Necesitas ayuda?</div><a href="mailto:contacto@transportesmx.org" style="display:inline-block;margin-top:7px;color:#d7b56d;text-decoration:none;font-weight:700">contacto@transportesmx.org</a><br><a href="https://transportesmx.org" style="display:inline-block;margin-top:9px;color:#d7b56d;text-decoration:none">https://transportesmx.org</a></div>
     <div style="text-align:center;padding-top:16px;font-size:11px;line-height:1.6;color:#7f8a9d">Grupo Turístico MX S. de R.L. de C.V.<br>Confirmación de Nota de Venta · Transportes MX</div>
   </div></body></html>`;
@@ -157,6 +202,11 @@ export default async function handler(req, res) {
     name: `Nota-de-Venta-${String(nota.folio).replace(/[^a-zA-Z0-9_-]/g, '')}.pdf`,
     content: pdfNotaBase64,
   }] : [];
+  const calendarBase64 = buildCalendarAttachment(nota);
+  if (calendarBase64) attachments.push({
+    name: `Cita-Transportes-MX-${String(nota.folio).replace(/[^a-zA-Z0-9_-]/g, '')}.ics`,
+    content: calendarBase64,
+  });
   const subject = `🚗 Nueva Reserva Manual | Folio ${nota.folio}`;
   async function sendTo(email) {
     const response = await fetch('https://api.brevo.com/v3/smtp/email', {
