@@ -73,6 +73,65 @@ function buildHtml(nota) {
   </div></body></html>`;
 }
 
+
+/**
+ * Reserva un folio de manera atómica en Supabase antes de contactar a Brevo.
+ * La restricción PRIMARY KEY en folio bloquea solicitudes simultáneas/repetidas.
+ * Requiere SUPABASE_URL (o NEXT_PUBLIC_SUPABASE_URL) y SUPABASE_SERVICE_ROLE_KEY.
+ */
+async function reservarEnvioPorFolio(folio, clienteEmail) {
+  const supabaseUrl = (process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || '').replace(/\/$/, '');
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!supabaseUrl || !serviceRoleKey) {
+    throw new Error('Falta SUPABASE_URL/NEXT_PUBLIC_SUPABASE_URL o SUPABASE_SERVICE_ROLE_KEY en Vercel.');
+  }
+
+  const response = await fetch(`${supabaseUrl}/rest/v1/notas_venta_email_envios`, {
+    method: 'POST',
+    headers: {
+      apikey: serviceRoleKey,
+      Authorization: `Bearer ${serviceRoleKey}`,
+      'Content-Type': 'application/json',
+      Prefer: 'return=minimal',
+    },
+    body: JSON.stringify({
+      folio: String(folio).trim(),
+      cliente_email: String(clienteEmail).trim().toLowerCase(),
+      status: 'processing',
+    }),
+  });
+
+  // Postgres unique constraint (folio PRIMARY KEY): el folio ya fue reservado.
+  if (response.status === 409) return false;
+  if (!response.ok) {
+    const detail = await response.text().catch(() => '');
+    throw new Error(`Supabase no pudo reservar el folio (${response.status}): ${detail}`);
+  }
+  return true;
+}
+
+async function actualizarRegistroEnvio(folio, values) {
+  const supabaseUrl = (process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || '').replace(/\/$/, '');
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const response = await fetch(
+    `${supabaseUrl}/rest/v1/notas_venta_email_envios?folio=eq.${encodeURIComponent(String(folio).trim())}`,
+    {
+      method: 'PATCH',
+      headers: {
+        apikey: serviceRoleKey,
+        Authorization: `Bearer ${serviceRoleKey}`,
+        'Content-Type': 'application/json',
+        Prefer: 'return=minimal',
+      },
+      body: JSON.stringify(values),
+    }
+  );
+  if (!response.ok) {
+    const detail = await response.text().catch(() => '');
+    console.error('[Supabase registro correo nota]', response.status, detail);
+  }
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     res.setHeader('Allow', ['POST']);
@@ -110,12 +169,65 @@ export default async function handler(req, res) {
     if (!response.ok) throw new Error(data.message || `Brevo respondió ${response.status}`);
     return data.messageId || null;
   }
+  let folioReservado = false;
+  let adminId = null;
+  let customerId = null;
+  const customerEmail = nota.email.trim();
+
   try {
-    const adminId = await sendTo(ADMIN_EMAIL);
-    const customerId = await sendTo(nota.email.trim());
-    return res.status(200).json({ success: true, messageId: customerId || adminId, sentTo: [ADMIN_EMAIL, nota.email.trim()] });
+    // Punto de control persistente: si otro request ya procesó/está procesando el folio,
+    // no se vuelve a invocar Brevo.
+    folioReservado = await reservarEnvioPorFolio(nota.folio, customerEmail);
+    if (!folioReservado) {
+      return res.status(200).json({
+        success: true,
+        alreadyProcessed: true,
+        message: `El folio ${nota.folio} ya tiene un envío registrado. Se bloqueó el correo duplicado.`,
+        sentTo: [],
+      });
+    }
+
+    adminId = await sendTo(ADMIN_EMAIL);
+    // Si el correo del cliente es igual al correo administrativo, no enviar dos veces
+    // al mismo buzón.
+    if (customerEmail.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
+      customerId = await sendTo(customerEmail);
+    } else {
+      customerId = adminId;
+    }
+
+    await actualizarRegistroEnvio(nota.folio, {
+      status: 'sent',
+      admin_message_id: adminId,
+      customer_message_id: customerId,
+      sent_at: new Date().toISOString(),
+      error: null,
+    });
+
+    return res.status(200).json({
+      success: true,
+      messageId: customerId || adminId,
+      sentTo: customerEmail.toLowerCase() === ADMIN_EMAIL.toLowerCase()
+        ? [ADMIN_EMAIL]
+        : [ADMIN_EMAIL, customerEmail],
+    });
   } catch (error) {
+    // No se libera la reserva: Brevo pudo aceptar un mensaje aunque la conexión
+    // haya fallado al devolver la respuesta. Reintentar automáticamente podría duplicarlo.
+    if (folioReservado) {
+      await actualizarRegistroEnvio(nota.folio, {
+        status: (adminId || customerId) ? 'partial_error' : 'error',
+        admin_message_id: adminId,
+        customer_message_id: customerId,
+        error: String(error?.message || error).slice(0, 2000),
+      });
+    }
     console.error('[Brevo Notas Venta]', error);
-    return res.status(502).json({ success: false, message: 'Brevo no pudo enviar uno o ambos correos.', error: error.message });
+    return res.status(502).json({
+      success: false,
+      message: 'Brevo no pudo confirmar el envío completo. El folio quedó protegido contra reenvíos duplicados.',
+      error: error.message,
+      folio: nota.folio,
+    });
   }
 }
