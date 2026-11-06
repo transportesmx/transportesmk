@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/lib/supabase";
 
 const ADMIN1 = "amstrekgrt@gmail.com";
@@ -777,6 +777,8 @@ export default function NotasVenta() {
   const [mensaje, setMensaje] = useState("");
   const [cargando, setCargando] = useState(true);
   const [guardando, setGuardando] = useState(false);
+  // Bloqueo síncrono: evita que submits rápidos disparen varias solicitudes de correo.
+  const envioEnCursoRef = useRef(false);
   const [editando, setEditando] = useState(null);
   const [busqueda, setBusqueda] = useState("");
 
@@ -889,13 +891,16 @@ nuevaNota();
 
   async function guardar(evento) {
     evento.preventDefault();
-if (!supabase || !autorizado || guardando) return;
+if (!supabase || !autorizado || envioEnCursoRef.current) return;
 
 if (!datos.cliente.trim()) {
   setMensaje("Captura el nombre del cliente antes de guardar.");
   return;
 }
 
+// El ref se bloquea inmediatamente; setGuardando por sí solo no bloquea
+// eventos repetidos antes del siguiente render de React.
+envioEnCursoRef.current = true;
 setGuardando(true);
 setMensaje("");
 
@@ -1058,6 +1063,7 @@ try {
     (error?.message || "Error desconocido.")
   );
 } finally {
+  envioEnCursoRef.current = false;
   setGuardando(false);
 }
   }
