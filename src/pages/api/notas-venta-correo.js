@@ -51,12 +51,11 @@ function buildHtml(nota) {
   <div style="max-width:680px;margin:0 auto;padding:28px 14px 24px">
     <div style="text-align:center;padding:10px 0 24px"><img src="${logo}" alt="Transportes MX" width="210" style="display:block;width:210px;max-width:70%;height:auto;margin:0 auto 22px">
       <div style="font-size:12px;letter-spacing:3px;color:#d7b56d;font-weight:700">TRANSPORTES MX</div>
-      <div style="font-size:28px;line-height:1.25;font-weight:800;margin-top:10px;color:#fff">NUEVA RESERVA <span style="color:#d7b56d">MANUAL</span></div>
-      <div style="display:inline-block;margin-top:14px;padding:8px 17px;border-radius:22px;background:#063c2b;border:1px solid #15804b;color:#45df91;font-weight:700;font-size:13px">✓ RESERVA PAGADA</div>
+      <div style="font-size:28px;line-height:1.25;font-weight:800;margin-top:10px;color:#fff">🚗 NUEVA RESERVA <span style="color:#d7b56d">MANUAL</span></div>
     </div>
     <div style="border:1px solid #354052;border-radius:16px;overflow:hidden;background:#0c1322">
       <div style="padding:20px;border-bottom:1px solid #273247;display:flex;align-items:center">
-        <div style="font-size:24px;color:#d7b56d;margin-right:14px">✦</div><div><div style="font-size:17px;font-weight:700;color:#fff">Nueva Reserva Pagada</div><div style="font-size:13px;color:#aab4c5;margin-top:5px">Folio ${folio}</div></div>
+        <div style="font-size:24px;color:#d7b56d;margin-right:14px">🚗</div><div><div style="font-size:17px;font-weight:700;color:#fff">Nueva Reserva Manual</div><div style="font-size:13px;color:#aab4c5;margin-top:5px">Folio ${folio}</div></div>
       </div>
       <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="border-collapse:collapse">
         <tr><td colspan="3" style="padding:18px 20px"><div style="font-size:10px;letter-spacing:1.5px;color:#d7b56d;font-weight:700">CLIENTE</div><div style="font-size:18px;font-weight:700;color:#fff;margin-top:6px">${customer}</div></td></tr>
@@ -158,7 +157,7 @@ export default async function handler(req, res) {
     name: `Nota-de-Venta-${String(nota.folio).replace(/[^a-zA-Z0-9_-]/g, '')}.pdf`,
     content: pdfNotaBase64,
   }] : [];
-  const subject = `Nueva Reserva Manual | Reserva Pagada | Folio ${nota.folio}`;
+  const subject = `🚗 Nueva Reserva Manual | Folio ${nota.folio}`;
   async function sendTo(email) {
     const response = await fetch('https://api.brevo.com/v3/smtp/email', {
       method: 'POST',
