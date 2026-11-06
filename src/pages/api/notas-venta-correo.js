@@ -18,9 +18,9 @@ function money(value) {
   if (!raw) return 'Por confirmar';
 
   // Preserve text statuses (e.g. "Pagado") instead of parsing them as $0.00.
-  const hasNumericAmount = /\\d/.test(raw);
+  const hasNumericAmount = /\d/.test(raw);
   const numericText = raw.replace(/[^0-9.,-]/g, '').replace(/,/g, '');
-  if (!hasNumericAmount || !numericText || !/^-?\\d+(?:\\.\\d+)?$/.test(numericText)) {
+  if (!hasNumericAmount || !numericText || !/^-?\d+(?:\.\d+)?$/.test(numericText)) {
     return esc(raw);
   }
 
@@ -91,7 +91,7 @@ function buildHtml(nota) {
   const destination = esc(nota.destino || 'Destino por confirmar');
   const route = `${origin} <span class="route-arrow">→</span> ${destination}`;
   const amount = money(nota.importe);
-  const amountIsText = !/\\d/.test(String(nota.importe ?? '').trim());
+  const amountIsText = !/\d/.test(String(nota.importe ?? '').trim());
   const totalLabel = amountIsText ? 'ESTADO DE PAGO' : 'TOTAL';
 
   const returnBlock = roundTrip ? `
