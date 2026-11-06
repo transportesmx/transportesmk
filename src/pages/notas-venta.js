@@ -759,11 +759,16 @@ async function generarPdfNotaVentaBase64(datos, folio) {
       elemento.style.setProperty("margin", "0", "important");
       elemento.style.setProperty("padding", "0", "important");
     });
+    // Fijar la hoja a Carta y anclarla al origen para evitar desplazamiento/corte lateral.
     hoja.style.setProperty("box-sizing", "border-box", "important");
     hoja.style.setProperty("width", "215.9mm", "important");
     hoja.style.setProperty("max-width", "215.9mm", "important");
     hoja.style.setProperty("height", "279.4mm", "important");
     hoja.style.setProperty("min-height", "279.4mm", "important");
+    hoja.style.setProperty("margin", "0", "important");
+    hoja.style.setProperty("position", "relative", "important");
+    hoja.style.setProperty("left", "0", "important");
+    hoja.style.setProperty("top", "0", "important");
     hoja.style.setProperty("overflow", "hidden", "important");
 
     // Esperar imágenes (logo y vehículo) para que aparezcan en el PDF.
@@ -785,11 +790,14 @@ async function generarPdfNotaVentaBase64(datos, folio) {
           useCORS: true,
           backgroundColor: "#ffffff",
           logging: false,
-          windowWidth: 816,
-          windowHeight: 1056
+          scrollX: 0,
+          scrollY: 0,
+          width: 816,
+          height: 1056
         },
         jsPDF: { unit: "mm", format: "letter", orientation: "portrait" },
-        // No añadir reglas de pagebreak: el elemento ya tiene dimensiones Carta exactas.
+        // Desactivar los saltos CSS/legacy: la captura ya es una página Carta exacta.
+        pagebreak: { mode: [] }
       })
       .from(hoja)
       .outputPdf("blob");
