@@ -708,7 +708,7 @@ button{
 }
 
 
-// Genera el PDF a partir del mismo HTML/CSS que utiliza la Nota de Venta al imprimir.
+// Genera PDF de una sola hoja Carta, preservando proporciones del documento.
 async function generarPdfNotaVentaBase64(datos, folio) {
   const ventanaPdf = abrirImpresion(datos, folio, true);
   if (!ventanaPdf || ventanaPdf === true) {
@@ -717,40 +717,68 @@ async function generarPdfNotaVentaBase64(datos, folio) {
 
   try {
     const doc = ventanaPdf.document;
-    // Cargar html2pdf.js dentro de la ventana de la nota.
+
     if (!ventanaPdf.html2pdf) {
       await new Promise((resolve, reject) => {
         const script = doc.createElement("script");
         script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js";
         script.onload = resolve;
-        script.onerror = () => reject(new Error("No se pudo cargar el generador PDF (html2pdf.js)."));
+        script.onerror = () => reject(new Error("No se pudo cargar html2pdf.js. Revisa la conexión e inténtalo nuevamente."));
         doc.head.appendChild(script);
       });
     }
 
-    const hoja = doc.querySelector(".hoja") || doc.querySelector("main");
-    if (!hoja) throw new Error("No se encontró el contenido de la Nota de Venta para convertirlo a PDF.");
+    const hoja = doc.querySelector(".hoja");
+    if (!hoja) throw new Error("No se encontró la hoja de la Nota de Venta.");
 
-    // Esperar imágenes (logo y vehículo) para que aparezcan en el PDF.
+    // Espera a que logo y unidad terminen de cargar para evitar PDF con imágenes incompletas.
     await Promise.all(Array.from(doc.images || []).map((img) => {
-      if (img.complete) return Promise.resolve();
+      if (img.complete && img.naturalWidth > 0) return Promise.resolve();
       return new Promise((resolve) => {
         img.onload = resolve;
         img.onerror = resolve;
+        setTimeout(resolve, 8000);
       });
     }));
 
+    // Ajusta la hoja a tamaño Carta y oculta botones operativos para que no
+    // aparezcan en el archivo adjunto ni provoquen una página extra.
+    const acciones = hoja.querySelector(".acciones");
+    if (acciones) acciones.style.setProperty("display", "none", "important");
+    hoja.style.setProperty("height", "279.4mm");
+    hoja.style.setProperty("min-height", "279.4mm");
+    hoja.style.setProperty("box-sizing", "border-box");
+
+    const opciones = {
+      margin: 0,
+      filename: `Nota-de-Venta-${folio || "TMX"}.pdf`,
+      image: { type: "jpeg", quality: 0.98 },
+      html2canvas: {
+        scale: 2,
+        useCORS: true,
+        allowTaint: false,
+        backgroundColor: "#ffffff",
+        logging: false,
+        scrollX: 0,
+        scrollY: 0,
+        windowWidth: hoja.scrollWidth,
+      },
+      jsPDF: { unit: "mm", format: "letter", orientation: "portrait", compress: true },
+      pagebreak: { mode: ["css", "legacy"], avoid: [".encabezado", ".cliente", ".total", ".barra", ".datos", ".regreso", ".observaciones", ".pie"] },
+      enableLinks: true,
+    };
+
+    // Clon se ajusta al área Carta; controles de impresión/cierre no forman parte del PDF.
     const blob = await ventanaPdf.html2pdf()
-      .set({
-        margin: 0,
-        filename: `Nota-de-Venta-${folio || "TMX"}.pdf`,
-        image: { type: "jpeg", quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true, backgroundColor: "#ffffff" },
-        jsPDF: { unit: "mm", format: "letter", orientation: "portrait" },
-        pagebreak: { mode: ["css", "legacy"] }
-      })
+      .set(opciones)
       .from(hoja)
-      .outputPdf("blob");
+      .toPdf()
+      .get("pdf")
+      .then((pdf) => pdf.output("blob"));
+
+    if (!blob || blob.size < 1000) {
+      throw new Error("El PDF se generó vacío o incompleto.");
+    }
 
     const base64 = await new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -762,7 +790,6 @@ async function generarPdfNotaVentaBase64(datos, folio) {
     if (!base64) throw new Error("El PDF generado está vacío.");
     return base64;
   } finally {
-    // Cerrar la ventana temporal después de la conversión.
     try { ventanaPdf.close(); } catch (_) {}
   }
 }
