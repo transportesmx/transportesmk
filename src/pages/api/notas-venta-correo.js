@@ -4,7 +4,7 @@
  * Requiere BREVO_API_KEY, BREVO_SENDER_EMAIL y (opcional) BREVO_SENDER_NAME.
  */
 const ADMIN_EMAIL = 'contacto@transportesmx.org';
-const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'https://transportesmx.org').replace(/\/$/, '');
+export const config = { api: { bodyParser: { sizeLimit: '8mb' } } };\n\nconst SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'https://transportesmx.org').replace(/\/$/, '');
 
 function esc(value = '') {
   return String(value).replace(/[&<>"']/g, (char) => ({
@@ -77,20 +77,32 @@ export default async function handler(req, res) {
     return res.status(405).json({ success: false, message: 'Método no permitido' });
   }
   const nota = req.body?.nota || req.body;
+  const pdfNotaBase64 = req.body?.pdfNotaBase64 || '';
   if (!nota?.folio || !nota?.cliente || !nota?.email) {
     return res.status(400).json({ success: false, message: 'Folio, cliente y correo del cliente son obligatorios.' });
   }
   if (!process.env.BREVO_API_KEY || !process.env.BREVO_SENDER_EMAIL) {
     return res.status(500).json({ success: false, message: 'Falta configurar BREVO_API_KEY o BREVO_SENDER_EMAIL en Vercel.' });
   }
+  if (pdfNotaBase64 && (typeof pdfNotaBase64 !== 'string' || !/^[A-Za-z0-9+/]+={0,2}$/.test(pdfNotaBase64))) {
+    return res.status(400).json({ success: false, message: 'El PDF adjunto no tiene un formato base64 válido.' });
+  }
+  if (pdfNotaBase64.length > 7_000_000) {
+    return res.status(413).json({ success: false, message: 'El PDF adjunto es demasiado grande. Reduce el tamaño de las imágenes de la nota.' });
+  }
+
   const sender = { name: process.env.BREVO_SENDER_NAME || 'Transportes MX', email: process.env.BREVO_SENDER_EMAIL };
   const htmlContent = buildHtml(nota);
+  const attachments = pdfNotaBase64 ? [{
+    name: `Nota-de-Venta-${String(nota.folio).replace(/[^a-zA-Z0-9_-]/g, '')}.pdf`,
+    content: pdfNotaBase64,
+  }] : [];
   const subject = `Nueva Reserva Manual | Reserva Pagada | Folio ${nota.folio}`;
   async function sendTo(email) {
     const response = await fetch('https://api.brevo.com/v3/smtp/email', {
       method: 'POST',
       headers: { 'accept': 'application/json', 'api-key': process.env.BREVO_API_KEY, 'content-type': 'application/json' },
-      body: JSON.stringify({ sender, to: [{ email }], subject, htmlContent }),
+      body: JSON.stringify({ sender, to: [{ email }], subject, htmlContent, attachment: attachments }),
     });
     const data = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error(data.message || `Brevo respondió ${response.status}`);
