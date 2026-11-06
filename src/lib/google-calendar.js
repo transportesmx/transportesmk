@@ -1,9 +1,12 @@
-
 /**
  * Integración con Google Calendar para TransportesMX
  * Usa OAuth 2.0 con Refresh Token.
  * Soporta español (es) e inglés (en).
  * Crea eventos para viajes sencillos e ida y vuelta.
+ *
+ * Para notas de venta manuales, Calendar se mantiene como agenda interna.
+ * Las confirmaciones al cliente se envían por Brevo con el PDF adjunto.
+ * No se agregan asistentes ni se envían invitaciones por correo desde Google.
  */
 
 const calLabels = {
@@ -148,15 +151,7 @@ export async function crearEventoCalendario(
       horaIda
     );
 
-    const attendees = [];
-
-    if (reserva.clienteEmail) {
-      attendees.push({
-        email: reserva.clienteEmail,
-        displayName: reserva.clienteNombre || '',
-      });
-    }
-
+    // No se agregan asistentes del cliente: evita invitaciones automáticas.
     const flightInfo =
       reserva.aerolinea && reserva.numVuelo
         ? `${reserva.aerolinea} / ${reserva.numVuelo}`
@@ -202,7 +197,7 @@ export async function crearEventoCalendario(
       .filter(Boolean)
       .join('\n');
 
-    // EVENTO DE IDA
+    // EVENTO DE IDA: evento interno, sin correo de invitación a cliente.
     const eventoIda = {
       summary: `🚗 ${t.transfer}: ${reserva.clienteNombre || 'Cliente'}`,
       description: descripcionBase,
@@ -216,7 +211,6 @@ export async function crearEventoCalendario(
         timeZone: 'America/Mexico_City',
       },
       colorId: '9',
-      attendees,
       reminders: {
         useDefault: false,
         overrides: [
@@ -229,7 +223,7 @@ export async function crearEventoCalendario(
     const resultIda = await calendar.events.insert({
       calendarId,
       resource: eventoIda,
-      sendUpdates: 'all',
+      sendUpdates: 'none',
     });
 
     const eventIdIda = resultIda.data.id;
@@ -297,7 +291,6 @@ export async function crearEventoCalendario(
           timeZone: 'America/Mexico_City',
         },
         colorId: '6',
-        attendees,
         reminders: {
           useDefault: false,
           overrides: [
@@ -311,7 +304,7 @@ export async function crearEventoCalendario(
         await calendar.events.insert({
           calendarId,
           resource: eventoRegreso,
-          sendUpdates: 'all',
+          sendUpdates: 'none',
         });
 
       eventIdRegreso = resultRegreso.data.id;
