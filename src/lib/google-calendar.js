@@ -1,7 +1,9 @@
+
 /**
  * Integración con Google Calendar para TransportesMX
  * Usa OAuth 2.0 con Refresh Token.
  * Soporta español (es) e inglés (en).
+ * Crea eventos para viajes sencillos e ida y vuelta.
  */
 
 const calLabels = {
@@ -12,7 +14,7 @@ const calLabels = {
     destination: 'Destino',
     vehicle: 'Vehículo',
     clientName: 'Nombre Cliente',
-    flightAndAirline: 'Numero de Vuelo y Aerolínea',
+    flightAndAirline: 'Número de Vuelo y Aerolínea',
     passengers: 'Pasajeros',
     phone: 'Tel',
     email: 'Email',
@@ -22,9 +24,7 @@ const calLabels = {
     type: 'Tipo',
     roundTrip: 'Ida y vuelta',
     oneWay: 'Sencillo',
-    returnTrip: 'Viaje de regreso',
     dateTime: 'Fecha y hora',
-    returnDateTime: 'Regreso',
   },
   en: {
     transfer: 'Transfer',
@@ -43,30 +43,65 @@ const calLabels = {
     type: 'Type',
     roundTrip: 'Round trip',
     oneWay: 'One way',
-    returnTrip: 'Return trip',
     dateTime: 'Date and time',
-    returnDateTime: 'Return',
   },
 };
 
 function formatDateDisplay(dateStr) {
   if (!dateStr) return 'N/A';
+
   const parts = dateStr.split('-');
-  if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
+
+  if (parts.length === 3) {
+    return `${parts[2]}/${parts[1]}/${parts[0]}`;
+  }
+
   return dateStr;
 }
 
-/**
- * @param {Object} reserva - datos de la reserva
- * @param {string} lang - 'es' o 'en'
- */
-export async function crearEventoCalendario(reserva, lang = 'es') {
+// Calcula la hora de término, contemplando cambio de día
+function calcularFin(fecha, hora, duracionHoras = 2) {
+  const [year, month, day] = fecha.split('-').map(Number);
+  const [hours, minutes] = hora.split(':').map(Number);
+
+  const fechaUTC = new Date(
+    Date.UTC(year, month - 1, day, hours, minutes)
+  );
+
+  fechaUTC.setUTCHours(
+    fechaUTC.getUTCHours() + duracionHoras
+  );
+
+  const nuevaFecha = [
+    fechaUTC.getUTCFullYear(),
+    String(fechaUTC.getUTCMonth() + 1).padStart(2, '0'),
+    String(fechaUTC.getUTCDate()).padStart(2, '0'),
+  ].join('-');
+
+  const nuevaHora = [
+    String(fechaUTC.getUTCHours()).padStart(2, '0'),
+    String(fechaUTC.getUTCMinutes()).padStart(2, '0'),
+  ].join(':');
+
+  return {
+    fecha: nuevaFecha,
+    hora: nuevaHora,
+  };
+}
+
+export async function crearEventoCalendario(
+  reserva,
+  lang = 'es'
+) {
   if (
     !process.env.GOOGLE_CALENDAR_CLIENT_ID ||
     !process.env.GOOGLE_CALENDAR_CLIENT_SECRET ||
     !process.env.GOOGLE_CALENDAR_REFRESH_TOKEN
   ) {
-    console.log('[Calendar] OAuth no configurado — omitiendo');
+    console.error(
+      '[Calendar] OAuth no está configurado'
+    );
+
     return null;
   }
 
@@ -82,72 +117,106 @@ export async function crearEventoCalendario(reserva, lang = 'es') {
     );
 
     oauth2Client.setCredentials({
-      refresh_token: process.env.GOOGLE_CALENDAR_REFRESH_TOKEN,
+      refresh_token:
+        process.env.GOOGLE_CALENDAR_REFRESH_TOKEN,
     });
 
-    // Forzar refresh del access token antes de hacer la llamada
-    try {
-      const { credentials } = await oauth2Client.refreshAccessToken();
-      oauth2Client.setCredentials(credentials);
-      console.log('[Calendar] ✅ Access token renovado correctamente');
-    } catch (refreshError) {
-      console.error('[Calendar] ❌ Error renovando token:', refreshError.message);
-      console.error('[Calendar] ⚠️ Es necesario generar un nuevo Refresh Token en https://developers.google.com/oauthplayground');
-      console.error('[Calendar] Asegúrate de: 1) Usar tu Client ID/Secret en el engrane (⚙️), 2) Autorizar el scope https://www.googleapis.com/auth/calendar, 3) Copiar el nuevo refresh_token a GOOGLE_CALENDAR_REFRESH_TOKEN en .env.local');
-      return null;
-    }
+    const { credentials } =
+      await oauth2Client.refreshAccessToken();
 
-    const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
+    oauth2Client.setCredentials(credentials);
 
-    const horaIda = reserva.horaIda?.length === 5 ? reserva.horaIda : '12:00';
-    const fechaInicioStr = `${reserva.fechaIda}T${horaIda}:00`;
-    const [hh, mm] = horaIda.split(':').map(Number);
-    const finHH = String((hh + 2) % 24).padStart(2, '0');
-    const fechaFinStr = `${reserva.fechaIda}T${finHH}:${String(mm).padStart(2, '0')}:00`;
+    console.log(
+      '[Calendar] Access token renovado correctamente'
+    );
 
-    // Asistentes: cliente
+    const calendar = google.calendar({
+      version: 'v3',
+      auth: oauth2Client,
+    });
+
+    const calendarId =
+      process.env.GOOGLE_CALENDAR_ID || 'primary';
+
+    const horaIda =
+      reserva.horaIda?.length === 5
+        ? reserva.horaIda
+        : '12:00';
+
+    const finIda = calcularFin(
+      reserva.fechaIda,
+      horaIda
+    );
+
     const attendees = [];
+
     if (reserva.clienteEmail) {
-      attendees.push({ email: reserva.clienteEmail, displayName: reserva.clienteNombre });
+      attendees.push({
+        email: reserva.clienteEmail,
+        displayName: reserva.clienteNombre || '',
+      });
     }
 
-    const flightInfo = (reserva.aerolinea && reserva.numVuelo)
-      ? `${reserva.aerolinea}/ ${reserva.numVuelo}`
-      : (reserva.aerolinea || reserva.numVuelo || '');
+    const flightInfo =
+      reserva.aerolinea && reserva.numVuelo
+        ? `${reserva.aerolinea} / ${reserva.numVuelo}`
+        : reserva.aerolinea ||
+          reserva.numVuelo ||
+          '';
 
-    const descripcion = [
-      `📍 ${t.pickup}: ${reserva.origen}`,
-      `📍 ${t.destination}: ${reserva.destino}`,
-      `📅 ${t.dateTime}: ${formatDateDisplay(reserva.fechaIda)}  ${reserva.horaIda || ''} HRS`,
-      `👤 ${t.clientName}: ${reserva.clienteNombre}`,
-      `🚘 ${t.vehicle}: ${reserva.vehiculoNombre}`,
-      flightInfo ? `✈️ ${t.flightAndAirline}: ${flightInfo}` : '',
-      `👥 ${t.passengers}: ${reserva.numPasajeros}`,
-      `📞 ${t.phone}: ${reserva.clienteTelefono}`,
-      `📧 ${t.email}: ${reserva.clienteEmail}`,
-      `💰 ${t.total}: $${reserva.precioTotal} MXN`,
-      reserva.distancia ? `📏 ${t.distance}: ${reserva.distancia}` : '',
-      reserva.duracion ? `⏱️ ${t.duration}: ${reserva.duracion}` : '',
-      `${t.type}: ${reserva.tipoViaje === 'redondo' ? t.roundTrip : t.oneWay}`,
-      reserva.tipoViaje === 'redondo' && reserva.fechaRegreso
-        ? `${t.returnDateTime}: ${formatDateDisplay(reserva.fechaRegreso)} ${reserva.horaRegreso || ''} HRS`
+    const tipoViaje =
+      reserva.tipoViaje === 'redondo'
+        ? 'redondo'
+        : 'sencillo';
+
+    const descripcionBase = [
+      `📍 ${t.pickup}: ${reserva.origen || ''}`,
+      `📍 ${t.destination}: ${reserva.destino || ''}`,
+      `📅 ${t.dateTime}: ${formatDateDisplay(reserva.fechaIda)} ${horaIda} HRS`,
+      `👤 ${t.clientName}: ${reserva.clienteNombre || ''}`,
+      `🚘 ${t.vehicle}: ${reserva.vehiculoNombre || ''}`,
+      flightInfo
+        ? `✈️ ${t.flightAndAirline}: ${flightInfo}`
+        : '',
+      `👥 ${t.passengers}: ${reserva.numPasajeros || ''}`,
+      `📞 ${t.phone}: ${reserva.clienteTelefono || ''}`,
+      `📧 ${t.email}: ${reserva.clienteEmail || ''}`,
+      `💰 ${t.total}: $${reserva.precioTotal || 0} MXN`,
+      reserva.distancia
+        ? `📏 ${t.distance}: ${reserva.distancia}`
+        : '',
+      reserva.duracion
+        ? `⏱️ ${t.duration}: ${reserva.duracion}`
+        : '',
+      `${t.type}: ${
+        tipoViaje === 'redondo'
+          ? t.roundTrip
+          : t.oneWay
+      }`,
+      reserva.observaciones
+        ? `📝 Observaciones:\n${reserva.observaciones}`
         : '',
       '',
       'TransportesMX - transportesmx.org',
-    ].filter(Boolean).join('\n');
+    ]
+      .filter(Boolean)
+      .join('\n');
 
-    const evento = {
-      summary: `🚗 ${t.transfer}: ${reserva.clienteNombre}`,
-      description: descripcion,
+    // EVENTO DE IDA
+    const eventoIda = {
+      summary: `🚗 ${t.transfer}: ${reserva.clienteNombre || 'Cliente'}`,
+      description: descripcionBase,
       location: reserva.origen || '',
-      start: { dateTime: fechaInicioStr, timeZone: 'America/Mexico_City' },
-      end: { dateTime: fechaFinStr, timeZone: 'America/Mexico_City' },
+      start: {
+        dateTime: `${reserva.fechaIda}T${horaIda}:00`,
+        timeZone: 'America/Mexico_City',
+      },
+      end: {
+        dateTime: `${finIda.fecha}T${finIda.hora}:00`,
+        timeZone: 'America/Mexico_City',
+      },
       colorId: '9',
       attendees,
-      organizer: {
-        displayName: 'TransportesMX',
-        self: true,
-      },
       reminders: {
         useDefault: false,
         overrides: [
@@ -157,60 +226,121 @@ export async function crearEventoCalendario(reserva, lang = 'es') {
       },
     };
 
-    const result = await calendar.events.insert({
-      calendarId: process.env.GOOGLE_CALENDAR_ID || 'primary',
-      resource: evento,
+    const resultIda = await calendar.events.insert({
+      calendarId,
+      resource: eventoIda,
       sendUpdates: 'all',
     });
 
-    console.log('[Calendar] ✅ Evento creado:', result.data.id);
+    const eventIdIda = resultIda.data.id;
 
-    // Evento de regreso si es viaje redondo
-    if (reserva.tipoViaje === 'redondo' && reserva.fechaRegreso && reserva.horaRegreso) {
-      const horaRegreso = reserva.horaRegreso?.length === 5 ? reserva.horaRegreso : '12:00';
-      const fechaRegresoStr = `${reserva.fechaRegreso}T${horaRegreso}:00`;
-      const [hhR, mmR] = horaRegreso.split(':').map(Number);
-      const finHHR = String((hhR + 2) % 24).padStart(2, '0');
-      const fechaFinRegresoStr = `${reserva.fechaRegreso}T${finHHR}:${String(mmR).padStart(2, '0')}:00`;
-
-      const descripcionRegreso = [
-        `📍 ${t.pickup}: ${reserva.destino}`,
-        `📍 ${t.destination}: ${reserva.origen}`,
-        `📅 ${t.dateTime}: ${formatDateDisplay(reserva.fechaRegreso)}  ${reserva.horaRegreso || ''} HRS`,
-        `👤 ${t.clientName}: ${reserva.clienteNombre}`,
-        `🚘 ${t.vehicle}: ${reserva.vehiculoNombre}`,
-        flightInfo ? `✈️ ${t.flightAndAirline}: ${flightInfo}` : '',
-        `👥 ${t.passengers}: ${reserva.numPasajeros}`,
-        `📞 ${t.phone}: ${reserva.clienteTelefono}`,
-        `📧 ${t.email}: ${reserva.clienteEmail}`,
-        `💰 ${t.total}: $${reserva.precioTotal} MXN`,
-        reserva.distancia ? `📏 ${t.distance}: ${reserva.distancia}` : '',
-        reserva.duracion ? `⏱️ ${t.duration}: ${reserva.duracion}` : '',
-        '',
-        'TransportesMX - transportesmx.org',
-      ].filter(Boolean).join('\n');
-
-      const eventoRegreso = {
-        ...evento,
-        summary: `🔄 ${t.returnTransfer}: ${reserva.clienteNombre}`,
-        description: descripcionRegreso,
-        location: reserva.destino || '',
-        start: { dateTime: fechaRegresoStr, timeZone: 'America/Mexico_City' },
-        end: { dateTime: fechaFinRegresoStr, timeZone: 'America/Mexico_City' },
-        colorId: '6',
-      };
-
-      const resultRegreso = await calendar.events.insert({
-        calendarId: process.env.GOOGLE_CALENDAR_ID || 'primary',
-        resource: eventoRegreso,
-        sendUpdates: 'all',
-      });
-      console.log('[Calendar] ✅ Evento regreso creado:', resultRegreso.data.id);
+    if (!eventIdIda) {
+      throw new Error(
+        'Google Calendar no devolvió el ID del evento de ida'
+      );
     }
 
-    return result.data.id;
+    console.log(
+      '[Calendar] Evento de ida creado:',
+      eventIdIda
+    );
+
+    let eventIdRegreso = null;
+
+    // EVENTO DE REGRESO
+    if (
+      tipoViaje === 'redondo' &&
+      reserva.fechaRegreso
+    ) {
+      const horaRegreso =
+        reserva.horaRegreso?.length === 5
+          ? reserva.horaRegreso
+          : '12:00';
+
+      const finRegreso = calcularFin(
+        reserva.fechaRegreso,
+        horaRegreso
+      );
+
+      const descripcionRegreso = [
+        `📍 ${t.pickup}: ${reserva.destino || ''}`,
+        `📍 ${t.destination}: ${reserva.origen || ''}`,
+        `📅 ${t.dateTime}: ${formatDateDisplay(reserva.fechaRegreso)} ${horaRegreso} HRS`,
+        `👤 ${t.clientName}: ${reserva.clienteNombre || ''}`,
+        `🚘 ${t.vehicle}: ${reserva.vehiculoNombre || ''}`,
+        flightInfo
+          ? `✈️ ${t.flightAndAirline}: ${flightInfo}`
+          : '',
+        `👥 ${t.passengers}: ${reserva.numPasajeros || ''}`,
+        `📞 ${t.phone}: ${reserva.clienteTelefono || ''}`,
+        `📧 ${t.email}: ${reserva.clienteEmail || ''}`,
+        `💰 ${t.total}: $${reserva.precioTotal || 0} MXN`,
+        reserva.observaciones
+          ? `📝 Observaciones:\n${reserva.observaciones}`
+          : '',
+        '',
+        'TransportesMX - transportesmx.org',
+      ]
+        .filter(Boolean)
+        .join('\n');
+
+      const eventoRegreso = {
+        summary: `🔄 ${t.returnTransfer}: ${reserva.clienteNombre || 'Cliente'}`,
+        description: descripcionRegreso,
+        location: reserva.destino || '',
+        start: {
+          dateTime: `${reserva.fechaRegreso}T${horaRegreso}:00`,
+          timeZone: 'America/Mexico_City',
+        },
+        end: {
+          dateTime: `${finRegreso.fecha}T${finRegreso.hora}:00`,
+          timeZone: 'America/Mexico_City',
+        },
+        colorId: '6',
+        attendees,
+        reminders: {
+          useDefault: false,
+          overrides: [
+            { method: 'popup', minutes: 60 },
+            { method: 'email', minutes: 120 },
+          ],
+        },
+      };
+
+      const resultRegreso =
+        await calendar.events.insert({
+          calendarId,
+          resource: eventoRegreso,
+          sendUpdates: 'all',
+        });
+
+      eventIdRegreso = resultRegreso.data.id;
+
+      if (!eventIdRegreso) {
+        throw new Error(
+          'Google Calendar no devolvió el ID del evento de regreso'
+        );
+      }
+
+      console.log(
+        '[Calendar] Evento de regreso creado:',
+        eventIdRegreso
+      );
+    }
+
+    // Devuelve los IDs de ambos eventos
+    return {
+      eventIdIda,
+      eventIdRegreso,
+      tipoViaje,
+      success: true,
+    };
   } catch (error) {
-    console.error('[Calendar] ❌ Error:', error.message);
-    return null;
+    console.error(
+      '[Calendar] Error creando evento:',
+      error.message
+    );
+
+    throw error;
   }
 }
