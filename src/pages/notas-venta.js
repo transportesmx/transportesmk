@@ -227,7 +227,7 @@ function htmlFila(etiqueta, valor, clase = "") {
   </div>`;
 }
 
-function abrirImpresion(datos, folio) {
+function abrirImpresion(datos, folio, devolverVentana = false) {
   const ventana = window.open("", "_blank", "width=1000,height=900");
 
   if (!ventana) return false;
@@ -704,7 +704,67 @@ button{
 
   ventana.document.close();
 
-  return true;
+  return devolverVentana ? ventana : true;
+}
+
+
+// Genera el PDF a partir del mismo HTML/CSS que utiliza la Nota de Venta al imprimir.
+async function generarPdfNotaVentaBase64(datos, folio) {
+  const ventanaPdf = abrirImpresion(datos, folio, true);
+  if (!ventanaPdf || ventanaPdf === true) {
+    throw new Error("No se pudo abrir la ventana temporal para generar el PDF. Permite ventanas emergentes.");
+  }
+
+  try {
+    const doc = ventanaPdf.document;
+    // Cargar html2pdf.js dentro de la ventana de la nota.
+    if (!ventanaPdf.html2pdf) {
+      await new Promise((resolve, reject) => {
+        const script = doc.createElement("script");
+        script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js";
+        script.onload = resolve;
+        script.onerror = () => reject(new Error("No se pudo cargar el generador PDF (html2pdf.js)."));
+        doc.head.appendChild(script);
+      });
+    }
+
+    const hoja = doc.querySelector(".hoja") || doc.querySelector("main");
+    if (!hoja) throw new Error("No se encontró el contenido de la Nota de Venta para convertirlo a PDF.");
+
+    // Esperar imágenes (logo y vehículo) para que aparezcan en el PDF.
+    await Promise.all(Array.from(doc.images || []).map((img) => {
+      if (img.complete) return Promise.resolve();
+      return new Promise((resolve) => {
+        img.onload = resolve;
+        img.onerror = resolve;
+      });
+    }));
+
+    const blob = await ventanaPdf.html2pdf()
+      .set({
+        margin: 0,
+        filename: `Nota-de-Venta-${folio || "TMX"}.pdf`,
+        image: { type: "jpeg", quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, backgroundColor: "#ffffff" },
+        jsPDF: { unit: "mm", format: "letter", orientation: "portrait" },
+        pagebreak: { mode: ["css", "legacy"] }
+      })
+      .from(hoja)
+      .outputPdf("blob");
+
+    const base64 = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result).split(",")[1] || "");
+      reader.onerror = () => reject(new Error("No se pudo convertir el PDF a base64."));
+      reader.readAsDataURL(blob);
+    });
+
+    if (!base64) throw new Error("El PDF generado está vacío.");
+    return base64;
+  } finally {
+    // Cerrar la ventana temporal después de la conversión.
+    try { ventanaPdf.close(); } catch (_) {}
+  }
 }
 
 export default function NotasVenta() {
@@ -937,6 +997,15 @@ try {
     let estadoCorreo = "pendiente";
     try {
       if (payload.email && payload.email.trim()) {
+        // Crear el PDF con el mismo diseño de la Nota de Venta impresa y adjuntarlo a Brevo.
+        const pdfNotaBase64 = await generarPdfNotaVentaBase64(
+          {
+            ...payload,
+            tipoViaje: payload.idaVuelta === "redondo" ? "redondo" : "sencillo",
+          },
+          nueva.folio
+        );
+
         const respuestaCorreo = await fetch("/api/notas-venta-correo", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -946,6 +1015,7 @@ try {
               folio: nueva.folio,
               tipoViaje: payload.idaVuelta === "redondo" ? "redondo" : "sencillo",
             },
+            pdfNotaBase64,
           }),
         });
 
