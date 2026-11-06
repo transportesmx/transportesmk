@@ -1,3 +1,4 @@
+
 import { getServiceSupabase } from '@/lib/supabase';
 
 export default async function handler(req, res) {
@@ -56,7 +57,21 @@ export default async function handler(req, res) {
       });
     }
 
-    // 3. Crear sesión de Stripe Checkout
+    // 3. Seleccionar imagen del vehículo para Stripe Checkout
+    // ÚNICO CAMBIO: asignar imagen según vehiculoId
+    const imagenesVehiculos = {
+      sedan: 'https://transportesmx.org/assets/autos-stripe/sedan.png',
+      suv: 'https://transportesmx.org/assets/autos-stripe/suburban.png',
+      minivan: 'https://transportesmx.org/assets/autos-stripe/van.png',
+      hiace: 'https://transportesmx.org/assets/autos-stripe/hiace.png',
+      sprinter: 'https://transportesmx.org/assets/autos-stripe/sprinter.png',
+    };
+
+    const imagenVehiculo =
+      imagenesVehiculos[reserva.vehiculoId] ||
+      'https://transportesmx.org/assets/logonegro.png';
+
+    // 4. Crear sesión de Stripe Checkout
     const Stripe = (await import('stripe')).default;
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -69,7 +84,7 @@ export default async function handler(req, res) {
             product_data: {
               name: `Traslado ${reserva.vehiculoNombre}`,
               description: `${reserva.origen} → ${reserva.destino} | ${reserva.fechaIda} ${reserva.horaIda}`,
-              images: ['https://transportesmx.org/assets/logonegro.png'],
+              images: [imagenVehiculo],
             },
             unit_amount: Math.round(reserva.precioTotal * 100),
           },
@@ -104,7 +119,7 @@ export default async function handler(req, res) {
       },
     });
 
-    // 4. Actualizar reserva con el session ID de Stripe
+    // 5. Actualizar reserva con el session ID de Stripe
     if (supabase && reservaId) {
       await supabase.from('reservas').update({
         stripe_session_id: session.id,
@@ -112,7 +127,11 @@ export default async function handler(req, res) {
     }
 
     console.log('[Stripe] Sesión creada:', session.id);
-    return res.status(200).json({ url: session.url, sessionId: session.id, reservaId });
+    return res.status(200).json({
+      url: session.url,
+      sessionId: session.id,
+      reservaId,
+    });
   } catch (error) {
     console.error('Error creando sesión de pago:', error);
     return res.status(500).json({ message: error.message });
