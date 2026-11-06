@@ -564,7 +564,65 @@ button{
   cursor:pointer
 }
 
+/* Segunda hoja: banner personalizado del cliente */
+.hojaBanner{
+  page-break-before:always;
+  break-before:page;
+  position:relative;
+  align-items:center;
+  justify-content:flex-start;
+  padding:16mm 12mm;
+  background:#fff;
+}
+.bannerLogoWrap{
+  width:100%;
+  height:70mm;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin-top:10mm;
+}
+.bannerLogo{
+  display:block;
+  width:62mm;
+  max-width:62mm;
+  height:auto;
+  max-height:32mm;
+  object-fit:contain;
+  transform:rotate(-90deg);
+}
+.bannerClienteWrap{
+  position:absolute;
+  top:48mm;
+  bottom:35mm;
+  left:50%;
+  transform:translateX(-50%);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  max-width:155mm;
+  overflow:hidden;
+}
+.bannerCliente{
+  margin:0;
+  color:#050505;
+  font-family:Arial,Helvetica,sans-serif;
+  font-size:25pt;
+  font-weight:900;
+  letter-spacing:1.2mm;
+  text-transform:uppercase;
+  writing-mode:vertical-rl;
+  transform:rotate(180deg);
+  text-align:center;
+  overflow-wrap:anywhere;
+}
+.pdfDocumento{
+  width:215.9mm;
+  display:block;
+}
 @media print{
+  .hojaBanner{page-break-before:always;break-before:page;margin:0!important;}
+  .pdfDocumento{width:auto;}
   .acciones{
     display:none!important
   }
@@ -718,6 +776,15 @@ button{
 </div>
 
 </main>
+
+<section class="hoja hojaBanner" aria-label="Banner del cliente">
+  <div class="bannerLogoWrap">
+    <img class="bannerLogo" src="${origen}/logo.jpg" alt="Logo Transportes MX">
+  </div>
+  <div class="bannerClienteWrap">
+    <h1 class="bannerCliente">${escapar(datos.cliente || "CLIENTE")}</h1>
+  </div>
+</section>
 </body>
 </html>`);
 
@@ -747,30 +814,38 @@ async function generarPdfNotaVentaBase64(datos, folio) {
       });
     }
 
-    const hoja = doc.querySelector(".hoja") || doc.querySelector("main");
-    if (!hoja) throw new Error("No se encontró el contenido de la Nota de Venta para convertirlo a PDF.");
+    const hojas = Array.from(doc.querySelectorAll(".hoja"));
+    if (hojas.length !== 2) throw new Error("Se esperaban exactamente dos hojas para el PDF.");
 
-    // Captura una página Carta exacta y saca los controles fuera del documento PDF.
-    hoja.classList.add("modoPdf");
-    hoja.querySelectorAll(".acciones, button").forEach((elemento) => {
-      elemento.style.setProperty("display", "none", "important");
-      elemento.style.setProperty("height", "0", "important");
-      elemento.style.setProperty("margin", "0", "important");
-      elemento.style.setProperty("padding", "0", "important");
+    // Preparar las dos páginas Carta (nota + banner), ocultando solo controles de impresión.
+    hojas.forEach((hoja) => {
+      hoja.classList.add("modoPdf");
+      hoja.style.setProperty("box-sizing", "border-box", "important");
+      hoja.style.setProperty("width", "215.9mm", "important");
+      hoja.style.setProperty("max-width", "215.9mm", "important");
+      hoja.style.setProperty("height", "279.4mm", "important");
+      hoja.style.setProperty("min-height", "279.4mm", "important");
+      hoja.style.setProperty("margin", "0", "important");
+      hoja.style.setProperty("position", "relative", "important");
+      hoja.style.setProperty("overflow", "hidden", "important");
+      hoja.querySelectorAll(".acciones, button").forEach((elemento) => {
+        elemento.style.setProperty("display", "none", "important");
+        elemento.style.setProperty("height", "0", "important");
+        elemento.style.setProperty("margin", "0", "important");
+        elemento.style.setProperty("padding", "0", "important");
+      });
     });
-    // Fijar la hoja a Carta y anclarla al origen para evitar desplazamiento/corte lateral.
-    hoja.style.setProperty("box-sizing", "border-box", "important");
-    hoja.style.setProperty("width", "215.9mm", "important");
-    hoja.style.setProperty("max-width", "215.9mm", "important");
-    hoja.style.setProperty("height", "279.4mm", "important");
-    hoja.style.setProperty("min-height", "279.4mm", "important");
-    hoja.style.setProperty("margin", "0", "important");
-    hoja.style.setProperty("position", "relative", "important");
-    hoja.style.setProperty("left", "0", "important");
-    hoja.style.setProperty("top", "0", "important");
-    hoja.style.setProperty("overflow", "hidden", "important");
 
-    // Esperar imágenes (logo y vehículo) para que aparezcan en el PDF.
+    // El contenedor incluye ambas hojas; el salto CSS fuerza el banner a la página 2.
+    const wrapper = doc.createElement("div");
+    wrapper.className = "pdfDocumento";
+    wrapper.style.setProperty("width", "215.9mm", "important");
+    wrapper.style.setProperty("height", "558.8mm", "important");
+    wrapper.style.setProperty("display", "block", "important");
+    hojas[0].parentNode.insertBefore(wrapper, hojas[0]);
+    hojas.forEach((hoja) => wrapper.appendChild(hoja));
+
+    // Esperar imágenes (logo y vehículo) para asegurar que ambas hojas se capturen.
     await Promise.all(Array.from(doc.images || []).map((img) => {
       if (img.complete) return Promise.resolve();
       return new Promise((resolve) => {
@@ -792,13 +867,12 @@ async function generarPdfNotaVentaBase64(datos, folio) {
           scrollX: 0,
           scrollY: 0,
           width: 816,
-          height: 1056
+          height: 2112
         },
         jsPDF: { unit: "mm", format: "letter", orientation: "portrait" },
-        // Desactivar los saltos CSS/legacy: la captura ya es una página Carta exacta.
-        pagebreak: { mode: [] }
+        pagebreak: { mode: ["css"] }
       })
-      .from(hoja)
+      .from(wrapper)
       .outputPdf("blob");
 
     const base64 = await new Promise((resolve, reject) => {
