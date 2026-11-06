@@ -70,7 +70,8 @@ function buildCalendarAttachment(nota) {
 
 function buildHtml(nota) {
   const roundTrip = nota.tipoViaje === 'redondo' || nota.idaVuelta === 'redondo';
-  const logoWhite = `${SITE_URL}/logo-email-white.png`;\n  const logoBlack = `${SITE_URL}/logo-email-black.png`;
+  const logoWhite = `${SITE_URL}/logo-email-white.png`;
+  const logoBlack = `${SITE_URL}/logo-email-black.png`;
   const customer = esc(nota.cliente || 'Cliente');
   const folio = esc(nota.folio || '—');
   const email = esc(nota.email || '—');
