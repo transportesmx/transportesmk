@@ -146,6 +146,8 @@ function buildHtml(nota) {
   .title { color:#f8fafc !important; }
   .folio, .muted, .route-stats { color:#9296a2 !important; }
   .info-card { background:#22232d !important; border:1px solid #343640 !important; }
+  .card-heading { background:#101827 !important; border-color:#30394a !important; }
+  .card-title { color:#ffffff !important; }
   .divider, .section-cell, .detail-cell { border-color:#343640 !important; }
   .field-value, .detail-value, .route-text, .return-route, .observations-value { color:#e2e4e9 !important; }
   .field-label { color:#d7b56d !important; }
@@ -196,8 +198,9 @@ function buildHtml(nota) {
     .header-subtitle { color:#52647b !important; }
     .main-content { background:#ffffff !important; }
     .title, .card-title { color:#101827 !important; }
-    .paid-badge { background:#e6f8ef !important; border-color:#9bd8bb !important; color:#079b69 !important; }
-    .manual-accent { color:#b58b37 !important; }
+    .card-heading { background:#101827 !important; border-color:#30394a !important; }
+    .card-title { color:#ffffff !important; }
+    .manual-accent { color:#ffffff !important; }
     .folio, .muted, .route-stats { color:#7a8494 !important; }
     .info-card { background:#f8fafc !important; border-color:#dce2eb !important; }
     .divider, .section-cell, .detail-cell { border-color:#e2e7ef !important; }
@@ -225,13 +228,13 @@ function buildHtml(nota) {
 <div class="header-subtitle" style="font-size:17px;font-weight:700;color:#52647b">Panel de reservas</div>
 </td></tr>
 <tr><td class="main-content" style="background:#fff;padding:18px 16px 0">
-<div class="headline title" style="font-size:25px;line-height:1.2;font-weight:800;color:#101827">🚗 NUEVA RESERVA <span class="manual-accent" style="color:#b58b37">MANUAL</span></div>
-<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-top:14px"><tr><td class="paid-badge" style="background:#e6f8ef;border:1px solid #9bd8bb;border-radius:30px;padding:8px 16px;color:#079b69;font-size:14px;font-weight:800">✓ RESERVA PAGADA</td></tr></table>
+<div class="headline title" style="font-size:25px;line-height:1.2;font-weight:800;color:#101827">🚗 NUEVA RESERVA <span class="manual-accent" style="color:#ffffff !important">MANUAL</span></div>
+
 </td></tr>
 <tr><td class="main-content" style="background:#fff;padding:14px 16px">
 <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" class="info-card" style="background:#f8fafc;border:1px solid #dce2eb;border-radius:16px;overflow:hidden">
-<tr><td class="section-cell card-heading" style="padding:12px 16px;border-top:0">
-<table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td valign="middle" style="font-size:24px;color:#b58b37;padding-right:14px">✦</td><td valign="middle"><div class="card-title" style="font-size:18px;font-weight:800;color:#263244">Nueva Reserva Pagada</div><div class="folio" style="font-size:14px;color:#7a8494;margin-top:5px">Folio ${folio}</div></td></tr></table>
+<tr><td class="section-cell card-heading" style="padding:12px 16px;border-top:0;background:#101827 !important;border-color:#30394a !important">
+<div class="card-title" style="font-size:18px;line-height:1.3;font-weight:800;color:#ffffff !important">Nueva Reserva</div><div class="folio" style="font-size:14px;color:#aab4c3;margin-top:5px">Folio ${folio}</div>
 </td></tr>
 <tr><td class="section-cell" style="padding:12px 16px;border-top:0">
 <div class="field-label">CLIENTE</div><div class="field-value" style="font-size:20px;font-weight:800;color:#263244;margin-top:6px">${customer}</div>
