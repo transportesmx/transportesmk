@@ -14,10 +14,20 @@ function esc(value = '') {
   }[char]));
 }
 function money(value) {
-  const numeric = Number(String(value ?? '').replace(/[^0-9.]/g, ''));
+  const raw = String(value ?? '').trim();
+  if (!raw) return 'Por confirmar';
+
+  // Preserve text statuses (e.g. "Pagado") instead of parsing them as $0.00.
+  const hasNumericAmount = /\\d/.test(raw);
+  const numericText = raw.replace(/[^0-9.,-]/g, '').replace(/,/g, '');
+  if (!hasNumericAmount || !numericText || !/^-?\\d+(?:\\.\\d+)?$/.test(numericText)) {
+    return esc(raw);
+  }
+
+  const numeric = Number(numericText);
   return Number.isFinite(numeric)
     ? new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(numeric)
-    : esc(value || 'Por confirmar');
+    : esc(raw);
 }
 function dateDisplay(value) {
   if (!value) return 'Por confirmar';
@@ -70,53 +80,162 @@ function buildCalendarAttachment(nota) {
 
 function buildHtml(nota) {
   const roundTrip = nota.tipoViaje === 'redondo' || nota.idaVuelta === 'redondo';
+  // This archive has the current logo.jpg. Blend modes remove its white JPG canvas
+  // in supporting email clients; transparent white/black logo variants are ideal later.
   const logo = `${SITE_URL}/logo.jpg`;
-  const vehiclePath = String(nota.imagenUnidad || '/sprinter.png').startsWith('/')
-    ? String(nota.imagenUnidad || '/sprinter.png') : `/${nota.imagenUnidad}`;
-  const vehicle = `${SITE_URL}${vehiclePath}`;
   const customer = esc(nota.cliente || 'Cliente');
   const folio = esc(nota.folio || '—');
-  const route = `${esc(nota.origen || 'Origen por confirmar')} → ${esc(nota.destino || 'Destino por confirmar')}`;
-  const returnBlock = roundTrip ? `
-    <tr><td colspan="3" style="padding:16px 20px;border-top:1px solid #273247">
-      <div style="font-size:11px;letter-spacing:1.5px;color:#d7b56d;font-weight:700">REGRESO</div>
-      <div style="font-size:15px;color:#f4f6fa;margin-top:6px">${esc(nota.destino || 'Destino')} → ${esc(nota.origen || 'Origen')}</div>
-      <div style="font-size:14px;color:#b9c1d0;margin-top:5px">${dateDisplay(nota.regresoFecha || nota.fechaRegreso)} · ${esc(nota.regresoHora || nota.horaRegreso || 'Hora por confirmar')}</div>
-    </td></tr>` : '';
-  const details = [
-    ['FECHA Y HORA', `${dateDisplay(nota.fecha)} · ${esc(nota.hora || 'Por confirmar')}`],
-    ['TIPO DE VIAJE', roundTrip ? 'Ida y vuelta' : 'Sencillo'],
-    ['VEHÍCULO', esc(nota.unidad || 'Por confirmar')],
-    ['PASAJEROS', esc(nota.pasajeros || 'Por confirmar')],
-  ];
-  const detailsHtml = details.map(([label, value]) => `<td style="width:50%;padding:14px 16px;border-top:1px solid #273247;vertical-align:top"><div style="font-size:10px;letter-spacing:1.4px;color:#d7b56d;font-weight:700">${label}</div><div style="font-size:14px;color:#f4f6fa;margin-top:7px">${value}</div></td>`).join('');
-  return `<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
-  <body style="margin:0;background:#080d18;font-family:Arial,Helvetica,sans-serif;color:#f4f6fa">
-  <div style="max-width:680px;margin:0 auto;padding:28px 14px 24px">
-    <div style="text-align:center;padding:10px 0 24px"><img src="${logo}" alt="Transportes MX" width="210" style="display:block;width:210px;max-width:70%;height:auto;margin:0 auto 22px">
-      <div style="font-size:12px;letter-spacing:3px;color:#d7b56d;font-weight:700">TRANSPORTES MX</div>
-      <div style="font-size:28px;line-height:1.25;font-weight:800;margin-top:10px;color:#fff">🚗 NUEVA RESERVA <span style="color:#d7b56d">MANUAL</span></div>
-    </div>
-    <div style="border:1px solid #354052;border-radius:16px;overflow:hidden;background:#0c1322">
-      <div style="padding:20px;border-bottom:1px solid #273247;display:flex;align-items:center">
-        <div style="font-size:24px;color:#d7b56d;margin-right:14px">🚗</div><div><div style="font-size:17px;font-weight:700;color:#fff">Nueva Reserva Manual</div><div style="font-size:13px;color:#aab4c5;margin-top:5px">Folio ${folio}</div></div>
-      </div>
-      <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="border-collapse:collapse">
-        <tr><td colspan="3" style="padding:18px 20px"><div style="font-size:10px;letter-spacing:1.5px;color:#d7b56d;font-weight:700">CLIENTE</div><div style="font-size:18px;font-weight:700;color:#fff;margin-top:6px">${customer}</div></td></tr>
-        <tr><td style="width:50%;padding:14px 20px;border-top:1px solid #273247"><div style="font-size:10px;letter-spacing:1.5px;color:#d7b56d;font-weight:700">EMAIL</div><div style="font-size:14px;color:#f4f6fa;margin-top:6px;word-break:break-word">${esc(nota.email || '—')}</div></td><td style="width:50%;padding:14px 20px;border-top:1px solid #273247"><div style="font-size:10px;letter-spacing:1.5px;color:#d7b56d;font-weight:700">TELÉFONO</div><div style="font-size:14px;color:#f4f6fa;margin-top:6px">${esc(nota.telefono || '—')}</div></td></tr>
-        <tr><td colspan="3" style="padding:16px 20px;border-top:1px solid #273247"><div style="font-size:10px;letter-spacing:1.5px;color:#d7b56d;font-weight:700">RUTA</div><div style="font-size:15px;line-height:1.5;color:#f4f6fa;margin-top:7px">${route}</div></td></tr>
-        ${returnBlock}
-        <tr>${detailsHtml}</tr>
-        <tr><td colspan="3" style="padding:16px 20px"><div style="border:1px solid #176b47;border-radius:12px;background:#06291f;padding:16px 18px"><div style="font-size:11px;letter-spacing:1.5px;color:#d7b56d;font-weight:700">TOTAL</div><div style="font-size:30px;line-height:1.3;font-weight:800;color:#36dc8a;margin-top:5px">${money(nota.importe)}</div><div style="font-size:12px;color:#a9c9b9;margin-top:3px">MXN</div></div></td></tr>
-        ${nota.observaciones ? `<tr><td colspan="3" style="padding:14px 20px;border-top:1px solid #273247"><div style="font-size:10px;letter-spacing:1.5px;color:#d7b56d;font-weight:700">OBSERVACIONES</div><div style="font-size:14px;color:#e4e8ef;line-height:1.5;margin-top:6px">${esc(nota.observaciones)}</div></td></tr>` : ''}
-      </table>
-    </div>
-    <div style="margin-top:18px;padding:16px 20px;border:1px solid #354052;border-radius:12px;background:#101b2d"><div style="font-size:15px;font-weight:700;color:#d7b56d">📅 Agrega tu traslado a tu calendario</div><div style="font-size:13px;line-height:1.5;color:#e4e8ef;margin-top:7px">Adjuntamos un archivo de calendario (.ics) con la fecha, hora, origen, destino y folio de tu servicio. Abre el archivo para agregar la cita a Google Calendar, Apple Calendar u Outlook.</div></div>
-    <div style="text-align:center;padding:24px 8px 18px;border-bottom:1px solid #d7b56d"><div style="font-size:14px;color:#e4e8ef">¿Necesitas ayuda?</div><a href="mailto:contacto@transportesmx.org" style="display:inline-block;margin-top:7px;color:#d7b56d;text-decoration:none;font-weight:700">contacto@transportesmx.org</a><br><a href="https://transportesmx.org" style="display:inline-block;margin-top:9px;color:#d7b56d;text-decoration:none">https://transportesmx.org</a></div>
-    <div style="text-align:center;padding-top:16px;font-size:11px;line-height:1.6;color:#7f8a9d">Grupo Turístico MX S. de R.L. de C.V.<br>Confirmación de Nota de Venta · Transportes MX</div>
-  </div></body></html>`;
-}
+  const email = esc(nota.email || '—');
+  const phone = esc(nota.telefono || '—');
+  const origin = esc(nota.origen || 'Origen por confirmar');
+  const destination = esc(nota.destino || 'Destino por confirmar');
+  const route = `${origin} <span class="route-arrow">→</span> ${destination}`;
+  const amount = money(nota.importe);
+  const amountIsText = !/\\d/.test(String(nota.importe ?? '').trim());
+  const totalLabel = amountIsText ? 'ESTADO DE PAGO' : 'TOTAL';
 
+  const returnBlock = roundTrip ? `
+    <tr><td colspan="2" class="section-cell return-cell">
+      <div class="field-label">↩ REGRESO</div>
+      <div class="field-value">${destination} <span class="route-arrow">→</span> ${origin}</div>
+      <div class="field-subvalue">${dateDisplay(nota.regresoFecha || nota.fechaRegreso)} · ${esc(nota.regresoHora || nota.horaRegreso || 'Hora por confirmar')}</div>
+    </td></tr>` : '';
+
+  const detailRows = [
+    ['FECHA Y HORA', `${dateDisplay(nota.fecha)} · ${esc(nota.hora || 'Por confirmar')}`],
+    ['TIPO DE VIAJE', roundTrip ? 'Ida y vuelta' : esc(nota.tipoViajeTexto || nota.tipoServicio || 'Sencillo')],
+    ['VEHÍCULO', esc(nota.unidad || nota.vehiculo || 'Por confirmar')],
+    ['PASAJEROS', esc(nota.pasajeros || nota.pax || 'Por confirmar')],
+  ];
+  const detailsHtml = detailRows.map(([label, value]) => `
+    <td class="detail-cell">
+      <div class="field-label">${label}</div>
+      <div class="field-value">${value}</div>
+    </td>`).join('');
+
+  const distance = nota.distancia ? `<span>📏 Distancia: ${esc(nota.distancia)}</span>` : '';
+  const duration = nota.duracion || nota.duracionTexto || nota.tiempoEstimado
+    ? `<span>⏱ Duración: ${esc(nota.duracion || nota.duracionTexto || nota.tiempoEstimado)}</span>` : '';
+  const metrics = distance || duration ? `
+    <div class="metrics">${[distance, duration].filter(Boolean).join('<span class="metric-dot"> · </span>')}</div>` : '';
+  const observations = nota.observaciones ? `
+    <tr><td colspan="2" class="section-cell observations">
+      <div class="field-label">OBSERVACIONES</div>
+      <div class="field-value">${esc(nota.observaciones)}</div>
+    </td></tr>` : '';
+
+  return `<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark">
+<style>
+  :root { color-scheme: light dark; supported-color-schemes: light dark; }
+  body, .email-bg { background:#f2f5f9 !important; color:#182235 !important; }
+  .shell { background:#ffffff !important; }
+  .booking-card { background:#ffffff !important; border-color:#d8dee8 !important; }
+  .heading-main { color:#111827 !important; }
+  .field-value { color:#202938 !important; }
+  .field-subvalue, .metrics { color:#687386 !important; }
+  .field-label { color:#9a762b !important; }
+  .section-cell, .detail-cell, .booking-head { border-color:#e1e6ee !important; }
+  .total-box { background:#e9f8f0 !important; border-color:#16a36a !important; }
+  .total-value { color:#07884f !important; }
+  .help-panel { background:#f7f8fb !important; border-color:#d8dee8 !important; }
+  .logo-img { mix-blend-mode:multiply; }
+  @media (prefers-color-scheme: dark) {
+    body, .email-bg { background:#080d18 !important; color:#f4f6fa !important; }
+    .shell { background:#080d18 !important; }
+    .booking-card { background:#0c1322 !important; border-color:#354052 !important; }
+    .heading-main { color:#ffffff !important; }
+    .field-value { color:#f4f6fa !important; }
+    .field-subvalue, .metrics { color:#b9c1d0 !important; }
+    .field-label { color:#d7b56d !important; }
+    .section-cell, .detail-cell, .booking-head { border-color:#273247 !important; }
+    .total-box { background:#06291f !important; border-color:#176b47 !important; }
+    .total-value { color:#36dc8a !important; }
+    .help-panel { background:#101b2d !important; border-color:#354052 !important; }
+    .logo-img { filter:invert(1); mix-blend-mode:screen; }
+  }
+  @media only screen and (max-width:600px) {
+    .outer-pad { padding:18px 8px !important; }
+    .detail-cell { display:block !important; width:auto !important; padding:12px 18px !important; border-top:1px solid #e1e6ee !important; }
+    .customer-contact-cell { display:block !important; width:auto !important; }
+    .heading-main { font-size:23px !important; }
+    .total-value { font-size:28px !important; }
+  }
+</style>
+</head>
+<body style="margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;background:#f2f5f9;color:#182235">
+<div class="email-bg" style="background:#f2f5f9;padding:0;margin:0">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;background:#f2f5f9">
+    <tr><td align="center" class="outer-pad" style="padding:28px 14px">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" class="shell" style="max-width:680px;border-collapse:collapse;background:#fff">
+        <tr><td align="center" style="padding:16px 12px 24px">
+          <img class="logo-img" src="${logo}" alt="Transportes MX" width="190" style="display:block;width:190px;max-width:70%;height:auto;margin:0 auto 18px;mix-blend-mode:multiply">
+          <div style="font-size:12px;letter-spacing:3px;color:#b18a3d;font-weight:700">TRANSPORTES MX</div>
+          <div class="heading-main" style="font-size:28px;line-height:1.25;font-weight:800;margin-top:10px;color:#111827">🚗 NUEVA RESERVA <span style="color:#b18a3d">MANUAL</span></div>
+          <div style="display:inline-block;margin-top:14px;padding:8px 18px;border-radius:22px;background:#e5f8ef;border:1px solid #0b9b61;color:#07884f;font-size:14px;font-weight:700">✓ RESERVA PAGADA</div>
+        </td></tr>
+        <tr><td>
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" class="booking-card" style="border:1px solid #d8dee8;border-radius:16px;overflow:hidden;background:#fff;border-collapse:separate">
+            <tr><td colspan="2" class="booking-head" style="padding:20px;border-bottom:1px solid #e1e6ee">
+              <table role="presentation" cellpadding="0" cellspacing="0" width="100%"><tr>
+                <td width="36" valign="middle" style="font-size:25px;color:#b18a3d">✦</td>
+                <td><div style="font-size:18px;font-weight:700;color:#111827">Nueva Reserva Pagada</div><div style="font-size:14px;color:#687386;margin-top:5px">Folio ${folio}</div></td>
+              </tr></table>
+            </td></tr>
+            <tr><td colspan="2" class="section-cell" style="padding:18px 20px;border-bottom:1px solid #e1e6ee">
+              <div class="field-label" style="font-size:11px;letter-spacing:1.5px;color:#9a762b;font-weight:700">CLIENTE</div>
+              <div class="field-value" style="font-size:22px;font-weight:700;color:#202938;margin-top:7px">${customer}</div>
+            </td></tr>
+            <tr>
+              <td width="50%" class="section-cell customer-contact-cell" style="padding:14px 20px;border-bottom:1px solid #e1e6ee;vertical-align:top">
+                <div class="field-label" style="font-size:11px;letter-spacing:1.5px;color:#9a762b;font-weight:700">✉ EMAIL</div>
+                <div class="field-value" style="font-size:15px;color:#202938;margin-top:6px;word-break:break-word">${email}</div>
+              </td>
+              <td width="50%" class="section-cell customer-contact-cell" style="padding:14px 20px;border-bottom:1px solid #e1e6ee;vertical-align:top">
+                <div class="field-label" style="font-size:11px;letter-spacing:1.5px;color:#9a762b;font-weight:700">☎ TELÉFONO</div>
+                <div class="field-value" style="font-size:15px;color:#202938;margin-top:6px;word-break:break-word">${phone}</div>
+              </td>
+            </tr>
+            <tr><td colspan="2" class="section-cell" style="padding:16px 20px;border-bottom:1px solid #e1e6ee">
+              <div class="field-label" style="font-size:11px;letter-spacing:1.5px;color:#9a762b;font-weight:700">📍 RUTA</div>
+              <div class="field-value" style="font-size:16px;line-height:1.55;color:#202938;margin-top:7px;word-break:break-word">${route}</div>
+            </td></tr>
+            ${returnBlock}
+            <tr>${detailsHtml}</tr>
+            <tr><td colspan="2" style="padding:16px 20px">
+              <div class="total-box" style="border:1px solid #16a36a;border-radius:12px;background:#e9f8f0;padding:16px 18px">
+                <div class="field-label" style="font-size:11px;letter-spacing:1.5px;color:#9a762b;font-weight:700">${totalLabel}</div>
+                <div class="total-value" style="font-size:32px;line-height:1.3;font-weight:800;color:#07884f;margin-top:5px">${amount}</div>
+                ${amountIsText ? '' : '<div class="field-subvalue" style="font-size:12px;color:#687386;margin-top:3px">MXN</div>'}
+              </div>
+            </td></tr>
+            ${observations}
+          </table>
+          ${metrics}
+        </td></tr>
+        <tr><td style="padding-top:18px">
+          <div class="help-panel" style="padding:16px 20px;border:1px solid #d8dee8;border-radius:12px;background:#f7f8fb">
+            <div style="font-size:15px;font-weight:700;color:#b18a3d">📅 Agrega tu traslado a tu calendario</div>
+            <div class="field-value" style="font-size:13px;line-height:1.5;color:#202938;margin-top:7px">Adjuntamos un archivo de calendario (.ics) con la fecha, hora, origen, destino y folio del servicio. Abre el archivo para agregar la cita a Google Calendar, Apple Calendar u Outlook.</div>
+          </div>
+        </td></tr>
+        <tr><td align="center" style="padding:24px 8px 18px;border-bottom:1px solid #b18a3d">
+          <div class="field-value" style="font-size:14px;color:#202938">¿Necesitas ayuda?</div>
+          <a href="mailto:contacto@transportesmx.org" style="display:inline-block;margin-top:7px;color:#b18a3d;text-decoration:none;font-weight:700">contacto@transportesmx.org</a><br>
+          <a href="https://transportesmx.org" style="display:inline-block;margin-top:9px;color:#b18a3d;text-decoration:none">https://transportesmx.org</a>
+        </td></tr>
+        <tr><td align="center" style="padding-top:16px;font-size:11px;line-height:1.6;color:#7f8a9d">Grupo Turístico MX S. de R.L. de C.V.<br>Confirmación de Nota de Venta · Transportes MX</td></tr>
+      </table>
+    </td></tr>
+  </table>
+</div>
+</body></html>`;
+}
 
 /**
  * Reserva un folio de manera atómica en Supabase antes de contactar a Brevo.
