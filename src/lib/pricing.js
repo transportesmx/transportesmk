@@ -42,7 +42,7 @@ export const vehiculos = [
     precioPorKm: 47,
     tarifas: [
       { hastaKm: 150, precioPorKm: 47 },
-      { hastaKm: Infinity, precioPorKm: 37 },
+      { hastaKm: Infinity, precioPorKm: 35 },
     ],
     banderazos: [
       { hastaKm: 35, monto: 1800 },
@@ -62,7 +62,7 @@ export const vehiculos = [
     capacidadEquipaje: 8,
     imagen: '/assets/autos/van.png',
     kmMinimo: 20,
-    precioPorKm: 36,
+    precioPorKm: 34,
     tarifas: [
       { hastaKm: 150, precioPorKm: 34 },
       { hastaKm: Infinity, precioPorKm: 32 },
