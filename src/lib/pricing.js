@@ -39,9 +39,9 @@ export const vehiculos = [
     capacidadEquipaje: 8,
     imagen: '/assets/autos/suburban.png',
     kmMinimo: 20,
-    precioPorKm: 43,
+    precioPorKm: 47,
     tarifas: [
-      { hastaKm: 150, precioPorKm: 43 },
+      { hastaKm: 150, precioPorKm: 47 },
       { hastaKm: Infinity, precioPorKm: 37 },
     ],
     banderazos: [
@@ -62,10 +62,10 @@ export const vehiculos = [
     capacidadEquipaje: 8,
     imagen: '/assets/autos/van.png',
     kmMinimo: 20,
-    precioPorKm: 32,
+    precioPorKm: 36,
     tarifas: [
-      { hastaKm: 150, precioPorKm: 32 },
-      { hastaKm: Infinity, precioPorKm: 30 },
+      { hastaKm: 150, precioPorKm: 34 },
+      { hastaKm: Infinity, precioPorKm: 32 },
     ],
     banderazos: [
       { hastaKm: 35, monto: 1800 },
