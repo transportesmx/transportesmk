@@ -25,7 +25,7 @@ export const vehiculos = [
       { hastaKm: Infinity, precioPorKm: 22 },
     ],
     banderazos: [
-      { hastaKm: 50, monto: 1 },
+      { hastaKm: 0, monto: 0 },
     ],
     caracteristicas: ['Aire acondicionado', 'Agua embotellada'],
     popular: false,
