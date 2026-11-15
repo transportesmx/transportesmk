@@ -1,9 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { Autocomplete, useJsApiLoader } from "@react-google-maps/api";
+import { autocompleteOptions } from "@/lib/google-maps";
 import { supabase } from "@/lib/supabase";
 
 const ADMIN1 = "amstrekgrt@gmail.com";
 const ADMIN2 = "and-i89@hotmail.com";
 const ZONA = "America/Mexico_City";
+const GOOGLE_MAPS_LIBRARIES = ["places"];
 
 const INICIAL = {
   cliente: "",
@@ -836,67 +839,54 @@ export default function NotasVenta() {
   const [guardando, setGuardando] = useState(false);
   const [editando, setEditando] = useState(null);
   const [busqueda, setBusqueda] = useState("");
-  const origenInputRef = useRef(null);
-  const destinoInputRef = useRef(null);
-  const placesInitializedRef = useRef(false);
+  // Carga Google Maps mediante el mismo loader y componente Autocomplete
+  // que usa el flujo principal de reservaciones de Transportes MX.
+  const { isLoaded: googleMapsLoaded, loadError: googleMapsLoadError } = useJsApiLoader({
+    id: "google-maps-script-notas-venta",
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
+    libraries: GOOGLE_MAPS_LIBRARIES,
+    language: "es",
+    region: "MX",
+  });
 
-  // Google Places Autocomplete para Recoger en y Destino.
-  // Requiere NEXT_PUBLIC_GOOGLE_MAPS_API_KEY con Places API habilitada.
-  useEffect(() => {
-    const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
-    if (!apiKey || placesInitializedRef.current) return;
+  const origenAutocompleteRef = useRef(null);
+  const destinoAutocompleteRef = useRef(null);
 
-    const inicializarPlaces = () => {
-      if (!window.google?.maps?.places || placesInitializedRef.current) return;
-      placesInitializedRef.current = true;
+  const onOrigenLoad = (autocomplete) => {
+    origenAutocompleteRef.current = autocomplete;
+  };
 
-      const configurar = (inputRef, campo) => {
-        const input = inputRef.current;
-        if (!input) return;
-        const autocomplete = new window.google.maps.places.Autocomplete(input, {
-          fields: ["formatted_address", "geometry", "place_id", "name"],
-          types: ["geocode", "establishment"],
-        });
-        autocomplete.addListener("place_changed", () => {
-          const place = autocomplete.getPlace();
-          const direccion = place.formatted_address || place.name || input.value || "";
-          const ubicacion = place.geometry?.location;
-          cambiar(campo, direccion);
-          cambiar(`${campo}PlaceId`, place.place_id || "");
-          cambiar(`${campo}Lat`, ubicacion ? String(ubicacion.lat()) : "");
-          cambiar(`${campo}Lng`, ubicacion ? String(ubicacion.lng()) : "");
-        });
-        input.addEventListener("input", () => {
-          cambiar(`${campo}PlaceId`, "");
-          cambiar(`${campo}Lat`, "");
-          cambiar(`${campo}Lng`, "");
-        });
-      };
+  const onDestinoLoad = (autocomplete) => {
+    destinoAutocompleteRef.current = autocomplete;
+  };
 
-      configurar(origenInputRef, "origen");
-      configurar(destinoInputRef, "destino");
-    };
-
-    if (window.google?.maps?.places) {
-      inicializarPlaces();
+  const onOrigenChanged = () => {
+    const place = origenAutocompleteRef.current?.getPlace();
+    if (!place?.geometry?.location) {
+      setMensaje("Selecciona una dirección de las sugerencias de Google Maps para Recoger en.");
       return;
     }
+    const location = place.geometry.location;
+    cambiar("origen", place.formatted_address || place.name || "");
+    cambiar("origenPlaceId", place.place_id || "");
+    cambiar("origenLat", String(location.lat()));
+    cambiar("origenLng", String(location.lng()));
+    setMensaje("");
+  };
 
-    const existingScript = document.querySelector('script[data-google-places="notas-venta"]');
-    if (existingScript) {
-      existingScript.addEventListener("load", inicializarPlaces, { once: true });
+  const onDestinoChanged = () => {
+    const place = destinoAutocompleteRef.current?.getPlace();
+    if (!place?.geometry?.location) {
+      setMensaje("Selecciona una dirección de las sugerencias de Google Maps para Destino.");
       return;
     }
-
-    const script = document.createElement("script");
-    script.dataset.googlePlaces = "notas-venta";
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(apiKey)}&libraries=places&language=es&region=MX`;
-    script.async = true;
-    script.defer = true;
-    script.onload = inicializarPlaces;
-    script.onerror = () => console.error("No se pudo cargar Google Places en Notas de Venta.");
-    document.head.appendChild(script);
-  }, []);
+    const location = place.geometry.location;
+    cambiar("destino", place.formatted_address || place.name || "");
+    cambiar("destinoPlaceId", place.place_id || "");
+    cambiar("destinoLat", String(location.lat()));
+    cambiar("destinoLng", String(location.lng()));
+    setMensaje("");
+  };
 
   const emailUsuario = sesion?.user?.email?.toLowerCase();
   const admin1 = emailUsuario === ADMIN1;
@@ -1352,6 +1342,7 @@ return notas.filter((nota) =>
 
   return (
     <main className="min-h-screen bg-slate-950 p-3 text-white sm:p-6">
+      <style jsx global>{`\n        .pac-container {\n          z-index: 999999 !important;\n          font-family: Arial, Helvetica, sans-serif !important;\n        }\n        .pac-item {\n          cursor: pointer;\n          padding: 6px 8px;\n        }\n      `}</style>
       <div className="mx-auto max-w-7xl">
     <header className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-700 pb-5">
 
@@ -1398,9 +1389,9 @@ return notas.filter((nota) =>
       </p>
     )}
 
-    <div className="grid items-start gap-5 py-5 xl:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]">
+    <div className="grid min-w-0 items-start gap-3 py-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:gap-3 xl:gap-5">
 
-      <section className="rounded-2xl border border-slate-700 bg-slate-900 p-4 sm:p-5">
+      <section className="min-w-0 rounded-2xl border border-slate-700 bg-slate-900 p-3 sm:p-4 xl:p-5">
 
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
 
@@ -1431,7 +1422,7 @@ return notas.filter((nota) =>
 
         <form onSubmit={guardar} className="space-y-4">
 
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2">
 
             {CAMPOS.map(([campo, etiqueta, tipo]) => {
               // Los campos de regreso solo se muestran para viaje redondo.
@@ -1453,7 +1444,6 @@ return notas.filter((nota) =>
                   <select
                     required
                     value={datos[campo] ?? ""}
-                    ref={campo === "origen" ? origenInputRef : campo === "destino" ? destinoInputRef : undefined}
                     onChange={(e) => cambiar(campo, e.target.value)}
                     className="mt-1 w-full rounded-lg border border-slate-400 bg-white p-3 text-slate-900 outline-none focus:border-emerald-500"
                   >
@@ -1492,6 +1482,68 @@ return notas.filter((nota) =>
                       </option>
                     ))}
                   </select>
+                ) : campo === "origen" ? (
+                  googleMapsLoaded ? (
+                    <Autocomplete
+                      onLoad={onOrigenLoad}
+                      onPlaceChanged={onOrigenChanged}
+                      options={autocompleteOptions}
+                    >
+                      <input
+                        type="text"
+                        required
+                        value={datos.origen ?? ""}
+                        onChange={(e) => {
+                          cambiar("origen", e.target.value);
+                          cambiar("origenPlaceId", "");
+                          cambiar("origenLat", "");
+                          cambiar("origenLng", "");
+                        }}
+                        placeholder="Escribe aeropuerto, hotel o dirección y selecciona una sugerencia"
+                        className="mt-1 w-full rounded-lg border border-slate-400 bg-white p-3 text-slate-900 outline-none focus:border-emerald-500"
+                      />
+                    </Autocomplete>
+                  ) : (
+                    <input
+                      type="text"
+                      required
+                      value={datos.origen ?? ""}
+                      onChange={(e) => cambiar("origen", e.target.value)}
+                      placeholder={googleMapsLoadError ? "Google Maps no pudo cargar" : "Cargando Google Maps…"}
+                      className="mt-1 w-full rounded-lg border border-slate-400 bg-white p-3 text-slate-900 outline-none focus:border-emerald-500"
+                    />
+                  )
+                ) : campo === "destino" ? (
+                  googleMapsLoaded ? (
+                    <Autocomplete
+                      onLoad={onDestinoLoad}
+                      onPlaceChanged={onDestinoChanged}
+                      options={autocompleteOptions}
+                    >
+                      <input
+                        type="text"
+                        required
+                        value={datos.destino ?? ""}
+                        onChange={(e) => {
+                          cambiar("destino", e.target.value);
+                          cambiar("destinoPlaceId", "");
+                          cambiar("destinoLat", "");
+                          cambiar("destinoLng", "");
+                        }}
+                        placeholder="Escribe aeropuerto, hotel o dirección y selecciona una sugerencia"
+                        className="mt-1 w-full rounded-lg border border-slate-400 bg-white p-3 text-slate-900 outline-none focus:border-emerald-500"
+                      />
+                    </Autocomplete>
+                  ) : (
+                    <input
+                      type="text"
+                      required
+                      value={datos.destino ?? ""}
+                      onChange={(e) => cambiar("destino", e.target.value)}
+                      placeholder={googleMapsLoadError ? "Google Maps no pudo cargar" : "Cargando Google Maps…"}
+                      className="mt-1 w-full rounded-lg border border-slate-400 bg-white p-3 text-slate-900 outline-none focus:border-emerald-500"
+                    />
+                  )
                 ) : (
                   <input
                     type={tipo}
@@ -1674,7 +1726,7 @@ return notas.filter((nota) =>
 
       </section>
 
-      <section className="rounded-2xl bg-slate-200 p-2 text-black sm:p-4">
+      <section className="min-w-0 rounded-2xl bg-slate-200 p-2 text-black sm:p-3 xl:p-4">
 
         <div className="mb-3 flex items-center justify-between gap-2 px-1">
 
@@ -1692,16 +1744,16 @@ return notas.filter((nota) =>
 
         </div>
 
-        <article className="mx-auto max-w-[560px] bg-white px-8 py-5 text-black shadow-xl sm:px-10 sm:py-7">
+        <article className="mx-auto w-full max-w-[560px] min-w-0 bg-white px-3 py-4 text-black shadow-xl sm:px-5 sm:py-5 xl:px-8 xl:py-7">
 
-          <div className="grid grid-cols-[minmax(0,1fr)_112px] items-start gap-3">
+          <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_minmax(76px,104px)] items-start gap-2 sm:grid-cols-[minmax(0,1fr)_112px] sm:gap-3">
 
             <div className="min-w-0">
 
               <img
                 src="/logo.jpg"
                 alt="Transportes MX"
-                className="mb-1 h-12 w-32 object-contain object-left"
+                className="mb-1 h-10 w-28 max-w-full object-contain object-left sm:h-12 sm:w-32"
               />
 
               <div className="min-w-0 text-[12px] font-extrabold leading-4">
@@ -1754,14 +1806,14 @@ return notas.filter((nota) =>
                     event.currentTarget.src = "/sprinter.png";
                   }
                 }}
-                className="mt-[36px] h-[150px] w-full max-w-[190px] object-contain object-center"
+                className="mt-6 h-[100px] w-full max-w-full object-contain object-center sm:mt-[36px] sm:h-[150px] sm:max-w-[190px]"
               />
 
             </div>
 
           </div>
 
-          <div className="mt-4 space-y-1.5 text-[16px]">
+          <div className="mt-3 space-y-1.5 break-words text-[14px] sm:mt-4 sm:text-[16px]">
 
             <p>
               <strong>Cliente:</strong> {datos.cliente}
@@ -1789,7 +1841,7 @@ return notas.filter((nota) =>
             Descripción del traslado:
           </div>
 
-          <div className="mt-[9mm] space-y-1.5 text-[16px]">
+          <div className="mt-5 min-w-0 space-y-1.5 break-words text-[13px] sm:mt-[9mm] sm:text-[16px]">
 
             {[
               ["🚐", "Vehículo:", datos.unidad],
@@ -1816,7 +1868,7 @@ return notas.filter((nota) =>
 
           </div>
 
-          <div className="mt-[15mm] flex items-start gap-1 text-[16px]">
+          <div className="mt-6 flex min-w-0 flex-wrap items-start gap-1 break-words text-[13px] sm:mt-[15mm] sm:text-[16px]">
 
             <span>↩️</span>
 
@@ -1826,7 +1878,7 @@ return notas.filter((nota) =>
 
           </div>
 
-          <div className="mt-5 min-h-16 rounded-[24px] border-2 border-black px-4 py-3 text-[14px]">
+          <div className="mt-4 min-h-16 min-w-0 break-words rounded-[20px] border-2 border-black px-3 py-3 text-[13px] sm:mt-5 sm:rounded-[24px] sm:px-4 sm:text-[14px]">
 
             <strong className="mb-1 block">
               Observaciones:
@@ -1836,7 +1888,7 @@ return notas.filter((nota) =>
 
           </div>
 
-          <footer className="mt-4 border-t-2 border-black pt-3 text-center text-[11px] leading-4 text-slate-600">
+          <footer className="mt-3 border-t-2 border-black pt-3 text-center text-[10px] leading-4 text-slate-600 sm:mt-4 sm:text-[11px]">
 
             <p>
               San Miguel de Allende, Guanajuato · Documento Generado:{" "}
