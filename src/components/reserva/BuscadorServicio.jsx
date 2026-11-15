@@ -212,7 +212,7 @@ export default function BuscadorServicio({ onNext, isLoaded }) {
     const hora = horaIda?.length === 5 ? horaIda : '12:00';
     const servicioDate = new Date(`${fechaIda}T${hora}:00`);
     const horasRestantes = (servicioDate.getTime() - Date.now()) / (1000 * 60 * 60);
-    if (horasRestantes < 48) {
+    if (horasRestantes < 24) {
       setShow48hModal(true);
       return;
     }
