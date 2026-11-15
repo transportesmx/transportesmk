@@ -24,281 +24,54 @@ function dateDisplay(value) {
   const parts = String(value).split('-');
   return parts.length === 3 ? `${parts[2]}/${parts[1]}/${parts[0]}` : esc(value);
 }
-function icsEscape(value = '') {
-  return String(value).replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/,/g, '\\,').replace(/;/g, '\\;');
-}
-function toIcsDate(date, time) {
-  if (!date || !/^\d{4}-\d{2}-\d{2}$/.test(String(date))) return null;
-  const safeTime = /^\d{2}:\d{2}$/.test(String(time || '')) ? time : '12:00';
-  return `${String(date).replace(/-/g, '')}T${safeTime.replace(':', '')}00`;
-}
-function buildCalendarAttachment(nota) {
-  const start = toIcsDate(nota.fecha, nota.hora);
-  if (!start) return null;
-  const startDate = new Date(`${nota.fecha}T${/^\d{2}:\d{2}$/.test(String(nota.hora || '')) ? nota.hora : '12:00'}:00`);
-  if (Number.isNaN(startDate.getTime())) return null;
-  const durationHours = Math.max(1, Math.min(24, Number(nota.duracionHoras || 2)));
-  const endDate = new Date(startDate.getTime() + durationHours * 3600000);
-  const toLocalIcs = (date) => `${date.getFullYear()}${String(date.getMonth()+1).padStart(2,'0')}${String(date.getDate()).padStart(2,'0')}T${String(date.getHours()).padStart(2,'0')}${String(date.getMinutes()).padStart(2,'0')}00`;
-  const events = [{
-    uid: `${icsEscape(nota.folio)}-ida@transportesmx.org`,
-    summary: `Traslado Transportes MX - ${nota.cliente || 'Cliente'}`,
-    start: toLocalIcs(startDate), end: toLocalIcs(endDate),
-    location: nota.origen || '',
-    description: `Folio: ${nota.folio}\nCliente: ${nota.cliente}\nOrigen: ${nota.origen || ''}\nDestino: ${nota.destino || ''}\nPasajeros: ${nota.pasajeros || ''}\nVehículo: ${nota.unidad || ''}\nTeléfono: ${nota.telefono || ''}\nObservaciones: ${nota.observaciones || ''}`,
-  }];
-  const roundTrip = nota.tipoViaje === 'redondo' || nota.idaVuelta === 'redondo';
-  const returnDate = nota.regresoFecha || nota.fechaRegreso;
-  const returnTime = nota.regresoHora || nota.horaRegreso;
-  if (roundTrip && toIcsDate(returnDate, returnTime)) {
-    const returnStart = new Date(`${returnDate}T${/^\d{2}:\d{2}$/.test(String(returnTime || '')) ? returnTime : '12:00'}:00`);
-    const returnEnd = new Date(returnStart.getTime() + durationHours * 3600000);
-    events.push({
-      uid: `${icsEscape(nota.folio)}-regreso@transportesmx.org`,
-      summary: `Regreso Transportes MX - ${nota.cliente || 'Cliente'}`,
-      start: toLocalIcs(returnStart), end: toLocalIcs(returnEnd),
-      location: nota.destino || '',
-      description: `Folio: ${nota.folio}\nCliente: ${nota.cliente}\nOrigen: ${nota.destino || ''}\nDestino: ${nota.origen || ''}\nPasajeros: ${nota.pasajeros || ''}\nVehículo: ${nota.unidad || ''}`,
-    });
-  }
-  const stamp = new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
-  const lines = ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Transportes MX//Reserva//ES','CALSCALE:GREGORIAN','METHOD:PUBLISH'];
-  for (const event of events) lines.push('BEGIN:VEVENT', `UID:${event.uid}`, `DTSTAMP:${stamp}`, `DTSTART;TZID=America/Mexico_City:${event.start}`, `DTEND;TZID=America/Mexico_City:${event.end}`, `SUMMARY:${icsEscape(event.summary)}`, `LOCATION:${icsEscape(event.location)}`, `DESCRIPTION:${icsEscape(event.description)}`, 'END:VEVENT');
-  lines.push('END:VCALENDAR');
-  return Buffer.from(lines.join('\r\n')).toString('base64');
-}
-
 function buildHtml(nota) {
   const roundTrip = nota.tipoViaje === 'redondo' || nota.idaVuelta === 'redondo';
-  const logoWhite = `${SITE_URL}/logo-email-white.png`;
-  const logoBlack = `${SITE_URL}/logo-email-black.png`;
+  const logo = `${SITE_URL}/logo.jpg`;
+  const vehiclePath = String(nota.imagenUnidad || '/sprinter.png').startsWith('/')
+    ? String(nota.imagenUnidad || '/sprinter.png') : `/${nota.imagenUnidad}`;
+  const vehicle = `${SITE_URL}${vehiclePath}`;
   const customer = esc(nota.cliente || 'Cliente');
   const folio = esc(nota.folio || '—');
-  const email = esc(nota.email || '—');
-  const phone = esc(nota.telefono || '—');
-  const origin = esc(nota.origen || 'Origen por confirmar');
-  const destination = esc(nota.destino || 'Destino por confirmar');
-  const route = `${origin} <span class="route-arrow">→</span> ${destination}`;
-
-  // Si el campo importe contiene texto (p. ej. "Pagado"), mostrarlo literalmente.
-  // Solo formatear como moneda cuando realmente sea un importe numérico.
-  const rawAmount = String(nota.importe ?? '').trim();
-  const cleanedAmount = rawAmount.replace(/[^0-9.,-]/g, '').replace(/,/g, '');
-  const isNumericAmount = rawAmount !== '' && /^-?\d+(?:\.\d+)?$/.test(cleanedAmount);
-  const totalValue = isNumericAmount
-    ? money(cleanedAmount)
-    : esc(rawAmount || 'Por confirmar');
-  const totalLabel = isNumericAmount ? 'TOTAL' : 'ESTADO DE PAGO';
-
+  const route = `${esc(nota.origen || 'Origen por confirmar')} → ${esc(nota.destino || 'Destino por confirmar')}`;
   const returnBlock = roundTrip ? `
-    <tr>
-      <td class="section-cell return-section" colspan="4">
-        <div class="field-label">🔄 REGRESO</div>
-        <div class="return-route">${destination} <span class="route-arrow">→</span> ${origin}</div>
-        <div class="muted return-date">${dateDisplay(nota.regresoFecha || nota.fechaRegreso)} · ${esc(nota.regresoHora || nota.horaRegreso || 'Hora por confirmar')}</div>
-      </td>
-    </tr>` : '';
-
-  const detailItems = [
-    ['📅 FECHA Y HORA', `${dateDisplay(nota.fecha)} · ${esc(nota.hora || 'Por confirmar')}`],
-    ['🧭 TIPO DE VIAJE', roundTrip ? 'Ida y vuelta' : esc(nota.tipoViaje || 'Sencillo')],
-    ['🚘 VEHÍCULO', esc(nota.unidad || 'Por confirmar')],
-    ['👥 PASAJEROS', esc(nota.pasajeros || 'Por confirmar')],
+    <tr><td colspan="3" style="padding:16px 20px;border-top:1px solid #273247">
+      <div style="font-size:11px;letter-spacing:1.5px;color:#d7b56d;font-weight:700">REGRESO</div>
+      <div style="font-size:15px;color:#f4f6fa;margin-top:6px">${esc(nota.destino || 'Destino')} → ${esc(nota.origen || 'Origen')}</div>
+      <div style="font-size:14px;color:#b9c1d0;margin-top:5px">${dateDisplay(nota.regresoFecha || nota.fechaRegreso)} · ${esc(nota.regresoHora || nota.horaRegreso || 'Hora por confirmar')}</div>
+    </td></tr>` : '';
+  const details = [
+    ['FECHA Y HORA', `${dateDisplay(nota.fecha)} · ${esc(nota.hora || 'Por confirmar')}`],
+    ['TIPO DE VIAJE', roundTrip ? 'Ida y vuelta' : 'Sencillo'],
+    ['VEHÍCULO', esc(nota.unidad || 'Por confirmar')],
+    ['PASAJEROS', esc(nota.pasajeros || 'Por confirmar')],
   ];
-  const detailsHtml = [detailItems.slice(0, 2), detailItems.slice(2, 4)].map((pair) => `
-    <tr>${pair.map(([label, value]) => `
-      <td class="detail-cell" width="50%" valign="top">
-        <div class="field-label">${label}</div>
-        <div class="detail-value">${value}</div>
-      </td>`).join('')}
-    </tr>`).join('');
-
-  const distanceValue = nota.distancia || nota.distanciaKm || nota.km || '';
-  const distance = distanceValue ? `<span>📏 Distancia: ${esc(distanceValue)}${String(distanceValue).toLowerCase().includes('km') ? '' : ' km'}</span>` : '';
-  const durationValue = nota.duracion || nota.duracionTexto || nota.tiempo || '';
-  const duration = durationValue ? `<span>⏱️ ${esc(durationValue)}</span>` : '';
-  const routeStats = distance || duration ? `
-    <tr><td class="route-stats">
-      ${distance}${distance && duration ? '<span class="stats-separator"> · </span>' : ''}${duration}
-    </td></tr>` : '';
-
-  const observations = nota.observaciones ? `
-    <tr><td class="section-cell observations">
-      <div class="field-label">📝 OBSERVACIONES</div>
-      <div class="observations-value">${esc(nota.observaciones)}</div>
-    </td></tr>` : '';
-
-  return `<!doctype html>
-<html lang="es">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="color-scheme" content="light dark">
-<meta name="supported-color-schemes" content="light dark">
-<style>
-  :root { color-scheme: light dark; supported-color-schemes: light dark; }
-  body, .page-bg { background-color:#080b12 !important; }
-  .email-shell { width:100%; max-width:720px; margin:0 auto; }
-  .outer-card { background:#171923 !important; border:1px solid #2c303b !important; border-radius:22px; overflow:hidden; }
-  .brand-header { background:#15304e !important; background-image:linear-gradient(135deg,#1c3a5d,#10253e) !important; }
-  .header-subtitle { color:#a6b2c3 !important; }
-  .main-content { background:#191a24 !important; }
-  .title { color:#f8fafc !important; }
-  .folio, .muted, .route-stats { color:#9296a2 !important; }
-  .info-card { background:#22232d !important; border:1px solid #343640 !important; }
-  .card-heading { background:#101827 !important; border-color:#30394a !important; }
-  .card-title { color:#ffffff !important; }
-  .divider, .section-cell, .detail-cell { border-color:#343640 !important; }
-  .field-value, .detail-value, .route-text, .return-route, .observations-value { color:#e2e4e9 !important; }
-  .field-label { color:#d7b56d !important; }
-  .total-card { background:#06291f !important; border:1px solid #176b47 !important; }
-  .total-value { color:#16c78b !important; }
-  .footer { background:#11121a !important; color:#777d8b !important; }
-  .calendar-help-wrap, .contact-help { background:#191a24 !important; }
-  .calendar-help { background:#22232d !important; border-color:#343640 !important; }
-  .calendar-help-title, .contact-gold { color:#d7b56d !important; }
-  .calendar-help-text, .contact-help-title { color:#e2e4e9 !important; }
-  .gold-divider { border-color:#d7b56d !important; }
-  .company-footer { color:#9296a2 !important; }
-  .route-arrow { color:#d7b56d !important; font-weight:bold; }
-  .brand-logo-light { display:block !important; }
-  .brand-logo-dark { display:none !important; }
-  .section-cell { padding:11px 16px; border-top:1px solid #343640; }
-  .field-label { font-size:11px; line-height:1.4; letter-spacing:1.5px; font-weight:700; }
-  .field-value { font-size:20px; line-height:1.4; font-weight:700; margin-top:6px; }
-  .detail-cell { padding:10px 12px; border-top:1px solid #343640; }
-  .detail-grid-cell { padding:0 !important; }
-  .detail-grid-cell table { width:100%; table-layout:fixed; }
-  .detail-value { font-size:14px; line-height:1.35; margin-top:4px; overflow-wrap:anywhere; }
-  .route-text { font-size:15px; line-height:1.4; margin-top:5px; overflow-wrap:anywhere; }
-  .return-route { font-size:16px; line-height:1.5; margin-top:7px; overflow-wrap:anywhere; }
-  .return-date { font-size:14px; margin-top:6px; }
-  .route-stats { padding:11px 16px; font-size:12px; line-height:1.4; font-weight:600; }
-  .total-card { border-radius:12px; padding:12px 15px; }
-  .total-value { font-size:27px; line-height:1.2; font-weight:800; margin-top:4px; overflow-wrap:anywhere; }
-  .observations-value { font-size:14px; line-height:1.55; margin-top:7px; white-space:pre-line; }
-  @media only screen and (max-width:600px) {
-    .page-pad { padding:8px 6px !important; }
-    .page-bg { padding:8px 0 !important; }
-    .outer-card { border-radius:14px !important; }
-    .brand-header { padding:20px 14px 16px !important; }
-    .brand-logo { width:135px !important; max-width:58% !important; margin-bottom:8px !important; }
-    .header-subtitle { font-size:14px !important; }
-    .main-content { padding:14px 12px 0 !important; }
-    .headline { font-size:20px !important; line-height:1.2 !important; }
-    .section-cell { padding:10px 12px !important; }
-    .card-heading { padding:12px !important; }
-    .detail-cell { display:table-cell !important; width:50% !important; padding:9px 8px !important; }
-    .detail-value { font-size:12px !important; line-height:1.3 !important; }
-    .field-value { font-size:16px !important; }
-    .field-label { font-size:10px !important; letter-spacing:1px !important; }
-    .route-text { font-size:14px !important; line-height:1.35 !important; }
-    .total-value { font-size:25px !important; }
-    .total-card { padding:10px 12px !important; }
-    .route-stats { padding:10px 12px !important; font-size:11px !important; }
-  .calendar-help-title { font-size:19px !important; }
-  .calendar-help-text { font-size:15px !important; line-height:1.55 !important; }
-  .contact-help-title { font-size:19px !important; }
-  .contact-gold { font-size:17px !important; overflow-wrap:anywhere; }
-  .company-footer { font-size:14px !important; }
-  }
-  @media (prefers-color-scheme: dark) {
-    body, .page-bg { background-color:#f1f4f8 !important; }
-    .outer-card { background:#ffffff !important; border-color:#dce2eb !important; }
-    .brand-header { background:#dce9f8 !important; background-image:linear-gradient(135deg,#c7d9f2,#e8f0fb) !important; }
-    .header-subtitle { color:#52647b !important; }
-    .main-content { background:#ffffff !important; }
-    .title, .card-title { color:#101827 !important; }
-    .card-heading { background:#101827 !important; border-color:#30394a !important; }
-    .card-title { color:#ffffff !important; }
-    .manual-accent { color:#ffffff !important; }
-    .folio, .muted, .route-stats { color:#7a8494 !important; }
-    .info-card { background:#f8fafc !important; border-color:#dce2eb !important; }
-    .divider, .section-cell, .detail-cell { border-color:#e2e7ef !important; }
-    .field-value, .detail-value, .route-text, .return-route, .observations-value { color:#263244 !important; }
-    .field-label { color:#b58b37 !important; }
-    .total-card { background:#e8f8f0 !important; border-color:#9bd8bb !important; }
-    .total-value { color:#079b69 !important; }
-    .footer { background:#f8fafc !important; color:#8993a2 !important; }
-    .calendar-help-wrap, .contact-help { background:#ffffff !important; }
-    .calendar-help { background:#f8fafc !important; border-color:#dce2eb !important; }
-    .calendar-help-title, .contact-gold { color:#b58b37 !important; }
-    .calendar-help-text, .contact-help-title { color:#263244 !important; }
-    .gold-divider { border-color:#b58b37 !important; }
-    .company-footer { color:#8993a2 !important; }
-    .route-arrow { color:#b58b37 !important; }
-    .brand-logo-light { display:none !important; }
-    .brand-logo-dark { display:block !important; }
-  }
-</style>
-</head>
-<body style="margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;background:#f1f4f8;color:#263244">
-<div class="page-bg" style="width:100%;background:#f1f4f8;padding:22px 0">
-<table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
-<tr><td align="center" class="page-pad" style="padding:18px 12px">
-<table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" class="email-shell" style="width:100%;max-width:720px">
-<tr><td class="outer-card" style="background:#fff;border:1px solid #dce2eb;border-radius:22px;overflow:hidden">
-<table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
-<tr><td class="brand-header" align="center" style="background:#dce9f8;background-image:linear-gradient(135deg,#c7d9f2,#e8f0fb);padding:34px 20px 28px">
-<img class="brand-logo brand-logo-light" src="${logoWhite}" alt="TMX · Transportes MX" width="190" style="display:block;width:190px;max-width:70%;height:auto;margin:0 auto 15px;border:0;background:transparent">
-<img class="brand-logo brand-logo-dark" src="${logoBlack}" alt="TMX · Transportes MX" width="190" style="display:none;width:190px;max-width:70%;height:auto;margin:0 auto 15px;border:0;background:transparent">
-<div class="header-subtitle" style="font-size:17px;font-weight:700;color:#52647b">Panel de reservas</div>
-</td></tr>
-<tr><td class="main-content" style="background:#fff;padding:18px 16px 0">
-<div class="headline title" style="font-size:25px;line-height:1.2;font-weight:800;color:#b58b37 !important">🚗 Nueva Reserva Manual</div>
-
-</td></tr>
-<tr><td class="main-content" style="background:#fff;padding:14px 16px">
-<table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" class="info-card" style="background:#f8fafc;border:1px solid #dce2eb;border-radius:16px;overflow:hidden">
-<tr><td class="section-cell card-heading" style="padding:12px 16px;border-top:0;background:#101827 !important;border-color:#30394a !important">
-<div class="card-title" style="font-size:18px;line-height:1.3;font-weight:800;color:#ffffff !important">Nueva Reserva</div><div class="folio" style="font-size:14px;color:#aab4c3;margin-top:5px">Folio ${folio}</div>
-</td></tr>
-<tr><td class="section-cell" style="padding:12px 16px;border-top:0">
-<div class="field-label">CLIENTE</div><div class="field-value" style="font-size:20px;font-weight:800;color:#263244;margin-top:6px">${customer}</div>
-</td></tr>
-<tr><td class="section-cell divider" style="padding:12px 16px;border-top:1px solid #e2e7ef">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
-<td width="58%" valign="top" style="padding:0 12px 0 0"><div class="field-label">📧 EMAIL</div><div class="detail-value" style="font-size:15px;line-height:1.5;margin-top:6px;overflow-wrap:anywhere"><a href="mailto:${email}" class="field-value-link" style="color:#2879d8;text-decoration:underline">${email}</a></div></td>
-<td width="42%" valign="top" style="padding:0"><div class="field-label">📞 TELÉFONO</div><div class="detail-value" style="font-size:15px;line-height:1.5;margin-top:6px;overflow-wrap:anywhere">${phone}</div></td>
-</tr></table>
-</td></tr>
-<tr><td class="section-cell divider" style="padding:12px 16px;border-top:1px solid #e2e7ef">
-<div class="field-label">📍 RUTA</div><div class="route-text" style="font-size:17px;line-height:1.55;color:#263244;margin-top:8px">${route}</div>
-</td></tr>
-${returnBlock}
-<tr><td class="section-cell detail-grid-cell" style="padding:0;border-top:1px solid #e2e7ef"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">${detailsHtml}</table></td></tr>
-<tr><td class="section-cell" style="padding:12px 16px;border-top:1px solid #e2e7ef">
-<table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0"><tr><td class="total-card" style="background:#e8f8f0;border:1px solid #9bd8bb;border-radius:14px;padding:18px 20px">
-<div class="field-label">${totalLabel}</div><div class="total-value" style="font-size:34px;line-height:1.25;font-weight:800;color:#079b69;margin-top:6px">${totalValue}</div>
-${isNumericAmount ? '<div class="muted" style="font-size:12px;color:#7b8798;margin-top:3px">MXN</div>' : ''}
-</td></tr></table>
-</td></tr>
-${observations}
-</table>
-</td></tr>
-${routeStats}
-<tr><td class="calendar-help-wrap" style="padding:22px 16px 10px;background:#ffffff">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="calendar-help" style="background:#f8fafc;border:1px solid #dce2eb;border-radius:18px">
-<tr><td style="padding:22px 20px 20px">
-<div class="calendar-help-title" style="font-size:23px;line-height:1.35;font-weight:800;color:#b58b37;margin-bottom:14px">📅 Agrega tu traslado a tu calendario</div>
-<div class="calendar-help-text" style="font-size:18px;line-height:1.65;color:#263244">Adjuntamos un archivo de calendario (.ics) con la fecha, hora, origen, destino y folio del servicio. Abre el archivo para agregar la cita a Google Calendar, Apple Calendar u Outlook.</div>
-</td></tr>
-</table>
-</td></tr>
-<tr><td class="contact-help" align="center" style="padding:22px 16px 18px;background:#ffffff;color:#263244">
-<div class="contact-help-title" style="font-size:22px;line-height:1.4;color:#263244;margin-bottom:12px">¿Necesitas ayuda?</div>
-<div style="font-size:21px;line-height:1.5;font-weight:800;margin-bottom:12px"><a href="mailto:contacto@transportesmx.org" class="contact-gold" style="color:#b58b37;text-decoration:none">contacto@transportesmx.org</a></div>
-<div style="font-size:21px;line-height:1.5;margin-bottom:20px"><a href="https://transportesmx.org" class="contact-gold" style="color:#b58b37;text-decoration:none">https://transportesmx.org</a></div>
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td class="gold-divider" style="border-top:2px solid #b58b37"></td></tr></table>
-<div class="company-footer" style="font-size:17px;line-height:1.65;color:#8993a2;margin-top:20px">Grupo Turístico MX S. de R.L. de C.V.<br>Confirmación de Nota de Venta · Transportes MX</div>
-</td></tr>
-<tr><td class="footer" align="center" style="padding:18px 12px;background:#f8fafc;color:#8993a2;font-size:14px;font-weight:600">TransportesMX · Panel de administración</td></tr>
-</table>
-</td></tr>
-</table>
-</div>
-</body></html>`;
+  const detailsHtml = details.map(([label, value]) => `<td style="width:50%;padding:14px 16px;border-top:1px solid #273247;vertical-align:top"><div style="font-size:10px;letter-spacing:1.4px;color:#d7b56d;font-weight:700">${label}</div><div style="font-size:14px;color:#f4f6fa;margin-top:7px">${value}</div></td>`).join('');
+  return `<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+  <body style="margin:0;background:#080d18;font-family:Arial,Helvetica,sans-serif;color:#f4f6fa">
+  <div style="max-width:680px;margin:0 auto;padding:28px 14px 24px">
+    <div style="text-align:center;padding:10px 0 24px"><img src="${logo}" alt="Transportes MX" width="210" style="display:block;width:210px;max-width:70%;height:auto;margin:0 auto 22px">
+      <div style="font-size:12px;letter-spacing:3px;color:#d7b56d;font-weight:700">TRANSPORTES MX</div>
+      <div style="font-size:28px;line-height:1.25;font-weight:800;margin-top:10px;color:#fff">🚗 NUEVA RESERVA <span style="color:#d7b56d">MANUAL</span></div>
+    </div>
+    <div style="border:1px solid #354052;border-radius:16px;overflow:hidden;background:#0c1322">
+      <div style="padding:20px;border-bottom:1px solid #273247;display:flex;align-items:center">
+        <div style="font-size:24px;color:#d7b56d;margin-right:14px">🚗</div><div><div style="font-size:17px;font-weight:700;color:#fff">Nueva Reserva Manual</div><div style="font-size:13px;color:#aab4c5;margin-top:5px">Folio ${folio}</div></div>
+      </div>
+      <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="border-collapse:collapse">
+        <tr><td colspan="3" style="padding:18px 20px"><div style="font-size:10px;letter-spacing:1.5px;color:#d7b56d;font-weight:700">CLIENTE</div><div style="font-size:18px;font-weight:700;color:#fff;margin-top:6px">${customer}</div></td></tr>
+        <tr><td style="width:50%;padding:14px 20px;border-top:1px solid #273247"><div style="font-size:10px;letter-spacing:1.5px;color:#d7b56d;font-weight:700">EMAIL</div><div style="font-size:14px;color:#f4f6fa;margin-top:6px;word-break:break-word">${esc(nota.email || '—')}</div></td><td style="width:50%;padding:14px 20px;border-top:1px solid #273247"><div style="font-size:10px;letter-spacing:1.5px;color:#d7b56d;font-weight:700">TELÉFONO</div><div style="font-size:14px;color:#f4f6fa;margin-top:6px">${esc(nota.telefono || '—')}</div></td></tr>
+        <tr><td colspan="3" style="padding:16px 20px;border-top:1px solid #273247"><div style="font-size:10px;letter-spacing:1.5px;color:#d7b56d;font-weight:700">RUTA</div><div style="font-size:15px;line-height:1.5;color:#f4f6fa;margin-top:7px">${route}</div></td></tr>
+        ${returnBlock}
+        <tr>${detailsHtml}</tr>
+        <tr><td colspan="3" style="padding:16px 20px"><div style="border:1px solid #176b47;border-radius:12px;background:#06291f;padding:16px 18px"><div style="font-size:11px;letter-spacing:1.5px;color:#d7b56d;font-weight:700">TOTAL</div><div style="font-size:30px;line-height:1.3;font-weight:800;color:#36dc8a;margin-top:5px">${money(nota.importe)}</div><div style="font-size:12px;color:#a9c9b9;margin-top:3px">MXN</div></div></td></tr>
+        ${nota.observaciones ? `<tr><td colspan="3" style="padding:14px 20px;border-top:1px solid #273247"><div style="font-size:10px;letter-spacing:1.5px;color:#d7b56d;font-weight:700">OBSERVACIONES</div><div style="font-size:14px;color:#e4e8ef;line-height:1.5;margin-top:6px">${esc(nota.observaciones)}</div></td></tr>` : ''}
+      </table>
+    </div>
+    <div style="text-align:center;padding:24px 8px 18px;border-bottom:1px solid #d7b56d"><div style="font-size:14px;color:#e4e8ef">¿Necesitas ayuda?</div><a href="mailto:contacto@transportesmx.org" style="display:inline-block;margin-top:7px;color:#d7b56d;text-decoration:none;font-weight:700">contacto@transportesmx.org</a><br><a href="https://transportesmx.org" style="display:inline-block;margin-top:9px;color:#d7b56d;text-decoration:none">https://transportesmx.org</a></div>
+    <div style="text-align:center;padding-top:16px;font-size:11px;line-height:1.6;color:#7f8a9d">Grupo Turístico MX S. de R.L. de C.V.<br>Confirmación de Nota de Venta · Transportes MX</div>
+  </div></body></html>`;
 }
+
 
 /**
  * Reserva un folio de manera atómica en Supabase antes de contactar a Brevo.
@@ -365,8 +138,14 @@ export default async function handler(req, res) {
   }
   const nota = req.body?.nota || req.body;
   const pdfNotaBase64 = req.body?.pdfNotaBase64 || '';
-  if (!nota?.folio || !nota?.cliente || !nota?.email) {
-    return res.status(400).json({ success: false, message: 'Folio, cliente y correo del cliente son obligatorios.' });
+  if (!nota?.folio || !nota?.cliente || !nota?.email || !String(nota.email).trim()) {
+    return res.status(400).json({ success: false, message: 'Folio, cliente y correo principal del cliente son obligatorios.' });
+  }
+  const customerEmail = String(nota.email).trim().toLowerCase();
+  const additionalEmail = String(nota.email2 || '').trim().toLowerCase();
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailPattern.test(customerEmail) || (additionalEmail && !emailPattern.test(additionalEmail))) {
+    return res.status(400).json({ success: false, message: 'El correo principal o adicional no tiene un formato válido.' });
   }
   if (!process.env.BREVO_API_KEY || !process.env.BREVO_SENDER_EMAIL) {
     return res.status(500).json({ success: false, message: 'Falta configurar BREVO_API_KEY o BREVO_SENDER_EMAIL en Vercel.' });
@@ -384,11 +163,6 @@ export default async function handler(req, res) {
     name: `Nota-de-Venta-${String(nota.folio).replace(/[^a-zA-Z0-9_-]/g, '')}.pdf`,
     content: pdfNotaBase64,
   }] : [];
-  const calendarBase64 = buildCalendarAttachment(nota);
-  if (calendarBase64) attachments.push({
-    name: `Cita-Transportes-MX-${String(nota.folio).replace(/[^a-zA-Z0-9_-]/g, '')}.ics`,
-    content: calendarBase64,
-  });
   const subject = `🚗 Nueva Reserva Manual | Folio ${nota.folio}`;
   async function sendTo(email) {
     const response = await fetch('https://api.brevo.com/v3/smtp/email', {
@@ -403,7 +177,6 @@ export default async function handler(req, res) {
   let folioReservado = false;
   let adminId = null;
   let customerId = null;
-  const customerEmail = nota.email.trim();
 
   try {
     // Punto de control persistente: si otro request ya procesó/está procesando el folio,
@@ -421,11 +194,16 @@ export default async function handler(req, res) {
     adminId = await sendTo(ADMIN_EMAIL);
     // Si el correo del cliente es igual al correo administrativo, no enviar dos veces
     // al mismo buzón.
-    if (customerEmail.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
-      customerId = await sendTo(customerEmail);
-    } else {
-      customerId = adminId;
+    const sentCustomerIds = [];
+    const recipients = [...new Set([customerEmail, additionalEmail].filter(Boolean))];
+    for (const recipient of recipients) {
+      if (recipient.toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
+        sentCustomerIds.push(adminId);
+        continue;
+      }
+      sentCustomerIds.push(await sendTo(recipient));
     }
+    customerId = sentCustomerIds.filter(Boolean).join(', ') || adminId;
 
     await actualizarRegistroEnvio(nota.folio, {
       status: 'sent',
@@ -438,9 +216,7 @@ export default async function handler(req, res) {
     return res.status(200).json({
       success: true,
       messageId: customerId || adminId,
-      sentTo: customerEmail.toLowerCase() === ADMIN_EMAIL.toLowerCase()
-        ? [ADMIN_EMAIL]
-        : [ADMIN_EMAIL, customerEmail],
+      sentTo: [ADMIN_EMAIL, ...recipients].filter((email, index, list) => email && list.findIndex((item) => item.toLowerCase() === email.toLowerCase()) === index),
     });
   } catch (error) {
     // No se libera la reserva: Brevo pudo aceptar un mensaje aunque la conexión
