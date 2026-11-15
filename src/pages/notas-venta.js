@@ -1342,7 +1342,7 @@ return notas.filter((nota) =>
 
   return (
     <main className="min-h-screen bg-slate-950 p-3 text-white sm:p-6">
-      <style jsx global>{`\n        .pac-container {\n          z-index: 999999 !important;\n          font-family: Arial, Helvetica, sans-serif !important;\n        }\n        .pac-item {\n          cursor: pointer;\n          padding: 6px 8px;\n        }\n      `}</style>
+      <style jsx global>{`\n        .pac-container {\n          z-index: 999999 !important;\n          font-family: Arial, Helvetica, sans-serif !important;\n        }\n        .pac-item {\n          cursor: pointer;\n          padding: 6px 8px;\n        }\n        /* Unificar apariencia de fecha/hora en navegadores móviles (incluido iOS). */\n        input[type="date"],\n        input[type="time"] {\n          box-sizing: border-box !important;\n          display: block !important;\n          width: 100% !important;\n          min-height: 48px !important;\n          height: 48px !important;\n          padding: 12px !important;\n          border: 1px solid #94a3b8 !important;\n          border-radius: 8px !important;\n          background-color: #fff !important;\n          color: #111827 !important;\n          font: inherit;\n          line-height: normal;\n          -webkit-appearance: none;\n          appearance: none;\n        }\n        input[type="date"]::-webkit-date-and-time-value,\n        input[type="time"]::-webkit-date-and-time-value {\n          text-align: left;\n        }\n      `}</style>
       <div className="mx-auto max-w-7xl">
     <header className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-700 pb-5">
 
@@ -1551,7 +1551,29 @@ return notas.filter((nota) =>
                     required={campo === "cliente" || campo === "unidad"}
                     value={datos[campo] ?? ""}
                     onChange={(e) => cambiar(campo, e.target.value)}
-                    className="mt-1 w-full rounded-lg border border-slate-400 bg-white p-3 text-slate-900 outline-none focus:border-emerald-500"
+                    className={`mt-1 w-full rounded-lg border border-slate-400 bg-white p-3 text-slate-900 outline-none focus:border-emerald-500 ${
+                      tipo === "date" || tipo === "time"
+                        ? "h-12 min-h-12 box-border appearance-none"
+                        : ""
+                    }`}
+                    style={
+                      tipo === "date" || tipo === "time"
+                        ? {
+                            boxSizing: "border-box",
+                            display: "block",
+                            width: "100%",
+                            height: "48px",
+                            minHeight: "48px",
+                            padding: "12px",
+                            border: "1px solid #94a3b8",
+                            borderRadius: "8px",
+                            backgroundColor: "#ffffff",
+                            color: "#111827",
+                            WebkitAppearance: "none",
+                            appearance: "none",
+                          }
+                        : undefined
+                    }
                   />
                 )}
 
