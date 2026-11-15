@@ -1,12 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Autocomplete, useJsApiLoader } from "@react-google-maps/api";
-import { autocompleteOptions } from "@/lib/google-maps";
 import { supabase } from "@/lib/supabase";
 
 const ADMIN1 = "amstrekgrt@gmail.com";
 const ADMIN2 = "and-i89@hotmail.com";
 const ZONA = "America/Mexico_City";
-const GOOGLE_MAPS_LIBRARIES = ["places"];
 
 const INICIAL = {
   cliente: "",
@@ -839,54 +836,67 @@ export default function NotasVenta() {
   const [guardando, setGuardando] = useState(false);
   const [editando, setEditando] = useState(null);
   const [busqueda, setBusqueda] = useState("");
-  // Carga Google Maps mediante el mismo loader y componente Autocomplete
-  // que usa el flujo principal de reservaciones de Transportes MX.
-  const { isLoaded: googleMapsLoaded, loadError: googleMapsLoadError } = useJsApiLoader({
-    id: "google-maps-script-notas-venta",
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
-    libraries: GOOGLE_MAPS_LIBRARIES,
-    language: "es",
-    region: "MX",
-  });
+  const origenInputRef = useRef(null);
+  const destinoInputRef = useRef(null);
+  const placesInitializedRef = useRef(false);
 
-  const origenAutocompleteRef = useRef(null);
-  const destinoAutocompleteRef = useRef(null);
+  // Google Places Autocomplete para Recoger en y Destino.
+  // Requiere NEXT_PUBLIC_GOOGLE_MAPS_API_KEY con Places API habilitada.
+  useEffect(() => {
+    const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+    if (!apiKey || placesInitializedRef.current) return;
 
-  const onOrigenLoad = (autocomplete) => {
-    origenAutocompleteRef.current = autocomplete;
-  };
+    const inicializarPlaces = () => {
+      if (!window.google?.maps?.places || placesInitializedRef.current) return;
+      placesInitializedRef.current = true;
 
-  const onDestinoLoad = (autocomplete) => {
-    destinoAutocompleteRef.current = autocomplete;
-  };
+      const configurar = (inputRef, campo) => {
+        const input = inputRef.current;
+        if (!input) return;
+        const autocomplete = new window.google.maps.places.Autocomplete(input, {
+          fields: ["formatted_address", "geometry", "place_id", "name"],
+          types: ["geocode", "establishment"],
+        });
+        autocomplete.addListener("place_changed", () => {
+          const place = autocomplete.getPlace();
+          const direccion = place.formatted_address || place.name || input.value || "";
+          const ubicacion = place.geometry?.location;
+          cambiar(campo, direccion);
+          cambiar(`${campo}PlaceId`, place.place_id || "");
+          cambiar(`${campo}Lat`, ubicacion ? String(ubicacion.lat()) : "");
+          cambiar(`${campo}Lng`, ubicacion ? String(ubicacion.lng()) : "");
+        });
+        input.addEventListener("input", () => {
+          cambiar(`${campo}PlaceId`, "");
+          cambiar(`${campo}Lat`, "");
+          cambiar(`${campo}Lng`, "");
+        });
+      };
 
-  const onOrigenChanged = () => {
-    const place = origenAutocompleteRef.current?.getPlace();
-    if (!place?.geometry?.location) {
-      setMensaje("Selecciona una dirección de las sugerencias de Google Maps para Recoger en.");
+      configurar(origenInputRef, "origen");
+      configurar(destinoInputRef, "destino");
+    };
+
+    if (window.google?.maps?.places) {
+      inicializarPlaces();
       return;
     }
-    const location = place.geometry.location;
-    cambiar("origen", place.formatted_address || place.name || "");
-    cambiar("origenPlaceId", place.place_id || "");
-    cambiar("origenLat", String(location.lat()));
-    cambiar("origenLng", String(location.lng()));
-    setMensaje("");
-  };
 
-  const onDestinoChanged = () => {
-    const place = destinoAutocompleteRef.current?.getPlace();
-    if (!place?.geometry?.location) {
-      setMensaje("Selecciona una dirección de las sugerencias de Google Maps para Destino.");
+    const existingScript = document.querySelector('script[data-google-places="notas-venta"]');
+    if (existingScript) {
+      existingScript.addEventListener("load", inicializarPlaces, { once: true });
       return;
     }
-    const location = place.geometry.location;
-    cambiar("destino", place.formatted_address || place.name || "");
-    cambiar("destinoPlaceId", place.place_id || "");
-    cambiar("destinoLat", String(location.lat()));
-    cambiar("destinoLng", String(location.lng()));
-    setMensaje("");
-  };
+
+    const script = document.createElement("script");
+    script.dataset.googlePlaces = "notas-venta";
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(apiKey)}&libraries=places&language=es&region=MX`;
+    script.async = true;
+    script.defer = true;
+    script.onload = inicializarPlaces;
+    script.onerror = () => console.error("No se pudo cargar Google Places en Notas de Venta.");
+    document.head.appendChild(script);
+  }, []);
 
   const emailUsuario = sesion?.user?.email?.toLowerCase();
   const admin1 = emailUsuario === ADMIN1;
@@ -1131,6 +1141,9 @@ try {
         if (!respuestaCorreo.ok || !resultadoCorreo.success) {
           estadoCorreo = "error";
           console.error("La nota se guardó, pero falló el envío del correo:", resultadoCorreo);
+        } else if (resultadoCorreo.alreadyProcessed) {
+          estadoCorreo = "ya-registrado";
+          console.warn("El folio ya tiene un registro de envío en Supabase:", resultadoCorreo);
         } else {
           estadoCorreo = "enviado";
           console.log("Correo de confirmación enviado con Brevo:", resultadoCorreo.messageId);
@@ -1152,8 +1165,10 @@ try {
 
     setMensaje(
       estadoCorreo === "enviado"
-        ? `Nota guardada con folio ${nueva.folio}. Correo de confirmación enviado al cliente y a contacto@transportesmx.org.`
-        : estadoCorreo === "error"
+        ? `Nota guardada con folio ${nueva.folio}. Correo enviado a los destinatarios registrados y a contacto@transportesmx.org.`
+        : estadoCorreo === "ya-registrado"
+          ? `Nota guardada con folio ${nueva.folio}. Supabase ya tiene un registro de envío para este folio; verifica el correo antes de solicitar otro envío.`
+          : estadoCorreo === "error"
           ? `Nota guardada con folio ${nueva.folio}, pero no se pudo enviar el correo. Revisa la configuración de Brevo.`
           : `Nota guardada con folio ${nueva.folio}. No se envió correo porque falta el correo del cliente.`
     );
@@ -1421,7 +1436,7 @@ return notas.filter((nota) =>
 
         <form onSubmit={guardar} className="space-y-4">
 
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
 
             {CAMPOS.map(([campo, etiqueta, tipo]) => {
               // Los campos de regreso solo se muestran para viaje redondo.
@@ -1443,7 +1458,6 @@ return notas.filter((nota) =>
                   <select
                     required
                     value={datos[campo] ?? ""}
-                    ref={campo === "origen" ? origenInputRef : campo === "destino" ? destinoInputRef : undefined}
                     onChange={(e) => cambiar(campo, e.target.value)}
                     className="mt-1 w-full rounded-lg border border-slate-400 bg-white p-3 text-slate-900 outline-none focus:border-emerald-500"
                   >
@@ -1482,76 +1496,15 @@ return notas.filter((nota) =>
                       </option>
                     ))}
                   </select>
-                ) : campo === "origen" ? (
-                  googleMapsLoaded ? (
-                    <Autocomplete
-                      onLoad={onOrigenLoad}
-                      onPlaceChanged={onOrigenChanged}
-                      options={autocompleteOptions}
-                    >
-                      <input
-                        type="text"
-                        required
-                        value={datos.origen ?? ""}
-                        onChange={(e) => {
-                          cambiar("origen", e.target.value);
-                          cambiar("origenPlaceId", "");
-                          cambiar("origenLat", "");
-                          cambiar("origenLng", "");
-                        }}
-                        placeholder="Escribe aeropuerto, hotel o dirección y selecciona una sugerencia"
-                        className="mt-1 w-full rounded-lg border border-slate-400 bg-white p-3 text-slate-900 outline-none focus:border-emerald-500"
-                      />
-                    </Autocomplete>
-                  ) : (
-                    <input
-                      type="text"
-                      required
-                      value={datos.origen ?? ""}
-                      onChange={(e) => cambiar("origen", e.target.value)}
-                      placeholder={googleMapsLoadError ? "Google Maps no pudo cargar" : "Cargando Google Maps…"}
-                      className="mt-1 w-full rounded-lg border border-slate-400 bg-white p-3 text-slate-900 outline-none focus:border-emerald-500"
-                    />
-                  )
-                ) : campo === "destino" ? (
-                  googleMapsLoaded ? (
-                    <Autocomplete
-                      onLoad={onDestinoLoad}
-                      onPlaceChanged={onDestinoChanged}
-                      options={autocompleteOptions}
-                    >
-                      <input
-                        type="text"
-                        required
-                        value={datos.destino ?? ""}
-                        onChange={(e) => {
-                          cambiar("destino", e.target.value);
-                          cambiar("destinoPlaceId", "");
-                          cambiar("destinoLat", "");
-                          cambiar("destinoLng", "");
-                        }}
-                        placeholder="Escribe aeropuerto, hotel o dirección y selecciona una sugerencia"
-                        className="mt-1 w-full rounded-lg border border-slate-400 bg-white p-3 text-slate-900 outline-none focus:border-emerald-500"
-                      />
-                    </Autocomplete>
-                  ) : (
-                    <input
-                      type="text"
-                      required
-                      value={datos.destino ?? ""}
-                      onChange={(e) => cambiar("destino", e.target.value)}
-                      placeholder={googleMapsLoadError ? "Google Maps no pudo cargar" : "Cargando Google Maps…"}
-                      className="mt-1 w-full rounded-lg border border-slate-400 bg-white p-3 text-slate-900 outline-none focus:border-emerald-500"
-                    />
-                  )
                 ) : (
                   <input
                     type={tipo}
                     min={tipo === "number" ? "0" : undefined}
                     required={campo === "cliente" || campo === "unidad"}
                     value={datos[campo] ?? ""}
+                    ref={campo === "origen" ? origenInputRef : campo === "destino" ? destinoInputRef : undefined}
                     onChange={(e) => cambiar(campo, e.target.value)}
-                    className="mt-1 w-full rounded-lg border border-slate-400 bg-white p-3 text-slate-900 outline-none focus:border-emerald-500"
+                    className="mt-1 w-full min-w-0 rounded-lg border border-slate-400 bg-white p-3 text-slate-900 outline-none focus:border-emerald-500"
                   />
                 )}
 
