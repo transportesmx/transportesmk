@@ -841,41 +841,22 @@ export default function NotasVenta() {
   const placesInitializedRef = useRef(false);
 
   // Google Places Autocomplete para Recoger en y Destino.
-  // Espera a que el formulario y sus inputs estén montados; esto ocurre
-  // después de validar la sesión en algunas vistas/tablets.
+  // Requiere NEXT_PUBLIC_GOOGLE_MAPS_API_KEY con Places API habilitada.
   useEffect(() => {
     const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
-    if (!apiKey) {
-      console.error("Falta NEXT_PUBLIC_GOOGLE_MAPS_API_KEY para Google Places.");
-      return;
-    }
-
-    let cancelled = false;
-    let retryTimer;
-    let script;
+    if (!apiKey || placesInitializedRef.current) return;
 
     const inicializarPlaces = () => {
-      if (cancelled || placesInitializedRef.current) return;
-      const googlePlaces = window.google?.maps?.places;
-      const origenInput = origenInputRef.current;
-      const destinoInput = destinoInputRef.current;
+      if (!window.google?.maps?.places || placesInitializedRef.current) return;
+      placesInitializedRef.current = true;
 
-      // No marcar como inicializado hasta que ambos inputs existan.
-      if (!googlePlaces || !origenInput || !destinoInput) {
-        retryTimer = window.setTimeout(inicializarPlaces, 250);
-        return;
-      }
-
-      const configurar = (input, campo) => {
-        // Evitar duplicar listeners si el efecto vuelve a ejecutarse.
-        if (input.dataset.placesAutocompleteAttached === "true") return;
-        input.dataset.placesAutocompleteAttached = "true";
-
-        const autocomplete = new googlePlaces.Autocomplete(input, {
+      const configurar = (inputRef, campo) => {
+        const input = inputRef.current;
+        if (!input) return;
+        const autocomplete = new window.google.maps.places.Autocomplete(input, {
           fields: ["formatted_address", "geometry", "place_id", "name"],
           types: ["geocode", "establishment"],
         });
-
         autocomplete.addListener("place_changed", () => {
           const place = autocomplete.getPlace();
           const direccion = place.formatted_address || place.name || input.value || "";
@@ -885,7 +866,6 @@ export default function NotasVenta() {
           cambiar(`${campo}Lat`, ubicacion ? String(ubicacion.lat()) : "");
           cambiar(`${campo}Lng`, ubicacion ? String(ubicacion.lng()) : "");
         });
-
         input.addEventListener("input", () => {
           cambiar(`${campo}PlaceId`, "");
           cambiar(`${campo}Lat`, "");
@@ -893,43 +873,30 @@ export default function NotasVenta() {
         });
       };
 
-      configurar(origenInput, "origen");
-      configurar(destinoInput, "destino");
-      placesInitializedRef.current = true;
+      configurar(origenInputRef, "origen");
+      configurar(destinoInputRef, "destino");
     };
 
-    // Google Maps puede estar ya disponible (por ejemplo, si el script
-    // compartido de reservas lo cargó antes que esta página).
     if (window.google?.maps?.places) {
       inicializarPlaces();
-    } else {
-      const existingScript = document.querySelector('script[data-google-places="notas-venta"]');
-      if (existingScript) {
-        existingScript.addEventListener("load", inicializarPlaces, { once: true });
-        existingScript.addEventListener("error", () => {
-          console.error("No se pudo cargar Google Places en Notas de Venta.");
-        }, { once: true });
-      } else {
-        script = document.createElement("script");
-        script.dataset.googlePlaces = "notas-venta";
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(apiKey)}&libraries=places&language=es&region=MX`;
-        script.async = true;
-        script.defer = true;
-        script.onload = inicializarPlaces;
-        script.onerror = () => console.error("No se pudo cargar Google Places en Notas de Venta.");
-        document.head.appendChild(script);
-      }
+      return;
     }
 
-    // Si el formulario aparece luego de la carga de Google, reintenta hasta
-    // conectar ambos inputs. El campo sigue siendo escribible manualmente.
-    retryTimer = window.setTimeout(inicializarPlaces, 250);
+    const existingScript = document.querySelector('script[data-google-places="notas-venta"]');
+    if (existingScript) {
+      existingScript.addEventListener("load", inicializarPlaces, { once: true });
+      return;
+    }
 
-    return () => {
-      cancelled = true;
-      if (retryTimer) window.clearTimeout(retryTimer);
-    };
-  }, [sesion]);
+    const script = document.createElement("script");
+    script.dataset.googlePlaces = "notas-venta";
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(apiKey)}&libraries=places&language=es&region=MX`;
+    script.async = true;
+    script.defer = true;
+    script.onload = inicializarPlaces;
+    script.onerror = () => console.error("No se pudo cargar Google Places en Notas de Venta.");
+    document.head.appendChild(script);
+  }, []);
 
   const emailUsuario = sesion?.user?.email?.toLowerCase();
   const admin1 = emailUsuario === ADMIN1;
@@ -1389,11 +1356,11 @@ return notas.filter((nota) =>
   }
 
   return (
-    <main className="min-h-screen w-full max-w-[100vw] overflow-x-hidden bg-slate-950 p-2 text-white sm:p-4 lg:p-6" style={{ boxSizing: "border-box" }}>
-      <div className="mx-auto w-full min-w-0 max-w-7xl" style={{ boxSizing: "border-box" }}>
-    <header className="flex w-full min-w-0 flex-wrap items-center justify-between gap-4 border-b border-slate-700 pb-5">
+    <main className="min-h-screen bg-slate-950 p-3 text-white sm:p-6">
+      <div className="mx-auto max-w-7xl">
+    <header className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-700 pb-5">
 
-      <div className="flex min-w-0 max-w-full items-center gap-4">
+      <div className="flex items-center gap-4">
         <img
           src="/logo-blanco.png"
           alt="Transportes MX"
@@ -1436,9 +1403,9 @@ return notas.filter((nota) =>
       </p>
     )}
 
-    <div className="grid w-full min-w-0 items-start gap-3 py-3 xl:gap-5 xl:py-5 xl:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]" style={{ boxSizing: "border-box" }}>
+    <div className="grid items-start gap-5 py-5 xl:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]">
 
-      <section className="w-full min-w-0 max-w-full rounded-2xl border border-slate-700 bg-slate-900 p-2 sm:p-3 lg:p-5" style={{ boxSizing: "border-box" }}>
+      <section className="rounded-2xl border border-slate-700 bg-slate-900 p-4 sm:p-5">
 
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
 
@@ -1467,9 +1434,9 @@ return notas.filter((nota) =>
 
         </div>
 
-        <form onSubmit={guardar} className="w-full min-w-0 space-y-3" style={{ boxSizing: "border-box" }}>
+        <form onSubmit={guardar} className="space-y-4">
 
-          <div className="grid w-full min-w-0 grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-3" style={{ boxSizing: "border-box" }}>
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
 
             {CAMPOS.map(([campo, etiqueta, tipo]) => {
               // Los campos de regreso solo se muestran para viaje redondo.
@@ -1492,7 +1459,7 @@ return notas.filter((nota) =>
                     required
                     value={datos[campo] ?? ""}
                     onChange={(e) => cambiar(campo, e.target.value)}
-                    className="mt-1 block w-full min-w-0 max-w-full rounded-lg border border-slate-400 bg-white p-3 text-slate-900 outline-none focus:border-emerald-500" style={{ boxSizing: "border-box" }}
+                    className="mt-1 w-full rounded-lg border border-slate-400 bg-white p-3 text-slate-900 outline-none focus:border-emerald-500"
                   >
                     <option value="">Selecciona el tipo de viaje</option>
                     <option value="sencillo">Sencillo</option>
@@ -1505,7 +1472,6 @@ return notas.filter((nota) =>
                     onChange={(e) => cambiar(campo, e.target.value)}
                     style={{
                       appearance: "auto",
-                      boxSizing: "border-box",
                       WebkitAppearance: "menulist",
                       MozAppearance: "menulist",
                       display: "block",
@@ -1538,7 +1504,7 @@ return notas.filter((nota) =>
                     value={datos[campo] ?? ""}
                     ref={campo === "origen" ? origenInputRef : campo === "destino" ? destinoInputRef : undefined}
                     onChange={(e) => cambiar(campo, e.target.value)}
-                    className="mt-1 block w-full min-w-0 max-w-full rounded-lg border border-slate-400 bg-white p-3 text-slate-900 outline-none focus:border-emerald-500" style={{ boxSizing: "border-box" }}
+                    className="mt-1 w-full min-w-0 rounded-lg border border-slate-400 bg-white p-3 text-slate-900 outline-none focus:border-emerald-500"
                   />
                 )}
 
@@ -1559,7 +1525,7 @@ return notas.filter((nota) =>
                 value={datos.importe}
                 onChange={(e) => cambiar("importe", e.target.value)}
                 placeholder="Ej. 3500 o Pagado"
-                className="mt-1 block w-full min-w-0 max-w-full rounded-lg border border-slate-400 bg-white p-3 text-slate-900 outline-none focus:border-emerald-500" style={{ boxSizing: "border-box" }}
+                className="mt-1 w-full rounded-lg border border-slate-400 bg-white p-3 text-slate-900 outline-none focus:border-emerald-500"
               />
 
             </label>
@@ -1577,7 +1543,7 @@ return notas.filter((nota) =>
               onChange={(e) => cambiar("observaciones", e.target.value)}
               rows={2}
               placeholder="Escribe las observaciones del servicio"
-              className="mt-1 block w-full min-w-0 max-w-full rounded-lg border border-slate-400 bg-white p-3 text-slate-900" style={{ boxSizing: "border-box" }}
+              className="mt-1 w-full rounded-lg border border-slate-400 bg-white p-3 text-slate-900"
             />
 
           </label>
@@ -1629,7 +1595,7 @@ return notas.filter((nota) =>
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
             placeholder="Buscar por folio, cliente o servicio…"
-            className="mb-4 block w-full min-w-0 max-w-full rounded-lg border border-slate-600 bg-slate-950 p-3 text-white" style={{ boxSizing: "border-box" }}
+            className="mb-4 w-full rounded-lg border border-slate-600 bg-slate-950 p-3 text-white"
           />
 
           {notasFiltradas.length === 0 ? (
@@ -1713,7 +1679,7 @@ return notas.filter((nota) =>
 
       </section>
 
-      <section className="w-full min-w-0 max-w-full rounded-2xl bg-slate-200 p-2 text-black sm:p-3 lg:p-4" style={{ boxSizing: "border-box" }}>
+      <section className="rounded-2xl bg-slate-200 p-2 text-black sm:p-4">
 
         <div className="mb-3 flex items-center justify-between gap-2 px-1">
 
@@ -1731,7 +1697,7 @@ return notas.filter((nota) =>
 
         </div>
 
-        <article className="mx-auto max-w-[560px] bg-white px-4 py-4 text-black shadow-xl sm:px-6 sm:py-5 lg:px-10 lg:py-7">
+        <article className="mx-auto max-w-[560px] bg-white px-8 py-5 text-black shadow-xl sm:px-10 sm:py-7">
 
           <div className="grid grid-cols-[minmax(0,1fr)_112px] items-start gap-3">
 
