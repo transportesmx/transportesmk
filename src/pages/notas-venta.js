@@ -1356,11 +1356,11 @@ return notas.filter((nota) =>
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 p-3 text-white sm:p-6">
-      <div className="mx-auto max-w-7xl">
-    <header className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-700 pb-5">
+    <main className="min-h-screen w-full max-w-[100vw] overflow-x-hidden bg-slate-950 p-3 text-white sm:p-6" style={{ boxSizing: "border-box" }}>
+      <div className="mx-auto w-full min-w-0 max-w-7xl" style={{ boxSizing: "border-box" }}>
+    <header className="flex w-full min-w-0 flex-wrap items-center justify-between gap-4 border-b border-slate-700 pb-5">
 
-      <div className="flex items-center gap-4">
+      <div className="flex min-w-0 max-w-full items-center gap-4">
         <img
           src="/logo-blanco.png"
           alt="Transportes MX"
@@ -1403,9 +1403,9 @@ return notas.filter((nota) =>
       </p>
     )}
 
-    <div className="grid items-start gap-5 py-5 xl:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]">
+    <div className="grid w-full min-w-0 items-start gap-5 py-5 xl:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]" style={{ boxSizing: "border-box" }}>
 
-      <section className="rounded-2xl border border-slate-700 bg-slate-900 p-4 sm:p-5">
+      <section className="w-full min-w-0 max-w-full rounded-2xl border border-slate-700 bg-slate-900 p-3 sm:p-5" style={{ boxSizing: "border-box" }}>
 
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
 
@@ -1434,9 +1434,9 @@ return notas.filter((nota) =>
 
         </div>
 
-        <form onSubmit={guardar} className="space-y-4">
+        <form onSubmit={guardar} className="w-full min-w-0 space-y-4" style={{ boxSizing: "border-box" }}>
 
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+          <div className="grid w-full min-w-0 grid-cols-1 gap-3 md:grid-cols-2" style={{ boxSizing: "border-box" }}>
 
             {CAMPOS.map(([campo, etiqueta, tipo]) => {
               // Los campos de regreso solo se muestran para viaje redondo.
@@ -1459,7 +1459,7 @@ return notas.filter((nota) =>
                     required
                     value={datos[campo] ?? ""}
                     onChange={(e) => cambiar(campo, e.target.value)}
-                    className="mt-1 w-full rounded-lg border border-slate-400 bg-white p-3 text-slate-900 outline-none focus:border-emerald-500"
+                    className="mt-1 block w-full min-w-0 max-w-full rounded-lg border border-slate-400 bg-white p-3 text-slate-900 outline-none focus:border-emerald-500" style={{ boxSizing: "border-box" }}
                   >
                     <option value="">Selecciona el tipo de viaje</option>
                     <option value="sencillo">Sencillo</option>
@@ -1472,6 +1472,7 @@ return notas.filter((nota) =>
                     onChange={(e) => cambiar(campo, e.target.value)}
                     style={{
                       appearance: "auto",
+                      boxSizing: "border-box",
                       WebkitAppearance: "menulist",
                       MozAppearance: "menulist",
                       display: "block",
@@ -1504,7 +1505,7 @@ return notas.filter((nota) =>
                     value={datos[campo] ?? ""}
                     ref={campo === "origen" ? origenInputRef : campo === "destino" ? destinoInputRef : undefined}
                     onChange={(e) => cambiar(campo, e.target.value)}
-                    className="mt-1 w-full min-w-0 rounded-lg border border-slate-400 bg-white p-3 text-slate-900 outline-none focus:border-emerald-500"
+                    className="mt-1 block w-full min-w-0 max-w-full rounded-lg border border-slate-400 bg-white p-3 text-slate-900 outline-none focus:border-emerald-500" style={{ boxSizing: "border-box" }}
                   />
                 )}
 
@@ -1525,7 +1526,7 @@ return notas.filter((nota) =>
                 value={datos.importe}
                 onChange={(e) => cambiar("importe", e.target.value)}
                 placeholder="Ej. 3500 o Pagado"
-                className="mt-1 w-full rounded-lg border border-slate-400 bg-white p-3 text-slate-900 outline-none focus:border-emerald-500"
+                className="mt-1 block w-full min-w-0 max-w-full rounded-lg border border-slate-400 bg-white p-3 text-slate-900 outline-none focus:border-emerald-500" style={{ boxSizing: "border-box" }}
               />
 
             </label>
@@ -1543,7 +1544,7 @@ return notas.filter((nota) =>
               onChange={(e) => cambiar("observaciones", e.target.value)}
               rows={2}
               placeholder="Escribe las observaciones del servicio"
-              className="mt-1 w-full rounded-lg border border-slate-400 bg-white p-3 text-slate-900"
+              className="mt-1 block w-full min-w-0 max-w-full rounded-lg border border-slate-400 bg-white p-3 text-slate-900" style={{ boxSizing: "border-box" }}
             />
 
           </label>
@@ -1595,7 +1596,7 @@ return notas.filter((nota) =>
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
             placeholder="Buscar por folio, cliente o servicio…"
-            className="mb-4 w-full rounded-lg border border-slate-600 bg-slate-950 p-3 text-white"
+            className="mb-4 block w-full min-w-0 max-w-full rounded-lg border border-slate-600 bg-slate-950 p-3 text-white" style={{ boxSizing: "border-box" }}
           />
 
           {notasFiltradas.length === 0 ? (
@@ -1679,7 +1680,7 @@ return notas.filter((nota) =>
 
       </section>
 
-      <section className="rounded-2xl bg-slate-200 p-2 text-black sm:p-4">
+      <section className="w-full min-w-0 max-w-full rounded-2xl bg-slate-200 p-2 text-black sm:p-4" style={{ boxSizing: "border-box" }}>
 
         <div className="mb-3 flex items-center justify-between gap-2 px-1">
 
