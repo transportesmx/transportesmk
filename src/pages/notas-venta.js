@@ -1356,7 +1356,7 @@ return notas.filter((nota) =>
   }
 
   return (
-    <main className="min-h-screen w-full max-w-[100vw] overflow-x-hidden bg-slate-950 p-3 text-white sm:p-6" style={{ boxSizing: "border-box" }}>
+    <main className="min-h-screen w-full max-w-[100vw] overflow-x-hidden bg-slate-950 p-2 text-white sm:p-4 lg:p-6" style={{ boxSizing: "border-box" }}>
       <div className="mx-auto w-full min-w-0 max-w-7xl" style={{ boxSizing: "border-box" }}>
     <header className="flex w-full min-w-0 flex-wrap items-center justify-between gap-4 border-b border-slate-700 pb-5">
 
@@ -1403,9 +1403,9 @@ return notas.filter((nota) =>
       </p>
     )}
 
-    <div className="grid w-full min-w-0 items-start gap-5 py-5 xl:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]" style={{ boxSizing: "border-box" }}>
+    <div className="grid w-full min-w-0 items-start gap-3 py-3 xl:gap-5 xl:py-5 xl:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]" style={{ boxSizing: "border-box" }}>
 
-      <section className="w-full min-w-0 max-w-full rounded-2xl border border-slate-700 bg-slate-900 p-3 sm:p-5" style={{ boxSizing: "border-box" }}>
+      <section className="w-full min-w-0 max-w-full rounded-2xl border border-slate-700 bg-slate-900 p-2 sm:p-3 lg:p-5" style={{ boxSizing: "border-box" }}>
 
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
 
@@ -1434,9 +1434,9 @@ return notas.filter((nota) =>
 
         </div>
 
-        <form onSubmit={guardar} className="w-full min-w-0 space-y-4" style={{ boxSizing: "border-box" }}>
+        <form onSubmit={guardar} className="w-full min-w-0 space-y-3" style={{ boxSizing: "border-box" }}>
 
-          <div className="grid w-full min-w-0 grid-cols-1 gap-3 md:grid-cols-2" style={{ boxSizing: "border-box" }}>
+          <div className="grid w-full min-w-0 grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-3" style={{ boxSizing: "border-box" }}>
 
             {CAMPOS.map(([campo, etiqueta, tipo]) => {
               // Los campos de regreso solo se muestran para viaje redondo.
@@ -1680,7 +1680,7 @@ return notas.filter((nota) =>
 
       </section>
 
-      <section className="w-full min-w-0 max-w-full rounded-2xl bg-slate-200 p-2 text-black sm:p-4" style={{ boxSizing: "border-box" }}>
+      <section className="w-full min-w-0 max-w-full rounded-2xl bg-slate-200 p-2 text-black sm:p-3 lg:p-4" style={{ boxSizing: "border-box" }}>
 
         <div className="mb-3 flex items-center justify-between gap-2 px-1">
 
@@ -1698,7 +1698,7 @@ return notas.filter((nota) =>
 
         </div>
 
-        <article className="mx-auto max-w-[560px] bg-white px-8 py-5 text-black shadow-xl sm:px-10 sm:py-7">
+        <article className="mx-auto max-w-[560px] bg-white px-4 py-4 text-black shadow-xl sm:px-6 sm:py-5 lg:px-10 lg:py-7">
 
           <div className="grid grid-cols-[minmax(0,1fr)_112px] items-start gap-3">
 
