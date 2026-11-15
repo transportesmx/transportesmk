@@ -841,22 +841,41 @@ export default function NotasVenta() {
   const placesInitializedRef = useRef(false);
 
   // Google Places Autocomplete para Recoger en y Destino.
-  // Requiere NEXT_PUBLIC_GOOGLE_MAPS_API_KEY con Places API habilitada.
+  // Espera a que el formulario y sus inputs estén montados; esto ocurre
+  // después de validar la sesión en algunas vistas/tablets.
   useEffect(() => {
     const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
-    if (!apiKey || placesInitializedRef.current) return;
+    if (!apiKey) {
+      console.error("Falta NEXT_PUBLIC_GOOGLE_MAPS_API_KEY para Google Places.");
+      return;
+    }
+
+    let cancelled = false;
+    let retryTimer;
+    let script;
 
     const inicializarPlaces = () => {
-      if (!window.google?.maps?.places || placesInitializedRef.current) return;
-      placesInitializedRef.current = true;
+      if (cancelled || placesInitializedRef.current) return;
+      const googlePlaces = window.google?.maps?.places;
+      const origenInput = origenInputRef.current;
+      const destinoInput = destinoInputRef.current;
 
-      const configurar = (inputRef, campo) => {
-        const input = inputRef.current;
-        if (!input) return;
-        const autocomplete = new window.google.maps.places.Autocomplete(input, {
+      // No marcar como inicializado hasta que ambos inputs existan.
+      if (!googlePlaces || !origenInput || !destinoInput) {
+        retryTimer = window.setTimeout(inicializarPlaces, 250);
+        return;
+      }
+
+      const configurar = (input, campo) => {
+        // Evitar duplicar listeners si el efecto vuelve a ejecutarse.
+        if (input.dataset.placesAutocompleteAttached === "true") return;
+        input.dataset.placesAutocompleteAttached = "true";
+
+        const autocomplete = new googlePlaces.Autocomplete(input, {
           fields: ["formatted_address", "geometry", "place_id", "name"],
           types: ["geocode", "establishment"],
         });
+
         autocomplete.addListener("place_changed", () => {
           const place = autocomplete.getPlace();
           const direccion = place.formatted_address || place.name || input.value || "";
@@ -866,6 +885,7 @@ export default function NotasVenta() {
           cambiar(`${campo}Lat`, ubicacion ? String(ubicacion.lat()) : "");
           cambiar(`${campo}Lng`, ubicacion ? String(ubicacion.lng()) : "");
         });
+
         input.addEventListener("input", () => {
           cambiar(`${campo}PlaceId`, "");
           cambiar(`${campo}Lat`, "");
@@ -873,30 +893,43 @@ export default function NotasVenta() {
         });
       };
 
-      configurar(origenInputRef, "origen");
-      configurar(destinoInputRef, "destino");
+      configurar(origenInput, "origen");
+      configurar(destinoInput, "destino");
+      placesInitializedRef.current = true;
     };
 
+    // Google Maps puede estar ya disponible (por ejemplo, si el script
+    // compartido de reservas lo cargó antes que esta página).
     if (window.google?.maps?.places) {
       inicializarPlaces();
-      return;
+    } else {
+      const existingScript = document.querySelector('script[data-google-places="notas-venta"]');
+      if (existingScript) {
+        existingScript.addEventListener("load", inicializarPlaces, { once: true });
+        existingScript.addEventListener("error", () => {
+          console.error("No se pudo cargar Google Places en Notas de Venta.");
+        }, { once: true });
+      } else {
+        script = document.createElement("script");
+        script.dataset.googlePlaces = "notas-venta";
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(apiKey)}&libraries=places&language=es&region=MX`;
+        script.async = true;
+        script.defer = true;
+        script.onload = inicializarPlaces;
+        script.onerror = () => console.error("No se pudo cargar Google Places en Notas de Venta.");
+        document.head.appendChild(script);
+      }
     }
 
-    const existingScript = document.querySelector('script[data-google-places="notas-venta"]');
-    if (existingScript) {
-      existingScript.addEventListener("load", inicializarPlaces, { once: true });
-      return;
-    }
+    // Si el formulario aparece luego de la carga de Google, reintenta hasta
+    // conectar ambos inputs. El campo sigue siendo escribible manualmente.
+    retryTimer = window.setTimeout(inicializarPlaces, 250);
 
-    const script = document.createElement("script");
-    script.dataset.googlePlaces = "notas-venta";
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(apiKey)}&libraries=places&language=es&region=MX`;
-    script.async = true;
-    script.defer = true;
-    script.onload = inicializarPlaces;
-    script.onerror = () => console.error("No se pudo cargar Google Places en Notas de Venta.");
-    document.head.appendChild(script);
-  }, []);
+    return () => {
+      cancelled = true;
+      if (retryTimer) window.clearTimeout(retryTimer);
+    };
+  }, [sesion]);
 
   const emailUsuario = sesion?.user?.email?.toLowerCase();
   const admin1 = emailUsuario === ADMIN1;
