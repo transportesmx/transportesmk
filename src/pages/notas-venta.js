@@ -842,7 +842,7 @@ export default function NotasVenta() {
   // Carga Google Maps mediante el mismo loader y componente Autocomplete
   // que usa el flujo principal de reservaciones de Transportes MX.
   const { isLoaded: googleMapsLoaded, loadError: googleMapsLoadError } = useJsApiLoader({
-    id: "google-maps-script-notas-venta",
+    id: "script-loader",
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
     libraries: GOOGLE_MAPS_LIBRARIES,
     language: "es",
