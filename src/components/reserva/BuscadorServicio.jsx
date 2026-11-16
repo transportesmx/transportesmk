@@ -488,7 +488,7 @@ export default function BuscadorServicio({ onNext, isLoaded }) {
                   y: { duration: 3, repeat: Infinity, ease: "easeInOut" },
                   scale: { duration: 3, repeat: Infinity, ease: "easeInOut" },
                 }}
-                className="relative mx-auto mb-2 flex h-32 sm:h-36 w-full max-w-[190px] items-center justify-center"
+                className="relative mx-auto mb-2 flex h-44 sm:h-52 w-full max-w-[260px] items-center justify-center"
               >
                 <img
                   src="/assets/images/operadora-tmx.png"
@@ -502,7 +502,7 @@ export default function BuscadorServicio({ onNext, isLoaded }) {
               <motion.div
                 animate={{ scale: [1, 1.06, 1] }}
                 transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
-                className="w-10 h-10 mx-auto rounded-full bg-amber-500/10 border border-amber-500/25 flex items-center justify-center mb-3 shadow-[0_0_14px_rgba(245,158,11,0.08)]"
+                className="w-10 h-10 mr-auto rounded-full bg-amber-500/10 border border-amber-500/25 flex items-center justify-center mb-3 shadow-[0_0_14px_rgba(245,158,11,0.08)]"
               >
                 <FaClock className="text-amber-400 text-base" />
               </motion.div>
