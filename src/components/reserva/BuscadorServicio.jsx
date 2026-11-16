@@ -479,24 +479,25 @@ export default function BuscadorServicio({ onNext, isLoaded }) {
                 <FaTimesCircle className="text-sm" />
               </button>
 
-              {/* Imagen de soporte alojada en el repositorio: public/assets/images/operadora-tmx.png */}
-              <motion.img
-                src="/assets/images/operadora-tmx.png"
-                alt="Asesora de atención de Transportes MX"
-                initial={{ opacity: 0, scale: 0.88, y: 18 }}
-                animate={{
-                  opacity: 1,
-                  scale: [1, 1.025, 1],
-                  y: [0, -5, 0],
-                }}
+              {/* Operadora: archivo en public/assets/images/operadora-tmx.png */}
+              <motion.div
+                initial={{ opacity: 0, y: 18, scale: 0.9 }}
+                animate={{ opacity: 1, y: [0, -5, 0], scale: [1, 1.02, 1] }}
                 transition={{
-                  opacity: { duration: 0.45 },
-                  scale: { duration: 3.2, repeat: Infinity, ease: "easeInOut" },
-                  y: { duration: 3.2, repeat: Infinity, ease: "easeInOut" },
+                  opacity: { duration: 0.5 },
+                  y: { duration: 3, repeat: Infinity, ease: "easeInOut" },
+                  scale: { duration: 3, repeat: Infinity, ease: "easeInOut" },
                 }}
-                className="w-40 h-40 object-contain mx-auto mb-3"
-                onError={(e) => { e.currentTarget.style.display = 'none'; }}
-              />
+                className="relative mx-auto mb-3 flex h-44 w-full max-w-[220px] items-center justify-center"
+              >
+                <img
+                  src="/assets/images/operadora-tmx.png"
+                  alt="Asesora de atención de Transportes MX con audífonos y micrófono"
+                  className="block h-full w-full object-contain object-bottom"
+                  loading="eager"
+                  style={{ opacity: 1, visibility: 'visible' }}
+                />
+              </motion.div>
 
               <motion.div
                 animate={{ scale: [1, 1.06, 1] }}
@@ -530,27 +531,30 @@ export default function BuscadorServicio({ onNext, isLoaded }) {
                 href="https://wa.me/524151393219?text=Hola%2C%20necesito%20un%20traslado%20urgente%20con%20menos%20de%2024%20horas%20de%20anticipaci%C3%B3n.%20Me%20gustar%C3%ADa%20verificar%20disponibilidad."
                 target="_blank"
                 rel="noopener noreferrer"
-                whileHover={{ scale: 1.025 }}
-                whileTap={{ scale: 0.97 }}
+                whileHover={{ scale: 1.035 }}
+                whileTap={{ scale: 0.96 }}
                 animate={{
+                  backgroundColor: ["#047857", "#059669", "#047857"],
                   boxShadow: [
-                    "0 0 0 0 rgba(16, 185, 129, 0.38)",
-                    "0 0 0 7px rgba(16, 185, 129, 0)",
-                    "0 0 0 0 rgba(16, 185, 129, 0)",
+                    "0 0 0 2px rgba(16,185,129,0.55), 0 0 12px rgba(16,185,129,0.25)",
+                    "0 0 0 7px rgba(16,185,129,0), 0 0 22px rgba(16,185,129,0.55)",
+                    "0 0 0 2px rgba(16,185,129,0.55), 0 0 12px rgba(16,185,129,0.25)",
                   ],
                 }}
                 transition={{
-                  boxShadow: { duration: 2, repeat: Infinity, ease: "easeOut" },
+                  backgroundColor: { duration: 2.1, repeat: Infinity, ease: "easeInOut" },
+                  boxShadow: { duration: 2.1, repeat: Infinity, ease: "easeOut" },
                   scale: { duration: 0.18 },
                 }}
-                className="flex items-center justify-center gap-2 w-full py-3 bg-emerald-600/80 hover:bg-emerald-600 text-white font-semibold rounded-xl transition-colors"
+                className="flex items-center justify-center gap-2 w-full py-3 text-white font-bold rounded-xl border-2 border-emerald-400/70 transition-colors"
+                style={{ backgroundColor: '#047857' }}
               >
                 <motion.span
-                  animate={{ scale: [1, 1.16, 1], rotate: [0, -5, 5, 0] }}
-                  transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+                  animate={{ scale: [1, 1.25, 1], rotate: [0, -8, 8, 0] }}
+                  transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
                   className="inline-flex items-center justify-center"
                 >
-                  <FaWhatsapp className="text-xl" />
+                  <FaWhatsapp className="text-2xl" />
                 </motion.span>
                 Contactar por WhatsApp
               </motion.a>
