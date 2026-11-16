@@ -93,19 +93,40 @@ export default function BuscadorServicio({ onNext, isLoaded }) {
   const [fechaRegreso, setFechaRegreso] = useState(reserva.fechaRegreso || '');
   const [horaRegreso, setHoraRegreso] = useState(reserva.horaRegreso || '12:00');
   const [error, setError] = useState('');
-  const [show48hModal, setShow48hModal] = useState(false);
+  const [show24hModal, setShow24hModal] = useState(false);
 
+  // Fecha mínima local: hoy (evita desfases de UTC en México).
   const today = new Date();
-  const minDate = today.toISOString().split('T')[0];
+  const minDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
 
-  // Default date: 3 days from now (ensures field is not empty and consistent sizing)
+  // Fecha predeterminada: primera fecha que permite al menos 24 horas
+  // de anticipación con la hora predeterminada del servicio (12:00).
   useEffect(() => {
-    if (!fechaIda) {
-      const defaultDate = new Date();
-      defaultDate.setDate(defaultDate.getDate() + 3);
-      setFechaIda(defaultDate.toISOString().split('T')[0]);
+    if (!fechaIda && !router.query.fecha && !reserva.fechaIda) {
+      const ahora = new Date();
+      const fechaMinimaServicio = new Date(ahora);
+      fechaMinimaServicio.setHours(fechaMinimaServicio.getHours() + 24);
+
+      // Si el día siguiente a las 12:00 todavía queda antes del límite,
+      // usar el día posterior. En caso contrario, usar mañana.
+      const mananaAlMediodia = new Date(ahora);
+      mananaAlMediodia.setDate(mananaAlMediodia.getDate() + 1);
+      mananaAlMediodia.setHours(12, 0, 0, 0);
+
+      const fechaDefault = mananaAlMediodia.getTime() >= fechaMinimaServicio.getTime()
+        ? mananaAlMediodia
+        : new Date(mananaAlMediodia);
+
+      if (fechaDefault.getTime() < fechaMinimaServicio.getTime()) {
+        fechaDefault.setDate(fechaDefault.getDate() + 1);
+      }
+
+      const year = fechaDefault.getFullYear();
+      const month = String(fechaDefault.getMonth() + 1).padStart(2, '0');
+      const day = String(fechaDefault.getDate()).padStart(2, '0');
+      setFechaIda(`${year}-${month}-${day}`);
     }
-  }, []);
+  }, [fechaIda, router.query.fecha, reserva.fechaIda]);
 
   const onOrigenLoad = (autocomplete) => { origenRef.current = autocomplete; };
   const onDestinoLoad = (autocomplete) => { destinoRef.current = autocomplete; };
@@ -429,61 +450,90 @@ export default function BuscadorServicio({ onNext, isLoaded }) {
         </form>
       </div>
 
-      {/* Modal: servicio en menos de 48hrs */}
+      {/* Modal: servicio con menos de 24 horas de anticipación */}
       <AnimatePresence>
-        {show48hModal && (
+        {show24hModal && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.15 }}
+            transition={{ duration: 0.2 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4"
-            onClick={() => setShow48hModal(false)}
+            onClick={() => setShow24hModal(false)}
           >
             <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
             <motion.div
               initial={{ opacity: 0, scale: 0.92, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.92, y: 20 }}
-              transition={{ duration: 0.2 }}
-              className="relative w-full max-w-sm bg-[#14141f] border border-white/[0.1] rounded-2xl p-6 shadow-2xl text-center"
+              transition={{ duration: 0.25 }}
+              className="relative w-full max-w-sm bg-[#14141f] border border-white/[0.1] rounded-2xl p-6 shadow-2xl text-center overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
               <button
                 type="button"
-                onClick={() => setShow48hModal(false)}
-                className="absolute top-3 right-3 w-7 h-7 rounded-full bg-white/[0.06] flex items-center justify-center text-white/40 hover:text-white transition-colors"
+                onClick={() => setShow24hModal(false)}
+                className="absolute top-3 right-3 w-7 h-7 rounded-full bg-white/[0.06] flex items-center justify-center text-white/40 hover:text-white transition-colors z-20"
+                aria-label="Cerrar aviso"
               >
                 <FaTimesCircle className="text-sm" />
               </button>
 
-              <div className="w-14 h-14 mx-auto rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mb-4">
+              {/* Imagen de soporte alojada en el repositorio: public/images/operadora-tmx.png */}
+              <motion.img
+                src="/images/operadora-tmx.png"
+                alt="Asesora de atención de Transportes MX"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.45 }}
+                className="w-36 h-36 object-contain mx-auto mb-3"
+                onError={(e) => { e.currentTarget.style.display = 'none'; }}
+              />
+
+              <motion.div
+                animate={{ scale: [1, 1.06, 1] }}
+                transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+                className="w-12 h-12 mx-auto rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mb-4"
+              >
                 <FaClock className="text-amber-400 text-xl" />
-              </div>
+              </motion.div>
 
               <h3 className="text-lg font-bold text-white mb-2">
-                {t.modal48hTitle || 'Servicio con menos de 48 hrs'}
+                ¡Atención personalizada!
               </h3>
-              <p className="text-white/50 text-sm mb-5 leading-relaxed">
-                {t.modal48hMessage || 'Para servicios con menos de 48 horas de anticipación, es necesario comunicarse directamente para verificar disponibilidad.'}
+
+              <p className="text-white/70 text-sm mb-3 leading-relaxed">
+                El límite para realizar una reservación en línea es de 24 horas de anticipación.
+              </p>
+              <p className="text-white/50 text-sm mb-4 leading-relaxed">
+                ¿Necesitas un servicio con menos de 24 horas? Podemos ayudarte. Contáctanos de manera urgente para verificar disponibilidad y coordinar tu traslado manualmente, con atención personalizada en el momento.
               </p>
 
+              <div className="bg-white/[0.04] border border-white/[0.08] rounded-xl p-3 mb-5">
+                <p className="text-white font-semibold text-sm">
+                  ¿Tienes algún evento o servicio especial?
+                </p>
+                <p className="text-white/40 text-xs mt-1">
+                  Estamos listos para ayudarte a organizar tu traslado.
+                </p>
+              </div>
+
               <a
-                href="https://wa.me/524151393219?text=Hola%2C%20necesito%20un%20traslado%20para%20las%20pr%C3%B3ximas%2048%20horas"
+                href="https://wa.me/524151393219?text=Hola%2C%20necesito%20un%20traslado%20urgente%20con%20menos%20de%2024%20horas%20de%20anticipaci%C3%B3n.%20Me%20gustar%C3%ADa%20verificar%20disponibilidad."
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 w-full py-3 bg-emerald-600/80 hover:bg-emerald-600 text-white font-semibold rounded-xl transition-colors"
               >
                 <FaWhatsapp className="text-lg" />
-                {t.modal48hWhatsapp || 'Contactar por WhatsApp'}
+                Contactar por WhatsApp
               </a>
 
               <button
                 type="button"
-                onClick={() => setShow48hModal(false)}
+                onClick={() => setShow24hModal(false)}
                 className="mt-3 text-white/30 hover:text-white/60 text-xs transition-colors"
               >
-                {t.modal48hClose || 'Cerrar'}
+                Cerrar
               </button>
             </motion.div>
           </motion.div>
