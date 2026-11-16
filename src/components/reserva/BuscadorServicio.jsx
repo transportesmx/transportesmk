@@ -458,7 +458,7 @@ export default function BuscadorServicio({ onNext, isLoaded }) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 md:items-start md:pt-28"
             onClick={() => setShow24hModal(false)}
           >
             <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
@@ -480,15 +480,8 @@ export default function BuscadorServicio({ onNext, isLoaded }) {
               </button>
 
               {/* Operadora: archivo en public/assets/images/operadora-tmx.png */}
-              <motion.div
-                initial={{ opacity: 0, y: 18, scale: 0.9 }}
-                animate={{ opacity: 1, y: [0, -5, 0], scale: [1, 1.02, 1] }}
-                transition={{
-                  opacity: { duration: 0.5 },
-                  y: { duration: 3, repeat: Infinity, ease: "easeInOut" },
-                  scale: { duration: 3, repeat: Infinity, ease: "easeInOut" },
-                }}
-                className="relative mx-auto mb-2 flex h-44 sm:h-52 w-full max-w-[260px] items-center justify-center"
+              <div
+                className="relative mx-auto mb-2 flex h-52 sm:h-60 w-full max-w-[300px] sm:max-w-[320px] items-center justify-center"
               >
                 <img
                   src="/assets/images/operadora-tmx.png"
@@ -497,17 +490,12 @@ export default function BuscadorServicio({ onNext, isLoaded }) {
                   loading="eager"
                   style={{ opacity: 1, visibility: 'visible' }}
                 />
-              </motion.div>
+              </div>
 
-              <motion.div
-                animate={{ scale: [1, 1.06, 1] }}
-                transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
-                className="w-10 h-10 mr-auto rounded-full bg-amber-500/10 border border-amber-500/25 flex items-center justify-center mb-3 shadow-[0_0_14px_rgba(245,158,11,0.08)]"
-              >
-                <FaClock className="text-amber-400 text-base" />
-              </motion.div>
-
-              <h3 className="text-base sm:text-lg font-bold text-white mb-2">
+              <h3 className="flex items-center justify-center gap-2 text-base sm:text-lg font-bold text-white mb-2">
+                <span className="inline-flex h-8 w-8 flex-shrink-0 rounded-full bg-amber-500/10 border border-amber-500/25 items-center justify-center shadow-[0_0_14px_rgba(245,158,11,0.08)]">
+                  <FaClock className="text-amber-400 text-base" />
+                </span>
                 ¡Atención personalizada!
               </h3>
 
