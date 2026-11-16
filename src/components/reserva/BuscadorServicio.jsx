@@ -479,14 +479,22 @@ export default function BuscadorServicio({ onNext, isLoaded }) {
                 <FaTimesCircle className="text-sm" />
               </button>
 
-              {/* Imagen de soporte alojada en el repositorio: public/images/operadora-tmx.png */}
+              {/* Imagen de soporte alojada en el repositorio: public/assets/images/operadora-tmx.png */}
               <motion.img
-                src="/images/operadora-tmx.png"
+                src="/assets/images/operadora-tmx.png"
                 alt="Asesora de atención de Transportes MX"
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.45 }}
-                className="w-36 h-36 object-contain mx-auto mb-3"
+                initial={{ opacity: 0, scale: 0.88, y: 18 }}
+                animate={{
+                  opacity: 1,
+                  scale: [1, 1.025, 1],
+                  y: [0, -5, 0],
+                }}
+                transition={{
+                  opacity: { duration: 0.45 },
+                  scale: { duration: 3.2, repeat: Infinity, ease: "easeInOut" },
+                  y: { duration: 3.2, repeat: Infinity, ease: "easeInOut" },
+                }}
+                className="w-40 h-40 object-contain mx-auto mb-3"
                 onError={(e) => { e.currentTarget.style.display = 'none'; }}
               />
 
@@ -518,15 +526,34 @@ export default function BuscadorServicio({ onNext, isLoaded }) {
                 </p>
               </div>
 
-              <a
+              <motion.a
                 href="https://wa.me/524151393219?text=Hola%2C%20necesito%20un%20traslado%20urgente%20con%20menos%20de%2024%20horas%20de%20anticipaci%C3%B3n.%20Me%20gustar%C3%ADa%20verificar%20disponibilidad."
                 target="_blank"
                 rel="noopener noreferrer"
+                whileHover={{ scale: 1.025 }}
+                whileTap={{ scale: 0.97 }}
+                animate={{
+                  boxShadow: [
+                    "0 0 0 0 rgba(16, 185, 129, 0.38)",
+                    "0 0 0 7px rgba(16, 185, 129, 0)",
+                    "0 0 0 0 rgba(16, 185, 129, 0)",
+                  ],
+                }}
+                transition={{
+                  boxShadow: { duration: 2, repeat: Infinity, ease: "easeOut" },
+                  scale: { duration: 0.18 },
+                }}
                 className="flex items-center justify-center gap-2 w-full py-3 bg-emerald-600/80 hover:bg-emerald-600 text-white font-semibold rounded-xl transition-colors"
               >
-                <FaWhatsapp className="text-lg" />
+                <motion.span
+                  animate={{ scale: [1, 1.16, 1], rotate: [0, -5, 5, 0] }}
+                  transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+                  className="inline-flex items-center justify-center"
+                >
+                  <FaWhatsapp className="text-xl" />
+                </motion.span>
                 Contactar por WhatsApp
-              </a>
+              </motion.a>
 
               <button
                 type="button"
