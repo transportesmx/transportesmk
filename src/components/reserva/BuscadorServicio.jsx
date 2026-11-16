@@ -458,7 +458,7 @@ export default function BuscadorServicio({ onNext, isLoaded }) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4"
             onClick={() => setShow24hModal(false)}
           >
             <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
@@ -467,7 +467,7 @@ export default function BuscadorServicio({ onNext, isLoaded }) {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.92, y: 20 }}
               transition={{ duration: 0.25 }}
-              className="relative w-full max-w-sm bg-[#14141f] border border-white/[0.1] rounded-2xl p-6 shadow-2xl text-center overflow-hidden"
+              className="relative w-full max-w-[min(100%,26rem)] max-h-[calc(100dvh-1.5rem)] overflow-y-auto bg-[#14141f] border border-white/[0.1] rounded-2xl p-4 sm:p-5 shadow-2xl text-center overscroll-contain"
               onClick={(e) => e.stopPropagation()}
             >
               <button
@@ -488,7 +488,7 @@ export default function BuscadorServicio({ onNext, isLoaded }) {
                   y: { duration: 3, repeat: Infinity, ease: "easeInOut" },
                   scale: { duration: 3, repeat: Infinity, ease: "easeInOut" },
                 }}
-                className="relative mx-auto mb-3 flex h-44 w-full max-w-[220px] items-center justify-center"
+                className="relative mx-auto mb-2 flex h-32 sm:h-36 w-full max-w-[190px] items-center justify-center"
               >
                 <img
                   src="/assets/images/operadora-tmx.png"
@@ -502,30 +502,18 @@ export default function BuscadorServicio({ onNext, isLoaded }) {
               <motion.div
                 animate={{ scale: [1, 1.06, 1] }}
                 transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
-                className="w-12 h-12 mx-auto rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mb-4"
+                className="w-10 h-10 mx-auto rounded-full bg-amber-500/10 border border-amber-500/25 flex items-center justify-center mb-3 shadow-[0_0_14px_rgba(245,158,11,0.08)]"
               >
-                <FaClock className="text-amber-400 text-xl" />
+                <FaClock className="text-amber-400 text-base" />
               </motion.div>
 
-              <h3 className="text-lg font-bold text-white mb-2">
+              <h3 className="text-base sm:text-lg font-bold text-white mb-2">
                 ¡Atención personalizada!
               </h3>
 
-              <p className="text-white/70 text-sm mb-3 leading-relaxed">
-                El límite para realizar una reservación en línea es de 24 horas de anticipación.
+              <p className="text-white/70 text-sm sm:text-[0.9rem] mb-4 leading-relaxed px-1">
+                ¿Necesitas un traslado en menos de 24 horas? Escríbenos por WhatsApp. Confirmaremos la disponibilidad y coordinaremos tu servicio de forma manual y personalizada.
               </p>
-              <p className="text-white/50 text-sm mb-4 leading-relaxed">
-                ¿Necesitas un servicio con menos de 24 horas? Podemos ayudarte. Contáctanos de manera urgente para verificar disponibilidad y coordinar tu traslado manualmente, con atención personalizada en el momento.
-              </p>
-
-              <div className="bg-white/[0.04] border border-white/[0.08] rounded-xl p-3 mb-5">
-                <p className="text-white font-semibold text-sm">
-                  ¿Tienes algún evento o servicio especial?
-                </p>
-                <p className="text-white/40 text-xs mt-1">
-                  Estamos listos para ayudarte a organizar tu traslado.
-                </p>
-              </div>
 
               <motion.a
                 href="https://wa.me/524151393219?text=Hola%2C%20necesito%20un%20traslado%20urgente%20con%20menos%20de%2024%20horas%20de%20anticipaci%C3%B3n.%20Me%20gustar%C3%ADa%20verificar%20disponibilidad."
@@ -546,7 +534,7 @@ export default function BuscadorServicio({ onNext, isLoaded }) {
                   boxShadow: { duration: 2.1, repeat: Infinity, ease: "easeOut" },
                   scale: { duration: 0.18 },
                 }}
-                className="flex items-center justify-center gap-2 w-full py-3 text-white font-bold rounded-xl border-2 border-emerald-400/70 transition-colors"
+                className="flex items-center justify-center gap-2 w-full py-2.5 sm:py-3 text-white font-bold text-sm sm:text-base rounded-xl border-2 border-emerald-400/70 transition-colors"
                 style={{ backgroundColor: '#047857' }}
               >
                 <motion.span
