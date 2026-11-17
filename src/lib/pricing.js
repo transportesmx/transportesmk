@@ -18,7 +18,7 @@ export const vehiculos = [
     capacidadPasajeros: 3,
     capacidadEquipaje: 3,
     imagen: '/assets/autos/sedan.png',
-    kmMinimo: 10,
+    kmMinimo: 0,
     precioPorKm: 10,
     tarifas: [
       { hastaKm: 150, precioPorKm: 10},
