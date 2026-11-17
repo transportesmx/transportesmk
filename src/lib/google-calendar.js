@@ -1,12 +1,18 @@
+
 /**
  * Integración con Google Calendar para TransportesMX
  * Usa OAuth 2.0 con Refresh Token.
  * Soporta español (es) e inglés (en).
  * Crea eventos para viajes sencillos e ida y vuelta.
  *
- * Para notas de venta manuales, Calendar se mantiene como agenda interna.
- * Las confirmaciones al cliente se envían por Brevo con el PDF adjunto.
- * No se agregan asistentes ni se envían invitaciones por correo desde Google.
+ * Para notas de venta manuales:
+ * - Un aviso el día anterior a las 8:00 PM.
+ * - Un aviso 4 horas antes.
+ * - Un aviso 1 hora antes.
+ * - Todos mediante notificación emergente de Google Calendar.
+ * - Sin recordatorios por correo electrónico.
+ *
+ * Las demás integraciones conservan sus recordatorios actuales.
  */
 
 const calLabels = {
@@ -62,7 +68,7 @@ function formatDateDisplay(dateStr) {
   return dateStr;
 }
 
-// Calcula la hora de término, contemplando cambio de día
+// Calcula la hora de término, contemplando cambio de día.
 function calcularFin(fecha, hora, duracionHoras = 2) {
   const [year, month, day] = fecha.split('-').map(Number);
   const [hours, minutes] = hora.split(':').map(Number);
@@ -92,9 +98,83 @@ function calcularFin(fecha, hora, duracionHoras = 2) {
   };
 }
 
+/**
+ * Calcula cuántos minutos hay entre las 8:00 PM
+ * del día anterior y el inicio del servicio.
+ *
+ * Las fechas y horas se interpretan como hora local
+ * de America/Mexico_City.
+ */
+function calcularAvisoNocheAnterior(fecha, hora) {
+  if (
+    !/^\d{4}-\d{2}-\d{2}$/.test(String(fecha || '')) ||
+    !/^\d{2}:\d{2}$/.test(String(hora || ''))
+  ) {
+    throw new Error(
+      'Fecha u hora inválida para configurar los recordatorios'
+    );
+  }
+
+  const [year, month, day] = fecha.split('-').map(Number);
+  const [hours, minutes] = hora.split(':').map(Number);
+
+  const inicioServicio = Date.UTC(
+    year,
+    month - 1,
+    day,
+    hours,
+    minutes
+  );
+
+  const nocheAnterior = Date.UTC(
+    year,
+    month - 1,
+    day - 1,
+    20,
+    0
+  );
+
+  const minutos = Math.round(
+    (inicioServicio - nocheAnterior) / 60000
+  );
+
+  if (minutos <= 0) {
+    throw new Error(
+      'No se pudo calcular el recordatorio de la noche anterior'
+    );
+  }
+
+  return minutos;
+}
+
+/**
+ * Recordatorios exclusivos para notas de venta manuales.
+ * No utiliza el método email, únicamente popup.
+ */
+function crearRecordatoriosManual(fecha, hora) {
+  return {
+    useDefault: false,
+    overrides: [
+      {
+        method: 'popup',
+        minutes: calcularAvisoNocheAnterior(fecha, hora),
+      },
+      {
+        method: 'popup',
+        minutes: 240,
+      },
+      {
+        method: 'popup',
+        minutes: 60,
+      },
+    ],
+  };
+}
+
 export async function crearEventoCalendario(
   reserva,
-  lang = 'es'
+  lang = 'es',
+  opciones = {}
 ) {
   if (
     !process.env.GOOGLE_CALENDAR_CLIENT_ID ||
@@ -151,7 +231,25 @@ export async function crearEventoCalendario(
       horaIda
     );
 
-    // No se agregan asistentes del cliente: evita invitaciones automáticas.
+    // Detectar si se trata de una nota de venta manual.
+    const esNotaManual = opciones.recordatoriosManual === true;
+
+    // Recordatorios de ida.
+    const recordatoriosIda = esNotaManual
+      ? crearRecordatoriosManual(
+          reserva.fechaIda,
+          horaIda
+        )
+      : {
+          useDefault: false,
+          overrides: [
+            { method: 'popup', minutes: 60 },
+            { method: 'email', minutes: 120 },
+          ],
+        };
+
+    // No se agregan asistentes del cliente:
+    // evita invitaciones automáticas.
     const flightInfo =
       reserva.aerolinea && reserva.numVuelo
         ? `${reserva.aerolinea} / ${reserva.numVuelo}`
@@ -197,7 +295,7 @@ export async function crearEventoCalendario(
       .filter(Boolean)
       .join('\n');
 
-    // EVENTO DE IDA: evento interno, sin correo de invitación a cliente.
+    // EVENTO DE IDA.
     const eventoIda = {
       summary: `🚗 ${t.transfer}: ${reserva.clienteNombre || 'Cliente'}`,
       description: descripcionBase,
@@ -211,13 +309,7 @@ export async function crearEventoCalendario(
         timeZone: 'America/Mexico_City',
       },
       colorId: '9',
-      reminders: {
-        useDefault: false,
-        overrides: [
-          { method: 'popup', minutes: 60 },
-          { method: 'email', minutes: 120 },
-        ],
-      },
+      reminders: recordatoriosIda,
     };
 
     const resultIda = await calendar.events.insert({
@@ -241,7 +333,7 @@ export async function crearEventoCalendario(
 
     let eventIdRegreso = null;
 
-    // EVENTO DE REGRESO
+    // EVENTO DE REGRESO.
     if (
       tipoViaje === 'redondo' &&
       reserva.fechaRegreso
@@ -255,6 +347,20 @@ export async function crearEventoCalendario(
         reserva.fechaRegreso,
         horaRegreso
       );
+
+      // Configurar recordatorios independientes para el regreso.
+      const recordatoriosRegreso = esNotaManual
+        ? crearRecordatoriosManual(
+            reserva.fechaRegreso,
+            horaRegreso
+          )
+        : {
+            useDefault: false,
+            overrides: [
+              { method: 'popup', minutes: 60 },
+              { method: 'email', minutes: 120 },
+            ],
+          };
 
       const descripcionRegreso = [
         `📍 ${t.pickup}: ${reserva.destino || ''}`,
@@ -291,13 +397,7 @@ export async function crearEventoCalendario(
           timeZone: 'America/Mexico_City',
         },
         colorId: '6',
-        reminders: {
-          useDefault: false,
-          overrides: [
-            { method: 'popup', minutes: 60 },
-            { method: 'email', minutes: 120 },
-          ],
-        },
+        reminders: recordatoriosRegreso,
       };
 
       const resultRegreso =
@@ -321,7 +421,7 @@ export async function crearEventoCalendario(
       );
     }
 
-    // Devuelve los IDs de ambos eventos
+    // Devuelve los IDs de ambos eventos.
     return {
       eventIdIda,
       eventIdRegreso,
