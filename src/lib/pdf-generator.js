@@ -186,8 +186,8 @@ export function generarHojaServicio(reserva, lang = 'es') {
 
   // Logo incrustado: ajustar al espacio disponible sin alterar su proporcion.
   const companyFontSize = 10;
-  const logoMaxW = 52;
-  const logoMaxH = 19;
+  const logoMaxW = 64;
+  const logoMaxH = 23;
   let logoW = logoMaxW;
   let logoH = logoMaxH;
 
@@ -197,7 +197,7 @@ export function generarHojaServicio(reserva, lang = 'es') {
     const logoRatio = logoProps.width / logoProps.height;
     logoH = Math.min(logoMaxH, logoMaxW / logoRatio);
     logoW = logoH * logoRatio;
-    doc.addImage(LOGOPDF_BASE64, 'PNG', margin, y, logoW, logoH);
+    doc.addImage(LOGOPDF_BASE64, 'JPEG', margin, y, logoW, logoH);
   } catch {
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(22);
@@ -236,17 +236,7 @@ export function generarHojaServicio(reserva, lang = 'es') {
   doc.setFontSize(11);
   doc.setTextColor(...COLORS.black);
   doc.text(`${t.date}: ${fechaDoc}`, folioBoxX, y + folioH + 6);
-  // Estado de pago en recuadro verde (sin texto negro adicional).
-  const paidText = lang === 'en' ? 'PAID' : 'PAGADO';
-  const paidBoxW = lang === 'en' ? 25 : 31;
-  const paidBoxH = 8;
-  const paidBoxY = y + folioH + 9;
-  doc.setFillColor(0, 166, 81);
-  doc.roundedRect(folioBoxX, paidBoxY, paidBoxW, paidBoxH, 1.2, 1.2, 'F');
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(9);
-  doc.setTextColor(...COLORS.white);
-  doc.text(paidText, folioBoxX + paidBoxW / 2, paidBoxY + 5.4, { align: 'center' });
+  // Debajo del folio se deja espacio en blanco, como en el diseño solicitado.
 
   // ── Company info ──
   y += logoH + 8;
@@ -309,7 +299,20 @@ export function generarHojaServicio(reserva, lang = 'es') {
   doc.setTextColor(...COLORS.blue);
   doc.setFont('helvetica', 'bold');
   doc.text(reserva.clienteEmail || 'N/A', margin + emLabelW, y);
-  y += 4;
+
+  // Sello de pago debajo del correo del cliente, en el área indicada.
+  const paidText = lang === 'en' ? 'PAID' : 'PAGADO';
+  const paidBoxW = lang === 'en' ? 25 : 31;
+  const paidBoxH = 8;
+  const paidBoxY = y + 2;
+  doc.setFillColor(0, 166, 81);
+  doc.roundedRect(margin, paidBoxY, paidBoxW, paidBoxH, 1.2, 1.2, 'F');
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(9);
+  doc.setTextColor(...COLORS.white);
+  doc.text(paidText, margin + paidBoxW / 2, paidBoxY + 5.4, { align: 'center' });
+
+  y += 14;
 
   // ── Vehicle image (right column) ──
   const vehicleImg = getVehicleImage(reserva.vehiculoId, reserva.vehiculoNombre);
