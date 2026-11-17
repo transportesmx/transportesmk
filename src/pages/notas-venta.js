@@ -479,9 +479,10 @@ body{
 }
 
 .dato{
-  display:flex;
-  align-items:flex-start;
-  gap:2mm;
+  display:grid;
+  grid-template-columns:6mm minmax(30mm,auto) minmax(0,1fr);
+  align-items:start;
+  column-gap:2mm;
   min-height:5.3mm;
   margin:0;
   padding:0;
@@ -500,13 +501,15 @@ body{
 
 .etiqueta{
   font-weight:900;
-  flex:none
+  min-width:0;
+  overflow-wrap:anywhere
 }
 
 .valor{
   min-width:0;
   white-space:pre-wrap;
-  overflow-wrap:anywhere
+  overflow-wrap:anywhere;
+  word-break:break-word
 }
 
 .regreso{
@@ -680,9 +683,7 @@ button{
     <strong>Teléfono:</strong> ${escapar(datos.telefono || "")}
   </div>
 
-  <div class="clienteItem">
-    <strong>Correo:</strong> ${escapar(datos.email || "")}
-  </div>
+  ${datos.email ? `<div class="clienteItem"><strong>Correo:</strong> ${escapar(datos.email)}</div>` : ""}
 
 </section>
 
@@ -1100,43 +1101,41 @@ try {
       );
     }
 
-    // Enviar correo transaccional con diseño premium negro/dorado mediante Brevo.
+    // El administrador recibe SIEMPRE su copia desde la API, incluso si el cliente
+    // no capturó correo. El correo adicional es opcional y se deduplica en servidor.
     // El envío es independiente: un fallo de correo no cancela la nota ni Calendar.
     let estadoCorreo = "pendiente";
     try {
-      if (payload.email && payload.email.trim()) {
-        // Crear el PDF con el mismo diseño de la Nota de Venta impresa y adjuntarlo a Brevo.
-        const pdfNotaBase64 = await generarPdfNotaVentaBase64(
-          {
+      const pdfNotaBase64 = await generarPdfNotaVentaBase64(
+        {
+          ...payload,
+          tipoViaje: payload.idaVuelta === "redondo" ? "redondo" : "sencillo",
+        },
+        nueva.folio
+      );
+
+      const respuestaCorreo = await fetch("/api/notas-venta-correo", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nota: {
             ...payload,
+            email: String(payload.email || "").trim(),
+            email2: String(payload.email2 || "").trim(),
+            folio: nueva.folio,
             tipoViaje: payload.idaVuelta === "redondo" ? "redondo" : "sencillo",
           },
-          nueva.folio
-        );
+          pdfNotaBase64,
+        }),
+      });
 
-        const respuestaCorreo = await fetch("/api/notas-venta-correo", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            nota: {
-              ...payload,
-              folio: nueva.folio,
-              tipoViaje: payload.idaVuelta === "redondo" ? "redondo" : "sencillo",
-            },
-            pdfNotaBase64,
-          }),
-        });
-
-        const resultadoCorreo = await respuestaCorreo.json().catch(() => ({}));
-        if (!respuestaCorreo.ok || !resultadoCorreo.success) {
-          estadoCorreo = "error";
-          console.error("La nota se guardó, pero falló el envío del correo:", resultadoCorreo);
-        } else {
-          estadoCorreo = "enviado";
-          console.log("Correo de confirmación enviado con Brevo:", resultadoCorreo.messageId);
-        }
+      const resultadoCorreo = await respuestaCorreo.json().catch(() => ({}));
+      if (!respuestaCorreo.ok || !resultadoCorreo.success) {
+        estadoCorreo = "error";
+        console.error("La nota se guardó, pero falló el envío del correo:", resultadoCorreo);
       } else {
-        estadoCorreo = "sin-correo-cliente";
+        estadoCorreo = "enviado";
+        console.log("Resultado de correo de nota de venta:", resultadoCorreo);
       }
     } catch (errorCorreo) {
       estadoCorreo = "error";
@@ -1152,10 +1151,8 @@ try {
 
     setMensaje(
       estadoCorreo === "enviado"
-        ? `Nota guardada con folio ${nueva.folio}. Correo de confirmación enviado al cliente y a contacto@transportesmx.org.`
-        : estadoCorreo === "error"
-          ? `Nota guardada con folio ${nueva.folio}, pero no se pudo enviar el correo. Revisa la configuración de Brevo.`
-          : `Nota guardada con folio ${nueva.folio}. No se envió correo porque falta el correo del cliente.`
+        ? `Nota guardada con folio ${nueva.folio}. Se envió la copia administrativa a contacto@transportesmx.org${payload.email ? " y al cliente" : ""}${payload.email2 ? " y al correo adicional" : ""}.`
+        : `Nota guardada con folio ${nueva.folio}, pero hubo un problema al enviar los correos. La nota sí quedó guardada; revisa el resultado de Brevo.`
     );
 
     await cargarNotas();
