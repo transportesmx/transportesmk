@@ -479,10 +479,9 @@ body{
 }
 
 .dato{
-  display:grid;
-  grid-template-columns:6mm minmax(30mm,auto) minmax(0,1fr);
-  align-items:start;
-  column-gap:2mm;
+  display:flex;
+  align-items:flex-start;
+  gap:2mm;
   min-height:5.3mm;
   margin:0;
   padding:0;
@@ -501,15 +500,13 @@ body{
 
 .etiqueta{
   font-weight:900;
-  min-width:0;
-  overflow-wrap:anywhere
+  flex:none
 }
 
 .valor{
   min-width:0;
   white-space:pre-wrap;
-  overflow-wrap:anywhere;
-  word-break:break-word
+  overflow-wrap:anywhere
 }
 
 .regreso{
@@ -683,7 +680,9 @@ button{
     <strong>Teléfono:</strong> ${escapar(datos.telefono || "")}
   </div>
 
-  ${datos.email ? `<div class="clienteItem"><strong>Correo:</strong> ${escapar(datos.email)}</div>` : ""}
+  <div class="clienteItem">
+    <strong>Correo:</strong> ${escapar(datos.email || "")}
+  </div>
 
 </section>
 
@@ -1101,14 +1100,18 @@ try {
       );
     }
 
-    // El administrador recibe SIEMPRE su copia desde la API, incluso si el cliente
-    // no capturó correo. El correo adicional es opcional y se deduplica en servidor.
-    // El envío es independiente: un fallo de correo no cancela la nota ni Calendar.
+    // Enviar correo transaccional mediante Brevo.
+    // Se invoca siempre para que el aviso administrativo llegue aunque el cliente
+    // no haya proporcionado correo. Los correos del cliente son opcionales.
+    // El endpoint adjunta el PDF y el archivo ICS; no se modifica esa función.
     let estadoCorreo = "pendiente";
     try {
+      // Crear el PDF una sola vez y adjuntarlo al correo administrativo/cliente.
       const pdfNotaBase64 = await generarPdfNotaVentaBase64(
         {
           ...payload,
+          email: String(payload.email || "").trim(),
+          email2: String(payload.email2 || "").trim(),
           tipoViaje: payload.idaVuelta === "redondo" ? "redondo" : "sencillo",
         },
         nueva.folio
@@ -1135,7 +1138,7 @@ try {
         console.error("La nota se guardó, pero falló el envío del correo:", resultadoCorreo);
       } else {
         estadoCorreo = "enviado";
-        console.log("Resultado de correo de nota de venta:", resultadoCorreo);
+        console.log("Correo transaccional procesado por Brevo:", resultadoCorreo.messageId || resultadoCorreo.sentTo);
       }
     } catch (errorCorreo) {
       estadoCorreo = "error";
@@ -1151,8 +1154,8 @@ try {
 
     setMensaje(
       estadoCorreo === "enviado"
-        ? `Nota guardada con folio ${nueva.folio}. Se envió la copia administrativa a contacto@transportesmx.org${payload.email ? " y al cliente" : ""}${payload.email2 ? " y al correo adicional" : ""}.`
-        : `Nota guardada con folio ${nueva.folio}, pero hubo un problema al enviar los correos. La nota sí quedó guardada; revisa el resultado de Brevo.`
+        ? `Nota guardada con folio ${nueva.folio}. Aviso administrativo procesado y correos del cliente enviados si fueron proporcionados.`
+        : `Nota guardada con folio ${nueva.folio}, pero no se pudo confirmar el envío de correo. Revisa la configuración de Brevo.`
     );
 
     await cargarNotas();
