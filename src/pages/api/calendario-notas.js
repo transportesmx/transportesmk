@@ -1,14 +1,21 @@
+
 /**
  * Google Calendar - Notas de Venta Transportes MX
  * Integración independiente del sistema de reservaciones y Stripe.
  *
  * Envía los datos de ida y regreso a Google Calendar.
+ * Configura recordatorios exclusivos para notas manuales:
+ * - Día anterior a las 8:00 PM.
+ * - 4 horas antes.
+ * - 1 hora antes.
+ *
+ * No envía invitaciones ni recordatorios por correo desde Google.
  */
 
 import { crearEventoCalendario } from '@/lib/google-calendar';
 
 export default async function handler(req, res) {
-  // Solo aceptar solicitudes POST
+  // Solo aceptar solicitudes POST.
   if (req.method !== 'POST') {
     res.setHeader('Allow', ['POST']);
 
@@ -19,7 +26,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Recibir datos de la nota de venta
+    // Recibir datos de la nota de venta.
     const nota = req.body?.nota || req.body;
 
     if (!nota) {
@@ -29,7 +36,7 @@ export default async function handler(req, res) {
       });
     }
 
-    // Detectar si es viaje redondo
+    // Detectar si es viaje redondo.
     const tipoViajeTexto = String(
       nota.idaVuelta ||
       nota.tipoViaje ||
@@ -44,7 +51,7 @@ export default async function handler(req, res) {
       tipoViajeTexto.includes('redondo') ||
       tipoViajeTexto.includes('ida y vuelta');
 
-    // Adaptar los datos al formato de Google Calendar
+    // Adaptar los datos al formato de Google Calendar.
     const reservaCalendar = {
       clienteNombre:
         nota.cliente || nota.clienteNombre || '',
@@ -78,14 +85,14 @@ export default async function handler(req, res) {
 
       tipoViaje: esRedondo ? 'redondo' : 'sencillo',
 
-      // Datos del regreso
+      // Datos del regreso.
       fechaRegreso:
         nota.regresoFecha || nota.fechaRegreso || '',
 
       horaRegreso:
         nota.regresoHora || nota.horaRegreso || '12:00',
 
-      // Información adicional
+      // Información adicional.
       aerolinea:
         nota.aerolinea || '',
 
@@ -96,7 +103,7 @@ export default async function handler(req, res) {
       duracion: '',
     };
 
-    // Validar fecha de ida
+    // Validar fecha de ida.
     if (!reservaCalendar.fechaIda) {
       return res.status(400).json({
         success: false,
@@ -104,7 +111,7 @@ export default async function handler(req, res) {
       });
     }
 
-    // Validar fecha de regreso cuando sea viaje redondo
+    // Validar fecha de regreso cuando sea viaje redondo.
     if (
       reservaCalendar.tipoViaje === 'redondo' &&
       !reservaCalendar.fechaRegreso
@@ -116,9 +123,15 @@ export default async function handler(req, res) {
       });
     }
 
-    // Crear evento(s) en Google Calendar
+    // Crear evento(s) en Google Calendar.
+    // La opción de recordatorios manuales solo se activa aquí.
+    // Las reservas automáticas conservan su configuración anterior.
     const eventId = await crearEventoCalendario(
-      reservaCalendar
+      reservaCalendar,
+      'es',
+      {
+        recordatoriosManual: true,
+      }
     );
 
     if (!eventId) {
@@ -135,10 +148,16 @@ export default async function handler(req, res) {
       tipoViaje: reservaCalendar.tipoViaje,
       fechaIda: reservaCalendar.fechaIda,
       fechaRegreso: reservaCalendar.fechaRegreso,
+      recordatorios: [
+        'Día anterior a las 8:00 PM',
+        '4 horas antes del servicio',
+        '1 hora antes del servicio',
+      ],
+      metodoRecordatorios: 'Google Calendar - Notificaciones emergentes',
       message:
         reservaCalendar.tipoViaje === 'redondo'
-          ? 'Datos de ida y regreso enviados correctamente a Google Calendar'
-          : 'Evento de ida creado correctamente en Google Calendar',
+          ? 'Eventos de ida y regreso creados con sus tres recordatorios de Google Calendar'
+          : 'Evento de ida creado con sus tres recordatorios de Google Calendar',
     });
   } catch (error) {
     console.error(
