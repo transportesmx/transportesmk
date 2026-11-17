@@ -53,7 +53,7 @@ function getVehicleImage(vehiculoId, vehiculoNombre) {
   const nombre = (vehiculoNombre || '').toLowerCase();
   if (nombre.includes('sedan')) return VEHICLE_IMAGES.sedan;
   if (nombre.includes('suburban')) return VEHICLE_IMAGES.suburban;
-  if (nombre.includes('minivan') || nombre.includes('van')) return VEHICLE_IMAGES.minivan;
+  if (nombre.includes('minivan') || nombre.includes('van') || nombre.includes('odyssey')) return VEHICLE_IMAGES.minivan;
   if (nombre.includes('hiace')) return VEHICLE_IMAGES.hiace;
   if (nombre.includes('sprinter')) return VEHICLE_IMAGES.sprinter;
   return null;
@@ -61,7 +61,7 @@ function getVehicleImage(vehiculoId, vehiculoNombre) {
 
 const labels = {
   es: {
-    company: 'Grupo Turístico MX S. de R.L',
+    company: 'Grupo Turístico MX S. de R.L. de C.V.',
     rfc: 'RATG900822G16',
     address: 'San Miguel de Allende GTO.',
     phone: '+52 415 139 3219',
@@ -98,7 +98,7 @@ const labels = {
     generated: 'Documento generado el',
   },
   en: {
-    company: 'Grupo Turístico MX S. de R.L',
+    company: 'Grupo Turístico MX S. de R.L. de C.V.',
     rfc: 'RATG900822G16',
     address: 'San Miguel de Allende GTO.',
     phone: '+52 415 139 3219',
@@ -156,6 +156,23 @@ function drawWrappedValue(doc, text, x, y, maxWidth, lineHeight) {
   return y + lineHeight * (lines.length - 1);
 }
 
+// Dibuja cualquier imagen dentro de un recuadro conservando su proporcion original.
+function addImageContain(doc, imageData, x, y, maxW, maxH, format = 'PNG') {
+  if (!imageData) return null;
+  const props = doc.getImageProperties(imageData);
+  const ratio = props.width / props.height;
+  let w = maxW;
+  let h = w / ratio;
+  if (h > maxH) {
+    h = maxH;
+    w = h * ratio;
+  }
+  const drawX = x + (maxW - w) / 2;
+  const drawY = y + (maxH - h) / 2;
+  doc.addImage(imageData, format, drawX, drawY, w, h);
+  return { x: drawX, y: drawY, w, h };
+}
+
 export function generarHojaServicio(reserva, lang = 'es') {
   const t = labels[lang] || labels.es;
   const doc = new jsPDF();
@@ -167,16 +184,19 @@ export function generarHojaServicio(reserva, lang = 'es') {
 
   let y = margin;
 
-  // Calculate logo width to match company name text width
+  // Logo incrustado: ajustar al espacio disponible sin alterar su proporcion.
   const companyFontSize = 10;
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(companyFontSize);
-  const companyTextW = doc.getStringUnitWidth(t.company) * companyFontSize / doc.internal.scaleFactor;
-  const logoW = companyTextW;
-  const logoH = logoW / 4.56;
+  const logoMaxW = 52;
+  const logoMaxH = 19;
+  let logoW = logoMaxW;
+  let logoH = logoMaxH;
 
   // ── LOGO ──
   try {
+    const logoProps = doc.getImageProperties(LOGOPDF_BASE64);
+    const logoRatio = logoProps.width / logoProps.height;
+    logoH = Math.min(logoMaxH, logoMaxW / logoRatio);
+    logoW = logoH * logoRatio;
     doc.addImage(LOGOPDF_BASE64, 'PNG', margin, y, logoW, logoH);
   } catch {
     doc.setFont('helvetica', 'bold');
@@ -191,7 +211,7 @@ export function generarHojaServicio(reserva, lang = 'es') {
   const qrRightEdge = rightX - 50;
   const qrX = qrLeftEdge + (qrRightEdge - qrLeftEdge - qrSize) / 2;
   try {
-    doc.addImage(QRPDF_BASE64, 'PNG', qrX, y - 3, qrSize, qrSize);
+    addImageContain(doc, QRPDF_BASE64, qrX, y - 3, qrSize, qrSize, 'PNG');
   } catch { /* QR not available */ }
 
   // ── FOLIO box (top right, RED) ──
@@ -216,11 +236,21 @@ export function generarHojaServicio(reserva, lang = 'es') {
   doc.setFontSize(11);
   doc.setTextColor(...COLORS.black);
   doc.text(`${t.date}: ${fechaDoc}`, folioBoxX, y + folioH + 6);
+  // Estado de pago en recuadro verde (sin texto negro adicional).
+  const paidText = lang === 'en' ? 'PAID' : 'PAGADO';
+  const paidBoxW = lang === 'en' ? 25 : 31;
+  const paidBoxH = 8;
+  const paidBoxY = y + folioH + 9;
+  doc.setFillColor(0, 166, 81);
+  doc.roundedRect(folioBoxX, paidBoxY, paidBoxW, paidBoxH, 1.2, 1.2, 'F');
   doc.setFont('helvetica', 'bold');
-  doc.text(t.status, folioBoxX, y + folioH + 12);
+  doc.setFontSize(9);
+  doc.setTextColor(...COLORS.white);
+  doc.text(paidText, folioBoxX + paidBoxW / 2, paidBoxY + 5.4, { align: 'center' });
 
   // ── Company info ──
   y += logoH + 8;
+  doc.setTextColor(...COLORS.black);
   doc.setFontSize(companyFontSize);
   doc.setFont('helvetica', 'bold');
   doc.setTextColor(...COLORS.black);
@@ -284,12 +314,12 @@ export function generarHojaServicio(reserva, lang = 'es') {
   // ── Vehicle image (right column) ──
   const vehicleImg = getVehicleImage(reserva.vehiculoId, reserva.vehiculoNombre);
   if (vehicleImg) {
-    const finalW = 55;
-    const finalH = finalW / 2;
-    const imgX = rightX - finalW;
-    const imgY = clientStartY - 2;
+    const boxW = 55;
+    const boxH = 29;
+    const imgX = rightX - boxW;
+    const imgY = clientStartY - 3;
     try {
-      doc.addImage(vehicleImg, 'PNG', imgX, imgY, finalW, finalH);
+      addImageContain(doc, vehicleImg, imgX, imgY, boxW, boxH, 'PNG');
     } catch { /* no image */ }
   }
 
