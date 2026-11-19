@@ -827,73 +827,78 @@ async function generarPdfNotaVentaBase64(datos, folio) {
   }
 }
 
-// Genera un PDF independiente de banner del cliente: media carta horizontal.
-// Diseño sencillo basado en la referencia Corel Draw: logo arriba y nombre grande, negro, negrita e itálica.
+// Genera el banner directamente con jsPDF para evitar capturas html2canvas
+// que producen páginas vacías o una segunda hoja. Página media carta horizontal.
 async function generarPdfBannerClienteBase64(nombreCliente) {
-  const ventana = window.open("", "_blank", "width=900,height=650");
+  const ventana = window.open("about:blank", "_blank", "width=900,height=650");
   if (!ventana) throw new Error("No se pudo abrir la ventana temporal del banner. Permite ventanas emergentes.");
 
   try {
-    const doc = ventana.document;
-    const origen = window.location.origin;
     const nombre = String(nombreCliente || "CLIENTE").trim() || "CLIENTE";
-    doc.open();
-    doc.write(`<!doctype html><html lang="es"><head><meta charset="utf-8">
-      <meta name="viewport" content="width=device-width,initial-scale=1">
-      <title>Banner ${escapar(nombre)}</title>
-      <style>
-        *{box-sizing:border-box}
-        @page{size:215.9mm 139.7mm landscape;margin:0}
-        html,body{margin:0;padding:0;width:215.9mm;height:139.7mm;background:#fff;color:#000;font-family:Arial,Helvetica,sans-serif;overflow:hidden}
-        .banner{width:215.9mm;height:139.7mm;padding:5mm;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;background:#fff;page-break-inside:avoid;break-inside:avoid}
-        .logo{display:block;width:72mm;max-width:72mm;height:30mm;object-fit:contain;object-position:center;margin:0 0 5mm;flex:none}
-        .nombre{width:100%;height:85mm;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:900;font-style:italic;line-height:0.9;letter-spacing:-0.7mm;overflow:hidden;white-space:nowrap;color:#000;page-break-inside:avoid;break-inside:avoid}
-      </style></head><body><main class="banner"><img class="logo" src="${origen}/logo.jpg" alt="Transportes MX"><div class="nombre">${escapar(nombre)}</div></main></body></html>`);
-    doc.close();
+    const origen = window.location.origin;
 
-    if (!ventana.html2pdf) {
-      await new Promise((resolve, reject) => {
-        const script = doc.createElement("script");
-        script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js";
-        script.onload = resolve;
-        script.onerror = () => reject(new Error("No se pudo cargar html2pdf.js para generar el banner."));
-        doc.head.appendChild(script);
-      });
+    // Cargar jsPDF directamente (sin html2pdf ni html2canvas).
+    await new Promise((resolve, reject) => {
+      const script = ventana.document.createElement("script");
+      script.src = "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js";
+      script.onload = resolve;
+      script.onerror = () => reject(new Error("No se pudo cargar jsPDF para crear el banner."));
+      ventana.document.head.appendChild(script);
+    });
+
+    const logoData = await new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        try {
+          const canvas = document.createElement("canvas");
+          canvas.width = img.naturalWidth || img.width;
+          canvas.height = img.naturalHeight || img.height;
+          const ctx = canvas.getContext("2d");
+          if (!ctx) throw new Error("No se pudo preparar el logotipo.");
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          resolve(canvas.toDataURL("image/jpeg", 0.95));
+        } catch (e) { reject(e); }
+      };
+      img.onerror = () => reject(new Error("No se pudo cargar /logo.jpg. Verifica que el logo exista en public."));
+      img.src = `${origen}/logo.jpg`;
+    });
+
+    const { jsPDF } = ventana.jspdf;
+    const pdf = new jsPDF({ orientation: "landscape", unit: "mm", format: [215.9, 139.7], compress: true });
+    const pageW = 215.9;
+    const pageH = 139.7;
+    const margin = 8;
+    const logoMaxW = 48;
+    const logoMaxH = 35;
+    const text = nombre.toLocaleUpperCase("es-MX");
+
+    // Centrar logo y conservar su relación de aspecto real.
+    const imgProps = pdf.getImageProperties(logoData);
+    const ratio = imgProps.width / imgProps.height;
+    let logoW = logoMaxW;
+    let logoH = logoW / ratio;
+    if (logoH > logoMaxH) { logoH = logoMaxH; logoW = logoH * ratio; }
+    pdf.addImage(logoData, "JPEG", (pageW - logoW) / 2, 12, logoW, logoH, undefined, "FAST");
+
+    // Ajustar la tipografía al ancho útil, dejando margen a ambos lados.
+    const availableW = pageW - margin * 2;
+    let fontSize = 180;
+    pdf.setFont("helvetica", "bolditalic");
+    pdf.setTextColor(0, 0, 0);
+    while (fontSize > 8) {
+      pdf.setFontSize(fontSize);
+      if (pdf.getTextWidth(text) <= availableW) break;
+      fontSize -= 1;
     }
+    pdf.setFontSize(fontSize);
+    const textW = pdf.getTextWidth(text);
+    // Centrado horizontal y vertical en la mitad inferior de la hoja.
+    const x = Math.max(margin, (pageW - textW) / 2);
+    const y = 95;
+    pdf.text(text, x, y, { baseline: "middle", maxWidth: availableW });
 
-    const logo = doc.querySelector(".logo");
-    if (logo && !logo.complete) {
-      await new Promise((resolve) => { logo.onload = resolve; logo.onerror = resolve; });
-    }
-
-    // Ajustar automáticamente el nombre: maximizar el tamaño sin salir del ancho.
-    const nombreEl = doc.querySelector(".nombre");
-    if (nombreEl) {
-      let size = 260;
-      nombreEl.style.fontSize = `${size}px`;
-      const maxWidth = nombreEl.clientWidth - 20;
-      while (size > 16 && (nombreEl.scrollWidth > maxWidth || nombreEl.scrollHeight > nombreEl.clientHeight)) {
-        size -= 2;
-        nombreEl.style.fontSize = `${size}px`;
-      }
-      while (size < 260) {
-        const siguiente = size + 2;
-        nombreEl.style.fontSize = `${siguiente}px`;
-        if (nombreEl.scrollWidth > maxWidth || nombreEl.scrollHeight > nombreEl.clientHeight) break;
-        size = siguiente;
-      }
-      nombreEl.style.fontSize = `${size}px`;
-    }
-
-    const blob = await ventana.html2pdf().set({
-      margin: 0,
-      filename: `Banner-${nombre.replace(/[^a-z0-9-_]+/gi, "-")}.pdf`,
-      image: { type: "jpeg", quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true, backgroundColor: "#ffffff", logging: false, width: doc.querySelector(".banner").scrollWidth, height: doc.querySelector(".banner").scrollHeight },
-      jsPDF: { unit: "mm", format: [215.9, 139.7], orientation: "landscape", compress: true },
-      pagebreak: { mode: ["avoid-all", "css"], avoid: [".banner", ".logo", ".nombre"] }
-    }).from(doc.querySelector(".banner")).outputPdf("blob");
-
+    // Exportar blob del PDF de una única página.
+    const blob = pdf.output("blob");
     const base64 = await new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = () => resolve(String(reader.result).split(",")[1] || "");
@@ -906,7 +911,6 @@ async function generarPdfBannerClienteBase64(nombreCliente) {
     try { ventana.close(); } catch (_) {}
   }
 }
-
 
 export default function NotasVenta() {
   const [sesion, setSesion] = useState(null);
