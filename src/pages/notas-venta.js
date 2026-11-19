@@ -827,6 +827,86 @@ async function generarPdfNotaVentaBase64(datos, folio) {
   }
 }
 
+// Genera un PDF independiente de banner del cliente: media carta horizontal.
+// Diseño sencillo basado en la referencia Corel Draw: logo arriba y nombre grande, negro, negrita e itálica.
+async function generarPdfBannerClienteBase64(nombreCliente) {
+  const ventana = window.open("", "_blank", "width=900,height=650");
+  if (!ventana) throw new Error("No se pudo abrir la ventana temporal del banner. Permite ventanas emergentes.");
+
+  try {
+    const doc = ventana.document;
+    const origen = window.location.origin;
+    const nombre = String(nombreCliente || "CLIENTE").trim() || "CLIENTE";
+    doc.open();
+    doc.write(`<!doctype html><html lang="es"><head><meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      <title>Banner ${escapar(nombre)}</title>
+      <style>
+        *{box-sizing:border-box}
+        @page{size:215.9mm 139.7mm landscape;margin:0}
+        html,body{margin:0;padding:0;width:215.9mm;height:139.7mm;background:#fff;color:#000;font-family:Arial,Helvetica,sans-serif}
+        .banner{width:215.9mm;height:139.7mm;padding:9mm 8mm 8mm;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;background:#fff}
+        .logo{display:block;width:78mm;max-width:78mm;height:35mm;object-fit:contain;object-position:center;margin:0 0 8mm}
+        .nombre{width:100%;height:65mm;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:900;font-style:italic;line-height:0.95;letter-spacing:-0.5mm;overflow:hidden;white-space:nowrap;color:#000}
+      </style></head><body><main class="banner"><img class="logo" src="${origen}/logo.jpg" alt="Transportes MX"><div class="nombre">${escapar(nombre)}</div></main></body></html>`);
+    doc.close();
+
+    if (!ventana.html2pdf) {
+      await new Promise((resolve, reject) => {
+        const script = doc.createElement("script");
+        script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js";
+        script.onload = resolve;
+        script.onerror = () => reject(new Error("No se pudo cargar html2pdf.js para generar el banner."));
+        doc.head.appendChild(script);
+      });
+    }
+
+    const logo = doc.querySelector(".logo");
+    if (logo && !logo.complete) {
+      await new Promise((resolve) => { logo.onload = resolve; logo.onerror = resolve; });
+    }
+
+    // Ajustar automáticamente el nombre: maximizar el tamaño sin salir del ancho.
+    const nombreEl = doc.querySelector(".nombre");
+    if (nombreEl) {
+      let size = 170;
+      nombreEl.style.fontSize = `${size}px`;
+      const maxWidth = nombreEl.clientWidth - 12;
+      while (size > 18 && (nombreEl.scrollWidth > maxWidth || nombreEl.scrollHeight > nombreEl.clientHeight)) {
+        size -= 2;
+        nombreEl.style.fontSize = `${size}px`;
+      }
+      while (size < 170) {
+        nombreEl.style.fontSize = `${size + 2}px`;
+        if (nombreEl.scrollWidth > maxWidth || nombreEl.scrollHeight > nombreEl.clientHeight) break;
+        size += 2;
+      }
+      nombreEl.style.fontSize = `${size}px`;
+    }
+
+    const blob = await ventana.html2pdf().set({
+      margin: 0,
+      filename: `Banner-${nombre.replace(/[^a-z0-9-_]+/gi, "-")}.pdf`,
+      image: { type: "jpeg", quality: 0.98 },
+      html2canvas: { scale: 3, useCORS: true, backgroundColor: "#ffffff", logging: false },
+      jsPDF: { unit: "mm", format: [215.9, 139.7], orientation: "landscape" },
+      pagebreak: { mode: [] }
+    }).from(doc.querySelector(".banner")).outputPdf("blob");
+
+    const base64 = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result).split(",")[1] || "");
+      reader.onerror = () => reject(new Error("No se pudo convertir el banner a base64."));
+      reader.readAsDataURL(blob);
+    });
+    if (!base64) throw new Error("El PDF del banner está vacío.");
+    return base64;
+  } finally {
+    try { ventana.close(); } catch (_) {}
+  }
+}
+
+
 export default function NotasVenta() {
   const [sesion, setSesion] = useState(null);
   const [correo, setCorreo] = useState("");
@@ -1117,6 +1197,9 @@ try {
         nueva.folio
       );
 
+      // Generar el banner como PDF separado, con el mismo nombre de cliente.
+      const pdfBannerBase64 = await generarPdfBannerClienteBase64(payload.cliente);
+
       const respuestaCorreo = await fetch("/api/notas-venta-correo", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -1129,6 +1212,7 @@ try {
             tipoViaje: payload.idaVuelta === "redondo" ? "redondo" : "sencillo",
           },
           pdfNotaBase64,
+          pdfBannerBase64,
         }),
       });
 
