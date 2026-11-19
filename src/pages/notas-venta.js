@@ -881,22 +881,34 @@ async function generarPdfBannerClienteBase64(nombreCliente) {
     const logoY = 8;
     pdf.addImage(logoData, "JPEG", (pageW - logoW) / 2, logoY, logoW, logoH, undefined, "FAST");
 
-    // Ajustar la tipografía al ancho útil, dejando margen a ambos lados.
+    // Crear el nombre en alta resolución y darle más altura sin ensancharlo.
     const availableW = pageW - margin * 2;
-    let fontSize = 180;
-    pdf.setFont("helvetica", "bolditalic");
-    pdf.setTextColor(0, 0, 0);
-    while (fontSize > 8) {
-      pdf.setFontSize(fontSize);
-      if (pdf.getTextWidth(text) <= availableW) break;
-      fontSize -= 1;
-    }
-    pdf.setFontSize(fontSize);
-    const textW = pdf.getTextWidth(text);
-    // Centrado horizontal, debajo del logo y con separación para evitar que se encimen.
-    const x = Math.max(margin, (pageW - textW) / 2);
-    const y = logoY + logoH + 5;
-    pdf.text(text, x, y, { baseline: "middle", maxWidth: availableW });
+    const textCanvas = document.createElement("canvas");
+    const textCtx = textCanvas.getContext("2d");
+    if (!textCtx) throw new Error("No se pudo preparar el texto del banner.");
+    textCanvas.width = 2400;
+    textCanvas.height = 500;
+    const fontPx = 260;
+    textCtx.font = `italic 900 ${fontPx}px Arial, Helvetica, sans-serif`;
+    textCtx.textAlign = "center";
+    textCtx.textBaseline = "middle";
+    const measured = textCtx.measureText(text);
+    const fitScale = Math.min(1, (textCanvas.width * 0.94) / measured.width);
+    textCtx.save();
+    textCtx.translate(textCanvas.width / 2, textCanvas.height / 2);
+    // Escala vertical ligeramente mayor; no cambia el ancho del nombre.
+    textCtx.scale(fitScale, 1.18);
+    textCtx.fillStyle = "#000000";
+    textCtx.font = `italic 900 ${fontPx}px Arial, Helvetica, sans-serif`;
+    textCtx.fillText(text, 0, 0);
+    textCtx.restore();
+    const textData = textCanvas.toDataURL("image/png");
+    const textW = availableW;
+    const textH = 27;
+    const x = margin;
+    // Bajamos el nombre aproximadamente un renglón (7 mm) respecto a la versión anterior.
+    const y = logoY + logoH + 12;
+    pdf.addImage(textData, "PNG", x, y, textW, textH, undefined, "FAST");
 
     // Exportar blob del PDF de una única página.
     const blob = pdf.output("blob");
