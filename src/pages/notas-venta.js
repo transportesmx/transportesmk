@@ -906,8 +906,8 @@ async function generarPdfBannerClienteBase64(nombreCliente) {
     const textW = availableW;
     const textH = 27;
     const x = margin;
-    // Bajamos el nombre aproximadamente un renglón (7 mm) respecto a la versión anterior.
-    const y = logoY + logoH + 12;
+    // Subimos el nombre 6 mm para reducir el espacio entre logotipo y nombre, sin pegarlos.
+    const y = logoY + logoH + 6;
     pdf.addImage(textData, "PNG", x, y, textW, textH, undefined, "FAST");
 
     // Exportar blob del PDF de una única página.
