@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react';
 
 export default function BannerPasajeros({ nombres, nombre, pasajeros }) {
-  // Obtener nombres desde cualquiera de las propiedades disponibles
   const listaNombres = useMemo(() => {
     let datos = nombres ?? nombre ?? pasajeros ?? '';
 
@@ -12,11 +11,9 @@ export default function BannerPasajeros({ nombres, nombre, pasajeros }) {
         .filter(Boolean);
     }
 
-    if (!Array.isArray(datos)) {
-      datos = [];
-    }
+    if (!Array.isArray(datos)) datos = [];
 
-    datos = datos
+    return datos
       .map((n) => {
         if (typeof n === 'string') return n.trim();
 
@@ -32,26 +29,26 @@ export default function BannerPasajeros({ nombres, nombre, pasajeros }) {
         return '';
       })
       .filter(Boolean);
-
-    return datos;
   }, [nombres, nombre, pasajeros]);
 
-  // Unir los nombres para el banner
-  const textoBanner = listaNombres.join('  •  ');
+  const textoBanner = listaNombres.join('  •  ').toUpperCase();
 
-  // Ajustar el tamaño de fuente según la longitud de los nombres
+  // Ajuste automático del tamaño de letra
   const fontSize = useMemo(() => {
     const longitud = textoBanner.length;
 
-    if (longitud <= 12) return 100;
-    if (longitud <= 20) return 80;
-    if (longitud <= 30) return 65;
-    if (longitud <= 40) return 50;
-    if (longitud <= 55) return 40;
-    if (longitud <= 70) return 32;
-    if (longitud <= 90) return 26;
+    if (longitud <= 10) return 110;
+    if (longitud <= 15) return 90;
+    if (longitud <= 20) return 75;
+    if (longitud <= 25) return 62;
+    if (longitud <= 30) return 52;
+    if (longitud <= 40) return 42;
+    if (longitud <= 50) return 34;
+    if (longitud <= 65) return 28;
+    if (longitud <= 80) return 23;
+    if (longitud <= 100) return 19;
 
-    return 22;
+    return 16;
   }, [textoBanner]);
 
   return (
@@ -59,53 +56,111 @@ export default function BannerPasajeros({ nombres, nombre, pasajeros }) {
       <style>{`
         .banner-pasajeros-pagina {
           width: 100%;
-          min-height: 100vh;
-          height: 100vh;
+          aspect-ratio: 11 / 8.5;
+          background: #ffffff;
           box-sizing: border-box;
-          background: white;
+          overflow: hidden;
+
           display: flex;
+          flex-direction: column;
           align-items: center;
           justify-content: center;
-          padding: 20px;
-          page-break-before: always;
-          break-before: page;
-          overflow: hidden;
+
+          padding: 4%;
+          gap: 5%;
+
+          page-break-before: auto !important;
+          break-before: auto !important;
+          page-break-after: auto !important;
+          break-after: auto !important;
+          page-break-inside: avoid !important;
+          break-inside: avoid !important;
+        }
+
+        .banner-pasajeros-logo {
+          width: 22%;
+          max-width: 220px;
+          height: auto;
+          object-fit: contain;
+          object-position: center;
+          flex-shrink: 0;
         }
 
         .banner-pasajeros-texto {
           width: 100%;
+          max-width: 100%;
           text-align: center;
+
           font-family: Arial, Helvetica, sans-serif;
           font-weight: 900;
+          font-style: italic;
           color: #000000;
+
           text-transform: uppercase;
-          line-height: 1.1;
+          line-height: 0.95;
+          letter-spacing: -1px;
+
           white-space: nowrap;
           overflow: hidden;
-          letter-spacing: 1px;
+          text-overflow: clip;
+
           box-sizing: border-box;
+          margin: 0;
         }
 
         @media print {
-          .banner-pasajeros-pagina {
-            width: 100%;
-            height: 100vh;
-            min-height: 100vh;
+          @page {
+            size: letter landscape;
             margin: 0;
-            padding: 10px;
-            page-break-before: always;
-            break-before: page;
-            page-break-after: auto;
-            break-inside: avoid;
-            overflow: hidden;
+          }
+
+          html,
+          body {
+            margin: 0 !important;
+            padding: 0 !important;
+          }
+
+          .banner-pasajeros-pagina {
+            width: 11in !important;
+            height: 8.5in !important;
+            min-height: 0 !important;
+            max-height: 8.5in !important;
+            aspect-ratio: auto !important;
+
+            padding: 0.35in !important;
+            margin: 0 !important;
+
+            overflow: hidden !important;
+
+            page-break-before: auto !important;
+            break-before: auto !important;
+            page-break-after: avoid !important;
+            break-after: avoid !important;
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
+          }
+
+          .banner-pasajeros-logo {
+            width: 1.8in !important;
+            max-width: 1.8in !important;
+            height: 1.2in !important;
+            object-fit: contain !important;
           }
 
           .banner-pasajeros-texto {
-            white-space: nowrap;
-            overflow: visible;
+            width: 100% !important;
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: clip !important;
           }
         }
       `}</style>
+
+      <img
+        className="banner-pasajeros-logo"
+        src="/logo.jpg"
+        alt="Transportes MX"
+      />
 
       <div
         className="banner-pasajeros-texto"
