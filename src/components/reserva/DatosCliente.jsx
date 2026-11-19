@@ -149,11 +149,19 @@ export default function DatosCliente({ onNext, onBack }) {
         onSubmit={handleSubmit}
         className="space-y-4 rounded-2xl border border-white/10 bg-black/30 p-5 shadow-2xl backdrop-blur-xl sm:p-6"
       >
+
         {/* NOMBRE COMPLETO */}
         <div>
           <label className={ETIQUETA}>
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" className="text-white/75" aria-hidden="true">
-              <path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-4.42 0-8 2.24-8 5v2h16v-2c0-2.76-3.58-5-8-5Z" />
+            <svg
+              width="13"
+              height="13"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              className="text-white/75"
+              aria-hidden="true"
+            >
+              <path d="M12 12a5 5 0 1á0-10 5 5 0 0á0 10Zm0 2c-4.42 0-8 2.24-8 5v2h16v-2c0-2.76-3.58-5-8-5Z" />
             </svg>
             Nombre completo
           </label>
@@ -172,8 +180,15 @@ export default function DatosCliente({ onNext, onBack }) {
         {/* CORREO */}
         <div>
           <label className={ETIQUETA}>
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" className="text-white/75" aria-hidden="true">
-              <path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm0 4-8 5-8-5V6l8 5 8-5v2Z" />
+            <svg
+              width="13"
+              height="13"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              className="text-white/75"
+              aria-hidden="true"
+            >
+              <path d="M20 4H4a2 2 0 0á2 2v12a2 2 0á2 2h16a2 2 0á2-2V6a2 2 0á-2-2Zm0 4-8 5-8-5V6l8 5 8-5v2Z" />
             </svg>
             Correo electrónico
           </label>
@@ -196,13 +211,21 @@ export default function DatosCliente({ onNext, onBack }) {
         {/* TELEFONO */}
         <div>
           <label className={ETIQUETA}>
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" className="text-white/75" aria-hidden="true">
-              <path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.02-.24c1.12.37 2.33.56 3.57.56.55 0 1 .45 1 1V20c0 .55-.45 1-1 1C10.61 21 3 13.39 3 4c0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.24.2 2.45.56 3.57a1 1 0 0 a-.25 1.02l-2.19 2.2Z" />
+            <svg
+              width="13"
+              height="13"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              className="text-white/75"
+              aria-hidden="true"
+            >
+              <path d="M6.62 10.79a15.05 15.05 0á6.59 6.59l2.2-2.2a1 1 0á1.02-.24c1.12.37 2.33.56 3.57.56.55 0 1 .45 1 1V20c0 .55-.45 1-1 1C10.61 21 3 13.39 3 4c0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.24.2 2.45.56 3.57a1 1 0á-.25 1.02l-2.19 2.2Z" />
             </svg>
             Teléfono
           </label>
 
           <div className="relative flex h-[43px] w-full items-stretch rounded-lg border border-white/10 bg-white/[0.055] transition focus-within:border-white/30 focus-within:ring-1 focus-within:ring-white/10">
+
             {/* SELECTOR DE BANDERA */}
             <button
               type="button"
@@ -213,7 +236,13 @@ export default function DatosCliente({ onNext, onBack }) {
             >
               <Bandera iso={paisSeleccionado.iso} />
 
-              <svg width="10" height="10" viewBox="0 0 20 20" fill="currentColor" className="text-white/65">
+              <svg
+                width="10"
+                height="10"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                className="text-white/65"
+              >
                 <path d="m5 7 5 5 5-5H5Z" />
               </svg>
             </button>
@@ -250,7 +279,9 @@ export default function DatosCliente({ onNext, onBack }) {
               inputMode="tel"
               autoComplete="tel-national"
               value={telefono}
-              onChange={e => setTelefono(e.target.value.replace(/[^\d\s()-]/g, ''))}
+              onChange={e =>
+                setTelefono(e.target.value.replace(/[^\d\s()-]/g, ''))
+              }
               placeholder={paisSeleccionado.ejemplo}
               required
             />
@@ -264,8 +295,15 @@ export default function DatosCliente({ onNext, onBack }) {
         {/* OBSERVACIONES */}
         <div>
           <label className={ETIQUETA}>
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" className="text-white/75" aria-hidden="true">
-              <path d="M4 3h16a2 2 0 a0 2 2 0 0 1 2 2v14a2 2 0 a0 2 2 0 0 1-2 2H4a2 2 0 a0 2 2 0 0 1-2-2V5a2 2 0 a0 2 2 0 0 1 2-2Zm2 4v2h12V7H6Zm0 4v2h12v-2H6Zm0 4v2h8v-2H6Z" />
+            <svg
+              width="13"
+              height="13"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              className="text-white/75"
+              aria-hidden="true"
+            >
+              <path d="M4 3h16a2 2 0á2 2v14a2 2 0á-2 2H4a2 2 0á-2-2V5a2 2 0á2-2Zm2 4v2h12V7H6Zm0 4v2h12v-2H6Zm0 4v2h8v-2H6Z" />
             </svg>
             Observaciones (opcional)
           </label>
@@ -310,24 +348,28 @@ export default function DatosCliente({ onNext, onBack }) {
 
         {/* BOTONES */}
         <div className="flex gap-3 pt-1">
-          {/* ATRÁS — AMARILLO SOLO AL PASAR EL CURSOR */}
+
+          {/* ATRÁS — AMARILLO SÓLIDO AL PASAR EL CURSOR */}
           {onBack && (
             <button
               type="button"
               onClick={onBack}
-              className="flex-1 rounded-lg border border-white/15 bg-white/[0.025] px-4 py-3 text-sm font-semibold text-white/75 transition-all duration-300 hover:bg-[#E5A000] hover:text-black hover:border-[#F5B800] hover:shadow-[0_0_12px_rgba(229,160,0,0.30)] hover:-translate-y-[1px] active:scale-[0.97]"
+              className="btn-back-tmx flex-1 rounded-lg border border-white/15 bg-white/[0.025] px-4 py-3 text-sm font-semibold text-white/75 transition-all duration-300 active:scale-[0.97]"
             >
               ← Atrás
             </button>
           )}
 
-          {/* CONTINUAR AL PAGO */}
+          {/* CONTINUAR AL PAGO — SIN CAMBIOS */}
           <button
             type="submit"
             className="flex-1 rounded-lg bg-white px-4 py-3 text-sm font-bold text-black transition hover:bg-gray-200 active:scale-[0.98]"
           >
             Continuar al pago →
           </button>
+
         </div>
       </form>
     </div>
+  );
+}
