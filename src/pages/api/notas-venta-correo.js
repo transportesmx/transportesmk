@@ -5,7 +5,7 @@
  * Conserva adjuntos PDF e ICS. Requiere BREVO_API_KEY, BREVO_SENDER_EMAIL y Supabase Service Role para idempotencia.
  */
 const ADMIN_EMAIL = 'contacto@transportesmx.org';
-export const config = { api: { bodyParser: { sizeLimit: '8mb' } } };
+export const config = { api: { bodyParser: { sizeLimit: '16mb' } } };
 
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'https://transportesmx.org').replace(/\/$/, '');
 
@@ -366,6 +366,7 @@ export default async function handler(req, res) {
   }
   const nota = req.body?.nota || req.body;
   const pdfNotaBase64 = req.body?.pdfNotaBase64 || '';
+  const pdfBannerBase64 = req.body?.pdfBannerBase64 || '';
   if (!nota?.folio || !nota?.cliente) {
     return res.status(400).json({ success: false, message: 'Folio y nombre del cliente son obligatorios.' });
   }
@@ -375,16 +376,25 @@ export default async function handler(req, res) {
   if (pdfNotaBase64 && (typeof pdfNotaBase64 !== 'string' || !/^[A-Za-z0-9+/]+={0,2}$/.test(pdfNotaBase64))) {
     return res.status(400).json({ success: false, message: 'El PDF adjunto no tiene un formato base64 válido.' });
   }
-  if (pdfNotaBase64.length > 7_000_000) {
-    return res.status(413).json({ success: false, message: 'El PDF adjunto es demasiado grande. Reduce el tamaño de las imágenes de la nota.' });
+  if (pdfNotaBase64.length > 7_000_000 || pdfBannerBase64.length > 7_000_000) {
+    return res.status(413).json({ success: false, message: 'Los archivos PDF adjuntos son demasiado grandes. Reduce el tamaño de las imágenes.' });
+  }
+  if (pdfBannerBase64 && (typeof pdfBannerBase64 !== 'string' || !/^[A-Za-z0-9+/]+={0,2}$/.test(pdfBannerBase64))) {
+    return res.status(400).json({ success: false, message: 'El PDF del banner no tiene un formato base64 válido.' });
   }
 
   const sender = { name: process.env.BREVO_SENDER_NAME || 'Transportes MX', email: process.env.BREVO_SENDER_EMAIL };
   const htmlContent = buildHtml(nota);
-  const attachments = pdfNotaBase64 ? [{
-    name: `Nota-de-Venta-${String(nota.folio).replace(/[^a-zA-Z0-9_-]/g, '')}.pdf`,
+  const folioArchivo = String(nota.folio).replace(/[^a-zA-Z0-9_-]/g, '');
+  const attachments = [];
+  if (pdfNotaBase64) attachments.push({
+    name: `Nota-de-Venta-${folioArchivo}.pdf`,
     content: pdfNotaBase64,
-  }] : [];
+  });
+  if (pdfBannerBase64) attachments.push({
+    name: `Banner-Cliente-${folioArchivo}.pdf`,
+    content: pdfBannerBase64,
+  });
   const calendarBase64 = buildCalendarAttachment(nota);
   if (calendarBase64) attachments.push({
     name: `Cita-Transportes-MX-${String(nota.folio).replace(/[^a-zA-Z0-9_-]/g, '')}.ics`,
@@ -444,6 +454,7 @@ export default async function handler(req, res) {
       sentTo: [ADMIN_EMAIL, ...customerEmails],
       customerEmailCount: customerEmails.length,
       calendarAttachment: Boolean(calendarBase64),
+      bannerAttachment: Boolean(pdfBannerBase64),
     });
   } catch (error) {
     // No se libera la reserva: Brevo pudo aceptar un mensaje aunque la conexión
