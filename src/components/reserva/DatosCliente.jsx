@@ -1,3 +1,4 @@
+
 import React, { useMemo, useState } from 'react';
 import { useReserva } from '@/Context/ReservaContext';
 
@@ -196,7 +197,7 @@ export default function DatosCliente({ onNext, onBack }) {
         <div>
           <label className={ETIQUETA}>
             <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" className="text-white/75" aria-hidden="true">
-              <path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.02-.24c1.12.37 2.33.56 3.57.56.55 0 1 .45 1 1V20c0 .55-.45 1-1 1C10.61 21 3 13.39 3 4c0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.24.2 2.45.56 3.57a1 1 0 0 1-.25 1.02l-2.19 2.2Z" />
+              <path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.02-.24c1.12.37 2.33.56 3.57.56.55 0 1 .45 1 1V20c0 .55-.45 1-1 1C10.61 21 3 13.39 3 4c0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.24.2 2.45.56 3.57a1 1 0 0 a-.25 1.02l-2.19 2.2Z" />
             </svg>
             Teléfono
           </label>
@@ -264,7 +265,7 @@ export default function DatosCliente({ onNext, onBack }) {
         <div>
           <label className={ETIQUETA}>
             <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" className="text-white/75" aria-hidden="true">
-              <path d="M4 3h16a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Zm2 4v2h12V7H6Zm0 4v2h12v-2H6Zm0 4v2h8v-2H6Z" />
+              <path d="M4 3h16a2 2 0 a0 2 2 0 0 1 2 2v14a2 2 0 a0 2 2 0 0 1-2 2H4a2 2 0 a0 2 2 0 0 1-2-2V5a2 2 0 a0 2 2 0 0 1 2-2Zm2 4v2h12V7H6Zm0 4v2h12v-2H6Zm0 4v2h8v-2H6Z" />
             </svg>
             Observaciones (opcional)
           </label>
@@ -285,7 +286,7 @@ export default function DatosCliente({ onNext, onBack }) {
             type="text"
             value={codigoDescuento}
             onChange={e => setCodigoDescuento(e.target.value.toUpperCase())}
-            placeholder="Código"
+            placeholder="Código (opcional)"
             autoComplete="off"
             className="w-full rounded-lg border border-white/[0.08] bg-white/[0.035] px-3 py-2.5 text-xs text-white/80 placeholder:text-white/35 outline-none transition focus:border-white/20 focus:bg-white/[0.055]"
           />
@@ -330,5 +331,3 @@ export default function DatosCliente({ onNext, onBack }) {
         </div>
       </form>
     </div>
-  );
-}
