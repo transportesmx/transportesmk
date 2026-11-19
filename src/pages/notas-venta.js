@@ -868,8 +868,8 @@ async function generarPdfBannerClienteBase64(nombreCliente) {
     const pageW = 215.9;
     const pageH = 139.7;
     const margin = 8;
-    const logoMaxW = 92;
-    const logoMaxH = 58;
+    const logoMaxW = 110;
+    const logoMaxH = 62;
     const text = nombre.toLocaleUpperCase("es-MX");
 
     // Centrar logo y conservar su relación de aspecto real.
@@ -878,7 +878,7 @@ async function generarPdfBannerClienteBase64(nombreCliente) {
     let logoW = logoMaxW;
     let logoH = logoW / ratio;
     if (logoH > logoMaxH) { logoH = logoMaxH; logoW = logoH * ratio; }
-    const logoY = 10;
+    const logoY = 8;
     pdf.addImage(logoData, "JPEG", (pageW - logoW) / 2, logoY, logoW, logoH, undefined, "FAST");
 
     // Ajustar la tipografía al ancho útil, dejando margen a ambos lados.
@@ -895,7 +895,7 @@ async function generarPdfBannerClienteBase64(nombreCliente) {
     const textW = pdf.getTextWidth(text);
     // Centrado horizontal, debajo del logo y con separación para evitar que se encimen.
     const x = Math.max(margin, (pageW - textW) / 2);
-    const y = logoY + logoH + 12;
+    const y = logoY + logoH + 5;
     pdf.text(text, x, y, { baseline: "middle", maxWidth: availableW });
 
     // Exportar blob del PDF de una única página.
@@ -2086,4 +2086,13 @@ return notas.filter((nota) =>
         <p className="mx-auto mt-3 max-w-[760px] text-sm text-slate-600">
           La vista previa sigue la distribución del documento impreso.
           Para generar el PDF, pulsa “Imprimir / PDF”.
-        
+        </p>
+
+      </section>
+
+    </div>
+
+  </div>
+</main>
+  );
+}
