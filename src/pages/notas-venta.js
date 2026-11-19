@@ -844,10 +844,10 @@ async function generarPdfBannerClienteBase64(nombreCliente) {
       <style>
         *{box-sizing:border-box}
         @page{size:215.9mm 139.7mm landscape;margin:0}
-        html,body{margin:0;padding:0;width:215.9mm;height:139.7mm;background:#fff;color:#000;font-family:Arial,Helvetica,sans-serif}
-        .banner{width:215.9mm;height:139.7mm;padding:9mm 8mm 8mm;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;background:#fff}
-        .logo{display:block;width:78mm;max-width:78mm;height:35mm;object-fit:contain;object-position:center;margin:0 0 8mm}
-        .nombre{width:100%;height:65mm;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:900;font-style:italic;line-height:0.95;letter-spacing:-0.5mm;overflow:hidden;white-space:nowrap;color:#000}
+        html,body{margin:0;padding:0;width:215.9mm;height:139.7mm;background:#fff;color:#000;font-family:Arial,Helvetica,sans-serif;overflow:hidden}
+        .banner{width:215.9mm;height:139.7mm;padding:5mm;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;background:#fff;page-break-inside:avoid;break-inside:avoid}
+        .logo{display:block;width:72mm;max-width:72mm;height:30mm;object-fit:contain;object-position:center;margin:0 0 5mm;flex:none}
+        .nombre{width:100%;height:85mm;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:900;font-style:italic;line-height:0.9;letter-spacing:-0.7mm;overflow:hidden;white-space:nowrap;color:#000;page-break-inside:avoid;break-inside:avoid}
       </style></head><body><main class="banner"><img class="logo" src="${origen}/logo.jpg" alt="Transportes MX"><div class="nombre">${escapar(nombre)}</div></main></body></html>`);
     doc.close();
 
@@ -869,17 +869,18 @@ async function generarPdfBannerClienteBase64(nombreCliente) {
     // Ajustar automáticamente el nombre: maximizar el tamaño sin salir del ancho.
     const nombreEl = doc.querySelector(".nombre");
     if (nombreEl) {
-      let size = 170;
+      let size = 260;
       nombreEl.style.fontSize = `${size}px`;
-      const maxWidth = nombreEl.clientWidth - 12;
-      while (size > 18 && (nombreEl.scrollWidth > maxWidth || nombreEl.scrollHeight > nombreEl.clientHeight)) {
+      const maxWidth = nombreEl.clientWidth - 20;
+      while (size > 16 && (nombreEl.scrollWidth > maxWidth || nombreEl.scrollHeight > nombreEl.clientHeight)) {
         size -= 2;
         nombreEl.style.fontSize = `${size}px`;
       }
-      while (size < 170) {
-        nombreEl.style.fontSize = `${size + 2}px`;
+      while (size < 260) {
+        const siguiente = size + 2;
+        nombreEl.style.fontSize = `${siguiente}px`;
         if (nombreEl.scrollWidth > maxWidth || nombreEl.scrollHeight > nombreEl.clientHeight) break;
-        size += 2;
+        size = siguiente;
       }
       nombreEl.style.fontSize = `${size}px`;
     }
@@ -888,9 +889,9 @@ async function generarPdfBannerClienteBase64(nombreCliente) {
       margin: 0,
       filename: `Banner-${nombre.replace(/[^a-z0-9-_]+/gi, "-")}.pdf`,
       image: { type: "jpeg", quality: 0.98 },
-      html2canvas: { scale: 3, useCORS: true, backgroundColor: "#ffffff", logging: false },
-      jsPDF: { unit: "mm", format: [215.9, 139.7], orientation: "landscape" },
-      pagebreak: { mode: [] }
+      html2canvas: { scale: 2, useCORS: true, backgroundColor: "#ffffff", logging: false, width: doc.querySelector(".banner").scrollWidth, height: doc.querySelector(".banner").scrollHeight },
+      jsPDF: { unit: "mm", format: [215.9, 139.7], orientation: "landscape", compress: true },
+      pagebreak: { mode: ["avoid-all", "css"], avoid: [".banner", ".logo", ".nombre"] }
     }).from(doc.querySelector(".banner")).outputPdf("blob");
 
     const base64 = await new Promise((resolve, reject) => {
@@ -1881,16 +1882,16 @@ return notas.filter((nota) =>
 
       <section className="min-w-0 rounded-2xl bg-slate-200 p-2 text-black sm:p-3 xl:p-4">
 
-        <div className="mb-3 flex items-center justify-between gap-2 px-1">
+        <div className="mb-3 flex flex-col items-stretch gap-2 px-1">
 
           <h2 className="font-semibold text-slate-800">
             Vista previa de impresión
           </h2>
 
-          {mostrarPreviewNota && <div className="flex flex-wrap gap-2">
-            <button type="button" onClick={() => accionesPdf("imprimir")} className="rounded-lg bg-green-600 px-3 py-2 text-sm font-bold text-white">Imprimir</button>
-            <button type="button" onClick={() => accionesPdf("compartir")} className="rounded-lg bg-blue-600 px-3 py-2 text-sm font-bold text-white">Compartir</button>
-            <button type="button" onClick={() => setMostrarPreviewNota(false)} className="rounded-lg bg-red-600 px-3 py-2 text-sm font-bold text-white">Cancelar</button>
+          {mostrarPreviewNota && <div className="grid w-full grid-cols-3 gap-1.5 sm:gap-2">
+            <button type="button" onClick={() => accionesPdf("imprimir")} className="min-w-0 rounded-lg bg-green-600 px-2 py-2 text-center text-xs font-bold text-white sm:px-3 sm:text-sm">Imprimir</button>
+            <button type="button" onClick={() => accionesPdf("compartir")} className="min-w-0 rounded-lg bg-blue-600 px-2 py-2 text-center text-xs font-bold text-white sm:px-3 sm:text-sm">Compartir</button>
+            <button type="button" onClick={() => setMostrarPreviewNota(false)} className="min-w-0 rounded-lg bg-red-600 px-2 py-2 text-center text-xs font-bold text-white sm:px-3 sm:text-sm">Cancelar</button>
           </div>}
 
         </div>
@@ -2064,15 +2065,15 @@ return notas.filter((nota) =>
         {mostrarPreviewBanner && <div className="mx-auto mt-4 w-full max-w-[760px] overflow-hidden rounded-xl border border-slate-400 bg-white text-black shadow-lg">
           <div className="flex flex-wrap items-center justify-between gap-2 bg-slate-100 p-3">
             <h3 className="font-bold text-slate-800">Vista previa · Banner del cliente</h3>
-            <div className="flex flex-wrap gap-2">
-              <button type="button" onClick={() => accionesPdf("imprimirBanner")} className="rounded-lg bg-green-600 px-3 py-2 text-sm font-bold text-white">Imprimir</button>
-              <button type="button" onClick={() => accionesPdf("compartirBanner")} className="rounded-lg bg-blue-600 px-3 py-2 text-sm font-bold text-white">Compartir</button>
-              <button type="button" onClick={() => setMostrarPreviewBanner(false)} className="rounded-lg bg-red-600 px-3 py-2 text-sm font-bold text-white">Cancelar</button>
+            <div className="grid w-full grid-cols-3 gap-1.5 sm:gap-2">
+              <button type="button" onClick={() => accionesPdf("imprimirBanner")} className="min-w-0 rounded-lg bg-green-600 px-2 py-2 text-center text-xs font-bold text-white sm:px-3 sm:text-sm">Imprimir</button>
+              <button type="button" onClick={() => accionesPdf("compartirBanner")} className="min-w-0 rounded-lg bg-blue-600 px-2 py-2 text-center text-xs font-bold text-white sm:px-3 sm:text-sm">Compartir</button>
+              <button type="button" onClick={() => setMostrarPreviewBanner(false)} className="min-w-0 rounded-lg bg-red-600 px-2 py-2 text-center text-xs font-bold text-white sm:px-3 sm:text-sm">Cancelar</button>
             </div>
           </div>
-          <div className="mx-auto flex aspect-[215.9/139.7] w-full flex-col items-center justify-center gap-3 overflow-hidden bg-white p-5 sm:p-8">
-            <img src="/logo.jpg" alt="Transportes MX" className="h-[35%] max-w-[45%] object-contain" />
-            <div className="flex h-[55%] w-full items-center justify-center overflow-hidden whitespace-nowrap text-center text-2xl font-black italic uppercase leading-none sm:text-5xl" style={{fontSize: `clamp(18px, 6vw, 72px)`}}>{datos.cliente || "NOMBRE DEL CLIENTE"}</div>
+          <div className="mx-auto flex aspect-[215.9/139.7] w-full flex-col items-center justify-center overflow-hidden bg-white p-[4%]">
+            <img src="/logo.jpg" alt="Transportes MX" className="h-[24%] w-[36%] shrink-0 object-contain" />
+            <div className="flex h-[70%] w-full items-center justify-center overflow-hidden whitespace-nowrap text-center font-black italic uppercase leading-[0.9]" style={{fontSize: `clamp(22px, 10vw, 110px)`}}>{datos.cliente || "NOMBRE DEL CLIENTE"}</div>
           </div>
         </div>}
         </div>
