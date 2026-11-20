@@ -938,7 +938,6 @@ export default function NotasVenta() {
   const [editando, setEditando] = useState(null);
   const [busqueda, setBusqueda] = useState("");
   const [mostrarPreviewNota, setMostrarPreviewNota] = useState(true);
-  const [mostrarPreviewBanner, setMostrarPreviewBanner] = useState(true);
   // Carga Google Maps mediante el mismo loader y componente Autocomplete
   // que usa el flujo principal de reservaciones de Transportes MX.
   const { isLoaded: googleMapsLoaded, loadError: googleMapsLoadError } = useJsApiLoader({
@@ -2074,24 +2073,8 @@ return notas.filter((nota) =>
         </article>}
 
 
-        {(!mostrarPreviewNota || !mostrarPreviewBanner) && <div className="mb-3 flex flex-wrap gap-2">
-          {!mostrarPreviewNota && <button type="button" onClick={() => setMostrarPreviewNota(true)} className="rounded-lg bg-slate-700 px-3 py-2 text-sm font-bold text-white">Mostrar Nota de Venta</button>}
-          {!mostrarPreviewBanner && <button type="button" onClick={() => setMostrarPreviewBanner(true)} className="rounded-lg bg-slate-700 px-3 py-2 text-sm font-bold text-white">Mostrar Banner</button>}
-        </div>}
-
-        {mostrarPreviewBanner && <div className="mx-auto mt-4 w-full max-w-[760px] overflow-hidden rounded-xl border border-slate-400 bg-white text-black shadow-lg">
-          <div className="flex flex-wrap items-center justify-between gap-2 bg-slate-100 p-3">
-            <h3 className="font-bold text-slate-800">Vista previa · Banner del cliente</h3>
-            <div className="grid w-full grid-cols-3 gap-1.5 sm:gap-2">
-              <button type="button" onClick={() => accionesPdf("imprimirBanner")} className="min-w-0 rounded-lg bg-green-600 px-2 py-2 text-center text-xs font-bold text-white sm:px-3 sm:text-sm">Imprimir</button>
-              <button type="button" onClick={() => accionesPdf("compartirBanner")} className="min-w-0 rounded-lg bg-blue-600 px-2 py-2 text-center text-xs font-bold text-white sm:px-3 sm:text-sm">Compartir</button>
-              <button type="button" onClick={() => setMostrarPreviewBanner(false)} className="min-w-0 rounded-lg bg-red-600 px-2 py-2 text-center text-xs font-bold text-white sm:px-3 sm:text-sm">Cancelar</button>
-            </div>
-          </div>
-          <div className="mx-auto flex aspect-[215.9/139.7] w-full flex-col items-center justify-center overflow-hidden bg-white p-[4%]">
-            <img src="/logo.jpg" alt="Transportes MX" className="h-[24%] w-[36%] shrink-0 object-contain" />
-            <div className="flex h-[70%] w-full items-center justify-center overflow-hidden whitespace-nowrap text-center font-black italic uppercase leading-[0.9]" style={{fontSize: `clamp(22px, 10vw, 110px)`}}>{datos.cliente || "NOMBRE DEL CLIENTE"}</div>
-          </div>
+        {!mostrarPreviewNota && <div className="mb-3 flex flex-wrap gap-2">
+          <button type="button" onClick={() => setMostrarPreviewNota(true)} className="rounded-lg bg-slate-700 px-3 py-2 text-sm font-bold text-white">Mostrar Nota de Venta</button>
         </div>}
         </div>
 
