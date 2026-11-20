@@ -1,18 +1,20 @@
-
 /**
  * Integración con Google Calendar para TransportesMX
  * Usa OAuth 2.0 con Refresh Token.
  * Soporta español (es) e inglés (en).
  * Crea eventos para viajes sencillos e ida y vuelta.
  *
- * Para notas de venta manuales:
- * - Un aviso el día anterior a las 8:00 PM.
- * - Un aviso 4 horas antes.
- * - Un aviso 1 hora antes.
- * - Todos mediante notificación emergente de Google Calendar.
+ * CONFIGURACIÓN UNIFICADA:
+ * - Aplica a Notas de Venta manuales y reservas Stripe.
+ * - 1 hora antes (60 minutos).
+ * - 4 horas antes (240 minutos).
+ * - 930 minutos antes (15 horas y 30 minutos).
+ * - Todos mediante notificaciones emergentes (popup).
  * - Sin recordatorios por correo electrónico.
+ * - Sin invitaciones automáticas.
+ * - La hora REAL del servicio aparece en el título.
  *
- * Las demás integraciones conservan sus recordatorios actuales.
+ * No modifica pagos, cobros ni confirmaciones de Stripe.
  */
 
 const calLabels = {
@@ -35,6 +37,7 @@ const calLabels = {
     oneWay: 'Sencillo',
     dateTime: 'Fecha y hora',
   },
+
   en: {
     transfer: 'Transfer',
     returnTransfer: 'Return',
@@ -56,6 +59,9 @@ const calLabels = {
   },
 };
 
+/**
+ * Formato de fecha para mostrar.
+ */
 function formatDateDisplay(dateStr) {
   if (!dateStr) return 'N/A';
 
@@ -68,7 +74,11 @@ function formatDateDisplay(dateStr) {
   return dateStr;
 }
 
-// Calcula la hora de término, contemplando cambio de día.
+/**
+ * Calcula la hora de término del servicio.
+ * Duración predeterminada: 2 horas.
+ * Contempla cambio de día.
+ */
 function calcularFin(fecha, hora, duracionHoras = 2) {
   const [year, month, day] = fecha.split('-').map(Number);
   const [hours, minutes] = hora.split(':').map(Number);
@@ -99,65 +109,23 @@ function calcularFin(fecha, hora, duracionHoras = 2) {
 }
 
 /**
- * Calcula cuántos minutos hay entre las 8:00 PM
- * del día anterior y el inicio del servicio.
+ * RECORDATORIOS UNIFICADOS PARA TODOS LOS SERVICIOS.
  *
- * Las fechas y horas se interpretan como hora local
- * de America/Mexico_City.
+ * Se utilizan exclusivamente notificaciones emergentes.
+ *
+ * 60 minutos  = 1 hora antes.
+ * 240 minutos = 4 horas antes.
+ * 930 minutos = 15 horas y 30 minutos antes.
+ *
+ * Sin correo electrónico.
  */
-function calcularAvisoNocheAnterior(fecha, hora) {
-  if (
-    !/^\d{4}-\d{2}-\d{2}$/.test(String(fecha || '')) ||
-    !/^\d{2}:\d{2}$/.test(String(hora || ''))
-  ) {
-    throw new Error(
-      'Fecha u hora inválida para configurar los recordatorios'
-    );
-  }
-
-  const [year, month, day] = fecha.split('-').map(Number);
-  const [hours, minutes] = hora.split(':').map(Number);
-
-  const inicioServicio = Date.UTC(
-    year,
-    month - 1,
-    day,
-    hours,
-    minutes
-  );
-
-  const nocheAnterior = Date.UTC(
-    year,
-    month - 1,
-    day - 1,
-    20,
-    0
-  );
-
-  const minutos = Math.round(
-    (inicioServicio - nocheAnterior) / 60000
-  );
-
-  if (minutos <= 0) {
-    throw new Error(
-      'No se pudo calcular el recordatorio de la noche anterior'
-    );
-  }
-
-  return minutos;
-}
-
-/**
- * Recordatorios exclusivos para notas de venta manuales.
- * No utiliza el método email, únicamente popup.
- */
-function crearRecordatoriosManual(fecha, hora) {
+function crearRecordatoriosServicio() {
   return {
     useDefault: false,
     overrides: [
       {
         method: 'popup',
-        minutes: calcularAvisoNocheAnterior(fecha, hora),
+        minutes: 60,
       },
       {
         method: 'popup',
@@ -165,12 +133,21 @@ function crearRecordatoriosManual(fecha, hora) {
       },
       {
         method: 'popup',
-        minutes: 60,
+        minutes: 930,
       },
     ],
   };
 }
 
+/**
+ * Crea eventos de Google Calendar para TransportesMX.
+ *
+ * Aplica la misma configuración de recordatorios a:
+ * - Notas de Venta manuales.
+ * - Reservaciones automáticas mediante Stripe.
+ *
+ * La hora real del servicio se muestra en el título.
+ */
 export async function crearEventoCalendario(
   reserva,
   lang = 'es',
@@ -221,6 +198,10 @@ export async function crearEventoCalendario(
     const calendarId =
       process.env.GOOGLE_CALENDAR_ID || 'primary';
 
+    // ==========================================
+    // HORA REAL DEL SERVICIO DE IDA
+    // ==========================================
+
     const horaIda =
       reserva.horaIda?.length === 5
         ? reserva.horaIda
@@ -231,25 +212,18 @@ export async function crearEventoCalendario(
       horaIda
     );
 
-    // Detectar si se trata de una nota de venta manual.
-    const esNotaManual = opciones.recordatoriosManual === true;
+    // ==========================================
+    // RECORDATORIOS UNIFICADOS
+    // PARA NOTAS MANUALES Y STRIPE
+    // ==========================================
 
-    // Recordatorios de ida.
-    const recordatoriosIda = esNotaManual
-      ? crearRecordatoriosManual(
-          reserva.fechaIda,
-          horaIda
-        )
-      : {
-          useDefault: false,
-          overrides: [
-            { method: 'popup', minutes: 60 },
-            { method: 'email', minutes: 120 },
-          ],
-        };
+    const recordatoriosIda =
+      crearRecordatoriosServicio();
 
-    // No se agregan asistentes del cliente:
-    // evita invitaciones automáticas.
+    // ==========================================
+    // INFORMACIÓN DEL VUELO
+    // ==========================================
+
     const flightInfo =
       reserva.aerolinea && reserva.numVuelo
         ? `${reserva.aerolinea} / ${reserva.numVuelo}`
@@ -257,58 +231,107 @@ export async function crearEventoCalendario(
           reserva.numVuelo ||
           '';
 
+    // ==========================================
+    // TIPO DE VIAJE
+    // ==========================================
+
     const tipoViaje =
       reserva.tipoViaje === 'redondo'
         ? 'redondo'
         : 'sencillo';
 
+    // ==========================================
+    // DESCRIPCIÓN DEL EVENTO DE IDA
+    // ==========================================
+
     const descripcionBase = [
       `📍 ${t.pickup}: ${reserva.origen || ''}`,
+
       `📍 ${t.destination}: ${reserva.destino || ''}`,
-      `📅 ${t.dateTime}: ${formatDateDisplay(reserva.fechaIda)} ${horaIda} HRS`,
-      `👤 ${t.clientName}: ${reserva.clienteNombre || ''}`,
-      `🚘 ${t.vehicle}: ${reserva.vehiculoNombre || ''}`,
+
+      `📅 ${t.dateTime}: ${formatDateDisplay(
+        reserva.fechaIda
+      )} ${horaIda} HRS`,
+
+      `👤 ${t.clientName}: ${
+        reserva.clienteNombre || ''
+      }`,
+
+      `🚘 ${t.vehicle}: ${
+        reserva.vehiculoNombre || ''
+      }`,
+
       flightInfo
         ? `✈️ ${t.flightAndAirline}: ${flightInfo}`
         : '',
-      `👥 ${t.passengers}: ${reserva.numPasajeros || ''}`,
-      `📞 ${t.phone}: ${reserva.clienteTelefono || ''}`,
-      `📧 ${t.email}: ${reserva.clienteEmail || ''}`,
-      `💰 ${t.total}: $${reserva.precioTotal || 0} MXN`,
+
+      `👥 ${t.passengers}: ${
+        reserva.numPasajeros || ''
+      }`,
+
+      `📞 ${t.phone}: ${
+        reserva.clienteTelefono || ''
+      }`,
+
+      `📧 ${t.email}: ${
+        reserva.clienteEmail || ''
+      }`,
+
+      `💰 ${t.total}: $${
+        reserva.precioTotal || 0
+      } MXN`,
+
       reserva.distancia
         ? `📏 ${t.distance}: ${reserva.distancia}`
         : '',
+
       reserva.duracion
         ? `⏱️ ${t.duration}: ${reserva.duracion}`
         : '',
+
       `${t.type}: ${
         tipoViaje === 'redondo'
           ? t.roundTrip
           : t.oneWay
       }`,
+
       reserva.observaciones
         ? `📝 Observaciones:\n${reserva.observaciones}`
         : '',
+
       '',
+
       'TransportesMX - transportesmx.org',
     ]
       .filter(Boolean)
       .join('\n');
 
-    // EVENTO DE IDA.
+    // ==========================================
+    // EVENTO DE IDA
+    // HORA REAL VISIBLE EN EL TÍTULO
+    // ==========================================
+
     const eventoIda = {
-      summary: `🚗 ${t.transfer}: ${reserva.clienteNombre || 'Cliente'}`,
+      summary: `🚗 ${horaIda} - ${t.transfer}: ${
+        reserva.clienteNombre || 'Cliente'
+      }`,
+
       description: descripcionBase,
+
       location: reserva.origen || '',
+
       start: {
         dateTime: `${reserva.fechaIda}T${horaIda}:00`,
         timeZone: 'America/Mexico_City',
       },
+
       end: {
         dateTime: `${finIda.fecha}T${finIda.hora}:00`,
         timeZone: 'America/Mexico_City',
       },
+
       colorId: '9',
+
       reminders: recordatoriosIda,
     };
 
@@ -331,9 +354,12 @@ export async function crearEventoCalendario(
       eventIdIda
     );
 
+    // ==========================================
+    // EVENTO DE REGRESO
+    // ==========================================
+
     let eventIdRegreso = null;
 
-    // EVENTO DE REGRESO.
     if (
       tipoViaje === 'redondo' &&
       reserva.fechaRegreso
@@ -348,55 +374,92 @@ export async function crearEventoCalendario(
         horaRegreso
       );
 
-      // Configurar recordatorios independientes para el regreso.
-      const recordatoriosRegreso = esNotaManual
-        ? crearRecordatoriosManual(
-            reserva.fechaRegreso,
-            horaRegreso
-          )
-        : {
-            useDefault: false,
-            overrides: [
-              { method: 'popup', minutes: 60 },
-              { method: 'email', minutes: 120 },
-            ],
-          };
+      // Mismos recordatorios para el regreso.
+      const recordatoriosRegreso =
+        crearRecordatoriosServicio();
+
+      // ========================================
+      // DESCRIPCIÓN DEL REGRESO
+      // ========================================
 
       const descripcionRegreso = [
-        `📍 ${t.pickup}: ${reserva.destino || ''}`,
-        `📍 ${t.destination}: ${reserva.origen || ''}`,
-        `📅 ${t.dateTime}: ${formatDateDisplay(reserva.fechaRegreso)} ${horaRegreso} HRS`,
-        `👤 ${t.clientName}: ${reserva.clienteNombre || ''}`,
-        `🚘 ${t.vehicle}: ${reserva.vehiculoNombre || ''}`,
+        `📍 ${t.pickup}: ${
+          reserva.destino || ''
+        }`,
+
+        `📍 ${t.destination}: ${
+          reserva.origen || ''
+        }`,
+
+        `📅 ${t.dateTime}: ${formatDateDisplay(
+          reserva.fechaRegreso
+        )} ${horaRegreso} HRS`,
+
+        `👤 ${t.clientName}: ${
+          reserva.clienteNombre || ''
+        }`,
+
+        `🚘 ${t.vehicle}: ${
+          reserva.vehiculoNombre || ''
+        }`,
+
         flightInfo
           ? `✈️ ${t.flightAndAirline}: ${flightInfo}`
           : '',
-        `👥 ${t.passengers}: ${reserva.numPasajeros || ''}`,
-        `📞 ${t.phone}: ${reserva.clienteTelefono || ''}`,
-        `📧 ${t.email}: ${reserva.clienteEmail || ''}`,
-        `💰 ${t.total}: $${reserva.precioTotal || 0} MXN`,
+
+        `👥 ${t.passengers}: ${
+          reserva.numPasajeros || ''
+        }`,
+
+        `📞 ${t.phone}: ${
+          reserva.clienteTelefono || ''
+        }`,
+
+        `📧 ${t.email}: ${
+          reserva.clienteEmail || ''
+        }`,
+
+        `💰 ${t.total}: $${
+          reserva.precioTotal || 0
+        } MXN`,
+
         reserva.observaciones
           ? `📝 Observaciones:\n${reserva.observaciones}`
           : '',
+
         '',
+
         'TransportesMX - transportesmx.org',
       ]
         .filter(Boolean)
         .join('\n');
 
+      // ========================================
+      // EVENTO DE REGRESO
+      // HORA REAL VISIBLE EN EL TÍTULO
+      // ========================================
+
       const eventoRegreso = {
-        summary: `🔄 ${t.returnTransfer}: ${reserva.clienteNombre || 'Cliente'}`,
+        summary: `🔄 ${horaRegreso} - ${
+          t.returnTransfer
+        }: ${reserva.clienteNombre || 'Cliente'}`,
+
         description: descripcionRegreso,
+
         location: reserva.destino || '',
+
         start: {
           dateTime: `${reserva.fechaRegreso}T${horaRegreso}:00`,
           timeZone: 'America/Mexico_City',
         },
+
         end: {
           dateTime: `${finRegreso.fecha}T${finRegreso.hora}:00`,
           timeZone: 'America/Mexico_City',
         },
+
         colorId: '6',
+
         reminders: recordatoriosRegreso,
       };
 
@@ -421,13 +484,17 @@ export async function crearEventoCalendario(
       );
     }
 
-    // Devuelve los IDs de ambos eventos.
+    // ==========================================
+    // RESULTADO
+    // ==========================================
+
     return {
       eventIdIda,
       eventIdRegreso,
       tipoViaje,
       success: true,
     };
+
   } catch (error) {
     console.error(
       '[Calendar] Error creando evento:',
