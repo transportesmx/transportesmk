@@ -1912,8 +1912,8 @@ return notas.filter((nota) =>
 
         </div>
 
-        <div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-2">
-        {mostrarPreviewNota && <article className="mx-auto w-full max-w-[560px] min-w-0 bg-white px-3 py-4 text-black shadow-xl sm:px-5 sm:py-5 xl:px-8 xl:py-7">
+        <div className="grid grid-cols-1 items-start gap-4">
+        {mostrarPreviewNota && <article className="w-full max-w-none min-w-0 bg-white px-3 py-4 text-black shadow-xl sm:px-5 sm:py-5 xl:px-8 xl:py-7">
 
           <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_minmax(76px,104px)] items-start gap-2 sm:grid-cols-[minmax(0,1fr)_112px] sm:gap-3">
 
