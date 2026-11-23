@@ -1,6 +1,7 @@
 /**
  * Envío de emails transaccionales con Resend
- * Envía confirmación con PDF adjunto al cliente y al dueño.
+ * Envía confirmación con Hoja de Servicio y Banner PDF
+ * al cliente y al dueño.
  * Soporta español (es) e inglés (en).
  */
 
@@ -29,7 +30,7 @@ const emailLabels = {
     oneWay: 'Sencillo',
     returnLabel: 'Regreso',
     totalPaid: 'Total pagado',
-    pdfNote: '📎 Se adjunta tu hoja de servicio en PDF.',
+    pdfNote: '📎 Se adjuntan tu hoja de servicio y tu banner de pasajeros en PDF.',
     contactNote: 'Cualquier duda contáctanos por WhatsApp:',
     footerCompany: 'TransportesMX · Grupo Turístico MX',
     footerLocation: 'San Miguel de Allende, GTO',
@@ -48,6 +49,7 @@ const emailLabels = {
     ownerDistance: 'Distancia',
     ownerFooter: 'TransportesMX · Panel de administración',
   },
+
   en: {
     tagline: 'Your trusted transfer service',
     confirmed: 'Booking Confirmed!',
@@ -62,7 +64,7 @@ const emailLabels = {
     oneWay: 'One way',
     returnLabel: 'Return',
     totalPaid: 'Total paid',
-    pdfNote: '📎 Your service sheet is attached as a PDF.',
+    pdfNote: '📎 Your service sheet and passenger banner are attached as PDFs.',
     contactNote: 'Any questions? Contact us via WhatsApp:',
     footerCompany: 'TransportesMX · Grupo Turístico MX',
     footerLocation: 'San Miguel de Allende, GTO',
@@ -385,12 +387,20 @@ function htmlNotificacionDueno(reserva) {
 }
 
 /**
- * Envía confirmación al cliente + notificación al dueño, ambos con PDF adjunto
- * @param {Object} reserva - datos de la reserva
- * @param {Buffer} pdfBuffer - buffer del PDF
+ * Envía confirmación al cliente + notificación al dueño,
+ * ambos con Hoja de Servicio y Banner de pasajeros adjuntos.
+ *
+ * @param {Object} reserva - Datos de la reserva
+ * @param {Buffer|null} pdfBuffer - PDF de Hoja de Servicio
+ * @param {Buffer|null} bannerBuffer - PDF del Banner
  * @param {string} lang - 'es' o 'en'
  */
-export async function enviarEmailConfirmacion(reserva, pdfBuffer, lang = 'es') {
+export async function enviarEmailConfirmacion(
+  reserva,
+  pdfBuffer,
+  bannerBuffer,
+  lang = 'es'
+) {
   if (!resend) {
     console.log('[Email] Resend no configurado — omitiendo envío');
     return null;
@@ -398,11 +408,22 @@ export async function enviarEmailConfirmacion(reserva, pdfBuffer, lang = 'es') {
 
   const t = emailLabels[lang] || emailLabels.es;
 
+  // Preparar ambos documentos
   const attachments = [];
+
+  // Hoja de Servicio
   if (pdfBuffer) {
     attachments.push({
       filename: `TransportesMX-${lang === 'en' ? 'Booking' : 'Reserva'}-${reserva.id || 'servicio'}.pdf`,
       content: pdfBuffer,
+    });
+  }
+
+  // Banner de pasajeros
+  if (bannerBuffer) {
+    attachments.push({
+      filename: `TransportesMX-Banner-Pasajeros-${reserva.id || 'servicio'}.pdf`,
+      content: bannerBuffer,
     });
   }
 
@@ -415,7 +436,11 @@ export async function enviarEmailConfirmacion(reserva, pdfBuffer, lang = 'es') {
       html: htmlConfirmacion(reserva, lang),
       attachments,
     });
-    console.log(`[Email] ✅ Confirmación enviada al cliente [${lang}]:`, clienteResult.data?.id);
+
+    console.log(
+      `[Email] ✅ Confirmación enviada al cliente [${lang}]:`,
+      clienteResult.data?.id
+    );
 
     // 2. Email al DUEÑO — siempre en español
     const duenioResult = await resend.emails.send({
@@ -425,9 +450,16 @@ export async function enviarEmailConfirmacion(reserva, pdfBuffer, lang = 'es') {
       html: htmlNotificacionDueno(reserva),
       attachments,
     });
-    console.log('[Email] ✅ Notificación enviada al dueño:', duenioResult.data?.id);
 
-    return { clienteId: clienteResult.data?.id, duenioId: duenioResult.data?.id };
+    console.log(
+      '[Email] ✅ Notificación enviada al dueño:',
+      duenioResult.data?.id
+    );
+
+    return {
+      clienteId: clienteResult.data?.id,
+      duenioId: duenioResult.data?.id,
+    };
   } catch (error) {
     console.error('[Email] ❌ Error:', error.message);
     return null;
