@@ -263,7 +263,7 @@ export default function BuscadorServicio({ onNext, isLoaded }) {
         </p>
       </div>
 
-      <div className="bg-white/[0.03] border border-white/[0.06] rounded-2xl p-5 sm:p-7">
+      <div className="bg-white/[0.03] border border-white/[0.30] rounded-2xl p-5 sm:p-7">
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Origen + Swap + Destino */}
           <div className="flex gap-3">
