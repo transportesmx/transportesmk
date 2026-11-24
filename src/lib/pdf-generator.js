@@ -407,39 +407,65 @@ export function generarHojaServicio(reserva, lang = 'es') {
     y += bulletLineH + 2;
   }
 
-  // ── FOOTER ──
+  // ── OBSERVATIONS (FIXED SIZE/POSITION MATCHING NOTA DE VENTA MX177) ──
+  const observacionesTexto = String(
+    reserva.observaciones ??
+    reserva.notas ??
+    reserva.notes ??
+    reserva.observations ??
+    reserva.comentarios ??
+    ''
+  ).trim();
+
+  // Footer line stays fixed. Observation box sits just above it,
+  // matching the reference Nota de Venta MX177 in size and spacing.
   const footerY = ph - 22;
+  const obsBoxHeight = 18; // mm: fixed box height, like the reference PDF
+  const obsBoxX = margin;
+  const obsBoxWidth = contentWidth;
+  const obsY = footerY - obsBoxHeight - 5; // 5 mm above the footer line
+  const obsPaddingX = 5;
 
-  // ── OBSERVATIONS (optional, moved near footer) ──
-  if (reserva.observaciones && String(reserva.observaciones).trim()) {
-    const obsText = doc.splitTextToSize(
-      String(reserva.observaciones).trim(),
-      contentWidth - 12
-    );
-    const obsLineHeight = 5;
-    const obsBoxHeight = Math.max(13, obsText.length * obsLineHeight + 11);
+  // Box: white fill, gray outline, rounded corners
+  doc.setDrawColor(80, 80, 80);
+  doc.setLineWidth(0.5);
+  doc.setFillColor(255, 255, 255);
+  doc.roundedRect(
+    obsBoxX,
+    obsY,
+    obsBoxWidth,
+    obsBoxHeight,
+    5,
+    5,
+    'FD'
+  );
 
-    // Colocar observaciones justo arriba del footer
-    const obsY = footerY - obsBoxHeight - 5;
+  // Title
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(8);
+  doc.setTextColor(30, 30, 30);
+  doc.text(`${t.observations}:`, obsBoxX + obsPaddingX, obsY + 6);
 
-    doc.setDrawColor(...COLORS.line);
-    doc.setLineWidth(0.4);
-    doc.roundedRect(margin, obsY, contentWidth, obsBoxHeight, 5, 5, 'S');
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(10);
-    doc.setTextColor(...COLORS.black);
-    doc.text(t.observations, margin + 5, obsY + 6);
+  // Text: wrap and fit inside the fixed-height box. For multiple lines,
+  // reduce the font size slightly as needed to prevent clipping.
+  if (observacionesTexto) {
+    const obsTextWidth = obsBoxWidth - obsPaddingX * 2;
+    let obsFontSize = 9;
+    let obsLines = doc.splitTextToSize(observacionesTexto, obsTextWidth);
+    const availableTextHeight = obsBoxHeight - 12;
+    while (obsLines.length * 4.2 > availableTextHeight && obsFontSize > 6) {
+      obsFontSize -= 0.5;
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(obsFontSize);
+      obsLines = doc.splitTextToSize(observacionesTexto, obsTextWidth);
+    }
     doc.setFont('helvetica', 'normal');
-    doc.setFontSize(9);
-    doc.text(obsText, margin + 5, obsY + 11);
+    doc.setFontSize(obsFontSize);
+    doc.setTextColor(40, 40, 40);
+    doc.text(obsLines, obsBoxX + obsPaddingX, obsY + 12);
   }
 
-  // Línea negra superior del pie
-  doc.setDrawColor(...COLORS.black);
-  doc.setLineWidth(1.2);
-  doc.line(margin, footerY, rightX, footerY);
-
-  // Fecha y hora de generación en formato 24 horas
+  // ── FOOTER ON EVERY PAGE ──
   const fechaHoraActual = new Date();
 
   const fechaFooter = fechaHoraActual.toLocaleDateString(
@@ -457,26 +483,38 @@ export function generarHojaServicio(reserva, lang = 'es') {
     hour12: false,
   });
 
-  // Primera línea: lugar, fecha y hora
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(10);
-  doc.setTextColor(...COLORS.footerGray);
-
   const footerInfo =
     `San Miguel de Allende, Guanajuato · Documento Generado: ${fechaFooter} · Hora: ${horaFooter}`;
 
-  doc.text(footerInfo, pw / 2, footerY + 6, {
-    align: 'center',
-  });
+  const totalPages = doc.getNumberOfPages();
 
-  // Empresa
-  doc.setFontSize(10);
-  doc.text(
-    'Grupo Turístico MX S. de R.L. de C.V.',
-    pw / 2,
-    footerY + 12,
-    { align: 'center' }
-  );
+  for (let page = 1; page <= totalPages; page++) {
+    doc.setPage(page);
+
+    // Línea superior del pie
+    doc.setDrawColor(...COLORS.black);
+    doc.setLineWidth(1.2);
+    doc.line(margin, footerY, rightX, footerY);
+
+    // Fecha, hora y lugar
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.setTextColor(...COLORS.footerGray);
+
+    doc.text(footerInfo, pw / 2, footerY + 6, {
+      align: 'center',
+    });
+
+    // Empresa
+    doc.text(
+      'Grupo Turístico MX S. de R.L. de C.V.',
+      pw / 2,
+      footerY + 12,
+      {
+        align: 'center',
+      }
+    );
+  }
 
   return doc;
 }
