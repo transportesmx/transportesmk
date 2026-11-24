@@ -21,8 +21,8 @@ export const vehiculos = [
     kmMinimo: 10,
     precioPorKm: 22,
     tarifas: [
-      { hastaKm: 150, precioPorKm: 22},
-      { hastaKm: Infinity, precioPorKm: 22},
+      { hastaKm: 150, precioPorKm: 21},
+      { hastaKm: Infinity, precioPorKm: 21},
     ],
     banderazos: [
       { hastaKm: 50, monto: 500 },
@@ -50,7 +50,7 @@ export const vehiculos = [
       { hastaKm: 60, monto: 600 },
       { hastaKm: 70, monto: 300 },
     ],
-    caracteristicas: ['Asientos de piel', 'WiFi disponible', 'Agua embotellada', 'Ideal para familias'],
+    caracteristicas: ['Asientos de piel', 'Maximo confort', 'Agua embotellada', 'Ideal para familias'],
     popular: true,
     disponibleReservacion: true,
   },
@@ -62,9 +62,9 @@ export const vehiculos = [
     capacidadEquipaje: 8,
     imagen: '/assets/autos/van.png',
     kmMinimo: 20,
-    precioPorKm: 34,
+    precioPorKm: 37,
     tarifas: [
-      { hastaKm: 150, precioPorKm: 34 },
+      { hastaKm: 150, precioPorKm: 37 },
       { hastaKm: Infinity, precioPorKm: 32 },
     ],
     banderazos: [
@@ -88,7 +88,7 @@ export const vehiculos = [
     precioPorKm: 52,
     tarifas: [
       { hastaKm: 150, precioPorKm: 52 },
-      { hastaKm: Infinity, precioPorKm: 38 },
+      { hastaKm: Infinity, precioPorKm: 39 },
     ],
     banderazos: [
       { hastaKm: 35, monto: 1800 },
@@ -103,7 +103,7 @@ export const vehiculos = [
   {
     id: 'sprinter',
     nombre: 'Mercedes Benz Sprinter',
-    descripcion: 'Mercedes Benz Sprinter, Volkswagen Crafter, Ford Tránsito o similar',
+    descripcion: 'Mercedes Benz Sprinter, Volkswagen Crafter, Ford Tránsit o similar',
     capacidadPasajeros: 20,
     capacidadEquipaje: 20,
     imagen: '/assets/autos/sprinter.png',
