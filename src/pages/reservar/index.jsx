@@ -77,7 +77,7 @@ function ReservaFlow() {
         {/* Evento especial CTA */}
         {reserva.paso < 6 && (
           <div className="mt-10 mx-auto max-w-lg">
-            <div className="bg-white/[0.04] border border-white/[0.08] rounded-2xl px-5 py-4 text-center">
+            <div className="bg-white/[0.04] border border-white/[0.30] rounded-2xl px-5 py-4 text-center">
               <p className="text-white/50 text-sm mb-3">
                 {traduccion?.reservar?.specialEvent?.text || '¿Tienes un evento especial? Contáctanos'}
               </p>
