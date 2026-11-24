@@ -19,7 +19,7 @@ export const vehiculos = [
     capacidadEquipaje: 3,
     imagen: '/assets/autos/sedan.png',
     kmMinimo: 10,
-    precioPorKm: 23,
+    precioPorKm: 24,
     tarifas: [
       { hastaKm: 150, precioPorKm: 23},
       { hastaKm: Infinity, precioPorKm: 21},
@@ -80,7 +80,7 @@ export const vehiculos = [
   {
     id: 'hiace',
     nombre: 'Toyota Hiace',
-    descripcion: 'Toyota Hiace, Nissan Urvan, Ford Tránsito o similar',
+    descripcion: 'Toyota Hiace, Nissan Urvan, Ford Tránsit o similar',
     capacidadPasajeros: 12,
     capacidadEquipaje: 10,
     imagen: '/assets/autos/Hiace.png',
