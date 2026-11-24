@@ -187,17 +187,102 @@ export default function BuscadorServicio({ onNext, isLoaded }) {
     });
   };
 
-  const CIUDADES_PERMITIDAS = [
-    'san miguel de allende', 'san miguel', 'dolores hidalgo',
-    'guanajuato', 'querétaro', 'queretaro', 'león', 'leon',
+  // ============================================================
+  // COBERTURA NACIONAL TRANSPORTES MX
+  // Se valida el país y la ciudad mediante coordenadas de Google
+  // Maps, no buscando palabras dentro de la dirección escrita.
+  // ============================================================
+
+  const CIUDADES_BASE = [
+    'san miguel de allende',
+    'dolores hidalgo',
+    'dolores hidalgo cuna de la independencia nacional',
+    'guanajuato',
+    'queretaro',
+    'santiago de queretaro',
+    'leon',
+    'leon de los aldama',
   ];
 
-  const esCiudadPermitida = (texto) => {
-    const lower = texto.toLowerCase();
-    return CIUDADES_PERMITIDAS.some((c) => lower.includes(c));
-  };
+  const normalizarTexto = (texto = '') =>
+    texto
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .trim();
 
-  const handleSubmit = (e) => {
+  const obtenerDatosGeograficos = (coords) =>
+    new Promise((resolve) => {
+      if (!window.google?.maps?.Geocoder || !coords) {
+        resolve(null);
+        return;
+      }
+
+      const lat = Number(coords.lat);
+      const lng = Number(coords.lng);
+
+      if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+        resolve(null);
+        return;
+      }
+
+      const geocoder = new window.google.maps.Geocoder();
+
+      geocoder.geocode(
+        { location: { lat, lng } },
+        (results, status) => {
+          if (status !== 'OK' || !results?.length) {
+            resolve(null);
+            return;
+          }
+
+          // Buscar el resultado más preciso que incluya componentes
+          // de dirección y país.
+          const resultado = results.find((item) =>
+            item.address_components?.some((componente) =>
+              componente.types.includes('country')
+            )
+          );
+
+          if (!resultado) {
+            resolve(null);
+            return;
+          }
+
+          const componentes = resultado.address_components || [];
+
+          const pais = componentes.find((componente) =>
+            componente.types.includes('country')
+          );
+
+          const componentesCiudad = componentes.filter((componente) =>
+            componente.types.some((tipo) =>
+              [
+                'locality',
+                'postal_town',
+                'administrative_area_level_2',
+                'sublocality_level_1',
+              ].includes(tipo)
+            )
+          );
+
+          const nombresCiudad = componentesCiudad.map((componente) =>
+            normalizarTexto(componente.long_name)
+          );
+
+          const esCiudadBase = nombresCiudad.some((nombre) =>
+            CIUDADES_BASE.includes(nombre)
+          );
+
+          resolve({
+            esMexico: pais?.short_name === 'MX',
+            esCiudadBase,
+          });
+        }
+      );
+    });
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
@@ -205,48 +290,95 @@ export default function BuscadorServicio({ onNext, isLoaded }) {
       setError(t.errorPickup || 'Selecciona un lugar de recogida válido');
       return;
     }
+
     if (!reserva.destinoCoords || !destinoText) {
       setError(t.errorDestination || 'Selecciona un destino válido');
       return;
     }
-    if (!esCiudadPermitida(origenText) && !esCiudadPermitida(destinoText)) {
-      setError(t.errorCityNotAllowed || 'El origen o destino debe estar en San Miguel de Allende, Dolores Hidalgo, Guanajuato, Querétaro o León.');
+
+    // Verificar ambos puntos geográficos con Google Maps.
+    const [datosOrigen, datosDestino] = await Promise.all([
+      obtenerDatosGeograficos(reserva.origenCoords),
+      obtenerDatosGeograficos(reserva.destinoCoords),
+    ]);
+
+    if (!datosOrigen || !datosDestino) {
+      setError(
+        'No pudimos verificar alguna ubicación. Selecciona nuevamente el origen y el destino desde las sugerencias de Google Maps.'
+      );
       return;
     }
+
+    // Ningún punto puede estar fuera de México.
+    if (!datosOrigen.esMexico || !datosDestino.esMexico) {
+      setError(
+        'Por el momento, Transportes MX solamente ofrece servicios dentro de México.'
+      );
+      return;
+    }
+
+    // Al menos uno de los dos puntos debe ser una ciudad base.
+    if (!datosOrigen.esCiudadBase && !datosDestino.esCiudadBase) {
+      setError(
+        t.errorCityNotAllowed ||
+        'El origen o destino debe estar en San Miguel de Allende, Dolores Hidalgo, Guanajuato, Querétaro o León.'
+      );
+      return;
+    }
+
     if (!fechaIda) {
       setError(t.errorDate || 'Selecciona una fecha');
       return;
     }
+
     if (tipoViaje === 'redondo' && !fechaRegreso) {
       setError(t.errorReturnDate || 'Selecciona fecha de regreso');
       return;
     }
+
     if (!aerolinea.trim()) {
       setError(t.errorAirline || 'Ingresa la aerolínea o escribe N/A si no aplica');
       return;
     }
-    if (aerolinea.trim().toUpperCase() !== 'N/A' && !numVuelo.trim()) {
+
+    if (
+      aerolinea.trim().toUpperCase() !== 'N/A' &&
+      !numVuelo.trim()
+    ) {
       setError(t.errorFlightNumber || 'Ingresa el número de vuelo');
       return;
     }
 
+    // Se conserva la anticipación mínima original de 24 horas.
     const hora = horaIda?.length === 5 ? horaIda : '12:00';
     const servicioDate = new Date(`${fechaIda}T${hora}:00`);
-    const horasRestantes = (servicioDate.getTime() - Date.now()) / (1000 * 60 * 60);
+    const horasRestantes =
+      (servicioDate.getTime() - Date.now()) / (1000 * 60 * 60);
+
     if (horasRestantes < 24) {
       setShow24hModal(true);
       return;
     }
 
+    // Se conserva el flujo original de reservación.
+    // No se modifica el cálculo de tarifas ni el componente de pagos.
     dispatch({
       type: 'SET_BUSQUEDA',
       payload: {
-        origen: origenText, destino: destinoText, fechaIda, horaIda,
-        numPasajeros, numMaletas, aerolinea, numVuelo, tipoViaje,
+        origen: origenText,
+        destino: destinoText,
+        fechaIda,
+        horaIda,
+        numPasajeros,
+        numMaletas,
+        aerolinea,
+        numVuelo,
+        tipoViaje,
         fechaRegreso: tipoViaje === 'redondo' ? fechaRegreso : '',
         horaRegreso: tipoViaje === 'redondo' ? horaRegreso : '',
       },
     });
+
     onNext();
   };
 
