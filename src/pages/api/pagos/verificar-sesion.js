@@ -4,21 +4,14 @@ import { crearEventoCalendario } from '@/lib/google-calendar';
 import { enviarEmailConfirmacion } from '@/lib/email';
 
 /**
- * Genera la Hoja de Servicio como Buffer PDF.
+ * Genera la Hoja de Servicio en PDF (Buffer)
  */
 async function generarPDFBuffer(reservaData, lang = 'es') {
   try {
     const { generarHojaServicio } = await import('@/lib/pdf-generator');
     const doc = generarHojaServicio(reservaData, lang);
-
     const arrayBuffer = doc.output('arraybuffer');
-    const buffer = Buffer.from(arrayBuffer);
-
-    if (!buffer.length || buffer.subarray(0, 5).toString() !== '%PDF-') {
-      throw new Error('La Hoja de Servicio no generó un PDF válido');
-    }
-
-    return buffer;
+    return Buffer.from(arrayBuffer);
   } catch (err) {
     console.error('[PDF] Error generando Hoja de Servicio:', err.message);
     return null;
@@ -26,29 +19,14 @@ async function generarPDFBuffer(reservaData, lang = 'es') {
 }
 
 /**
- * Genera el Banner de pasajeros como Buffer PDF.
- * Se reutiliza el generador compartido del sistema.
+ * Genera el Banner de pasajeros en PDF (Buffer)
  */
 async function generarBannerBuffer(reservaData) {
   try {
     const { generarBannerCliente } = await import('@/lib/banner-generator');
-
-    const bannerDoc = await generarBannerCliente(reservaData);
-
-    if (!bannerDoc || typeof bannerDoc.output !== 'function') {
-      throw new Error('El generador del banner no devolvió un documento PDF');
-    }
-
-    const arrayBuffer = bannerDoc.output('arraybuffer');
-    const buffer = Buffer.from(arrayBuffer);
-
-    if (!buffer.length || buffer.subarray(0, 5).toString() !== '%PDF-') {
-      throw new Error('El Banner de pasajeros no generó un PDF válido');
-    }
-
-    console.log('[Banner] PDF válido generado:', buffer.length, 'bytes');
-
-    return buffer;
+    const doc = await generarBannerCliente(reservaData);
+    const arrayBuffer = doc.output('arraybuffer');
+    return Buffer.from(arrayBuffer);
   } catch (err) {
     console.error('[Banner] Error generando PDF:', err.message);
     return null;
@@ -58,8 +36,8 @@ async function generarBannerBuffer(reservaData) {
 const processedSessions = new Set();
 
 /**
- * Procesa las acciones post-pago (email, PDFs, calendario).
- * Se llama desde la página de éxito Y desde el webhook.
+ * Procesa las acciones post-pago (email, PDFs, calendario)
+ * Se llama desde la página de éxito Y desde el webhook
  */
 async function procesarPostPago(session) {
   const meta = session.metadata || {};
@@ -122,7 +100,9 @@ async function procesarPostPago(session) {
     try {
       await supabase
         .from('reservas')
-        .update({ estado: 'pagada' })
+        .update({
+          estado: 'pagada',
+        })
         .eq('id', meta.reservaId);
 
       console.log('[Supabase] Reserva actualizada a pagada');
@@ -131,7 +111,7 @@ async function procesarPostPago(session) {
     }
   }
 
-  // 2. Datos unificados de la reserva
+  // 2. Datos unificados
   const reservaData = {
     id: meta.reservaId || session.id.slice(-8),
     clienteNombre: meta.clienteNombre || '',
@@ -156,17 +136,28 @@ async function procesarPostPago(session) {
     numMaletas: meta.numMaletas || '',
     aerolinea: meta.aerolinea || '',
     numVuelo: meta.numVuelo || '',
+
+    // CORRECCIÓN: recuperar observaciones desde Stripe Metadata
+    observaciones: meta.observaciones || '',
+
     metodoPago: session.payment_method_types?.[0] || 'tarjeta',
     estadoPago: 'pagado',
   };
+
+  console.log(
+    '[Verificar] Observaciones recuperadas:',
+    reservaData.observaciones
+      ? 'Sí (' + reservaData.observaciones.length + ' caracteres)'
+      : 'No hay observaciones'
+  );
 
   // 3. Generar Hoja de Servicio PDF
   const pdfBuffer = await generarPDFBuffer(reservaData, lang);
 
   console.log(
-    '[PDF Hoja de Servicio]',
+    '[PDF]',
     pdfBuffer
-      ? `Generado (${pdfBuffer.length} bytes) [${lang}]`
+      ? `Hoja de Servicio generada (${pdfBuffer.length} bytes) [${lang}]`
       : 'No se pudo generar'
   );
 
@@ -174,13 +165,13 @@ async function procesarPostPago(session) {
   const bannerBuffer = await generarBannerBuffer(reservaData);
 
   console.log(
-    '[PDF Banner]',
+    '[Banner]',
     bannerBuffer
-      ? `Generado (${bannerBuffer.length} bytes)`
+      ? `Banner generado (${bannerBuffer.length} bytes)`
       : 'No se pudo generar'
   );
 
-  // 5. Enviar ambos documentos por Resend
+  // 5. Enviar email con ambos PDFs
   let emailResult = null;
 
   try {
@@ -190,8 +181,6 @@ async function procesarPostPago(session) {
       bannerBuffer,
       lang
     );
-
-    console.log('[Email] Resultado del envío:', !!emailResult);
   } catch (emailErr) {
     console.error('[Email] Error:', emailErr.message);
   }
@@ -200,15 +189,14 @@ async function procesarPostPago(session) {
   let calendarEventId = null;
 
   try {
-    calendarEventId = await crearEventoCalendario(
-      reservaData,
-      lang
-    );
+    calendarEventId = await crearEventoCalendario(reservaData, lang);
 
     if (calendarEventId && supabase && meta.reservaId) {
       await supabase
         .from('reservas')
-        .update({ estado: 'confirmada' })
+        .update({
+          estado: 'confirmada',
+        })
         .eq('id', meta.reservaId);
 
       console.log('[Calendar] Evento creado y reserva confirmada');
@@ -256,7 +244,9 @@ export default async function handler(req, res) {
 
     const session = await stripe.checkout.sessions.retrieve(
       sessionId,
-      { expand: ['customer_details'] }
+      {
+        expand: ['customer_details'],
+      }
     );
 
     if (!session) {
