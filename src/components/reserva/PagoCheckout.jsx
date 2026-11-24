@@ -67,6 +67,9 @@ export default function PagoCheckout({ onNext, onBack }) {
             aerolinea: reserva.aerolinea || '',
             numVuelo: reserva.numVuelo || '',
 
+            // CORRECCIÓN: Transmitir observaciones al servidor
+            observaciones: reserva.observaciones || '',
+
             // Código enviado para validación en el servidor
             codigoDescuento: codigoDescuento,
 
@@ -349,6 +352,7 @@ export default function PagoCheckout({ onNext, onBack }) {
           disabled={loading}
           className="px-5 py-3 text-sm text-white/50 hover:text-black bg-white/[0.04] hover:bg-amber-500/90 border border-white/[0.06] hover:border-amber-500 rounded-lg transition-all flex items-center gap-2 hover:font-bold disabled:opacity-30"
         >
+
           <FaArrowLeft className="text-xs" />
           {t.back || 'Atrás'}
         </button>
