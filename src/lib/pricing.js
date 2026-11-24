@@ -19,7 +19,7 @@ export const vehiculos = [
     capacidadEquipaje: 3,
     imagen: '/assets/autos/sedan.png',
     kmMinimo: 10,
-    precioPorKm: 24,
+    precioPorKm: 25,
     tarifas: [
       { hastaKm: 150, precioPorKm: 23},
       { hastaKm: Infinity, precioPorKm: 21},
