@@ -21,7 +21,7 @@ export const vehiculos = [
     kmMinimo: 10,
     precioPorKm: 22,
     tarifas: [
-      { hastaKm: 150, precioPorKm: 21},
+      { hastaKm: 150, precioPorKm: 23},
       { hastaKm: Infinity, precioPorKm: 21},
     ],
     banderazos: [
