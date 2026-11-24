@@ -67,7 +67,7 @@ export default function PagoCheckout({ onNext, onBack }) {
             aerolinea: reserva.aerolinea || '',
             numVuelo: reserva.numVuelo || '',
 
-            // CORRECCIÓN: Transmitir observaciones al servidor
+            // Transmitir observaciones al servidor
             observaciones: reserva.observaciones || '',
 
             // Código enviado para validación en el servidor
@@ -149,7 +149,8 @@ export default function PagoCheckout({ onNext, onBack }) {
         </p>
       </div>
 
-      <div className="bg-white/[0.03] border border-white/[0.06] rounded-2xl p-5 mb-5 space-y-4">
+      {/* RECUADRO PRINCIPAL */}
+      <div className="bg-white/[0.03] border border-white/[0.30] rounded-2xl p-5 mb-5 space-y-4">
 
         {/* Origen y destino */}
         <div className="flex items-start gap-3">
@@ -170,7 +171,7 @@ export default function PagoCheckout({ onNext, onBack }) {
           </div>
         </div>
 
-        <div className="h-px bg-white/[0.04]" />
+        <div className="h-px bg-white/[0.12]" />
 
         {/* Información del viaje */}
         <div className="grid grid-cols-2 gap-3 text-sm">
@@ -223,7 +224,7 @@ export default function PagoCheckout({ onNext, onBack }) {
         {reserva.tipoViaje === 'redondo' &&
           reserva.fechaRegreso && (
             <>
-              <div className="h-px bg-white/[0.04]" />
+              <div className="h-px bg-white/[0.12]" />
 
               <div>
                 <p className="text-[10px] text-white/25 uppercase tracking-wider font-medium">
@@ -237,7 +238,7 @@ export default function PagoCheckout({ onNext, onBack }) {
             </>
           )}
 
-        <div className="h-px bg-white/[0.04]" />
+        <div className="h-px bg-white/[0.12]" />
 
         {/* Contacto */}
         <div className="grid grid-cols-1 gap-1 text-sm">
@@ -254,7 +255,7 @@ export default function PagoCheckout({ onNext, onBack }) {
           </p>
         </div>
 
-        <div className="h-px bg-white/[0.04]" />
+        <div className="h-px bg-white/[0.12]" />
 
         {/* Resumen de precio */}
         <div className="space-y-2">
@@ -283,7 +284,7 @@ export default function PagoCheckout({ onNext, onBack }) {
             </>
           )}
 
-          <div className="h-px bg-white/[0.06]" />
+          <div className="h-px bg-white/[0.12]" />
 
           <div className="flex items-center justify-between">
             <p className="text-[10px] text-white/25 uppercase tracking-wider font-medium">
@@ -350,7 +351,7 @@ export default function PagoCheckout({ onNext, onBack }) {
         <button
           onClick={onBack}
           disabled={loading}
-          className="px-5 py-3 text-sm text-white/50 hover:text-black bg-white/[0.04] hover:bg-amber-500/90 border border-white/[0.06] hover:border-amber-500 rounded-lg transition-all flex items-center gap-2 hover:font-bold disabled:opacity-30"
+          className="px-5 py-3 text-sm text-white/50 hover:text-black bg-white/[0.04] hover:bg-amber-500/90 border border-white/[0.30] hover:border-amber-500 rounded-lg transition-all flex items-center gap-2 hover:font-bold disabled:opacity-30"
         >
 
           <FaArrowLeft className="text-xs" />
