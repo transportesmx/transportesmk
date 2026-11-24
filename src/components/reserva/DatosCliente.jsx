@@ -382,13 +382,20 @@ export default function DatosCliente({ onNext, onBack }) {
               type="button"
               onClick={onBack}
               className="
-                btn-back-tmx flex-1 rounded-lg
-                border border-white/[0.30]
-                bg-white/[0.025] px-4 py-3
-                text-sm font-semibold text-white/75
-                transition-all duration-300
-                active:scale-[0.97]
-              "
+  btn-back-tmx flex-1 rounded-lg
+  border border-white/20
+  bg-white/[0.025]
+  px-4 py-3
+  text-sm font-semibold text-white/75
+  transition-all duration-300 ease-out
+  hover:bg-amber-500
+  hover:border-amber-400
+  hover:text-black
+  hover:font-bold
+  hover:shadow-[0_0_18px_rgba(245,158,11,0.35)]
+  hover:scale-[1.02]
+  active:scale-[0.97]
+"
             >
               ← Atrás
             </button>
