@@ -236,38 +236,49 @@ export default function BuscadorServicio({ onNext, isLoaded }) {
             return;
           }
 
-          // Buscar el resultado más preciso que incluya componentes
-          // de dirección y país.
-          const resultado = results.find((item) =>
-            item.address_components?.some((componente) =>
-              componente.types.includes('country')
-            )
+          // Google puede devolver varios niveles de resultado para un mismo
+          // punto. Revisamos todos para no depender de un solo resultado.
+          const resultados = results.filter(
+            (item) => Array.isArray(item.address_components)
           );
 
-          if (!resultado) {
+          if (!resultados.length) {
             resolve(null);
             return;
           }
 
-          const componentes = resultado.address_components || [];
+          // El país se obtiene de cualquier resultado que incluya country.
+          const componentePais = resultados
+            .flatMap((item) => item.address_components)
+            .find((componente) =>
+              componente.types?.includes('country')
+            );
 
-          const pais = componentes.find((componente) =>
-            componente.types.includes('country')
-          );
+          if (!componentePais) {
+            resolve(null);
+            return;
+          }
 
-          const componentesCiudad = componentes.filter((componente) =>
-            componente.types.some((tipo) =>
-              [
-                'locality',
-                'postal_town',
-                'administrative_area_level_2',
-                'sublocality_level_1',
-              ].includes(tipo)
-            )
-          );
+          // La ciudad o municipio puede aparecer en distintos niveles.
+          // No incluimos administrative_area_level_1 porque representa
+          // normalmente el estado y podría aceptar todo Guanajuato.
+          const tiposCiudad = [
+            'locality',
+            'postal_town',
+            'administrative_area_level_2',
+            'administrative_area_level_3',
+            'sublocality_level_1',
+          ];
 
-          const nombresCiudad = componentesCiudad.map((componente) =>
-            normalizarTexto(componente.long_name)
+          const nombresCiudad = resultados.flatMap((item) =>
+            item.address_components
+              .filter((componente) =>
+                componente.types?.some((tipo) => tiposCiudad.includes(tipo))
+              )
+              .flatMap((componente) => [
+                normalizarTexto(componente.long_name || ''),
+                normalizarTexto(componente.short_name || ''),
+              ])
           );
 
           const esCiudadBase = nombresCiudad.some((nombre) =>
@@ -275,7 +286,7 @@ export default function BuscadorServicio({ onNext, isLoaded }) {
           );
 
           resolve({
-            esMexico: pais?.short_name === 'MX',
+            esMexico: componentePais.short_name === 'MX',
             esCiudadBase,
           });
         }
