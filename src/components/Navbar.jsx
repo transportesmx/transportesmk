@@ -117,30 +117,30 @@ const Navbar = () => {
           <Link
             href="/blog"
             className="flex items-center gap-2 hover:text-blue-500 transition"
-            title="Blog de Transportes MX"
+            title={traduccion.navbar.blog || "Blog"}
           >
-            Blog
+            {traduccion.navbar.blog || "Blog"}
           </Link>
 
           {/* ACCESO AL SISTEMA */}
           <Link
             href="/notas-venta"
             className="flex items-center gap-2 hover:text-blue-500 transition"
-            title="Acceso al sistema"
-            aria-label="Acceso al sistema"
+            title={traduccion.navbar.access || (idioma.nombre === "EN" ? "Access" : "Acceso")}
+            aria-label={traduccion.navbar.access || (idioma.nombre === "EN" ? "Access" : "Acceso")}
           >
             <FaUserCircle size={20} />
-            <span>Acceso</span>
+            <span>{traduccion.navbar.access || (idioma.nombre === "EN" ? "Access" : "Acceso")}</span>
           </Link>
 
           {/* NUEVO ACCESO AL BANNER */}
           <Link
             href="/banner"
             className="flex items-center gap-2 hover:text-blue-500 transition"
-            title="Banner de bienvenida"
-            aria-label="Banner de bienvenida"
+            title={traduccion.navbar.banner || "Banner"}
+            aria-label={traduccion.navbar.banner || "Banner"}
           >
-            <span>Banner</span>
+            <span>{traduccion.navbar.banner || "Banner"}</span>
           </Link>
 
           {/* RESERVACIONES */}
@@ -148,7 +148,7 @@ const Navbar = () => {
             href="/reservar"
             className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition font-semibold text-sm"
           >
-            {idioma.nombre === "EN" ? "Book now" : "Reservar"}
+            {traduccion.navbar.reserve || (idioma.nombre === "EN" ? "Book now" : "Reservar")}
           </Link>
         </nav>
 
@@ -220,14 +220,14 @@ const Navbar = () => {
             href="/reservar"
             className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 rounded-lg transition font-semibold text-xs text-white whitespace-nowrap"
           >
-            {idioma.nombre === "EN" ? "Book now" : "Reservar"}
+            {traduccion.navbar.reserve || (idioma.nombre === "EN" ? "Book now" : "Reservar")}
           </Link>
 
           <button
             ref={buttonRef}
             type="button"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            aria-label={isMenuOpen ? "Cerrar menú" : "Abrir menú"}
+            aria-label={isMenuOpen ? (idioma.nombre === "EN" ? "Close menu" : "Cerrar menú") : (idioma.nombre === "EN" ? "Open menu" : "Abrir menú")}
             aria-expanded={isMenuOpen}
           >
             {isMenuOpen ? <HiX size={24} /> : <HiMenu size={24} />}
@@ -296,7 +296,7 @@ const Navbar = () => {
             className="block px-4 py-2 hover:bg-gray-600"
             onClick={closeMobileMenu}
           >
-            Blog
+            {traduccion.navbar.blog || "Blog"}
           </Link>
 
           {/* ACCESO AL SISTEMA */}
@@ -304,10 +304,10 @@ const Navbar = () => {
             href="/notas-venta"
             className="flex items-center gap-2 px-4 py-2 hover:bg-gray-600"
             onClick={closeMobileMenu}
-            title="Acceso al sistema"
+            title={traduccion.navbar.access || (idioma.nombre === "EN" ? "Access" : "Acceso")}
           >
             <FaUserCircle size={20} />
-            <span>Acceso</span>
+            <span>{traduccion.navbar.access || (idioma.nombre === "EN" ? "Access" : "Acceso")}</span>
           </Link>
 
           {/* NUEVO ACCESO AL BANNER */}
@@ -315,9 +315,9 @@ const Navbar = () => {
             href="/banner"
             className="flex items-center gap-2 px-4 py-2 hover:bg-gray-600"
             onClick={closeMobileMenu}
-            title="Banner de bienvenida"
+            title={traduccion.navbar.banner || "Banner"}
           >
-            <span>Banner</span>
+            <span>{traduccion.navbar.banner || "Banner"}</span>
           </Link>
 
           {/* SELECTOR DE IDIOMA */}
