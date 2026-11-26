@@ -1,5 +1,4 @@
-import { useContext, useEffect, useMemo, useRef, useState } from "react";
-import { AppContext } from "@/Context/AppContext";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Autocomplete, useJsApiLoader } from "@react-google-maps/api";
 import { autocompleteOptions } from "@/lib/google-maps";
 import { supabase } from "@/lib/supabase";
@@ -8,115 +7,6 @@ const ADMIN1 = "amstrekgrt@gmail.com";
 const ADMIN2 = "and-i89@hotmail.com";
 const ZONA = "America/Mexico_City";
 const GOOGLE_MAPS_LIBRARIES = ["places"];
-
-const TEXTOS = {
-  "Sistema de notas de venta": "Sales Notes System",
-  "Cargando sistema de notas de venta…": "Loading sales notes system…",
-  "Inicia sesión con tu cuenta autorizada.": "Sign in with your authorized account.",
-  "Correo electrónico": "Email address",
-  "Contraseña": "Password",
-  "Entrar": "Sign in",
-  "Acceso no autorizado": "Unauthorized access",
-  "Esta cuenta no tiene permisos para las notas de venta.": "This account does not have permission to access sales notes.",
-  "Cerrar sesión": "Sign out",
-  "Nueva nota de venta": "New sales note",
-  "Editar nota": "Edit note",
-  "Folio:": "Folio:",
-  "Se asigna al guardar": "Assigned when saved",
-  "Nueva nota": "New note",
-  "Selecciona el tipo de viaje": "Select trip type",
-  "Sencillo": "One way",
-  "Ida y vuelta": "Round trip",
-  "Selecciona un vehículo": "Select a vehicle",
-  "Escribe aeropuerto, hotel o dirección y selecciona una sugerencia": "Enter an airport, hotel, or address and select a suggestion",
-  "Google Maps no pudo cargar": "Google Maps could not load",
-  "Cargando Google Maps…": "Loading Google Maps…",
-  "💰 Total / estado de pago": "💰 Total / payment status",
-  "Ej. 3500 o Pagado": "e.g. 3500 or Paid",
-  "Observaciones": "Notes",
-  "Escribe las observaciones del servicio": "Enter service notes",
-  "Guardando…": "Saving…",
-  "Guardar cambios": "Save changes",
-  "Guardar nota": "Save note",
-  "Imprimir / PDF": "Print / PDF",
-  "Cancelar edición": "Cancel editing",
-  "Historial de notas": "Notes history",
-  "Buscar por folio, cliente o servicio…": "Search by folio, customer, or service…",
-  "No hay registros que coincidan con la búsqueda.": "No records match your search.",
-  "Sin cliente": "No customer",
-  "Editar": "Edit",
-  "Eliminar": "Delete",
-  "Vista previa de impresión": "Print preview",
-  "Imprimir": "Print",
-  "Compartir": "Share",
-  "Cancelar": "Cancel",
-  "Mostrar Nota de Venta": "Show Sales Note",
-  "La vista previa sigue la distribución del documento impreso.": "The preview follows the layout of the printed document.",
-  "Para generar el PDF, pulsa “Imprimir / PDF”.": "To generate the PDF, click “Print / PDF”.",
-  "Administrador 1": "Administrator 1",
-  "Administrador 2": "Administrator 2",
-  "Seleccionar imagen del vehículo": "Select vehicle image",
-  "Nombre del vehículo (manual)": "Vehicle name (manual)",
-  "Nombre del cliente": "Customer name",
-  "Fecha del servicio": "Service date",
-  "Hora del servicio": "Service time",
-  "Recoger en": "Pickup location",
-  "Aerolínea": "Airline",
-  "Número de pasajeros": "Number of passengers",
-  "Número de maletas": "Number of bags",
-  "Número de teléfono": "Phone number",
-  "Destino": "Destination",
-  "Tipo de viaje": "Trip type",
-  "Duración": "Duration",
-  "Fecha de regreso": "Return date",
-  "Hora de regreso": "Return time",
-  "Correo electrónico principal": "Primary email",
-  "Correo electrónico adicional (opcional)": "Additional email (optional)",
-  "Cliente:": "Customer:",
-  "Teléfono:": "Phone:",
-  "Correo:": "Email:",
-  "Total:": "Total:",
-  "Total:": "Total:",
-  "Descripción del traslado:": "Transfer details:",
-  "Vehículo:": "Vehicle:",
-  "Fecha y hora:": "Date and time:",
-  "Regreso:": "Return:",
-  "Documento Generado:": "Document generated:",
-  "Hora:": "Time:",
-  "Pendiente": "Pending",
-  "Pendiente de guardar": "Pending save",
-  "N/A": "N/A",
-  "Folio pendiente": "Folio pending",
-};
-
-function traducir(texto, ingles) {
-  return ingles ? (TEXTOS[texto] || texto) : texto;
-}
-
-function etiquetaCampo(campo, etiqueta, ingles) {
-  if (!ingles) return etiqueta;
-  const mapa = {
-    imagenUnidad: "🖼️ Select vehicle image",
-    unidad: "✏️ Vehicle name (manual)",
-    cliente: "👤 Customer name",
-    fecha: "📅 Service date",
-    hora: "🕒 Service time",
-    origen: "📍 Pickup location",
-    aerolinea: "✈️ Airline",
-    pasajeros: "👥 Number of passengers",
-    maletas: "🧳 Number of bags",
-    telefono: "☎️ Phone number",
-    destino: "📍 Destination",
-    idaVuelta: "🔄 Trip type",
-    duracion: "⏱️ Duration",
-    regresoFecha: "↩️ Return date",
-    regresoHora: "🕒 Return time",
-    email: "✉️ Primary email",
-    email2: "✉️ Additional email (optional)",
-  };
-  return mapa[campo] || etiqueta;
-}
-
 
 const INICIAL = {
   cliente: "",
@@ -220,14 +110,15 @@ function imagenVehiculo(imagenUnidad, nombreManual = "") {
   return "/sprinter.png";
 }
 
-function formatoFecha(valor, idioma = "ES") {
+function formatoFecha(valor, ingles = false) {
   if (!valor) return "";
 
   const fecha = new Date(String(valor).trim() + "T12:00:00");
 
   if (Number.isNaN(fecha.getTime())) return valor;
 
-  const texto = new Intl.DateTimeFormat(idioma === "EN" ? "en-US" : "es-MX", {
+  const locale = ingles ? "en-US" : "es-MX";
+  const texto = new Intl.DateTimeFormat(locale, {
     day: "2-digit",
     month: "long",
     year: "numeric",
@@ -235,11 +126,11 @@ function formatoFecha(valor, idioma = "ES") {
   }).format(fecha);
 
   return texto.replace(/\b([a-záéíóúñ])/i, (letra) =>
-    letra.toLocaleUpperCase("es-MX")
+    letra.toLocaleUpperCase(locale)
   );
 }
 
-function formatoHora(valor) {
+function formatoHora(valor, ingles = false) {
   if (!valor) return "";
 
   const [hora, minuto] = valor.split(":").map(Number);
@@ -248,7 +139,8 @@ function formatoHora(valor) {
     return valor;
   }
 
-  return `${hora % 12 || 12}:${String(minuto).padStart(2, "0")} ${hora >= 12 ? "P.M." : "A.M."}`;
+  const periodo = ingles ? (hora >= 12 ? "PM" : "AM") : (hora >= 12 ? "P.M." : "A.M.");
+  return `${hora % 12 || 12}:${String(minuto).padStart(2, "0")} ${periodo}`;
 }
 
 function moneda(valor) {
@@ -277,34 +169,63 @@ function escapar(valor) {
   })[caracter]);
 }
 
-function fechaHoraActual(idioma = "ES") {
+function fechaHoraActual(ingles = false) {
   const ahora = new Date();
-  const locale = idioma === "EN" ? "en-US" : "es-MX";
-  const fecha = new Intl.DateTimeFormat(locale, {
+
+  const localeFecha = ingles ? "en-US" : "es-MX";
+  const partesFecha = new Intl.DateTimeFormat(localeFecha, {
     day: "2-digit",
     month: "long",
     year: "numeric",
     timeZone: ZONA,
-  }).format(ahora);
-  const hora = new Intl.DateTimeFormat(locale, {
+  }).formatToParts(ahora);
+
+  const dia =
+    partesFecha.find((parte) => parte.type === "day")?.value || "";
+
+  const mesCrudo =
+    partesFecha.find((parte) => parte.type === "month")?.value || "";
+
+  const mes = mesCrudo
+    ? mesCrudo.charAt(0).toLocaleUpperCase(localeFecha) + mesCrudo.slice(1)
+    : "";
+
+  const anio =
+    partesFecha.find((parte) => parte.type === "year")?.value || "";
+
+  const partesHora = new Intl.DateTimeFormat("en-US", {
     hour: "2-digit",
     minute: "2-digit",
     hour12: true,
     timeZone: ZONA,
-  }).format(ahora);
-  return { fecha, hora };
+  }).formatToParts(ahora);
+
+  const hora =
+    partesHora.find((parte) => parte.type === "hour")?.value || "";
+
+  const minuto =
+    partesHora.find((parte) => parte.type === "minute")?.value || "";
+
+  const periodo = (
+    partesHora.find((parte) => parte.type === "dayPeriod")?.value || "AM"
+  ).toUpperCase();
+
+  return {
+    fecha: ingles ? `${mes} ${dia}, ${anio}` : `${dia} de ${mes} de ${anio}`,
+    hora: ingles ? `${hora}:${minuto} ${periodo}` : `${hora}:${minuto} ${periodo === "PM" ? "P.M." : "A.M."}`,
+  };
 }
 
-function valorFechaHora(datos, idioma = "ES") {
-  return [formatoFecha(datos.fecha, idioma), formatoHora(datos.hora)]
+function valorFechaHora(datos, ingles = false) {
+  return [formatoFecha(datos.fecha, ingles), formatoHora(datos.hora, ingles)]
     .filter(Boolean)
     .join(" · ");
 }
 
-function valorRegreso(datos, idioma = "ES") {
+function valorRegreso(datos, ingles = false) {
   return [
-    formatoFecha(datos.regresoFecha, idioma),
-    formatoHora(datos.regresoHora),
+    formatoFecha(datos.regresoFecha, ingles),
+    formatoHora(datos.regresoHora, ingles),
   ]
     .filter(Boolean)
     .join(" · ");
@@ -318,35 +239,38 @@ function htmlFila(etiqueta, valor, clase = "") {
   </div>`;
 }
 
-function abrirImpresion(datos, folio, devolverVentana = false, idioma = "ES") {
-  const ingles = idioma === "EN";
+function abrirImpresion(datos, folio, devolverVentana = false) {
+  // El idioma se toma de la misma preferencia que utiliza el selector general del sitio.
+  let idiomaGuardado = {};
+  try { idiomaGuardado = JSON.parse(window.localStorage.getItem("idioma") || "{}"); } catch (_) {}
+  const ingles = idiomaGuardado?.nombre === "EN" || idiomaGuardado?.code === "US";
   const ventana = window.open("", "_blank", "width=1000,height=900");
 
   if (!ventana) return false;
 
-  const generado = fechaHoraActual(idioma);
-  const folioTexto = folio || (ingles ? "Pending save" : "Pendiente de guardar");
+  const generado = fechaHoraActual(ingles);
+  const folioTexto = folio || "Pendiente de guardar";
   const origen = window.location.origin;
 
   const filas = [
-    ["🚐 " + (ingles ? "Vehicle:" : "Vehículo:"), datos.unidad],
-    ["👤 " + (ingles ? "Customer name:" : "Nombre del cliente:"), datos.cliente],
-    ["📅 " + (ingles ? "Date and time:" : "Fecha y hora:"), valorFechaHora(datos, idioma)],
-    ["📍 " + (ingles ? "Pickup location:" : "Recoger en:"), datos.origen],
-    ["✈️ " + (ingles ? "Airline:" : "Aerolínea:"), datos.aerolinea || "N/A"],
-    ["👥 " + (ingles ? "Passengers:" : "Número de pasajeros:"), datos.pasajeros],
-    ["🧳 " + (ingles ? "Number of bags:" : "Número de maletas:"), datos.maletas],
-    ["☎️ " + (ingles ? "Phone number:" : "Número de teléfono:"), datos.telefono],
-    ["📍 " + (ingles ? "Destination:" : "Destino:"), datos.destino],
-    ["🔄 " + (ingles ? "Trip type:" : "Tipo de viaje:"), datos.idaVuelta === "redondo" ? (ingles ? "Round trip" : "Ida y vuelta") : datos.idaVuelta === "sencillo" ? (ingles ? "One way" : "Sencillo") : ""],
-    ["⏱️ " + (ingles ? "Duration:" : "Duración:"), datos.duracion],
+    [ingles ? "🚐 Vehicle:" : "🚐 Vehículo:", datos.unidad],
+    [ingles ? "👤 Customer name:" : "👤 Nombre del cliente:", datos.cliente],
+    [ingles ? "📅 Date and time:" : "📅 Fecha y hora:", valorFechaHora(datos, ingles)],
+    [ingles ? "📍 Pickup location:" : "📍 Recoger en:", datos.origen],
+    [ingles ? "✈️ Airline:" : "✈️ Aerolínea:", datos.aerolinea || "N/A"],
+    [ingles ? "👥 Passengers:" : "👥 Número de pasajeros:", datos.pasajeros],
+    [ingles ? "🧳 Bags:" : "🧳 Número de maletas:", datos.maletas],
+    [ingles ? "☎️ Phone number:" : "☎️ Número de teléfono:", datos.telefono],
+    [ingles ? "📍 Destination:" : "📍 Destino:", datos.destino],
+    [ingles ? "🔄 Trip type:" : "🔄 Tipo de viaje:", datos.idaVuelta === "redondo" ? (ingles ? "Round trip" : "Ida y vuelta") : datos.idaVuelta === "sencillo" ? (ingles ? "One way" : "Sencillo") : ""],
+    [ingles ? "⏱️ Duration:" : "⏱️ Duración:", datos.duracion],
   ]
     .map(([etiqueta, valor]) => htmlFila(etiqueta, valor))
     .join("");
 
   const regreso = [
-    formatoFecha(datos.regresoFecha, idioma),
-    formatoHora(datos.regresoHora),
+    formatoFecha(datos.regresoFecha, ingles),
+    formatoHora(datos.regresoHora, ingles),
   ]
     .filter(Boolean)
     .join(" · ");
@@ -357,7 +281,7 @@ function abrirImpresion(datos, folio, devolverVentana = false, idioma = "ES") {
   const total = !importeTexto
     ? ""
     : Number.isFinite(importeNumero)
-      ? `$${importeNumero.toLocaleString(ingles ? "en-US" : "es-MX", { minimumFractionDigits: 0, maximumFractionDigits: 2 })} MXN`
+      ? `$${importeNumero.toLocaleString("es-MX", { minimumFractionDigits: 0, maximumFractionDigits: 2 })} MXN`
       : importeTexto;
 
   const imagenSeleccionada = imagenVehiculo(datos.imagenUnidad, datos.unidad);
@@ -637,9 +561,27 @@ body{
 .acciones{
   display:flex;
   justify-content:center;
-  gap:3mm;
-  margin:7mm 0 2mm
+  align-items:center;
+  flex-wrap:wrap;
+  gap:10px;
+  width:100%;
+  margin:14px auto 22px;
+  padding:0 12px;
 }
+.acciones button{
+  min-width:110px;
+  border:0;
+  border-radius:7px;
+  color:#fff;
+  font-weight:800;
+  padding:11px 18px;
+  cursor:pointer;
+  font-size:14px;
+}
+.acciones button:disabled{opacity:.6;cursor:wait}
+.acciones .btn-imprimir{background:#16a34a}
+.acciones .btn-compartir{background:#2563eb}
+.acciones .btn-cancelar{background:#dc2626}
 
  .hoja.modoPdf .acciones{
   display:none!important;
@@ -658,9 +600,7 @@ button{
 }
 
 @media print{
-  .acciones{
-    display:none!important
-  }
+  .acciones{display:none!important}
 
   .hoja{
     box-sizing:border-box;
@@ -737,7 +677,7 @@ button{
   <div class="folioCol">
 
 <div class="folio">
-  ${ingles ? "Folio" : "F"}- ${escapar(folioTexto)}
+  F- ${escapar(folioTexto)}
 </div>
 
 <img
@@ -755,15 +695,15 @@ button{
 <section class="cliente">
 
   <div class="clienteItem">
-    <strong>{ingles ? "Customer:" : "Cliente:"}</strong> ${escapar(datos.cliente || "")}
+    <strong>${ingles ? "Customer:" : "Cliente:"}</strong> ${escapar(datos.cliente || "")}
   </div>
 
   <div class="clienteItem">
-    <strong>{ingles ? "Phone:" : "Teléfono:"}</strong> ${escapar(datos.telefono || "")}
+    <strong>${ingles ? "Phone:" : "Teléfono:"}</strong> ${escapar(datos.telefono || "")}
   </div>
 
   <div class="clienteItem">
-    <strong>{ingles ? "Email:" : "Correo:"}</strong> ${escapar(datos.email || "")}
+    <strong>${ingles ? "Email:" : "Correo:"}</strong> ${escapar(datos.email || "")}
   </div>
 
 </section>
@@ -775,7 +715,7 @@ button{
 <div class="antesBarra" aria-hidden="true"></div>
 
 <div class="barra">
-  {ingles ? "Transfer details:" : "Descripción del traslado:"}
+  ${ingles ? "Transfer details:" : "Descripción del traslado:"}
 </div>
 
 <section class="datos">
@@ -784,7 +724,7 @@ button{
 
 <div class="regreso">
   <span class="icono">↩️</span>
-  <strong>{ingles ? "Return:" : "Regreso:"}</strong>
+  <strong>${ingles ? "Return:" : "Regreso:"}</strong>
   <span class="valor">${escapar(regreso)}</span>
 </div>
 
@@ -794,23 +734,65 @@ button{
 </div>
 
 <footer class="pie">
-  San Miguel de Allende, Guanajuato · {ingles ? "Document generated:" : "Documento Generado:"}
+  ${ingles ? "San Miguel de Allende, Guanajuato · Generated:" : "San Miguel de Allende, Guanajuato · Documento Generado:"}
   ${escapar(generado.fecha)} · ${ingles ? "Time:" : "Hora:"} ${escapar(generado.hora)}
   <br>
   Grupo Turístico MX S. de R.L. de C.V.
 </footer>
 
-<div class="acciones">
-  <button onclick="window.print()">
-    ${ingles ? "Print / Save PDF" : "Imprimir / Guardar PDF"}
-  </button>
+</main>
 
-  <button onclick="window.close()">
-    ${ingles ? "Close" : "Cerrar"}
-  </button>
+<!-- Los controles quedan fuera de la hoja: se ven en about:blank, pero nunca salen impresos. -->
+<div class="acciones" role="group" aria-label="${ingles ? "Document actions" : "Acciones del documento"}">
+  <button class="btn-imprimir" type="button" onclick="window.print()">${ingles ? "Print" : "Imprimir"}</button>
+  <button class="btn-compartir" type="button" onclick="compartirNota()">${ingles ? "Share PDF" : "Compartir PDF"}</button>
+  <button class="btn-cancelar" type="button" onclick="window.close()">${ingles ? "Cancel" : "Cancelar"}</button>
 </div>
 
-</main>
+<script>
+async function compartirNota() {
+  const boton = document.querySelector(".btn-compartir");
+  const texto = boton.textContent;
+  try {
+    boton.disabled = true;
+    boton.textContent = ${ingles ? '"Preparing..."' : '"Preparando..."'};
+    if (!window.html2pdf) {
+      await new Promise((resolve, reject) => {
+        const script = document.createElement("script");
+        script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js";
+        script.onload = resolve;
+        script.onerror = () => reject(new Error("No se pudo cargar el generador PDF."));
+        document.head.appendChild(script);
+      });
+    }
+    const hoja = document.querySelector(".hoja");
+    const blob = await window.html2pdf().set({
+      margin: 0,
+      filename: "Nota-de-Venta-${String(folioTexto).replace(/[^a-zA-Z0-9_-]/g, "_")}.pdf",
+      image: { type: "jpeg", quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true, backgroundColor: "#ffffff", scrollX: 0, scrollY: 0 },
+      jsPDF: { unit: "mm", format: "letter", orientation: "portrait" },
+      pagebreak: { mode: [] }
+    }).from(hoja).outputPdf("blob");
+    const nombre = "Nota-de-Venta-${String(folioTexto).replace(/[^a-zA-Z0-9_-]/g, "_")}.pdf";
+    const archivo = new File([blob], nombre, { type: "application/pdf" });
+    if (navigator.share && navigator.canShare && navigator.canShare({ files: [archivo] })) {
+      await navigator.share({ files: [archivo], title: nombre });
+    } else {
+      const url = URL.createObjectURL(blob);
+      const enlace = document.createElement("a");
+      enlace.href = url; enlace.download = nombre; enlace.click();
+      setTimeout(() => URL.revokeObjectURL(url), 60000);
+      alert(${ingles ? '"Direct sharing is not supported in this browser. The PDF was downloaded."' : '"Este navegador no permite compartir directamente. Se descargó el PDF."'});
+    }
+  } catch (error) {
+    alert(error?.message || ${ingles ? '"Could not share the PDF."' : '"No se pudo compartir el PDF."'});
+  } finally {
+    boton.disabled = false;
+    boton.textContent = texto;
+  }
+}
+</script>
 </body>
 </html>`);
 
@@ -821,8 +803,8 @@ button{
 
 
 // Genera el PDF a partir del mismo HTML/CSS que utiliza la Nota de Venta al imprimir.
-async function generarPdfNotaVentaBase64(datos, folio, idioma = "ES") {
-  const ventanaPdf = abrirImpresion(datos, folio, true, idioma);
+async function generarPdfNotaVentaBase64(datos, folio) {
+  const ventanaPdf = abrirImpresion(datos, folio, true);
   if (!ventanaPdf || ventanaPdf === true) {
     throw new Error("No se pudo abrir la ventana temporal para generar el PDF. Permite ventanas emergentes.");
   }
@@ -1008,10 +990,6 @@ async function generarPdfBannerClienteBase64(nombreCliente) {
 }
 
 export default function NotasVenta() {
-  const { idioma } = useContext(AppContext);
-  const idiomaDoc = idioma?.nombre === "EN" ? "EN" : "ES";
-  const ingles = idiomaDoc === "EN";
-  const t = (texto) => traducir(texto, ingles);
   const [sesion, setSesion] = useState(null);
   const [correo, setCorreo] = useState("");
   const [contrasena, setContrasena] = useState("");
@@ -1299,8 +1277,7 @@ try {
           email2: String(payload.email2 || "").trim(),
           tipoViaje: payload.idaVuelta === "redondo" ? "redondo" : "sencillo",
         },
-        nueva.folio,
-        idiomaDoc
+        nueva.folio
       );
 
       // Generar el banner como PDF separado, con el mismo nombre de cliente.
@@ -1433,7 +1410,7 @@ await cargarNotas();
         base64 = await generarPdfBannerClienteBase64(nombreCliente);
         archivo = `Banner-Cliente-${folioActual}.pdf`;
       } else {
-        base64 = await generarPdfNotaVentaBase64({ ...datos }, folioActual, idiomaDoc);
+        base64 = await generarPdfNotaVentaBase64({ ...datos }, folioActual);
         archivo = `Nota-de-Venta-${folioActual}.pdf`;
       }
       const bytes = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
@@ -1470,7 +1447,7 @@ if (!d.cliente.trim()) {
   return;
 }
 
-if (!abrirImpresion(d, f, false, idiomaDoc)) {
+if (!abrirImpresion(d, f)) {
   setMensaje(
     "El navegador bloqueó la ventana de impresión. Permite las ventanas emergentes para este sitio."
   );
@@ -1486,13 +1463,13 @@ return notas.filter((nota) =>
 );
   }, [notas, busqueda]);
 
-  const fechaActual = fechaHoraActual(idiomaDoc);
+  const fechaActual = fechaHoraActual();
   const folioVisible = folio || "Se asigna al guardar";
 
   if (cargando) {
     return (
       <main className="min-h-screen bg-slate-950 p-8 text-white">
-        {t("Cargando sistema de notas de venta…")}
+        Cargando sistema de notas de venta…
       </main>
     );
   }
@@ -1509,11 +1486,11 @@ return notas.filter((nota) =>
             className="mb-5 h-16 w-40 object-contain object-left"
           />
       <p className="mt-2 text-sm text-slate-300">
-        {t("Inicia sesión con tu cuenta autorizada.")}
+        Inicia sesión con tu cuenta autorizada.
       </p>
 
       <label className="mt-6 block text-sm">
-        {t("Correo electrónico")}
+        Correo electrónico
 
         <input
           type="email"
@@ -1526,7 +1503,7 @@ return notas.filter((nota) =>
       </label>
 
       <label className="mt-4 block text-sm">
-        {t("Contraseña")}
+        Contraseña
 
         <input
           type="password"
@@ -1539,7 +1516,7 @@ return notas.filter((nota) =>
       </label>
 
       <button className="mt-5 w-full rounded-lg bg-emerald-600 p-3 font-bold text-white hover:bg-emerald-700">
-        {t("Entrar")}
+        Entrar
       </button>
 
       {mensaje && (
@@ -1559,17 +1536,17 @@ return notas.filter((nota) =>
     return (
       <main className="min-h-screen bg-slate-950 p-8 text-white">
         <h1 className="text-2xl font-bold">
-          {t("Acceso no autorizado")}
+          Acceso no autorizado
         </h1>
     <p className="mt-3">
-      {t("Esta cuenta no tiene permisos para las notas de venta.")}
+      Esta cuenta no tiene permisos para las notas de venta.
     </p>
 
     <button
       onClick={cerrarSesion}
       className="mt-5 rounded border border-slate-600 p-3"
     >
-      {t("Cerrar sesión")}
+      Cerrar sesión
     </button>
   </main>
 );
@@ -1595,21 +1572,21 @@ return notas.filter((nota) =>
           </h1>
 
           <p className="text-slate-300">
-            {t("Sistema de notas de venta")}
+            Sistema de notas de venta
           </p>
         </div>
       </div>
 
       <div className="flex items-center gap-3">
         <span className="text-sm text-slate-300">
-          {admin1 ? t("Administrador 1") : t("Administrador 2")}
+          {admin1 ? "Administrador 1" : "Administrador 2"}
         </span>
 
         <button
           onClick={cerrarSesion}
           className="rounded-lg border border-slate-600 px-3 py-2 text-sm hover:bg-slate-800"
         >
-          {t("Cerrar sesión")}
+          Cerrar sesión
         </button>
       </div>
 
@@ -1634,13 +1611,13 @@ return notas.filter((nota) =>
             <h2 className="text-xl font-semibold">
               {editando
                 ? `Editar nota ${editando.folio}`
-                : t("Nueva nota de venta")}
+                : "Nueva nota de venta"}
             </h2>
 
             <p className="mt-1 text-sm text-slate-400">
-              {t("Folio:")}{" "}
+              Folio:{" "}
               <span className="font-bold text-red-400">
-                {t(folioVisible)}
+                {folioVisible}
               </span>
             </p>
           </div>
@@ -1650,7 +1627,7 @@ return notas.filter((nota) =>
             onClick={nuevaNota}
             className="rounded-lg border border-slate-600 px-3 py-2 text-sm hover:bg-slate-800"
           >
-            {t("Nueva nota")}
+            Nueva nota
           </button>
 
         </div>
@@ -1672,7 +1649,7 @@ return notas.filter((nota) =>
               <label key={campo} className="block text-sm">
 
                 <span className="font-medium text-slate-200">
-                  {etiquetaCampo(campo, etiqueta, ingles)}
+                  {etiqueta}
                 </span>
 
                 {tipo === "viaje" ? (
@@ -1682,9 +1659,9 @@ return notas.filter((nota) =>
                     onChange={(e) => cambiar(campo, e.target.value)}
                     className="mt-1 w-full rounded-lg border border-slate-400 bg-white p-3 text-slate-900 outline-none focus:border-emerald-500"
                   >
-                    <option value="">{t("Selecciona el tipo de viaje")}</option>
-                    <option value="sencillo">{t("Sencillo")}</option>
-                    <option value="redondo">{t("Ida y vuelta")}</option>
+                    <option value="">Selecciona el tipo de viaje</option>
+                    <option value="sencillo">Sencillo</option>
+                    <option value="redondo">Ida y vuelta</option>
                   </select>
                 ) : tipo === "select" ? (
                   <select
@@ -1708,7 +1685,7 @@ return notas.filter((nota) =>
                     className="mt-1 w-full outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
                   >
                     <option value="">
-                      {t("Selecciona un vehículo")}
+                      Selecciona un vehículo
                     </option>
 
                     {VEHICULOS.map((vehiculo) => (
@@ -1734,7 +1711,7 @@ return notas.filter((nota) =>
                           cambiar("origenLat", "");
                           cambiar("origenLng", "");
                         }}
-                        placeholder={t("Escribe aeropuerto, hotel o dirección y selecciona una sugerencia")}
+                        placeholder="Escribe aeropuerto, hotel o dirección y selecciona una sugerencia"
                         className="mt-1 w-full rounded-lg border border-slate-400 bg-white p-3 text-slate-900 outline-none focus:border-emerald-500"
                       />
                     </Autocomplete>
@@ -1744,7 +1721,7 @@ return notas.filter((nota) =>
                       required
                       value={datos.origen ?? ""}
                       onChange={(e) => cambiar("origen", e.target.value)}
-                      placeholder={googleMapsLoadError ? t("Google Maps no pudo cargar") : t("Cargando Google Maps…")}
+                      placeholder={googleMapsLoadError ? "Google Maps no pudo cargar" : "Cargando Google Maps…"}
                       className="mt-1 w-full rounded-lg border border-slate-400 bg-white p-3 text-slate-900 outline-none focus:border-emerald-500"
                     />
                   )
@@ -1765,7 +1742,7 @@ return notas.filter((nota) =>
                           cambiar("destinoLat", "");
                           cambiar("destinoLng", "");
                         }}
-                        placeholder={t("Escribe aeropuerto, hotel o dirección y selecciona una sugerencia")}
+                        placeholder="Escribe aeropuerto, hotel o dirección y selecciona una sugerencia"
                         className="mt-1 w-full rounded-lg border border-slate-400 bg-white p-3 text-slate-900 outline-none focus:border-emerald-500"
                       />
                     </Autocomplete>
@@ -1775,7 +1752,7 @@ return notas.filter((nota) =>
                       required
                       value={datos.destino ?? ""}
                       onChange={(e) => cambiar("destino", e.target.value)}
-                      placeholder={googleMapsLoadError ? t("Google Maps no pudo cargar") : t("Cargando Google Maps…")}
+                      placeholder={googleMapsLoadError ? "Google Maps no pudo cargar" : "Cargando Google Maps…"}
                       className="mt-1 w-full rounded-lg border border-slate-400 bg-white p-3 text-slate-900 outline-none focus:border-emerald-500"
                     />
                   )
@@ -1819,7 +1796,7 @@ return notas.filter((nota) =>
             <label className="block text-sm">
 
               <span className="font-medium text-slate-200">
-                {t("💰 Total / estado de pago")}
+                💰 Total / estado de pago
               </span>
 
               <input
@@ -1828,7 +1805,7 @@ return notas.filter((nota) =>
                 autoComplete="off"
                 value={datos.importe}
                 onChange={(e) => cambiar("importe", e.target.value)}
-                placeholder={t("Ej. 3500 o Pagado")}
+                placeholder="Ej. 3500 o Pagado"
                 className="mt-1 w-full rounded-lg border border-slate-400 bg-white p-3 text-slate-900 outline-none focus:border-emerald-500"
               />
 
@@ -1839,14 +1816,14 @@ return notas.filter((nota) =>
           <label className="block text-sm">
 
             <span className="font-medium text-slate-200">
-              {t("Observaciones")}
+              Observaciones
             </span>
 
             <textarea
               value={datos.observaciones}
               onChange={(e) => cambiar("observaciones", e.target.value)}
               rows={2}
-              placeholder={t("Escribe las observaciones del servicio")}
+              placeholder="Escribe las observaciones del servicio"
               className="mt-1 w-full rounded-lg border border-slate-400 bg-white p-3 text-slate-900"
             />
 
@@ -1860,10 +1837,10 @@ return notas.filter((nota) =>
               className="rounded-lg bg-emerald-600 px-5 py-3 font-bold text-white disabled:opacity-50"
             >
               {guardando
-                ? t("Guardando…")
+                ? "Guardando…"
                 : editando
-                  ? t("Guardar cambios")
-                  : t("Guardar nota")}
+                  ? "Guardar cambios"
+                  : "Guardar nota"}
             </button>
 
             <button
@@ -1871,7 +1848,7 @@ return notas.filter((nota) =>
               onClick={() => imprimir()}
               className="rounded-lg border border-slate-500 px-4 py-3 hover:bg-slate-800"
             >
-              {t("Imprimir / PDF")}
+              Imprimir / PDF
             </button>
 
             {editando && (
@@ -1880,7 +1857,7 @@ return notas.filter((nota) =>
                 onClick={nuevaNota}
                 className="rounded-lg border border-slate-500 px-4 py-3 hover:bg-slate-800"
               >
-                {t("Cancelar edición")}
+                Cancelar edición
               </button>
             )}
 
@@ -1891,20 +1868,20 @@ return notas.filter((nota) =>
         <div className="mt-7 border-t border-slate-700 pt-5">
 
           <h3 className="mb-3 text-lg font-semibold">
-            {t("Historial de notas")}
+            Historial de notas
           </h3>
 
           <input
             type="search"
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
-            placeholder={t("Buscar por folio, cliente o servicio…")}
+            placeholder="Buscar por folio, cliente o servicio…"
             className="mb-4 w-full rounded-lg border border-slate-600 bg-slate-950 p-3 text-white"
           />
 
           {notasFiltradas.length === 0 ? (
             <p className="text-sm text-slate-400">
-              {t("No hay registros que coincidan con la búsqueda.")}
+              No hay registros que coincidan con la búsqueda.
             </p>
           ) : (
             <div className="max-h-[520px] space-y-3 overflow-y-auto pr-1">
@@ -1924,7 +1901,7 @@ return notas.filter((nota) =>
                       </p>
 
                       <p className="break-words">
-                        {nota.datos?.cliente || t("Sin cliente")}
+                        {nota.datos?.cliente || "Sin cliente"}
                       </p>
 
                       <p className="break-words text-sm text-slate-400">
@@ -1956,7 +1933,7 @@ return notas.filter((nota) =>
                         onClick={() => editar(nota)}
                         className="rounded border border-slate-600 px-3 py-2 text-sm"
                       >
-                        {t("Editar")}
+                        Editar
                       </button>
 
                       {admin1 && (
@@ -1965,7 +1942,7 @@ return notas.filter((nota) =>
                           onClick={() => eliminar(nota)}
                           className="rounded border border-red-800 px-3 py-2 text-sm text-red-300"
                         >
-                          {t("Eliminar")}
+                          Eliminar
                         </button>
                       )}
 
@@ -1988,13 +1965,13 @@ return notas.filter((nota) =>
         <div className="mb-3 flex flex-col items-stretch gap-2 px-1">
 
           <h2 className="font-semibold text-slate-800">
-            {t("Vista previa de impresión")}
+            Vista previa de impresión
           </h2>
 
           {mostrarPreviewNota && <div className="grid w-full grid-cols-3 gap-1.5 sm:gap-2">
-            <button type="button" onClick={() => accionesPdf("imprimir")} className="min-w-0 rounded-lg bg-green-600 px-2 py-2 text-center text-xs font-bold text-white sm:px-3 sm:text-sm">{t("Imprimir")}</button>
-            <button type="button" onClick={() => accionesPdf("compartir")} className="min-w-0 rounded-lg bg-blue-600 px-2 py-2 text-center text-xs font-bold text-white sm:px-3 sm:text-sm">{t("Compartir")}</button>
-            <button type="button" onClick={() => setMostrarPreviewNota(false)} className="min-w-0 rounded-lg bg-red-600 px-2 py-2 text-center text-xs font-bold text-white sm:px-3 sm:text-sm">{t("Cancelar")}</button>
+            <button type="button" onClick={() => accionesPdf("imprimir")} className="min-w-0 rounded-lg bg-green-600 px-2 py-2 text-center text-xs font-bold text-white sm:px-3 sm:text-sm">Imprimir</button>
+            <button type="button" onClick={() => accionesPdf("compartir")} className="min-w-0 rounded-lg bg-blue-600 px-2 py-2 text-center text-xs font-bold text-white sm:px-3 sm:text-sm">Compartir</button>
+            <button type="button" onClick={() => setMostrarPreviewNota(false)} className="min-w-0 rounded-lg bg-red-600 px-2 py-2 text-center text-xs font-bold text-white sm:px-3 sm:text-sm">Cancelar</button>
           </div>}
 
         </div>
@@ -2072,15 +2049,15 @@ return notas.filter((nota) =>
           <div className="mt-3 space-y-1.5 break-words text-[14px] sm:mt-4 sm:text-[16px]">
 
             <p>
-              <strong>{ingles ? "Customer:" : "Cliente:"}</strong> {datos.cliente}
+              <strong>Cliente:</strong> {datos.cliente}
             </p>
 
             <p>
-              <strong>{ingles ? "Phone:" : "Teléfono:"}</strong> {datos.telefono}
+              <strong>Teléfono:</strong> {datos.telefono}
             </p>
 
             <p>
-              <strong>{ingles ? "Email:" : "Correo:"}</strong> {datos.email}
+              <strong>Correo:</strong> {datos.email}
             </p>
 
           </div>
@@ -2088,36 +2065,36 @@ return notas.filter((nota) =>
           <div className="my-3 h-1.5 w-full bg-black" />
 
           <div className="mt-2 inline-block max-w-full bg-green-600 px-3 py-1 text-[16px] font-extrabold text-white">
-            {t("Total:")} {moneda(datos.importe)}
+            Total: {moneda(datos.importe)}
           </div>
 
           <div className="mt-2 h-[3mm]" aria-hidden="true" />
 
           <div className="bg-black px-2 py-1.5 text-[16px] font-extrabold text-white">
-            {ingles ? "Transfer details:" : "Descripción del traslado:"}
+            Descripción del traslado:
           </div>
 
           <div className="mt-5 min-w-0 space-y-1.5 break-words text-[13px] sm:mt-[9mm] sm:text-[16px]">
 
             {[
-              ["🚐", ingles ? "Vehicle:" : "Vehículo:", datos.unidad],
-              ["👤", ingles ? "Customer name:" : "Nombre del cliente:", datos.cliente],
-              ["📅", ingles ? "Date and time:" : "Fecha y hora:", valorFechaHora(datos, idiomaDoc)],
-              ["📍", ingles ? "Pickup location:" : "Recoger en:", datos.origen],
-              ["✈️", ingles ? "Airline:" : "Aerolínea:", datos.aerolinea || "N/A"],
-              ["👥", ingles ? "Number of passengers:" : "Número de pasajeros:", datos.pasajeros],
-              ["🧳", ingles ? "Number of bags:" : "Número de maletas:", datos.maletas],
-              ["☎️", ingles ? "Phone number:" : "Número de teléfono:", datos.telefono],
-              ["📍", ingles ? "Destination:" : "Destino:", datos.destino],
-              ["🔄", ingles ? "Trip type:" : "Tipo de viaje:", datos.idaVuelta === "redondo" ? (ingles ? "Round trip" : "Ida y vuelta") : datos.idaVuelta === "sencillo" ? (ingles ? "One way" : "Sencillo") : ""],
-              ["⏱️", ingles ? "Duration:" : "Duración:", datos.duracion],
+              ["🚐", "Vehículo:", datos.unidad],
+              ["👤", "Nombre del cliente:", datos.cliente],
+              ["📅", "Fecha y hora:", valorFechaHora(datos)],
+              ["📍", "Recoger en:", datos.origen],
+              ["✈️", "Aerolínea:", datos.aerolinea || "N/A"],
+              ["👥", "Número de pasajeros:", datos.pasajeros],
+              ["🧳", "Número de maletas:", datos.maletas],
+              ["☎️", "Número de teléfono:", datos.telefono],
+              ["📍", "Destino:", datos.destino],
+              ["🔄", "Tipo de viaje:", datos.idaVuelta === "redondo" ? "Ida y vuelta" : datos.idaVuelta === "sencillo" ? "Sencillo" : ""],
+              ["⏱️", "Duración:", datos.duracion],
             ].map(([icono, etiqueta, valor]) => (
               <p
                 key={etiqueta}
                 className="flex flex-wrap items-start gap-x-1"
               >
                 <span>{icono}</span>
-                <strong>{t(etiqueta)}</strong>
+                <strong>{etiqueta}</strong>
                 <span className="break-words">{valor || ""}</span>
               </p>
             ))}
@@ -2128,16 +2105,16 @@ return notas.filter((nota) =>
 
             <span>↩️</span>
 
-            <strong>{ingles ? "Return:" : "Regreso:"}</strong>
+            <strong>Regreso:</strong>
 
-            <span>{valorRegreso(datos, idiomaDoc)}</span>
+            <span>{valorRegreso(datos)}</span>
 
           </div>
 
           <div className="mt-4 min-h-16 min-w-0 break-words rounded-[20px] border-2 border-black px-3 py-3 text-[13px] sm:mt-5 sm:rounded-[24px] sm:px-4 sm:text-[14px]">
 
             <strong className="mb-1 block">
-              {t("Observaciones")}:
+              Observaciones:
             </strong>
 
             <span>{datos.observaciones || ""}</span>
@@ -2147,8 +2124,8 @@ return notas.filter((nota) =>
           <footer className="mt-3 border-t-2 border-black pt-3 text-center text-[10px] leading-4 text-slate-600 sm:mt-4 sm:text-[11px]">
 
             <p>
-              San Miguel de Allende, Guanajuato · {ingles ? "Document generated:" : "Documento Generado:"}{" "}
-              {fechaActual.fecha} · {ingles ? "Time:" : "Hora:"} {fechaActual.hora}
+              San Miguel de Allende, Guanajuato · Documento Generado:{" "}
+              {fechaActual.fecha} · Hora: {fechaActual.hora}
             </p>
 
             <p>
@@ -2161,13 +2138,13 @@ return notas.filter((nota) =>
 
 
         {!mostrarPreviewNota && <div className="mb-3 flex flex-wrap gap-2">
-          <button type="button" onClick={() => setMostrarPreviewNota(true)} className="rounded-lg bg-slate-700 px-3 py-2 text-sm font-bold text-white">{t("Mostrar Nota de Venta")}</button>
+          <button type="button" onClick={() => setMostrarPreviewNota(true)} className="rounded-lg bg-slate-700 px-3 py-2 text-sm font-bold text-white">Mostrar Nota de Venta</button>
         </div>}
         </div>
 
         <p className="mx-auto mt-3 max-w-[760px] text-sm text-slate-600">
-          {t("La vista previa sigue la distribución del documento impreso.")}
-          {t("Para generar el PDF, pulsa “Imprimir / PDF”.")}
+          La vista previa sigue la distribución del documento impreso.
+          Para generar el PDF, pulsa “Imprimir / PDF”.
         </p>
 
       </section>
