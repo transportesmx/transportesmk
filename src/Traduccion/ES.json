@@ -1,44 +1,43 @@
 {
-    "hero": {
-        "slides": [
-            {
-                "image": "/assets/images/suburban.png",
-                "title": "Explora, vive y disfruta destinos inolvidables",
-                "description": "Descubre la riqueza cultural y los paisajes más impresionantes con nuestros tours personalizados. Vive la magia de cada rincón con comodidad y un servicio de lujo."
-            },
-            {
-                "image": "/assets/images/sprinter.png",
-                "title": "Llegadas y salidas con puntualidad y comodidad",
-                "description": "Disfruta de un traslado cómodo y seguro a los principales aeropuertos. Viaja sin preocupaciones, siempre a tiempo y con atención personalizada."
-            },
-            {
-                "image": "/assets/images/odissey.png",
-                "title": "Movilidad para cada compromiso",
-                "description": "Maximiza tu tiempo con un transporte exclusivo y seguro. Perfecto para reuniones de trabajo, eventos empresariales y traslados VIP."
-            },
-            {
-                "image": "/assets/images/chofer.png",
-                "title": "Tu ruta, tu tiempo, nuestro compromiso",
-                "description": "Disfruta de la flexibilidad de un servicio privado con chofer exclusivo. Ideal para recorridos dentro y fuera de la ciudad, con la comodidad que mereces."
-            },
-            {
-                "image": "/assets/images/suburban2.png",
-                "title": "Lujo y comodidad en cada trayecto",
-                "description": "Disfruta de un viaje exclusivo y seguro en nuestra Suburban. Ideal para traslados ejecutivos, viajes familiares o eventos especiales."
-            },
-            
+  "hero": {
+    "slides": [
+      {
+        "image": "/assets/images/suburban.png",
+        "title": "Explora, vive y disfruta destinos inolvidables",
+        "description": "Descubre la riqueza cultural y los paisajes más impresionantes con nuestros tours personalizados. Vive la magia de cada rincón con comodidad y un servicio de lujo."
+      },
+      {
+        "image": "/assets/images/sprinter.png",
+        "title": "Llegadas y salidas con puntualidad y comodidad",
+        "description": "Disfruta de un traslado cómodo y seguro a los principales aeropuertos. Viaja sin preocupaciones, siempre a tiempo y con atención personalizada."
+      },
+      {
+        "image": "/assets/images/odissey.png",
+        "title": "Movilidad para cada compromiso",
+        "description": "Maximiza tu tiempo con un transporte exclusivo y seguro. Perfecto para reuniones de trabajo, eventos empresariales y traslados VIP."
+      },
+      {
+        "image": "/assets/images/chofer.png",
+        "title": "Tu ruta, tu tiempo, nuestro compromiso",
+        "description": "Disfruta de la flexibilidad de un servicio privado con chofer exclusivo. Ideal para recorridos dentro y fuera de la ciudad, con la comodidad que mereces."
+      },
+      {
+        "image": "/assets/images/suburban2.png",
+        "title": "Lujo y comodidad en cada trayecto",
+        "description": "Disfruta de un viaje exclusivo y seguro en nuestra Suburban. Ideal para traslados ejecutivos, viajes familiares o eventos especiales."
+      },
       {
         "image": "/assets/images/camry.png",
         "title": " Eficiencia y confort en cada traslado",
         "description": "Nuestros autos combinan elegancia, seguridad y rendimiento. Perfecto para traslados privados, citas de negocios y viajes dentro de la ciudad. Máxima eficiencia y confort para que llegues a tu destino con total tranquilidad."
       }
-        ],
-        "buttons": {
-            "quote": "Cotizar",
-            "reserve": "Reservar"
-        }
-    },
-    "heroCotiza": {
+    ],
+    "buttons": {
+      "quote": "Cotizar",
+      "reserve": "Reservar"
+    }
+  },
+  "heroCotiza": {
     "from": "Desde",
     "to": "Hacia",
     "date": "Fecha",
@@ -50,46 +49,49 @@
     "returnTime": "Hora de regreso",
     "placeholderReturnDate": "Selecciona una fecha de regreso"
   },
-    "navbar": {
-        "home": "Inicio",
-        "about": "Acerca",
-        "services": "Servicios",
-        "airport_transfer": "Traslado Aeropuerto",
-        "wedding_transport": "Transporte Bodas Destino",
-        "private_driver": "Chofer Privado",
-        "executive_transport": "Transporte Ejecutivo",
-        "tours": "Tours",
-        "quote": "Cotiza",
-        "languages": {
-            "spanish": "ESP",
-            "english": "EN"
-        },
-        "social": {
-            "facebook": "Facebook",
-            "instagram": "Instagram",
-            "tripadvisor": "Tripadvisor",
-            "tiktok": "Tiktok",
-            "whatsapp": "WhatsApp"
-        }
+  "navbar": {
+    "home": "Inicio",
+    "about": "Acerca",
+    "services": "Servicios",
+    "airport_transfer": "Traslado Aeropuerto",
+    "wedding_transport": "Transporte Bodas Destino",
+    "private_driver": "Chofer Privado",
+    "executive_transport": "Transporte Ejecutivo",
+    "tours": "Tours",
+    "quote": "Cotiza",
+    "languages": {
+      "spanish": "ESP",
+      "english": "EN"
     },
-    "about": {
-        "title": "Más de 10 años de experiencia ofreciendo transporte turístico y ejecutivo de excelencia.",
-        "features": {
-            "punctuality": "Puntualidad garantizada.",
-            "drivers": "Choferes altamente capacitados.",
-            "vehicles": "Vehículos en perfectas condiciones.",
-            "support": "Atención personalizada 24/7."
-        },
-        "mission": {
-            "title": "Misión",
-            "description": "Ofrecer servicios de transporte de calidad, garantizando la mejor experiencia para nuestros clientes, con un enfoque en puntualidad, seguridad y atención personalizada."
-        },
-        "vision": {
-            "title": "Visión",
-            "description": "Ser la compañía de transporte más confiable y reconocida, destacándonos por nuestra excelencia y profesionalismo."
-        }
+    "social": {
+      "facebook": "Facebook",
+      "instagram": "Instagram",
+      "tripadvisor": "Tripadvisor",
+      "tiktok": "Tiktok",
+      "whatsapp": "WhatsApp"
     },
-   
+    "blog": "Blog",
+    "access": "Acceso",
+    "banner": "Banner",
+    "reserve": "Reservar"
+  },
+  "about": {
+    "title": "Más de 10 años de experiencia ofreciendo transporte turístico y ejecutivo de excelencia.",
+    "features": {
+      "punctuality": "Puntualidad garantizada.",
+      "drivers": "Choferes altamente capacitados.",
+      "vehicles": "Vehículos en perfectas condiciones.",
+      "support": "Atención personalizada 24/7."
+    },
+    "mission": {
+      "title": "Misión",
+      "description": "Ofrecer servicios de transporte de calidad, garantizando la mejor experiencia para nuestros clientes, con un enfoque en puntualidad, seguridad y atención personalizada."
+    },
+    "vision": {
+      "title": "Visión",
+      "description": "Ser la compañía de transporte más confiable y reconocida, destacándonos por nuestra excelencia y profesionalismo."
+    }
+  },
   "faqs": {
     "title": "Preguntas Frecuentes",
     "questions": [
@@ -111,7 +113,7 @@
       },
       {
         "question": "¿Con cuánto tiempo de anticipación debo reservar?",
-        "answer": "Te recomendamos reservar al menos 48 horas antes de tu viaje para asegurar disponibilidad."
+        "answer": "Te recomendamos reservar al menos 24 horas antes de tu viaje para asegurar disponibilidad."
       },
       {
         "question": "¿Qué métodos de pago se aceptan?",
@@ -126,37 +128,65 @@
       "chat": "Chatear"
     }
   },
-    "aeropuerto": {
-        "title": "Traslado Aeropuerto",
-        "description": "Servicio personalizado, rápido y confiable."
+  "aeropuerto": {
+    "title": "Traslado Aeropuerto",
+    "description": "Servicio personalizado, rápido y confiable."
+  },
+  "formulario": {
+    "title": "Cotizar",
+    "fields": {
+      "name": "Nombre",
+      "phone": "Teléfono",
+      "email": "Correo Electrónico",
+      "passengers": "Número de pasajeros",
+      "origin": "Origen",
+      "destination": "Destino",
+      "vehicle": "Tipo de vehículo",
+      "comment": "Comentario",
+      "date": "Fecha",
+      "time": "Hora",
+      "round_trip": "Ida y vuelta",
+      "return_date": "Fecha de regreso",
+      "return_time": "Hora de regreso",
+      "locations": [
+        "Origen",
+        "Aeropuerto AICM",
+        "Aeropuerto AIFA",
+        "Aeropuerto BJX GTO",
+        "Aeropuerto AIQ QRO",
+        "Aeropuerto GDL",
+        "Ciudad Querétaro",
+        "San Miguel de Allende",
+        "Ciudad Guanajuato"
+      ],
+      "destinations": [
+        "Destino",
+        "Ciudad Querétaro",
+        "San Miguel de Allende",
+        "Ciudad Guanajuato",
+        "Aeropuerto AICM",
+        "Aeropuerto AIFA",
+        "Aeropuerto BJX GTO",
+        "Aeropuerto AIQ QRO",
+        "Aeropuerto GDL"
+      ],
+      "vehicleTypes": [
+        "Tipo de vehiculo",
+        "Sedán 3 pax",
+        "SUV 4 pax",
+        "Minivan 6 pax",
+        "Suburban 6 pax",
+        "Toyota Hiace 12 pax",
+        "Sprinter 20 pax",
+        "Autobús 50 pax"
+      ]
     },
-    "formulario": {
-        "title": "Cotizar",
-        "fields": {
-            "name": "Nombre",
-            "phone": "Teléfono",
-            "email": "Correo Electrónico",
-            "passengers": "Número de pasajeros",
-            "origin": "Origen",
-            "destination": "Destino",
-            "vehicle": "Tipo de vehículo",
-            "comment":"Comentario",
-            "date": "Fecha",
-            "time": "Hora",
-            "round_trip": "Ida y vuelta",
-            "return_date": "Fecha de regreso",
-            "return_time": "Hora de regreso",
-            "locations" : ["Origen","Aeropuerto AICM", "Aeropuerto AIFA", "Aeropuerto BJX GTO", "Aeropuerto AIQ QRO", "Aeropuerto GDL","Ciudad Querétaro", "San Miguel de Allende", "Ciudad Guanajuato" ],
-             "destinations" : ["Destino","Ciudad Querétaro", "San Miguel de Allende","Ciudad Guanajuato","Aeropuerto AICM", "Aeropuerto AIFA", "Aeropuerto BJX GTO", "Aeropuerto AIQ QRO", "Aeropuerto GDL"],
-             "vehicleTypes": ["Tipo de vehiculo","Sedán 3 pax", "SUV 4 pax", "Minivan 6 pax", "Suburban 6 pax", "Toyota Hiace 12 pax", "Sprinter 20 pax", "Autobús 50 pax"]
-            },
-        "buttons": {
-            "submit": "Enviar",
-            "support": "*Atención personalizada 24/7."
-
-        }
-    },
-    "boda": {
+    "buttons": {
+      "submit": "Enviar",
+      "support": "*Atención personalizada 24/7."
+    }
+  },
+  "boda": {
     "title": "Traslado para Bodas",
     "description": "En Transportes MX entendemos la importancia de un día tan especial como tu boda. Nuestro servicio de traslado para bodas está diseñado para garantizar que los novios e invitados lleguen cómodos, puntuales y con estilo. Nos encargamos de cada detalle para que tú solo te preocupes por disfrutar.",
     "features": [
@@ -180,7 +210,6 @@
     "buttons": {
       "quote": "Cotizar",
       "support": "Atención personalizada para garantizar una experiencia impecable."
-
     }
   },
   "bodasModal": {
@@ -211,7 +240,6 @@
     ],
     "buttons": {
       "quote": "Cotizar"
-      
     }
   },
   "ejecutivo": {
@@ -239,8 +267,7 @@
       "quote": "Cotizar"
     }
   },
-  
-"autobus": {
+  "autobus": {
     "title": "Viajes en Grupo con Total Comodidad",
     "description": "Nuestros autobuses ofrecen capacidad para 50 pasajeros, con asientos reclinables, WC, aire acondicionado y entretenimiento a bordo. La mejor opción para playas, conciertos, eventos corporativos y traslados masivos con seguridad y puntualidad.",
     "features": [
@@ -265,23 +292,21 @@
       "quote": "Cotizar"
     }
   },
-
-    "testimonials": {
-        "title": "Testimonios",
-        "reviews": [
-            {
-                "name": "Ana Martínez",
-                "service": "Traslado a Aeropuerto",
-                "review": "Reservamos transporte a Monterrey para visas de trabajo en EE.UU. Todo salió excelente, muy puntuales y con experiencia en trayectos largos."
-            },
-            {
-                "name": "Carlos Ramírez",
-                "service": "Chofer Privado",
-                "review": "Tienen vehículos para todas las necesidades. Hemos viajado varias veces a San Miguel y siempre nos sentimos seguros reservando con ellos."
-            }
-        ]
-    },
-    
+  "testimonials": {
+    "title": "Testimonios",
+    "reviews": [
+      {
+        "name": "Ana Martínez",
+        "service": "Traslado a Aeropuerto",
+        "review": "Reservamos transporte a Monterrey para visas de trabajo en EE.UU. Todo salió excelente, muy puntuales y con experiencia en trayectos largos."
+      },
+      {
+        "name": "Carlos Ramírez",
+        "service": "Chofer Privado",
+        "review": "Tienen vehículos para todas las necesidades. Hemos viajado varias veces a San Miguel y siempre nos sentimos seguros reservando con ellos."
+      }
+    ]
+  },
   "tours": {
     "title": "Tours",
     "options": [
@@ -487,156 +512,156 @@
         "title": "Transporte para bodas",
         "image": "/assets/images/galeria/bodas/bodas.jpg",
         "categoryImages": [
-  "/assets/images/galeria/bodas/swiper/1.jpg",
-  "/assets/images/galeria/bodas/swiper/2.jpg",
-  "/assets/images/galeria/bodas/swiper/3.jpg",
-  "/assets/images/galeria/bodas/swiper/4.jpg",
-  "/assets/images/galeria/bodas/swiper/5.jpg",
-  "/assets/images/galeria/bodas/swiper/6.jpg",
-  "/assets/images/galeria/bodas/swiper/7.jpg",
-  "/assets/images/galeria/bodas/swiper/8.jpg",
-  "/assets/images/galeria/bodas/swiper/9.jpg",
-  "/assets/images/galeria/bodas/swiper/10.jpg",
-  "/assets/images/galeria/bodas/swiper/11.jpg",
-  "/assets/images/galeria/bodas/swiper/12.jpg",
-  "/assets/images/galeria/bodas/swiper/13.jpg",
-  "/assets/images/galeria/bodas/swiper/14.jpg",
-  "/assets/images/galeria/bodas/swiper/15.jpg",
-  "/assets/images/galeria/bodas/swiper/16.jpg",
-  "/assets/images/galeria/bodas/swiper/17.jpg",
-  "/assets/images/galeria/bodas/swiper/18.jpg",
-  "/assets/images/galeria/bodas/swiper/19.jpg",
-  "/assets/images/galeria/bodas/swiper/20.jpg",
-  "/assets/images/galeria/bodas/swiper/21.jpg",
-  "/assets/images/galeria/bodas/swiper/22.jpg",
-  "/assets/images/galeria/bodas/swiper/23.jpg",
-  "/assets/images/galeria/bodas/swiper/24.jpg",
-  "/assets/images/galeria/bodas/swiper/25.jpg",
-  "/assets/images/galeria/bodas/swiper/26.jpg"
-]
+          "/assets/images/galeria/bodas/swiper/1.jpg",
+          "/assets/images/galeria/bodas/swiper/2.jpg",
+          "/assets/images/galeria/bodas/swiper/3.jpg",
+          "/assets/images/galeria/bodas/swiper/4.jpg",
+          "/assets/images/galeria/bodas/swiper/5.jpg",
+          "/assets/images/galeria/bodas/swiper/6.jpg",
+          "/assets/images/galeria/bodas/swiper/7.jpg",
+          "/assets/images/galeria/bodas/swiper/8.jpg",
+          "/assets/images/galeria/bodas/swiper/9.jpg",
+          "/assets/images/galeria/bodas/swiper/10.jpg",
+          "/assets/images/galeria/bodas/swiper/11.jpg",
+          "/assets/images/galeria/bodas/swiper/12.jpg",
+          "/assets/images/galeria/bodas/swiper/13.jpg",
+          "/assets/images/galeria/bodas/swiper/14.jpg",
+          "/assets/images/galeria/bodas/swiper/15.jpg",
+          "/assets/images/galeria/bodas/swiper/16.jpg",
+          "/assets/images/galeria/bodas/swiper/17.jpg",
+          "/assets/images/galeria/bodas/swiper/18.jpg",
+          "/assets/images/galeria/bodas/swiper/19.jpg",
+          "/assets/images/galeria/bodas/swiper/20.jpg",
+          "/assets/images/galeria/bodas/swiper/21.jpg",
+          "/assets/images/galeria/bodas/swiper/22.jpg",
+          "/assets/images/galeria/bodas/swiper/23.jpg",
+          "/assets/images/galeria/bodas/swiper/24.jpg",
+          "/assets/images/galeria/bodas/swiper/25.jpg",
+          "/assets/images/galeria/bodas/swiper/26.jpg"
+        ]
       },
       {
         "title": "Transporte Turístico",
         "image": "/assets/images/galeria/turistico/turistico.jpg",
-       "categoryImages": [
-  "/assets/images/galeria/turistico/swiper/1.jpg",
-  "/assets/images/galeria/turistico/swiper/2.jpg",
-  "/assets/images/galeria/turistico/swiper/3.jpg",
-  "/assets/images/galeria/turistico/swiper/4.jpg",
-  "/assets/images/galeria/turistico/swiper/5.jpg",
-  "/assets/images/galeria/turistico/swiper/6.jpg",
-  "/assets/images/galeria/turistico/swiper/7.jpg",
-  "/assets/images/galeria/turistico/swiper/8.jpg",
-  "/assets/images/galeria/turistico/swiper/9.jpg",
-  "/assets/images/galeria/turistico/swiper/10.jpg",
-  "/assets/images/galeria/turistico/swiper/11.jpg",
-  "/assets/images/galeria/turistico/swiper/12.jpg",
-  "/assets/images/galeria/turistico/swiper/13.jpg",
-  "/assets/images/galeria/turistico/swiper/14.jpg",
-  "/assets/images/galeria/turistico/swiper/15.jpg",
-  "/assets/images/galeria/turistico/swiper/16.jpg",
-  "/assets/images/galeria/turistico/swiper/17.jpg",
-  "/assets/images/galeria/turistico/swiper/18.jpg",
-  "/assets/images/galeria/turistico/swiper/19.jpg",
-  "/assets/images/galeria/turistico/swiper/20.jpg",
-  "/assets/images/galeria/turistico/swiper/21.jpg",
-  "/assets/images/galeria/turistico/swiper/22.jpg",
-  "/assets/images/galeria/turistico/swiper/23.jpg",
-  "/assets/images/galeria/turistico/swiper/24.jpg",
-  "/assets/images/galeria/turistico/swiper/25.jpg",
-  "/assets/images/galeria/turistico/swiper/26.jpg",
-  "/assets/images/galeria/turistico/swiper/27.jpg",
-  "/assets/images/galeria/turistico/swiper/28.jpg",
-  "/assets/images/galeria/turistico/swiper/29.jpg",
-  "/assets/images/galeria/turistico/swiper/30.jpg",
-  "/assets/images/galeria/turistico/swiper/31.jpg",
-  "/assets/images/galeria/turistico/swiper/32.jpg",
-  "/assets/images/galeria/turistico/swiper/33.jpg",
-  "/assets/images/galeria/turistico/swiper/34.jpg",
-  "/assets/images/galeria/turistico/swiper/35.jpg",
-  "/assets/images/galeria/turistico/swiper/36.jpg",
-  "/assets/images/galeria/turistico/swiper/37.jpg",
-  "/assets/images/galeria/turistico/swiper/38.jpg",
-  "/assets/images/galeria/turistico/swiper/39.jpg",
-  "/assets/images/galeria/turistico/swiper/40.jpg",
-  "/assets/images/galeria/turistico/swiper/41.jpg",
-  "/assets/images/galeria/turistico/swiper/42.jpg",
-  "/assets/images/galeria/turistico/swiper/43.jpg",
-  "/assets/images/galeria/turistico/swiper/44.jpg",
-  "/assets/images/galeria/turistico/swiper/45.jpg",
-  "/assets/images/galeria/turistico/swiper/46.jpg",
-  "/assets/images/galeria/turistico/swiper/47.jpg",
-  "/assets/images/galeria/turistico/swiper/48.jpg",
-  "/assets/images/galeria/turistico/swiper/49.jpg",
-  "/assets/images/galeria/turistico/swiper/50.jpg",
-  "/assets/images/galeria/turistico/swiper/51.jpg",
-  "/assets/images/galeria/turistico/swiper/52.jpg",
-  "/assets/images/galeria/turistico/swiper/53.jpg",
-  "/assets/images/galeria/turistico/swiper/54.jpg",
-  "/assets/images/galeria/turistico/swiper/55.jpg",
-  "/assets/images/galeria/turistico/swiper/56.jpg",
-  "/assets/images/galeria/turistico/swiper/57.jpg",
-  "/assets/images/galeria/turistico/swiper/58.jpg",
-  "/assets/images/galeria/turistico/swiper/59.jpg",
-  "/assets/images/galeria/turistico/swiper/60.jpg",
-  "/assets/images/galeria/turistico/swiper/61.jpg",
-  "/assets/images/galeria/turistico/swiper/62.jpg",
-  "/assets/images/galeria/turistico/swiper/63.jpg",
-  "/assets/images/galeria/turistico/swiper/64.jpg",
-  "/assets/images/galeria/turistico/swiper/65.jpg",
-  "/assets/images/galeria/turistico/swiper/66.jpg",
-  "/assets/images/galeria/turistico/swiper/67.jpg",
-  "/assets/images/galeria/turistico/swiper/68.jpg",
-  "/assets/images/galeria/turistico/swiper/69.jpg",
-  "/assets/images/galeria/turistico/swiper/70.jpg",
-  "/assets/images/galeria/turistico/swiper/71.jpg",
-  "/assets/images/galeria/turistico/swiper/72.jpg",
-  "/assets/images/galeria/turistico/swiper/73.jpg",
-  "/assets/images/galeria/turistico/swiper/74.jpg",
-  "/assets/images/galeria/turistico/swiper/75.jpg",
-  "/assets/images/galeria/turistico/swiper/76.jpg",
-  "/assets/images/galeria/turistico/swiper/77.jpg",
-  "/assets/images/galeria/turistico/swiper/78.jpg",
-  "/assets/images/galeria/turistico/swiper/79.jpg",
-  "/assets/images/galeria/turistico/swiper/80.jpg",
-  "/assets/images/galeria/turistico/swiper/81.jpg",
-  "/assets/images/galeria/turistico/swiper/82.jpg",
-  "/assets/images/galeria/turistico/swiper/83.jpg",
-  "/assets/images/galeria/turistico/swiper/84.jpg",
-  "/assets/images/galeria/turistico/swiper/85.jpg",
-  "/assets/images/galeria/turistico/swiper/86.jpg",
-  "/assets/images/galeria/turistico/swiper/87.jpg",
-  "/assets/images/galeria/turistico/swiper/88.jpg",
-  "/assets/images/galeria/turistico/swiper/89.jpg",
-  "/assets/images/galeria/turistico/swiper/90.jpg",
-  "/assets/images/galeria/turistico/swiper/91.jpg",
-  "/assets/images/galeria/turistico/swiper/92.jpg",
-  "/assets/images/galeria/turistico/swiper/93.jpg",
-  "/assets/images/galeria/turistico/swiper/94.jpg",
-  "/assets/images/galeria/turistico/swiper/95.jpg",
-  "/assets/images/galeria/turistico/swiper/96.jpg",
-  "/assets/images/galeria/turistico/swiper/97.jpg",
-  "/assets/images/galeria/turistico/swiper/98.jpg",
-  "/assets/images/galeria/turistico/swiper/99.jpg",
-  "/assets/images/galeria/turistico/swiper/100.jpg",
-  "/assets/images/galeria/turistico/swiper/101.jpg",
-  "/assets/images/galeria/turistico/swiper/102.jpg",
-  "/assets/images/galeria/turistico/swiper/103.jpg",
-  "/assets/images/galeria/turistico/swiper/104.jpg",
-  "/assets/images/galeria/turistico/swiper/105.jpg",
-  "/assets/images/galeria/turistico/swiper/106.jpg",
-  "/assets/images/galeria/turistico/swiper/107.jpg",
-  "/assets/images/galeria/turistico/swiper/108.jpg",
-  "/assets/images/galeria/turistico/swiper/109.jpg",
-  "/assets/images/galeria/turistico/swiper/110.jpg",
-  "/assets/images/galeria/turistico/swiper/111.jpg",
-  "/assets/images/galeria/turistico/swiper/112.jpg",
-  "/assets/images/galeria/turistico/swiper/113.jpg",
-  "/assets/images/galeria/turistico/swiper/114.jpg",
-  "/assets/images/galeria/turistico/swiper/115.jpg",
-  "/assets/images/galeria/turistico/swiper/116.jpg",
-  "/assets/images/galeria/turistico/swiper/117.jpg"
-]
+        "categoryImages": [
+          "/assets/images/galeria/turistico/swiper/1.jpg",
+          "/assets/images/galeria/turistico/swiper/2.jpg",
+          "/assets/images/galeria/turistico/swiper/3.jpg",
+          "/assets/images/galeria/turistico/swiper/4.jpg",
+          "/assets/images/galeria/turistico/swiper/5.jpg",
+          "/assets/images/galeria/turistico/swiper/6.jpg",
+          "/assets/images/galeria/turistico/swiper/7.jpg",
+          "/assets/images/galeria/turistico/swiper/8.jpg",
+          "/assets/images/galeria/turistico/swiper/9.jpg",
+          "/assets/images/galeria/turistico/swiper/10.jpg",
+          "/assets/images/galeria/turistico/swiper/11.jpg",
+          "/assets/images/galeria/turistico/swiper/12.jpg",
+          "/assets/images/galeria/turistico/swiper/13.jpg",
+          "/assets/images/galeria/turistico/swiper/14.jpg",
+          "/assets/images/galeria/turistico/swiper/15.jpg",
+          "/assets/images/galeria/turistico/swiper/16.jpg",
+          "/assets/images/galeria/turistico/swiper/17.jpg",
+          "/assets/images/galeria/turistico/swiper/18.jpg",
+          "/assets/images/galeria/turistico/swiper/19.jpg",
+          "/assets/images/galeria/turistico/swiper/20.jpg",
+          "/assets/images/galeria/turistico/swiper/21.jpg",
+          "/assets/images/galeria/turistico/swiper/22.jpg",
+          "/assets/images/galeria/turistico/swiper/23.jpg",
+          "/assets/images/galeria/turistico/swiper/24.jpg",
+          "/assets/images/galeria/turistico/swiper/25.jpg",
+          "/assets/images/galeria/turistico/swiper/26.jpg",
+          "/assets/images/galeria/turistico/swiper/27.jpg",
+          "/assets/images/galeria/turistico/swiper/28.jpg",
+          "/assets/images/galeria/turistico/swiper/29.jpg",
+          "/assets/images/galeria/turistico/swiper/30.jpg",
+          "/assets/images/galeria/turistico/swiper/31.jpg",
+          "/assets/images/galeria/turistico/swiper/32.jpg",
+          "/assets/images/galeria/turistico/swiper/33.jpg",
+          "/assets/images/galeria/turistico/swiper/34.jpg",
+          "/assets/images/galeria/turistico/swiper/35.jpg",
+          "/assets/images/galeria/turistico/swiper/36.jpg",
+          "/assets/images/galeria/turistico/swiper/37.jpg",
+          "/assets/images/galeria/turistico/swiper/38.jpg",
+          "/assets/images/galeria/turistico/swiper/39.jpg",
+          "/assets/images/galeria/turistico/swiper/40.jpg",
+          "/assets/images/galeria/turistico/swiper/41.jpg",
+          "/assets/images/galeria/turistico/swiper/42.jpg",
+          "/assets/images/galeria/turistico/swiper/43.jpg",
+          "/assets/images/galeria/turistico/swiper/44.jpg",
+          "/assets/images/galeria/turistico/swiper/45.jpg",
+          "/assets/images/galeria/turistico/swiper/46.jpg",
+          "/assets/images/galeria/turistico/swiper/47.jpg",
+          "/assets/images/galeria/turistico/swiper/48.jpg",
+          "/assets/images/galeria/turistico/swiper/49.jpg",
+          "/assets/images/galeria/turistico/swiper/50.jpg",
+          "/assets/images/galeria/turistico/swiper/51.jpg",
+          "/assets/images/galeria/turistico/swiper/52.jpg",
+          "/assets/images/galeria/turistico/swiper/53.jpg",
+          "/assets/images/galeria/turistico/swiper/54.jpg",
+          "/assets/images/galeria/turistico/swiper/55.jpg",
+          "/assets/images/galeria/turistico/swiper/56.jpg",
+          "/assets/images/galeria/turistico/swiper/57.jpg",
+          "/assets/images/galeria/turistico/swiper/58.jpg",
+          "/assets/images/galeria/turistico/swiper/59.jpg",
+          "/assets/images/galeria/turistico/swiper/60.jpg",
+          "/assets/images/galeria/turistico/swiper/61.jpg",
+          "/assets/images/galeria/turistico/swiper/62.jpg",
+          "/assets/images/galeria/turistico/swiper/63.jpg",
+          "/assets/images/galeria/turistico/swiper/64.jpg",
+          "/assets/images/galeria/turistico/swiper/65.jpg",
+          "/assets/images/galeria/turistico/swiper/66.jpg",
+          "/assets/images/galeria/turistico/swiper/67.jpg",
+          "/assets/images/galeria/turistico/swiper/68.jpg",
+          "/assets/images/galeria/turistico/swiper/69.jpg",
+          "/assets/images/galeria/turistico/swiper/70.jpg",
+          "/assets/images/galeria/turistico/swiper/71.jpg",
+          "/assets/images/galeria/turistico/swiper/72.jpg",
+          "/assets/images/galeria/turistico/swiper/73.jpg",
+          "/assets/images/galeria/turistico/swiper/74.jpg",
+          "/assets/images/galeria/turistico/swiper/75.jpg",
+          "/assets/images/galeria/turistico/swiper/76.jpg",
+          "/assets/images/galeria/turistico/swiper/77.jpg",
+          "/assets/images/galeria/turistico/swiper/78.jpg",
+          "/assets/images/galeria/turistico/swiper/79.jpg",
+          "/assets/images/galeria/turistico/swiper/80.jpg",
+          "/assets/images/galeria/turistico/swiper/81.jpg",
+          "/assets/images/galeria/turistico/swiper/82.jpg",
+          "/assets/images/galeria/turistico/swiper/83.jpg",
+          "/assets/images/galeria/turistico/swiper/84.jpg",
+          "/assets/images/galeria/turistico/swiper/85.jpg",
+          "/assets/images/galeria/turistico/swiper/86.jpg",
+          "/assets/images/galeria/turistico/swiper/87.jpg",
+          "/assets/images/galeria/turistico/swiper/88.jpg",
+          "/assets/images/galeria/turistico/swiper/89.jpg",
+          "/assets/images/galeria/turistico/swiper/90.jpg",
+          "/assets/images/galeria/turistico/swiper/91.jpg",
+          "/assets/images/galeria/turistico/swiper/92.jpg",
+          "/assets/images/galeria/turistico/swiper/93.jpg",
+          "/assets/images/galeria/turistico/swiper/94.jpg",
+          "/assets/images/galeria/turistico/swiper/95.jpg",
+          "/assets/images/galeria/turistico/swiper/96.jpg",
+          "/assets/images/galeria/turistico/swiper/97.jpg",
+          "/assets/images/galeria/turistico/swiper/98.jpg",
+          "/assets/images/galeria/turistico/swiper/99.jpg",
+          "/assets/images/galeria/turistico/swiper/100.jpg",
+          "/assets/images/galeria/turistico/swiper/101.jpg",
+          "/assets/images/galeria/turistico/swiper/102.jpg",
+          "/assets/images/galeria/turistico/swiper/103.jpg",
+          "/assets/images/galeria/turistico/swiper/104.jpg",
+          "/assets/images/galeria/turistico/swiper/105.jpg",
+          "/assets/images/galeria/turistico/swiper/106.jpg",
+          "/assets/images/galeria/turistico/swiper/107.jpg",
+          "/assets/images/galeria/turistico/swiper/108.jpg",
+          "/assets/images/galeria/turistico/swiper/109.jpg",
+          "/assets/images/galeria/turistico/swiper/110.jpg",
+          "/assets/images/galeria/turistico/swiper/111.jpg",
+          "/assets/images/galeria/turistico/swiper/112.jpg",
+          "/assets/images/galeria/turistico/swiper/113.jpg",
+          "/assets/images/galeria/turistico/swiper/114.jpg",
+          "/assets/images/galeria/turistico/swiper/115.jpg",
+          "/assets/images/galeria/turistico/swiper/116.jpg",
+          "/assets/images/galeria/turistico/swiper/117.jpg"
+        ]
       },
       {
         "title": "Chofer Privado",
@@ -662,7 +687,7 @@
       }
     ]
   },
-   "footer": {
+  "footer": {
     "logoSlogan": "Viaja con comodidad, puntualidad y la mejor atención. ¡Cotiza tu traslado ahora!",
     "rights": "© {{year}}. Transportes MX. Todos los derechos reservados.",
     "services": {
