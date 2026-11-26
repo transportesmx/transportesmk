@@ -1,431 +1,456 @@
 {
-    "hero": {
-      "slides": [
-        {
-          "image": "/assets/images/suburban.png",
-          "title": "Explore, Live & Enjoy Unforgettable Destinations",
-          "description": "Discover the cultural richness and the most breathtaking landscapes with our personalized tours. Experience the magic of every corner with comfort and luxury service."
-        },
-        {
-          "image": "/assets/images/sprinter.png",
-          "title": "Arrivals & Departures with Punctuality and Comfort",
-          "description": "Enjoy a comfortable and safe transfer to the main airports. Travel worry-free, always on time, with personalized attention."
-        },
-        {
-          "image": "/assets/images/odissey.png",
-          "title": "Mobility for Every Commitment",
-          "description": "Maximize your time with exclusive and secure transportation. Perfect for business meetings, corporate events, and VIP transfers."
-        },
-        {
-          "image": "/assets/images/chofer.png",
-          "title": "Your Route, Your Time, Our Commitment",
-          "description": "Enjoy the flexibility of a private service with an exclusive driver. Ideal for trips within and outside the city, with the comfort you deserve."
-        },
-        {
-          "image": "/assets/images/suburban2.png",
-          "title": "Luxury and Comfort on Every Journey",
-          "description": "Enjoy an exclusive and safe ride in our Suburban. Ideal for executive transfers, family trips, or special events."
-        },
-        {
-          "image": "/assets/images/camry.png",
-          "title": "Efficiency and Comfort in Every Transfer",
-          "description": "Our cars combine elegance, safety, and performance. Perfect for private transfers, business appointments, and city trips. Maximum efficiency and comfort so you reach your destination with complete peace of mind."
-        }
-      ],
-      "buttons": {
-        "quote": "Get a Quote",
-        "reserve": "Reserve"
+  "hero": {
+    "slides": [
+      {
+        "image": "/assets/images/suburban.png",
+        "title": "Explore, Live & Enjoy Unforgettable Destinations",
+        "description": "Discover the cultural richness and the most breathtaking landscapes with our personalized tours. Experience the magic of every corner with comfort and luxury service."
+      },
+      {
+        "image": "/assets/images/sprinter.png",
+        "title": "Arrivals & Departures with Punctuality and Comfort",
+        "description": "Enjoy a comfortable and safe transfer to the main airports. Travel worry-free, always on time, with personalized attention."
+      },
+      {
+        "image": "/assets/images/odissey.png",
+        "title": "Mobility for Every Commitment",
+        "description": "Maximize your time with exclusive and secure transportation. Perfect for business meetings, corporate events, and VIP transfers."
+      },
+      {
+        "image": "/assets/images/chofer.png",
+        "title": "Your Route, Your Time, Our Commitment",
+        "description": "Enjoy the flexibility of a private service with an exclusive driver. Ideal for trips within and outside the city, with the comfort you deserve."
+      },
+      {
+        "image": "/assets/images/suburban2.png",
+        "title": "Luxury and Comfort on Every Journey",
+        "description": "Enjoy an exclusive and safe ride in our Suburban. Ideal for executive transfers, family trips, or special events."
+      },
+      {
+        "image": "/assets/images/camry.png",
+        "title": "Efficiency and Comfort in Every Transfer",
+        "description": "Our cars combine elegance, safety, and performance. Perfect for private transfers, business appointments, and city trips. Maximum efficiency and comfort so you reach your destination with complete peace of mind."
       }
+    ],
+    "buttons": {
+      "quote": "Get a Quote",
+      "reserve": "Reserve"
+    }
+  },
+  "heroCotiza": {
+    "from": "From",
+    "to": "To",
+    "date": "Date",
+    "time": "Time",
+    "vehicle": "Vehicle",
+    "passengers": "Passengers",
+    "roundTrip": "Round Trip",
+    "returnDate": "Return Date",
+    "returnTime": "Return Time",
+    "placeholderReturnDate": "Select a return date"
+  },
+  "navbar": {
+    "home": "Home",
+    "about": "About",
+    "services": "Services",
+    "airport_transfer": "Airport Transfer",
+    "wedding_transport": "Wedding Transport",
+    "private_driver": "Private Driver",
+    "executive_transport": "Executive Transport",
+    "tours": "Tours",
+    "quote": "Get a Quote",
+    "languages": {
+      "spanish": "ES",
+      "english": "EN"
     },
-    "heroCotiza": {
-      "from": "From",
-      "to": "To",
+    "social": {
+      "facebook": "Facebook",
+      "instagram": "Instagram",
+      "tripadvisor": "Tripadvisor",
+      "tiktok": "Tiktok",
+      "whatsapp": "WhatsApp"
+    },
+    "blog": "Blog",
+    "access": "Access",
+    "banner": "Banner",
+    "reserve": "Book now"
+  },
+  "about": {
+    "title": "Over 10 Years of Experience Providing Excellent Tourist and Executive Transportation",
+    "features": {
+      "punctuality": "Guaranteed Punctuality.",
+      "drivers": "Highly Trained Drivers.",
+      "vehicles": "Vehicles in Perfect Condition.",
+      "support": "24/7 Personalized Support."
+    },
+    "mission": {
+      "title": "Mission",
+      "description": "To provide quality transportation services, ensuring the best experience for our clients with a focus on punctuality, safety, and personalized attention."
+    },
+    "vision": {
+      "title": "Vision",
+      "description": "To be the most reliable and recognized transportation company, standing out for our excellence and professionalism."
+    }
+  },
+  "faqs": {
+    "title": "Frequently Asked Questions",
+    "questions": [
+      {
+        "question": "How can I request a quote?",
+        "answer": "You can request a quote by filling out the form on this page. Our team will respond via WhatsApp in just a few minutes to provide you with all the details."
+      },
+      {
+        "question": "How long does it take to confirm my reservation?",
+        "answer": "Our team will confirm your reservation within the next 24 hours."
+      },
+      {
+        "question": "What transportation services do you offer?",
+        "answer": "We offer private, group, and executive transportation services depending on the client's needs."
+      },
+      {
+        "question": "Are the vehicles private or shared?",
+        "answer": "The vehicles are private, ensuring your comfort and privacy throughout the journey."
+      },
+      {
+        "question": "How far in advance should I book?",
+        "answer": "We recommend booking at least 24 hours before your trip to ensure availability."
+      },
+      {
+        "question": "What payment methods are accepted?",
+        "answer": "We accept payments by credit/debit card, bank transfers, and cash."
+      },
+      {
+        "question": "Do you issue invoices?",
+        "answer": "Yes, we issue invoices. Just provide your tax details at the time of booking."
+      }
+    ],
+    "buttons": {
+      "chat": "Chat"
+    }
+  },
+  "boda": {
+    "title": "Wedding Transfer",
+    "description": "At Transportes MX, we understand how important your wedding day is. Our wedding transfer service is designed to ensure that the bride, groom, and guests arrive comfortably, on time, and in style. We take care of every detail so you can simply enjoy your day.",
+    "features": [
+      {
+        "icon": "/assets/icons/clock.png",
+        "text": "Precise coordination for every transfer, from the ceremony venue to the reception."
+      },
+      {
+        "icon": "/assets/icons/driver.png",
+        "text": "Uniformed, friendly drivers who know the most efficient routes."
+      },
+      {
+        "icon": "/assets/icons/bus.png",
+        "text": "Transportation for small groups or large groups of over 600 people."
+      },
+      {
+        "icon": "/assets/icons/24.png",
+        "text": "Schedules, routes, and stops tailored to your event's needs."
+      }
+    ],
+    "buttons": {
+      "quote": "Get a Quote",
+      "support": "Personalized attention to ensure a flawless experience."
+    }
+  },
+  "bodasModal": {
+    "title": "Discover Our Wedding Transfers",
+    "description": "Enjoy an exclusive transportation service for your big day. We guarantee comfort, punctuality, and elegance for the bride, groom, and guests. From luxury cars to decorated vans, we ensure every transfer is perfect so you can simply focus on enjoying your celebration.",
+    "button": "Get a Quote"
+  },
+  "chofer": {
+    "title": "Private Driver",
+    "description": "Our private driver vehicles are available for personalized use for as long as you need. Whether for city tours, executive transfers, or long trips to tourist destinations, we adapt to your schedule to offer you a luxurious, worry-free experience.",
+    "features": [
+      {
+        "icon": "/assets/icons/diamante.png",
+        "text": "Personalized attention to ensure a flawless experience."
+      },
+      {
+        "icon": "/assets/icons/driver.png",
+        "text": "Uniformed, friendly drivers who know the most efficient routes."
+      },
+      {
+        "icon": "/assets/icons/bus.png",
+        "text": "A wide fleet that includes sedans, SUVs, and vans in perfect condition."
+      },
+      {
+        "icon": "/assets/icons/24.png",
+        "text": "Schedules tailored to your agenda and personalized stops according to your needs."
+      }
+    ],
+    "buttons": {
+      "quote": "Get a Quote"
+    }
+  },
+  "ejecutivo": {
+    "title": "Executive & Corporate Transfer",
+    "description": "Our executive and corporate transfer service is designed to meet the needs of professionals and companies seeking comfort, punctuality, and premium service. Whether for business meetings, corporate events, or airport transfers, we guarantee an efficient, hassle-free experience.",
+    "features": [
+      {
+        "icon": "/assets/icons/clock.png",
+        "text": "Guaranteed punctuality."
+      },
+      {
+        "icon": "/assets/icons/driver.png",
+        "text": "Uniformed, friendly drivers who know the most efficient routes."
+      },
+      {
+        "icon": "/assets/icons/bus.png",
+        "text": "A wide fleet that includes sedans, SUVs, and vans in perfect condition."
+      },
+      {
+        "icon": "/assets/icons/24.png",
+        "text": "Schedules and routes tailored to your business needs."
+      }
+    ],
+    "buttons": {
+      "quote": "Get a Quote"
+    }
+  },
+  "aeropuerto": {
+    "title": "Airport Transfer",
+    "description": "Personalized, fast, and reliable service."
+  },
+  "formulario": {
+    "title": "Get a Quote",
+    "fields": {
+      "name": "Name",
+      "phone": "Phone",
+      "email": "Email",
+      "passengers": "Number of Passengers",
+      "origin": "Origin",
+      "destination": "Destination",
+      "vehicle": "Vehicle Type",
+      "comment": "Comment",
       "date": "Date",
       "time": "Time",
-      "vehicle": "Vehicle",
-      "passengers": "Passengers",
-      "roundTrip": "Round Trip",
-      "returnDate": "Return Date",
-      "returnTime": "Return Time",
-      "placeholderReturnDate": "Select a return date"
-    },
-    "navbar": {
-      "home": "Home",
-      "about": "About",
-      "services": "Services",
-      "airport_transfer": "Airport Transfer",
-      "wedding_transport": "Wedding Transport",
-      "private_driver": "Private Driver",
-      "executive_transport": "Executive Transport",
-      "tours": "Tours",
-      "quote": "Get a Quote",
-      "languages": {
-        "spanish": "ES",
-        "english": "EN"
-      },
-      "social": {
-        "facebook": "Facebook",
-        "instagram": "Instagram",
-        "tripadvisor": "Tripadvisor",
-        "tiktok": "Tiktok",
-        "whatsapp": "WhatsApp"
-      }
-    },
-    "about": {
-      "title": "Over 10 Years of Experience Providing Excellent Tourist and Executive Transportation",
-      "features": {
-        "punctuality": "Guaranteed Punctuality.",
-        "drivers": "Highly Trained Drivers.",
-        "vehicles": "Vehicles in Perfect Condition.",
-        "support": "24/7 Personalized Support."
-      },
-      "mission": {
-        "title": "Mission",
-        "description": "To provide quality transportation services, ensuring the best experience for our clients with a focus on punctuality, safety, and personalized attention."
-      },
-      "vision": {
-        "title": "Vision",
-        "description": "To be the most reliable and recognized transportation company, standing out for our excellence and professionalism."
-      }
-    },
-    "faqs": {
-      "title": "Frequently Asked Questions",
-      "questions": [
-        {
-          "question": "How can I request a quote?",
-          "answer": "You can request a quote by filling out the form on this page. Our team will respond via WhatsApp in just a few minutes to provide you with all the details."
-        },
-        {
-          "question": "How long does it take to confirm my reservation?",
-          "answer": "Our team will confirm your reservation within the next 24 hours."
-        },
-        {
-          "question": "What transportation services do you offer?",
-          "answer": "We offer private, group, and executive transportation services depending on the client's needs."
-        },
-        {
-          "question": "Are the vehicles private or shared?",
-          "answer": "The vehicles are private, ensuring your comfort and privacy throughout the journey."
-        },
-        {
-          "question": "How far in advance should I book?",
-          "answer": "We recommend booking at least 48 hours before your trip to ensure availability."
-        },
-        {
-          "question": "What payment methods are accepted?",
-          "answer": "We accept payments by credit/debit card, bank transfers, and cash."
-        },
-        {
-          "question": "Do you issue invoices?",
-          "answer": "Yes, we issue invoices. Just provide your tax details at the time of booking."
-        }
+      "round_trip": "Round Trip",
+      "return_date": "Return Date",
+      "return_time": "Return Time",
+      "locations": [
+        "From",
+        "Aeropuerto AICM",
+        "Aeropuerto AIFA",
+        "Aeropuerto BJX GTO",
+        "Aeropuerto AIQ QRO",
+        "Aeropuerto GDL",
+        "Ciudad Querétaro",
+        "San Miguel de Allende",
+        "Ciudad Guanajuato"
       ],
-      "buttons": {
-        "chat": "Chat"
-      }
-    },
-    "boda": {
-      "title": "Wedding Transfer",
-      "description": "At Transportes MX, we understand how important your wedding day is. Our wedding transfer service is designed to ensure that the bride, groom, and guests arrive comfortably, on time, and in style. We take care of every detail so you can simply enjoy your day.",
-      "features": [
-        {
-          "icon": "/assets/icons/clock.png",
-          "text": "Precise coordination for every transfer, from the ceremony venue to the reception."
-        },
-        {
-          "icon": "/assets/icons/driver.png",
-          "text": "Uniformed, friendly drivers who know the most efficient routes."
-        },
-        {
-          "icon": "/assets/icons/bus.png",
-          "text": "Transportation for small groups or large groups of over 600 people."
-        },
-        {
-          "icon": "/assets/icons/24.png",
-          "text": "Schedules, routes, and stops tailored to your event's needs."
-        }
+      "destinations": [
+        "To",
+        "Ciudad Querétaro",
+        "San Miguel de Allende",
+        "Ciudad Guanajuato",
+        "Aeropuerto AICM",
+        "Aeropuerto AIFA",
+        "Aeropuerto BJX GTO",
+        "Aeropuerto AIQ QRO",
+        "Aeropuerto GDL"
       ],
-      "buttons": {
-        "quote": "Get a Quote"
-      }
-    },
-      "bodasModal": {
-        "title": "Discover Our Wedding Transfers",
-        "description": "Enjoy an exclusive transportation service for your big day. We guarantee comfort, punctuality, and elegance for the bride, groom, and guests. From luxury cars to decorated vans, we ensure every transfer is perfect so you can simply focus on enjoying your celebration.",
-        "button": "Get a Quote"
-      },
-    "chofer": {
-      "title": "Private Driver",
-      "description": "Our private driver vehicles are available for personalized use for as long as you need. Whether for city tours, executive transfers, or long trips to tourist destinations, we adapt to your schedule to offer you a luxurious, worry-free experience.",
-      "features": [
-        {
-          "icon": "/assets/icons/diamante.png",
-          "text": "Personalized attention to ensure a flawless experience."
-        },
-        {
-          "icon": "/assets/icons/driver.png",
-          "text": "Uniformed, friendly drivers who know the most efficient routes."
-        },
-        {
-          "icon": "/assets/icons/bus.png",
-          "text": "A wide fleet that includes sedans, SUVs, and vans in perfect condition."
-        },
-        {
-          "icon": "/assets/icons/24.png",
-          "text": "Schedules tailored to your agenda and personalized stops according to your needs."
-        }
-      ],
-      "buttons": {
-        "quote": "Get a Quote"
-      }
-    },
-    "ejecutivo": {
-      "title": "Executive & Corporate Transfer",
-      "description": "Our executive and corporate transfer service is designed to meet the needs of professionals and companies seeking comfort, punctuality, and premium service. Whether for business meetings, corporate events, or airport transfers, we guarantee an efficient, hassle-free experience.",
-      "features": [
-        {
-          "icon": "/assets/icons/clock.png",
-          "text": "Guaranteed punctuality."
-        },
-        {
-          "icon": "/assets/icons/driver.png",
-          "text": "Uniformed, friendly drivers who know the most efficient routes."
-        },
-        {
-          "icon": "/assets/icons/bus.png",
-          "text": "A wide fleet that includes sedans, SUVs, and vans in perfect condition."
-        },
-        {
-          "icon": "/assets/icons/24.png",
-          "text": "Schedules and routes tailored to your business needs."
-        }
-      ],
-      "buttons": {
-        "quote": "Get a Quote"
-      }
-    },
-    "aeropuerto": {
-      "title": "Airport Transfer",
-      "description": "Personalized, fast, and reliable service."
-    },
-    "formulario": {
-      "title": "Get a Quote",
-      "fields": {
-        "name": "Name",
-        "phone": "Phone",
-        "email": "Email",
-        "passengers": "Number of Passengers",
-        "origin": "Origin",
-        "destination": "Destination",
-        "vehicle": "Vehicle Type",
-        "comment":"Comment",
-        "date": "Date",
-        "time": "Time",
-        "round_trip": "Round Trip",
-        "return_date": "Return Date",
-        "return_time": "Return Time",
-        "locations" : ["From","Aeropuerto AICM", "Aeropuerto AIFA", "Aeropuerto BJX GTO", "Aeropuerto AIQ QRO", "Aeropuerto GDL","Ciudad Querétaro", "San Miguel de Allende", "Ciudad Guanajuato" ],
-             "destinations" : ["To","Ciudad Querétaro", "San Miguel de Allende","Ciudad Guanajuato","Aeropuerto AICM", "Aeropuerto AIFA", "Aeropuerto BJX GTO", "Aeropuerto AIQ QRO", "Aeropuerto GDL"],
-             "vehicleTypes": [
-              "Vehicle Type",
-              "Sedan 3 pax",
-              "SUV 4 pax",
-              "Minivan 6 pax",
-              "Suburban 6 pax",
-              "Toyota Hiace 12 pax",
-              "Sprinter 20 pax",
-              "Bus 50 pax"
-            ]
-            },
-      "buttons": {
-        "submit": "Submit",
-        "support": "*24/7 Personalized Support."
-      }
-    },
-    "autobus": {
-      "title": "Group Travel with Total Comfort",
-      "description": "Our buses offer capacity for 50 passengers, with reclining seats, restrooms, air conditioning, and onboard entertainment. The best option for beaches, concerts, corporate events, and mass transfers with safety and punctuality.",
-      "features": [
-        {
-          "icon": "/assets/icons/bus.png",
-          "text": "Capacity for 50 passengers with reclining seats."
-        },
-        {
-          "icon": "/assets/icons/user-tie.png",
-          "text": "Experienced drivers for a safe and reliable journey."
-        },
-        {
-          "icon": "/assets/icons/music.png",
-          "text": "We take you to your favorite concert or event in complete comfort."
-        },
-        {
-          "icon": "/assets/icons/clock.png",
-          "text": "Guaranteed punctuality on every transfer."
-        }
-      ],
-      "buttons": {
-        "quote": "Get a Quote"
-      }
-    },
-    "tours": {
-      "title": "Tours",
-      "options": [
-        {
-          "name": "Guanajuato",
-          "description": "Discover the tunnels of Guanajuato and enjoy the view from the Pípila Lookout. Visit the Juárez Theater, the University of Guanajuato, and the Alhóndiga de Granaditas. Immerse yourself in history at the Mummy Museum and the Church of San Cayetano (Valenciana). Don't miss the mystical Museum of the Holy Inquisition or the romantic Callejón del Beso.",
-          "price": "$1,750 per person",
-          "minimo": "(min. 2)",
-          "duration": "Approximately 8 hrs",
-          "image": "/assets/images/guanajuato.png"
-        },
-        {
-          "name": "San Miguel De Allende",
-          "description": "Tour the Sanctuary of Jesús Nazareno in Atotonilco, known as the 'Sistine Chapel of Mexico'. Discover art and design at Fábrica La Aurora and enjoy the colorful Lucas Balderas Artisan Market. Admire the city from the Lookout, relax in Juárez Park, and learn about history at the Lavaderos del Chorro.",
-          "price": "$1,200 per person",
-          "minimo": "(min. 2)",
-          "duration": "Approximately 4 hrs",
-          "image": "/assets/images/sanmiguel.png"
-        },
-        {
-          "name": "Dolores, Hidalgo",
-          "description": "Visit the Sanctuary of Atotonilco and the Mausoleum of José Alfredo Jiménez with tastings of rompope and mezcal. Explore Ceramics Avenue and the Church of the Cry of Independence. Enjoy traditional shaved ice.",
-          "price": "$1,700 per person",
-          "minimo": "(min. 2)",
-          "duration": "Approximately 6 hrs",
-          "image": "/assets/images/dolores.png"
-        },
-        {
-          "name": "Peña de Bernal",
-          "description": "Explore one of the largest monoliths in the world in the charming Magic Town of Bernal. Enjoy a hike with breathtaking views, stroll through its colorful colonial streets, and sample artisanal wines and cheeses at nearby wineries. An unforgettable experience blending nature, history, and gastronomy.",
-          "price": "$1,800 per person",
-          "minimo": "(min. 2)",
-          "duration": "Approximately 6.5 hrs",
-          "image": "/assets/images/queretaro.jpg"
-        }
-      ],
-      "static": {
-        "vehicle_info": "Sedan, SUV, and Van with Air Conditioning",
-        "driver_info": "Bilingual Driver"
-      },
-      "buttons": {
-        "quote": "Book Now"
-      }
-    },
-    "testimonios": {
-      "title": "Testimonials",
-      "reviews": [
-        {
-          "nombre": "Ana Martínez",
-          "description": "We booked transportation to Monterrey for work visas to the USA. Everything went excellently, very punctual and experienced with long-distance routes.",
-          "usuario": "/assets/images/testimonios/usuario2.png",
-          "servicio": "Airport Transfer",
-          "imagen": "/assets/images/testimonios/1.png"
-        },
-        {
-          "nombre": "Carlos Ramírez",
-          "description": "They have vehicles for all needs. We have traveled several times to San Miguel and always felt safe booking with them.",
-          "usuario": "/assets/images/testimonios/usuario4.png",
-          "servicio": "Private Driver",
-          "imagen": "/assets/images/testimonios/2.png"
-        },
-        {
-          "nombre": "María Hernández",
-          "description": "We are a wedding planning company and have worked with them for years. Always punctual, professional, and with excellent service.",
-          "usuario": "/assets/images/testimonios/usuario3.png",
-          "servicio": "Wedding Transfer",
-          "imagen": "/assets/images/testimonios/3.png"
-        },
-        {
-          "nombre": "Luis Gómez",
-          "description": "The tour to San Miguel was amazing. We visited iconic places and made the most of our day. I would definitely do it again.",
-          "usuario": "/assets/images/testimonios/usuario1.png",
-          "servicio": "Tours (San Miguel de Allende)",
-          "imagen": "/assets/images/testimonios/4.png"
-        },
-        {
-          "nombre": "Eduardo Torres",
-          "description": "The executive transfer was impeccable. Punctuality, comfort, and professional service. Ideal for business trips.",
-          "usuario": "/assets/images/testimonios/usuario21.png",
-          "servicio": "Executive Transfer",
-          "imagen": "/assets/images/testimonios/5.png"
-        },
-        {
-          "nombre": "Laura Sánchez",
-          "description": "The vineyard tour was a great experience. Comfortable transport, friendly driver, and everything well organized. I would do it again.",
-          "usuario": "/assets/images/testimonios/usuario5.png",
-          "servicio": "Tours (Vineyard Route)",
-          "imagen": "/assets/images/testimonios/6.png"
-        },
-        {
-          "nombre": "Fernando Pérez",
-          "description": "A first-class service. They picked me up on time and the transfer was safe and efficient. Perfect for long trips.",
-          "usuario": "/assets/images/testimonios/usuario13.png",
-          "servicio": "Private Driver",
-          "imagen": "/assets/images/testimonios/7.png"
-        },
-        {
-          "nombre": "Alejandra Ruiz",
-          "description": "We traveled from California and arrived on different flights. They picked us up on time and everything was excellent. We also took excursions to vineyards.",
-          "usuario": "/assets/images/testimonios/usuario9.png",
-          "servicio": "Wedding Transfer",
-          "imagen": "/assets/images/testimonios/8.png"
-        },
-        {
-          "nombre": "Ricardo López",
-          "description": "We travel to San Miguel every year from the USA. We always book their transfers and the service is excellent. 100% recommended.",
-          "usuario": "/assets/images/testimonios/usuario8.png",
-          "servicio": "Executive Transfer",
-          "imagen": "/assets/images/testimonios/9.png"
-        },
-        {
-          "nombre": "Sofía Torres",
-          "description": "We booked the Guanajuato tour and visited many places without wasting any time. Very well organized and an excellent experience.",
-          "usuario": "/assets/images/testimonios/usuario11.png",
-          "servicio": "Tours (Guanajuato)",
-          "imagen": "/assets/images/testimonios/10.png"
-        },
-        {
-          "nombre": "Javier Muñoz",
-          "description": "My family and I used the airport transfer service and it was excellent. Punctuality, safety, and comfort guaranteed.",
-          "usuario": "/assets/images/testimonios/usuario10.png",
-          "servicio": "Airport Transfer",
-          "imagen": "/assets/images/testimonios/11.png"
-        },
-        {
-          "nombre": "Paula Gómez",
-          "description": "The Querétaro tour was an unforgettable experience. Beautiful places, excellent logistics, and a very attentive driver. Recommended.",
-          "usuario": "/assets/images/testimonios/usuario12.png",
-          "servicio": "Tours (Querétaro)",
-          "imagen": "/assets/images/testimonios/12.png"
-        },
-        {
-          "nombre": "Roberto Castro",
-          "description": "We hired a private driver to visit several agricultural companies. Punctual, helpful, and knowledgeable about the routes.",
-          "usuario": "/assets/images/testimonios/usuario27.png",
-          "servicio": "Private Driver",
-          "imagen": "/assets/images/testimonios/13.png"
-        },
-        {
-          "nombre": "Ismael Serrano",
-          "description": "We hired their service for our wedding with 350 guests. Impeccable coordination and punctual transfers. Highly recommended.",
-          "usuario": "/assets/images/testimonios/usuario25.png",
-          "servicio": "Wedding Transfer",
-          "imagen": "/assets/images/testimonios/14.png"
-        },
-        {
-          "nombre": "Daniel Ríos",
-          "description": "The executive transfer was top-notch. Punctual, comfortable, and professional. I highly recommend it for business trips.",
-          "usuario": "/assets/images/testimonios/usuario22.png",
-          "servicio": "Executive Transfer",
-          "imagen": "/assets/images/testimonios/15.png"
-        }
+      "vehicleTypes": [
+        "Vehicle Type",
+        "Sedan 3 pax",
+        "SUV 4 pax",
+        "Minivan 6 pax",
+        "Suburban 6 pax",
+        "Toyota Hiace 12 pax",
+        "Sprinter 20 pax",
+        "Bus 50 pax"
       ]
     },
-    "galeria": {
+    "buttons": {
+      "submit": "Submit",
+      "support": "*24/7 Personalized Support."
+    }
+  },
+  "autobus": {
+    "title": "Group Travel with Total Comfort",
+    "description": "Our buses offer capacity for 50 passengers, with reclining seats, restrooms, air conditioning, and onboard entertainment. The best option for beaches, concerts, corporate events, and mass transfers with safety and punctuality.",
+    "features": [
+      {
+        "icon": "/assets/icons/bus.png",
+        "text": "Capacity for 50 passengers with reclining seats."
+      },
+      {
+        "icon": "/assets/icons/user-tie.png",
+        "text": "Experienced drivers for a safe and reliable journey."
+      },
+      {
+        "icon": "/assets/icons/music.png",
+        "text": "We take you to your favorite concert or event in complete comfort."
+      },
+      {
+        "icon": "/assets/icons/clock.png",
+        "text": "Guaranteed punctuality on every transfer."
+      }
+    ],
+    "buttons": {
+      "quote": "Get a Quote"
+    }
+  },
+  "tours": {
+    "title": "Tours",
+    "options": [
+      {
+        "name": "Guanajuato",
+        "description": "Discover the tunnels of Guanajuato and enjoy the view from the Pípila Lookout. Visit the Juárez Theater, the University of Guanajuato, and the Alhóndiga de Granaditas. Immerse yourself in history at the Mummy Museum and the Church of San Cayetano (Valenciana). Don't miss the mystical Museum of the Holy Inquisition or the romantic Callejón del Beso.",
+        "price": "$1,750 per person",
+        "minimo": "(min. 2)",
+        "duration": "Approximately 8 hrs",
+        "image": "/assets/images/guanajuato.png"
+      },
+      {
+        "name": "San Miguel De Allende",
+        "description": "Tour the Sanctuary of Jesús Nazareno in Atotonilco, known as the 'Sistine Chapel of Mexico'. Discover art and design at Fábrica La Aurora and enjoy the colorful Lucas Balderas Artisan Market. Admire the city from the Lookout, relax in Juárez Park, and learn about history at the Lavaderos del Chorro.",
+        "price": "$1,200 per person",
+        "minimo": "(min. 2)",
+        "duration": "Approximately 4 hrs",
+        "image": "/assets/images/sanmiguel.png"
+      },
+      {
+        "name": "Dolores, Hidalgo",
+        "description": "Visit the Sanctuary of Atotonilco and the Mausoleum of José Alfredo Jiménez with tastings of rompope and mezcal. Explore Ceramics Avenue and the Church of the Cry of Independence. Enjoy traditional shaved ice.",
+        "price": "$1,700 per person",
+        "minimo": "(min. 2)",
+        "duration": "Approximately 6 hrs",
+        "image": "/assets/images/dolores.png"
+      },
+      {
+        "name": "Peña de Bernal",
+        "description": "Explore one of the largest monoliths in the world in the charming Magic Town of Bernal. Enjoy a hike with breathtaking views, stroll through its colorful colonial streets, and sample artisanal wines and cheeses at nearby wineries. An unforgettable experience blending nature, history, and gastronomy.",
+        "price": "$1,800 per person",
+        "minimo": "(min. 2)",
+        "duration": "Approximately 6.5 hrs",
+        "image": "/assets/images/queretaro.jpg"
+      }
+    ],
+    "static": {
+      "vehicle_info": "Sedan, SUV, and Van with Air Conditioning",
+      "driver_info": "Bilingual Driver"
+    },
+    "buttons": {
+      "quote": "Book Now"
+    }
+  },
+  "testimonios": {
+    "title": "Testimonials",
+    "reviews": [
+      {
+        "nombre": "Ana Martínez",
+        "description": "We booked transportation to Monterrey for work visas to the USA. Everything went excellently, very punctual and experienced with long-distance routes.",
+        "usuario": "/assets/images/testimonios/usuario2.png",
+        "servicio": "Airport Transfer",
+        "imagen": "/assets/images/testimonios/1.png"
+      },
+      {
+        "nombre": "Carlos Ramírez",
+        "description": "They have vehicles for all needs. We have traveled several times to San Miguel and always felt safe booking with them.",
+        "usuario": "/assets/images/testimonios/usuario4.png",
+        "servicio": "Private Driver",
+        "imagen": "/assets/images/testimonios/2.png"
+      },
+      {
+        "nombre": "María Hernández",
+        "description": "We are a wedding planning company and have worked with them for years. Always punctual, professional, and with excellent service.",
+        "usuario": "/assets/images/testimonios/usuario3.png",
+        "servicio": "Wedding Transfer",
+        "imagen": "/assets/images/testimonios/3.png"
+      },
+      {
+        "nombre": "Luis Gómez",
+        "description": "The tour to San Miguel was amazing. We visited iconic places and made the most of our day. I would definitely do it again.",
+        "usuario": "/assets/images/testimonios/usuario1.png",
+        "servicio": "Tours (San Miguel de Allende)",
+        "imagen": "/assets/images/testimonios/4.png"
+      },
+      {
+        "nombre": "Eduardo Torres",
+        "description": "The executive transfer was impeccable. Punctuality, comfort, and professional service. Ideal for business trips.",
+        "usuario": "/assets/images/testimonios/usuario21.png",
+        "servicio": "Executive Transfer",
+        "imagen": "/assets/images/testimonios/5.png"
+      },
+      {
+        "nombre": "Laura Sánchez",
+        "description": "The vineyard tour was a great experience. Comfortable transport, friendly driver, and everything well organized. I would do it again.",
+        "usuario": "/assets/images/testimonios/usuario5.png",
+        "servicio": "Tours (Vineyard Route)",
+        "imagen": "/assets/images/testimonios/6.png"
+      },
+      {
+        "nombre": "Fernando Pérez",
+        "description": "A first-class service. They picked me up on time and the transfer was safe and efficient. Perfect for long trips.",
+        "usuario": "/assets/images/testimonios/usuario13.png",
+        "servicio": "Private Driver",
+        "imagen": "/assets/images/testimonios/7.png"
+      },
+      {
+        "nombre": "Alejandra Ruiz",
+        "description": "We traveled from California and arrived on different flights. They picked us up on time and everything was excellent. We also took excursions to vineyards.",
+        "usuario": "/assets/images/testimonios/usuario9.png",
+        "servicio": "Wedding Transfer",
+        "imagen": "/assets/images/testimonios/8.png"
+      },
+      {
+        "nombre": "Ricardo López",
+        "description": "We travel to San Miguel every year from the USA. We always book their transfers and the service is excellent. 100% recommended.",
+        "usuario": "/assets/images/testimonios/usuario8.png",
+        "servicio": "Executive Transfer",
+        "imagen": "/assets/images/testimonios/9.png"
+      },
+      {
+        "nombre": "Sofía Torres",
+        "description": "We booked the Guanajuato tour and visited many places without wasting any time. Very well organized and an excellent experience.",
+        "usuario": "/assets/images/testimonios/usuario11.png",
+        "servicio": "Tours (Guanajuato)",
+        "imagen": "/assets/images/testimonios/10.png"
+      },
+      {
+        "nombre": "Javier Muñoz",
+        "description": "My family and I used the airport transfer service and it was excellent. Punctuality, safety, and comfort guaranteed.",
+        "usuario": "/assets/images/testimonios/usuario10.png",
+        "servicio": "Airport Transfer",
+        "imagen": "/assets/images/testimonios/11.png"
+      },
+      {
+        "nombre": "Paula Gómez",
+        "description": "The Querétaro tour was an unforgettable experience. Beautiful places, excellent logistics, and a very attentive driver. Recommended.",
+        "usuario": "/assets/images/testimonios/usuario12.png",
+        "servicio": "Tours (Querétaro)",
+        "imagen": "/assets/images/testimonios/12.png"
+      },
+      {
+        "nombre": "Roberto Castro",
+        "description": "We hired a private driver to visit several agricultural companies. Punctual, helpful, and knowledgeable about the routes.",
+        "usuario": "/assets/images/testimonios/usuario27.png",
+        "servicio": "Private Driver",
+        "imagen": "/assets/images/testimonios/13.png"
+      },
+      {
+        "nombre": "Ismael Serrano",
+        "description": "We hired their service for our wedding with 350 guests. Impeccable coordination and punctual transfers. Highly recommended.",
+        "usuario": "/assets/images/testimonios/usuario25.png",
+        "servicio": "Wedding Transfer",
+        "imagen": "/assets/images/testimonios/14.png"
+      },
+      {
+        "nombre": "Daniel Ríos",
+        "description": "The executive transfer was top-notch. Punctual, comfortable, and professional. I highly recommend it for business trips.",
+        "usuario": "/assets/images/testimonios/usuario22.png",
+        "servicio": "Executive Transfer",
+        "imagen": "/assets/images/testimonios/15.png"
+      }
+    ]
+  },
+  "galeria": {
     "title": "Galería Visual",
     "categories": [
       {
-        "title": "Traslado a Aeropuertos",
+        "title": "Airport Transfers",
         "image": "/assets/images/galeria/aeropuertos/aeropuertos.jpg",
         "categoryImages": [
           "/assets/images/galeria/aeropuertos/swiper/1.jpg",
@@ -469,162 +494,162 @@
         ]
       },
       {
-        "title": "Transporte para bodas",
+        "title": "Wedding Transportation",
         "image": "/assets/images/galeria/bodas/bodas.jpg",
         "categoryImages": [
-  "/assets/images/galeria/bodas/swiper/1.jpg",
-  "/assets/images/galeria/bodas/swiper/2.jpg",
-  "/assets/images/galeria/bodas/swiper/3.jpg",
-  "/assets/images/galeria/bodas/swiper/4.jpg",
-  "/assets/images/galeria/bodas/swiper/5.jpg",
-  "/assets/images/galeria/bodas/swiper/6.jpg",
-  "/assets/images/galeria/bodas/swiper/7.jpg",
-  "/assets/images/galeria/bodas/swiper/8.jpg",
-  "/assets/images/galeria/bodas/swiper/9.jpg",
-  "/assets/images/galeria/bodas/swiper/10.jpg",
-  "/assets/images/galeria/bodas/swiper/11.jpg",
-  "/assets/images/galeria/bodas/swiper/12.jpg",
-  "/assets/images/galeria/bodas/swiper/13.jpg",
-  "/assets/images/galeria/bodas/swiper/14.jpg",
-  "/assets/images/galeria/bodas/swiper/15.jpg",
-  "/assets/images/galeria/bodas/swiper/16.jpg",
-  "/assets/images/galeria/bodas/swiper/17.jpg",
-  "/assets/images/galeria/bodas/swiper/18.jpg",
-  "/assets/images/galeria/bodas/swiper/19.jpg",
-  "/assets/images/galeria/bodas/swiper/20.jpg",
-  "/assets/images/galeria/bodas/swiper/21.jpg",
-  "/assets/images/galeria/bodas/swiper/22.jpg",
-  "/assets/images/galeria/bodas/swiper/23.jpg",
-  "/assets/images/galeria/bodas/swiper/24.jpg",
-  "/assets/images/galeria/bodas/swiper/25.jpg",
-  "/assets/images/galeria/bodas/swiper/26.jpg"
-]
+          "/assets/images/galeria/bodas/swiper/1.jpg",
+          "/assets/images/galeria/bodas/swiper/2.jpg",
+          "/assets/images/galeria/bodas/swiper/3.jpg",
+          "/assets/images/galeria/bodas/swiper/4.jpg",
+          "/assets/images/galeria/bodas/swiper/5.jpg",
+          "/assets/images/galeria/bodas/swiper/6.jpg",
+          "/assets/images/galeria/bodas/swiper/7.jpg",
+          "/assets/images/galeria/bodas/swiper/8.jpg",
+          "/assets/images/galeria/bodas/swiper/9.jpg",
+          "/assets/images/galeria/bodas/swiper/10.jpg",
+          "/assets/images/galeria/bodas/swiper/11.jpg",
+          "/assets/images/galeria/bodas/swiper/12.jpg",
+          "/assets/images/galeria/bodas/swiper/13.jpg",
+          "/assets/images/galeria/bodas/swiper/14.jpg",
+          "/assets/images/galeria/bodas/swiper/15.jpg",
+          "/assets/images/galeria/bodas/swiper/16.jpg",
+          "/assets/images/galeria/bodas/swiper/17.jpg",
+          "/assets/images/galeria/bodas/swiper/18.jpg",
+          "/assets/images/galeria/bodas/swiper/19.jpg",
+          "/assets/images/galeria/bodas/swiper/20.jpg",
+          "/assets/images/galeria/bodas/swiper/21.jpg",
+          "/assets/images/galeria/bodas/swiper/22.jpg",
+          "/assets/images/galeria/bodas/swiper/23.jpg",
+          "/assets/images/galeria/bodas/swiper/24.jpg",
+          "/assets/images/galeria/bodas/swiper/25.jpg",
+          "/assets/images/galeria/bodas/swiper/26.jpg"
+        ]
       },
       {
-        "title": "Transporte Turístico",
+        "title": "Tourist Transportation",
         "image": "/assets/images/galeria/turistico/turistico.jpg",
-       "categoryImages": [
-  "/assets/images/galeria/turistico/swiper/1.jpg",
-  "/assets/images/galeria/turistico/swiper/2.jpg",
-  "/assets/images/galeria/turistico/swiper/3.jpg",
-  "/assets/images/galeria/turistico/swiper/4.jpg",
-  "/assets/images/galeria/turistico/swiper/5.jpg",
-  "/assets/images/galeria/turistico/swiper/6.jpg",
-  "/assets/images/galeria/turistico/swiper/7.jpg",
-  "/assets/images/galeria/turistico/swiper/8.jpg",
-  "/assets/images/galeria/turistico/swiper/9.jpg",
-  "/assets/images/galeria/turistico/swiper/10.jpg",
-  "/assets/images/galeria/turistico/swiper/11.jpg",
-  "/assets/images/galeria/turistico/swiper/12.jpg",
-  "/assets/images/galeria/turistico/swiper/13.jpg",
-  "/assets/images/galeria/turistico/swiper/14.jpg",
-  "/assets/images/galeria/turistico/swiper/15.jpg",
-  "/assets/images/galeria/turistico/swiper/16.jpg",
-  "/assets/images/galeria/turistico/swiper/17.jpg",
-  "/assets/images/galeria/turistico/swiper/18.jpg",
-  "/assets/images/galeria/turistico/swiper/19.jpg",
-  "/assets/images/galeria/turistico/swiper/20.jpg",
-  "/assets/images/galeria/turistico/swiper/21.jpg",
-  "/assets/images/galeria/turistico/swiper/22.jpg",
-  "/assets/images/galeria/turistico/swiper/23.jpg",
-  "/assets/images/galeria/turistico/swiper/24.jpg",
-  "/assets/images/galeria/turistico/swiper/25.jpg",
-  "/assets/images/galeria/turistico/swiper/26.jpg",
-  "/assets/images/galeria/turistico/swiper/27.jpg",
-  "/assets/images/galeria/turistico/swiper/28.jpg",
-  "/assets/images/galeria/turistico/swiper/29.jpg",
-  "/assets/images/galeria/turistico/swiper/30.jpg",
-  "/assets/images/galeria/turistico/swiper/31.jpg",
-  "/assets/images/galeria/turistico/swiper/32.jpg",
-  "/assets/images/galeria/turistico/swiper/33.jpg",
-  "/assets/images/galeria/turistico/swiper/34.jpg",
-  "/assets/images/galeria/turistico/swiper/35.jpg",
-  "/assets/images/galeria/turistico/swiper/36.jpg",
-  "/assets/images/galeria/turistico/swiper/37.jpg",
-  "/assets/images/galeria/turistico/swiper/38.jpg",
-  "/assets/images/galeria/turistico/swiper/39.jpg",
-  "/assets/images/galeria/turistico/swiper/40.jpg",
-  "/assets/images/galeria/turistico/swiper/41.jpg",
-  "/assets/images/galeria/turistico/swiper/42.jpg",
-  "/assets/images/galeria/turistico/swiper/43.jpg",
-  "/assets/images/galeria/turistico/swiper/44.jpg",
-  "/assets/images/galeria/turistico/swiper/45.jpg",
-  "/assets/images/galeria/turistico/swiper/46.jpg",
-  "/assets/images/galeria/turistico/swiper/47.jpg",
-  "/assets/images/galeria/turistico/swiper/48.jpg",
-  "/assets/images/galeria/turistico/swiper/49.jpg",
-  "/assets/images/galeria/turistico/swiper/50.jpg",
-  "/assets/images/galeria/turistico/swiper/51.jpg",
-  "/assets/images/galeria/turistico/swiper/52.jpg",
-  "/assets/images/galeria/turistico/swiper/53.jpg",
-  "/assets/images/galeria/turistico/swiper/54.jpg",
-  "/assets/images/galeria/turistico/swiper/55.jpg",
-  "/assets/images/galeria/turistico/swiper/56.jpg",
-  "/assets/images/galeria/turistico/swiper/57.jpg",
-  "/assets/images/galeria/turistico/swiper/58.jpg",
-  "/assets/images/galeria/turistico/swiper/59.jpg",
-  "/assets/images/galeria/turistico/swiper/60.jpg",
-  "/assets/images/galeria/turistico/swiper/61.jpg",
-  "/assets/images/galeria/turistico/swiper/62.jpg",
-  "/assets/images/galeria/turistico/swiper/63.jpg",
-  "/assets/images/galeria/turistico/swiper/64.jpg",
-  "/assets/images/galeria/turistico/swiper/65.jpg",
-  "/assets/images/galeria/turistico/swiper/66.jpg",
-  "/assets/images/galeria/turistico/swiper/67.jpg",
-  "/assets/images/galeria/turistico/swiper/68.jpg",
-  "/assets/images/galeria/turistico/swiper/69.jpg",
-  "/assets/images/galeria/turistico/swiper/70.jpg",
-  "/assets/images/galeria/turistico/swiper/71.jpg",
-  "/assets/images/galeria/turistico/swiper/72.jpg",
-  "/assets/images/galeria/turistico/swiper/73.jpg",
-  "/assets/images/galeria/turistico/swiper/74.jpg",
-  "/assets/images/galeria/turistico/swiper/75.jpg",
-  "/assets/images/galeria/turistico/swiper/76.jpg",
-  "/assets/images/galeria/turistico/swiper/77.jpg",
-  "/assets/images/galeria/turistico/swiper/78.jpg",
-  "/assets/images/galeria/turistico/swiper/79.jpg",
-  "/assets/images/galeria/turistico/swiper/80.jpg",
-  "/assets/images/galeria/turistico/swiper/81.jpg",
-  "/assets/images/galeria/turistico/swiper/82.jpg",
-  "/assets/images/galeria/turistico/swiper/83.jpg",
-  "/assets/images/galeria/turistico/swiper/84.jpg",
-  "/assets/images/galeria/turistico/swiper/85.jpg",
-  "/assets/images/galeria/turistico/swiper/86.jpg",
-  "/assets/images/galeria/turistico/swiper/87.jpg",
-  "/assets/images/galeria/turistico/swiper/88.jpg",
-  "/assets/images/galeria/turistico/swiper/89.jpg",
-  "/assets/images/galeria/turistico/swiper/90.jpg",
-  "/assets/images/galeria/turistico/swiper/91.jpg",
-  "/assets/images/galeria/turistico/swiper/92.jpg",
-  "/assets/images/galeria/turistico/swiper/93.jpg",
-  "/assets/images/galeria/turistico/swiper/94.jpg",
-  "/assets/images/galeria/turistico/swiper/95.jpg",
-  "/assets/images/galeria/turistico/swiper/96.jpg",
-  "/assets/images/galeria/turistico/swiper/97.jpg",
-  "/assets/images/galeria/turistico/swiper/98.jpg",
-  "/assets/images/galeria/turistico/swiper/99.jpg",
-  "/assets/images/galeria/turistico/swiper/100.jpg",
-  "/assets/images/galeria/turistico/swiper/101.jpg",
-  "/assets/images/galeria/turistico/swiper/102.jpg",
-  "/assets/images/galeria/turistico/swiper/103.jpg",
-  "/assets/images/galeria/turistico/swiper/104.jpg",
-  "/assets/images/galeria/turistico/swiper/105.jpg",
-  "/assets/images/galeria/turistico/swiper/106.jpg",
-  "/assets/images/galeria/turistico/swiper/107.jpg",
-  "/assets/images/galeria/turistico/swiper/108.jpg",
-  "/assets/images/galeria/turistico/swiper/109.jpg",
-  "/assets/images/galeria/turistico/swiper/110.jpg",
-  "/assets/images/galeria/turistico/swiper/111.jpg",
-  "/assets/images/galeria/turistico/swiper/112.jpg",
-  "/assets/images/galeria/turistico/swiper/113.jpg",
-  "/assets/images/galeria/turistico/swiper/114.jpg",
-  "/assets/images/galeria/turistico/swiper/115.jpg",
-  "/assets/images/galeria/turistico/swiper/116.jpg",
-  "/assets/images/galeria/turistico/swiper/117.jpg"
-]
+        "categoryImages": [
+          "/assets/images/galeria/turistico/swiper/1.jpg",
+          "/assets/images/galeria/turistico/swiper/2.jpg",
+          "/assets/images/galeria/turistico/swiper/3.jpg",
+          "/assets/images/galeria/turistico/swiper/4.jpg",
+          "/assets/images/galeria/turistico/swiper/5.jpg",
+          "/assets/images/galeria/turistico/swiper/6.jpg",
+          "/assets/images/galeria/turistico/swiper/7.jpg",
+          "/assets/images/galeria/turistico/swiper/8.jpg",
+          "/assets/images/galeria/turistico/swiper/9.jpg",
+          "/assets/images/galeria/turistico/swiper/10.jpg",
+          "/assets/images/galeria/turistico/swiper/11.jpg",
+          "/assets/images/galeria/turistico/swiper/12.jpg",
+          "/assets/images/galeria/turistico/swiper/13.jpg",
+          "/assets/images/galeria/turistico/swiper/14.jpg",
+          "/assets/images/galeria/turistico/swiper/15.jpg",
+          "/assets/images/galeria/turistico/swiper/16.jpg",
+          "/assets/images/galeria/turistico/swiper/17.jpg",
+          "/assets/images/galeria/turistico/swiper/18.jpg",
+          "/assets/images/galeria/turistico/swiper/19.jpg",
+          "/assets/images/galeria/turistico/swiper/20.jpg",
+          "/assets/images/galeria/turistico/swiper/21.jpg",
+          "/assets/images/galeria/turistico/swiper/22.jpg",
+          "/assets/images/galeria/turistico/swiper/23.jpg",
+          "/assets/images/galeria/turistico/swiper/24.jpg",
+          "/assets/images/galeria/turistico/swiper/25.jpg",
+          "/assets/images/galeria/turistico/swiper/26.jpg",
+          "/assets/images/galeria/turistico/swiper/27.jpg",
+          "/assets/images/galeria/turistico/swiper/28.jpg",
+          "/assets/images/galeria/turistico/swiper/29.jpg",
+          "/assets/images/galeria/turistico/swiper/30.jpg",
+          "/assets/images/galeria/turistico/swiper/31.jpg",
+          "/assets/images/galeria/turistico/swiper/32.jpg",
+          "/assets/images/galeria/turistico/swiper/33.jpg",
+          "/assets/images/galeria/turistico/swiper/34.jpg",
+          "/assets/images/galeria/turistico/swiper/35.jpg",
+          "/assets/images/galeria/turistico/swiper/36.jpg",
+          "/assets/images/galeria/turistico/swiper/37.jpg",
+          "/assets/images/galeria/turistico/swiper/38.jpg",
+          "/assets/images/galeria/turistico/swiper/39.jpg",
+          "/assets/images/galeria/turistico/swiper/40.jpg",
+          "/assets/images/galeria/turistico/swiper/41.jpg",
+          "/assets/images/galeria/turistico/swiper/42.jpg",
+          "/assets/images/galeria/turistico/swiper/43.jpg",
+          "/assets/images/galeria/turistico/swiper/44.jpg",
+          "/assets/images/galeria/turistico/swiper/45.jpg",
+          "/assets/images/galeria/turistico/swiper/46.jpg",
+          "/assets/images/galeria/turistico/swiper/47.jpg",
+          "/assets/images/galeria/turistico/swiper/48.jpg",
+          "/assets/images/galeria/turistico/swiper/49.jpg",
+          "/assets/images/galeria/turistico/swiper/50.jpg",
+          "/assets/images/galeria/turistico/swiper/51.jpg",
+          "/assets/images/galeria/turistico/swiper/52.jpg",
+          "/assets/images/galeria/turistico/swiper/53.jpg",
+          "/assets/images/galeria/turistico/swiper/54.jpg",
+          "/assets/images/galeria/turistico/swiper/55.jpg",
+          "/assets/images/galeria/turistico/swiper/56.jpg",
+          "/assets/images/galeria/turistico/swiper/57.jpg",
+          "/assets/images/galeria/turistico/swiper/58.jpg",
+          "/assets/images/galeria/turistico/swiper/59.jpg",
+          "/assets/images/galeria/turistico/swiper/60.jpg",
+          "/assets/images/galeria/turistico/swiper/61.jpg",
+          "/assets/images/galeria/turistico/swiper/62.jpg",
+          "/assets/images/galeria/turistico/swiper/63.jpg",
+          "/assets/images/galeria/turistico/swiper/64.jpg",
+          "/assets/images/galeria/turistico/swiper/65.jpg",
+          "/assets/images/galeria/turistico/swiper/66.jpg",
+          "/assets/images/galeria/turistico/swiper/67.jpg",
+          "/assets/images/galeria/turistico/swiper/68.jpg",
+          "/assets/images/galeria/turistico/swiper/69.jpg",
+          "/assets/images/galeria/turistico/swiper/70.jpg",
+          "/assets/images/galeria/turistico/swiper/71.jpg",
+          "/assets/images/galeria/turistico/swiper/72.jpg",
+          "/assets/images/galeria/turistico/swiper/73.jpg",
+          "/assets/images/galeria/turistico/swiper/74.jpg",
+          "/assets/images/galeria/turistico/swiper/75.jpg",
+          "/assets/images/galeria/turistico/swiper/76.jpg",
+          "/assets/images/galeria/turistico/swiper/77.jpg",
+          "/assets/images/galeria/turistico/swiper/78.jpg",
+          "/assets/images/galeria/turistico/swiper/79.jpg",
+          "/assets/images/galeria/turistico/swiper/80.jpg",
+          "/assets/images/galeria/turistico/swiper/81.jpg",
+          "/assets/images/galeria/turistico/swiper/82.jpg",
+          "/assets/images/galeria/turistico/swiper/83.jpg",
+          "/assets/images/galeria/turistico/swiper/84.jpg",
+          "/assets/images/galeria/turistico/swiper/85.jpg",
+          "/assets/images/galeria/turistico/swiper/86.jpg",
+          "/assets/images/galeria/turistico/swiper/87.jpg",
+          "/assets/images/galeria/turistico/swiper/88.jpg",
+          "/assets/images/galeria/turistico/swiper/89.jpg",
+          "/assets/images/galeria/turistico/swiper/90.jpg",
+          "/assets/images/galeria/turistico/swiper/91.jpg",
+          "/assets/images/galeria/turistico/swiper/92.jpg",
+          "/assets/images/galeria/turistico/swiper/93.jpg",
+          "/assets/images/galeria/turistico/swiper/94.jpg",
+          "/assets/images/galeria/turistico/swiper/95.jpg",
+          "/assets/images/galeria/turistico/swiper/96.jpg",
+          "/assets/images/galeria/turistico/swiper/97.jpg",
+          "/assets/images/galeria/turistico/swiper/98.jpg",
+          "/assets/images/galeria/turistico/swiper/99.jpg",
+          "/assets/images/galeria/turistico/swiper/100.jpg",
+          "/assets/images/galeria/turistico/swiper/101.jpg",
+          "/assets/images/galeria/turistico/swiper/102.jpg",
+          "/assets/images/galeria/turistico/swiper/103.jpg",
+          "/assets/images/galeria/turistico/swiper/104.jpg",
+          "/assets/images/galeria/turistico/swiper/105.jpg",
+          "/assets/images/galeria/turistico/swiper/106.jpg",
+          "/assets/images/galeria/turistico/swiper/107.jpg",
+          "/assets/images/galeria/turistico/swiper/108.jpg",
+          "/assets/images/galeria/turistico/swiper/109.jpg",
+          "/assets/images/galeria/turistico/swiper/110.jpg",
+          "/assets/images/galeria/turistico/swiper/111.jpg",
+          "/assets/images/galeria/turistico/swiper/112.jpg",
+          "/assets/images/galeria/turistico/swiper/113.jpg",
+          "/assets/images/galeria/turistico/swiper/114.jpg",
+          "/assets/images/galeria/turistico/swiper/115.jpg",
+          "/assets/images/galeria/turistico/swiper/116.jpg",
+          "/assets/images/galeria/turistico/swiper/117.jpg"
+        ]
       },
       {
-        "title": "Chofer Privado",
+        "title": "Private Driver",
         "image": "/assets/images/galeria/chofer/chofer.jpg",
         "categoryImages": [
           "/assets/images/galeria/chofer/swiper/1.jpg",
@@ -647,179 +672,178 @@
       }
     ]
   },
-    "footer": {
-      "logoSlogan": "Travel with comfort, punctuality, and the best service. Get your transfer quote now!",
-      "rights": "© {{year}}. Transportes MX. All rights reserved.",
-      "services": {
-        "title": "Services",
-        "aeropuerto": "Airport Transfers",
-        "bodas": "Wedding Transport",
-        "chofer": "Private Driver",
-        "ejecutivo": "Executive Transport"
-      },
-      "social": {
-        "facebook": "Facebook",
-        "tripadvisor": "Tripadvisor",
-        "instagram": "Instagram",
-        "tiktok": "Tiktok"
-      },
-      "contact": {
-        "email": "contacto@transportesmx.org",
-        "phone": "+52 415 139 3219",
-        "address": "San Miguel de Allende, Guanajuato"
-      },
-      "links": {
-        "terms": "Terms & Conditions",
-        "privacy": "Privacy Policy"
-      },
-      "backToTop": "Back to Top"
+  "footer": {
+    "logoSlogan": "Travel with comfort, punctuality, and the best service. Get your transfer quote now!",
+    "rights": "© {{year}}. Transportes MX. All rights reserved.",
+    "services": {
+      "title": "Services",
+      "aeropuerto": "Airport Transfers",
+      "bodas": "Wedding Transport",
+      "chofer": "Private Driver",
+      "ejecutivo": "Executive Transport"
     },
-    "reservar": {
-      "pageTitle": "Book a transfer",
-      "steps": {
-        "service": "Service",
-        "route": "Route",
-        "vehicle": "Vehicle",
-        "details": "Details",
-        "payment": "Payment"
-      },
-      "step1": {
-        "title": "Book your transfer",
-        "subtitle": "Instant pricing · Secure payment · Door to door",
-        "pickup": "Pickup",
-        "destination": "Destination",
-        "pickupPlaceholder": "Airport, hotel, address...",
-        "destinationPlaceholder": "Airport, hotel, address...",
-        "swap": "Swap",
-        "loadingMaps": "Loading Maps...",
-        "date": "Date",
-        "time": "Time",
-        "passengers": "Passengers",
-        "bags": "Bags",
-        "tripType": "Trip type",
-        "oneWay": "One way",
-        "roundTrip": "Round trip",
-        "airline": "Airline",
-        "airlinePlaceholder": "E.g. American Airlines",
-        "flightNumber": "Flight No.",
-        "flightPlaceholder": "E.g. AA1234",
-        "optional": "optional",
-        "returnDate": "Return date",
-        "returnTime": "Return time",
-        "submit": "See route & prices",
-        "errorPickup": "Select a valid pickup location",
-        "errorDestination": "Select a valid destination",
-        "errorDate": "Select a date",
-        "errorReturnDate": "Select a return date",
-        "errorCityNotAllowed": "We only offer service in San Miguel de Allende, Dolores Hidalgo, Guanajuato, Querétaro and León.",
-        "errorOriginNotAllowed": "The pickup location must be in San Miguel de Allende, Dolores Hidalgo, Guanajuato, Querétaro or León.",
-        "errorDestinationNotAllowed": "The destination must be in San Miguel de Allende, Dolores Hidalgo, Guanajuato, Querétaro or León.",
-        "modal48hTitle": "Service within 48 hours",
-        "modal48hMessage": "For services with less than 48 hours notice, please contact us directly to verify availability.",
-        "modal48hWhatsapp": "Contact via WhatsApp",
-        "modal48hClose": "Close"
-      },
-      "step2": {
-        "title": "Your route",
-        "subtitle": "Verify before choosing your vehicle",
-        "pickup": "Pickup",
-        "destination": "Destination",
-        "calculating": "Calculating route...",
-        "errorRoute": "Could not calculate the route.",
-        "distance": "Distance",
-        "estTime": "Est. time",
-        "disclaimer": "* Estimates may vary due to traffic",
-        "back": "Back",
-        "next": "Choose vehicle"
-      },
-      "step3": {
-        "title": "Select your vehicle",
-        "optionsFor": "options for",
-        "passenger": "passenger(s)",
-        "popular": "Popular",
-        "bags": "bags",
-        "pax": "pax",
-        "roundTrip": "Round trip",
-        "oneWay": "One way",
-        "discountIncluded": "10% discount included",
-        "unavailable": "Unavailable",
-        "noVehicles": "No vehicles available for this number of passengers",
-        "back": "Back",
-        "freeCancellation": "Free cancellation",
-        "luggageSize": "Luggage size",
-        "luggageSizeTitle": "Maximum luggage size",
-        "luggageFits": "Fits",
-        "bagsInVehicle": "bags in this vehicle",
-        "height": "height",
-        "width": "width",
-        "depth": "depth"
-      },
-      "step4": {
-        "title": "Your details",
-        "subtitle": "We need your info to confirm the booking",
-        "summary": "Service summary",
-        "fullName": "Full name",
-        "namePlaceholder": "John Doe",
-        "email": "Email",
-        "emailNote": "You will receive your confirmation and PDF here",
-        "phone": "Phone",
-        "privacy": "Your data is protected with SSL encryption. We will never share it.",
-        "errorName": "Enter your full name",
-        "errorEmail": "Enter a valid email",
-        "errorPhone": "Enter a valid phone number",
-        "back": "Back",
-        "next": "Continue to payment"
-      },
-      "step5": {
-        "title": "Confirm & Pay",
-        "subtitle": "Review your booking before payment",
-        "date": "Date",
-        "vehicle": "Vehicle",
-        "passengers": "Passengers",
-        "trip": "Trip",
-        "roundTrip": "Round trip",
-        "oneWay": "One way",
-        "return": "Return",
-        "contact": "Contact",
-        "cards": "Cards",
-        "errorConnection": "Connection error. Please try again.",
-        "back": "Back",
-        "payNow": "Pay now",
-        "redirecting": "Redirecting...",
-        "redirectNote": "You will be redirected to Stripe to complete the payment securely."
-      },
-      "step6": {
-        "title": "Booking confirmed",
-        "subtitle": "Your transfer has been booked successfully",
-        "booking": "Booking",
-        "date": "Date",
-        "vehicle": "Vehicle",
-        "return": "Return",
-        "newBooking": "New booking",
-        "home": "Home",
-        "emailNote": "A confirmation email with your service sheet has been sent to your inbox."
-      },
-      "specialEvent": {
-        "text": "Have a special event? Contact us",
-        "email": "Email"
-      },
-      "footerInfo": {
-        "secure": "Secure payment with Stripe",
-        "reviews": "+500 positive reviews",
-        "support": "24/7 Support"
-      },
-      "exito": {
-        "pageTitle": "Payment successful!",
-        "title": "Payment Successful!",
-        "subtitle": "Your booking has been confirmed",
-        "verifying": "Verifying payment...",
-        "verifyingNote": "We are confirming your payment and sending your service sheet...",
-        "processing": "Generating PDF and sending confirmation...",
-        "emailNote": "You will receive a confirmation email with your transfer details.",
-        "transactionId": "Transaction ID",
-        "whatsapp": "Confirm via WhatsApp",
-        "home": "Back to home"
-      }
+    "social": {
+      "facebook": "Facebook",
+      "tripadvisor": "Tripadvisor",
+      "instagram": "Instagram",
+      "tiktok": "Tiktok"
+    },
+    "contact": {
+      "email": "contacto@transportesmx.org",
+      "phone": "+52 415 139 3219",
+      "address": "San Miguel de Allende, Guanajuato"
+    },
+    "links": {
+      "terms": "Terms & Conditions",
+      "privacy": "Privacy Policy"
+    },
+    "backToTop": "Back to Top"
+  },
+  "reservar": {
+    "pageTitle": "Book a transfer",
+    "steps": {
+      "service": "Service",
+      "route": "Route",
+      "vehicle": "Vehicle",
+      "details": "Details",
+      "payment": "Payment"
+    },
+    "step1": {
+      "title": "Book your transfer",
+      "subtitle": "Instant pricing · Secure payment · Door to door",
+      "pickup": "Pickup",
+      "destination": "Destination",
+      "pickupPlaceholder": "Airport, hotel, address...",
+      "destinationPlaceholder": "Airport, hotel, address...",
+      "swap": "Swap",
+      "loadingMaps": "Loading Maps...",
+      "date": "Date",
+      "time": "Time",
+      "passengers": "Passengers",
+      "bags": "Bags",
+      "tripType": "Trip type",
+      "oneWay": "One way",
+      "roundTrip": "Round trip",
+      "airline": "Airline",
+      "airlinePlaceholder": "E.g. American Airlines",
+      "flightNumber": "Flight No.",
+      "flightPlaceholder": "E.g. AA1234",
+      "optional": "optional",
+      "returnDate": "Return date",
+      "returnTime": "Return time",
+      "submit": "See route & prices",
+      "errorPickup": "Select a valid pickup location",
+      "errorDestination": "Select a valid destination",
+      "errorDate": "Select a date",
+      "errorReturnDate": "Select a return date",
+      "errorCityNotAllowed": "We only offer service in San Miguel de Allende, Dolores Hidalgo, Guanajuato, Querétaro and León.",
+      "errorOriginNotAllowed": "The pickup location must be in San Miguel de Allende, Dolores Hidalgo, Guanajuato, Querétaro or León.",
+      "errorDestinationNotAllowed": "The destination must be in San Miguel de Allende, Dolores Hidalgo, Guanajuato, Querétaro or León.",
+      "modal48hTitle": "Service within 48 hours",
+      "modal48hMessage": "For services with less than 48 hours notice, please contact us directly to verify availability.",
+      "modal48hWhatsapp": "Contact via WhatsApp",
+      "modal48hClose": "Close"
+    },
+    "step2": {
+      "title": "Your route",
+      "subtitle": "Verify before choosing your vehicle",
+      "pickup": "Pickup",
+      "destination": "Destination",
+      "calculating": "Calculating route...",
+      "errorRoute": "Could not calculate the route.",
+      "distance": "Distance",
+      "estTime": "Est. time",
+      "disclaimer": "* Estimates may vary due to traffic",
+      "back": "Back",
+      "next": "Choose vehicle"
+    },
+    "step3": {
+      "title": "Select your vehicle",
+      "optionsFor": "options for",
+      "passenger": "passenger(s)",
+      "popular": "Popular",
+      "bags": "bags",
+      "pax": "pax",
+      "roundTrip": "Round trip",
+      "oneWay": "One way",
+      "discountIncluded": "10% discount included",
+      "unavailable": "Unavailable",
+      "noVehicles": "No vehicles available for this number of passengers",
+      "back": "Back",
+      "freeCancellation": "Free cancellation",
+      "luggageSize": "Luggage size",
+      "luggageSizeTitle": "Maximum luggage size",
+      "luggageFits": "Fits",
+      "bagsInVehicle": "bags in this vehicle",
+      "height": "height",
+      "width": "width",
+      "depth": "depth"
+    },
+    "step4": {
+      "title": "Your details",
+      "subtitle": "We need your info to confirm the booking",
+      "summary": "Service summary",
+      "fullName": "Full name",
+      "namePlaceholder": "John Doe",
+      "email": "Email",
+      "emailNote": "You will receive your confirmation and PDF here",
+      "phone": "Phone",
+      "privacy": "Your data is protected with SSL encryption. We will never share it.",
+      "errorName": "Enter your full name",
+      "errorEmail": "Enter a valid email",
+      "errorPhone": "Enter a valid phone number",
+      "back": "Back",
+      "next": "Continue to payment"
+    },
+    "step5": {
+      "title": "Confirm & Pay",
+      "subtitle": "Review your booking before payment",
+      "date": "Date",
+      "vehicle": "Vehicle",
+      "passengers": "Passengers",
+      "trip": "Trip",
+      "roundTrip": "Round trip",
+      "oneWay": "One way",
+      "return": "Return",
+      "contact": "Contact",
+      "cards": "Cards",
+      "errorConnection": "Connection error. Please try again.",
+      "back": "Back",
+      "payNow": "Pay now",
+      "redirecting": "Redirecting...",
+      "redirectNote": "You will be redirected to Stripe to complete the payment securely."
+    },
+    "step6": {
+      "title": "Booking confirmed",
+      "subtitle": "Your transfer has been booked successfully",
+      "booking": "Booking",
+      "date": "Date",
+      "vehicle": "Vehicle",
+      "return": "Return",
+      "newBooking": "New booking",
+      "home": "Home",
+      "emailNote": "A confirmation email with your service sheet has been sent to your inbox."
+    },
+    "specialEvent": {
+      "text": "Have a special event? Contact us",
+      "email": "Email"
+    },
+    "footerInfo": {
+      "secure": "Secure payment with Stripe",
+      "reviews": "+500 positive reviews",
+      "support": "24/7 Support"
+    },
+    "exito": {
+      "pageTitle": "Payment successful!",
+      "title": "Payment Successful!",
+      "subtitle": "Your booking has been confirmed",
+      "verifying": "Verifying payment...",
+      "verifyingNote": "We are confirming your payment and sending your service sheet...",
+      "processing": "Generating PDF and sending confirmation...",
+      "emailNote": "You will receive a confirmation email with your transfer details.",
+      "transactionId": "Transaction ID",
+      "whatsapp": "Confirm via WhatsApp",
+      "home": "Back to home"
     }
   }
-  
+}
