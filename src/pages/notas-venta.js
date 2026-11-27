@@ -640,12 +640,8 @@ body{
   align-items:center;
   flex-wrap:wrap;
   gap:4mm;
-  margin:4mm 0 0;
-  padding:2mm 0 3mm;
-  position:static;
-  z-index:1;
-  background:#fff;
-  width:100%;
+  margin:3mm 0 0;
+  padding:0;
 }
 
 .acciones button{
@@ -697,23 +693,12 @@ body{
 }
 
 @media(max-width:600px){
-  .acciones{
-    gap:2mm;
-    margin:3mm 0 0;
-    padding:2mm 0 max(3mm, env(safe-area-inset-bottom, 0px));
-    position:static;
-    z-index:1;
-    width:100%;
-  }
+  .acciones{gap:2mm;margin-top:3mm;}
   .acciones button{
     min-width:0;
-    min-height:13mm;
-    flex:1 1 0;
-    padding:3mm 1mm;
+    flex:1 1 28%;
+    padding:2.5mm 2mm;
     font-size:9pt;
-    white-space:nowrap;
-    touch-action:manipulation;
-    -webkit-tap-highlight-color:transparent;
   }
 }
 
@@ -765,7 +750,6 @@ body{
 
 <body>
 <main class="hoja">
-
 
 <header class="encabezado">
 
@@ -893,167 +877,89 @@ body{
 
 </main>
 <script>
-let pdfNotaVentaPreparado = null;
-let pdfNotaVentaPreparando = false;
-
-function opcionesPdfNotaVenta() {
-  return {
-    margin: 0,
-    image: { type: "jpeg", quality: 0.98 },
-    html2canvas: {
-      scale: 2,
-      useCORS: true,
-      backgroundColor: "#ffffff",
-      logging: false,
-      scrollX: 0,
-      scrollY: 0,
-      width: 816,
-      height: 1056
-    },
-    jsPDF: { unit: "mm", format: "letter", orientation: "portrait" },
-    pagebreak: { mode: [] }
-  };
-}
-
-async function prepararPdfNotaVenta() {
-  if (pdfNotaVentaPreparado) return pdfNotaVentaPreparado;
-  if (pdfNotaVentaPreparando) {
-    while (pdfNotaVentaPreparando && !pdfNotaVentaPreparado) {
-      await new Promise(resolve => setTimeout(resolve, 150));
-    }
-    if (pdfNotaVentaPreparado) return pdfNotaVentaPreparado;
-  }
-
-  pdfNotaVentaPreparando = true;
+async function compartirNotaVenta(){
+  const ingles = document.documentElement.lang === "en";
+  const boton = document.querySelector(".btn-compartir");
+  const textoOriginal = boton ? boton.innerHTML : "";
   const hoja = document.querySelector(".hoja");
-  if (!hoja) throw new Error("No se encontró la Nota de Venta.");
+  if (!hoja) return;
 
   try {
+    if (boton) {
+      boton.disabled = true;
+      boton.style.opacity = ".7";
+      boton.querySelector("span").textContent = ingles ? "Preparing…" : "Preparando…";
+    }
+
     if (!window.html2pdf) {
       await new Promise((resolve, reject) => {
         const script = document.createElement("script");
         script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js";
         script.onload = resolve;
-        script.onerror = () => reject(new Error("No se pudo cargar el generador PDF."));
+        script.onerror = () => reject(new Error("PDF_LIBRARY"));
         document.head.appendChild(script);
       });
     }
 
-    // Generar desde una copia fuera de pantalla: la hoja visible y el botón
-    // Compartir nunca se ocultan ni desaparecen durante la preparación.
-    const copia = hoja.cloneNode(true);
-    copia.classList.add("modoPdf");
-    copia.style.position = "fixed";
-    copia.style.left = "-12000px";
-    copia.style.top = "0";
-    copia.style.width = "215.9mm";
-    copia.style.maxWidth = "215.9mm";
-    copia.style.height = "279.4mm";
-    copia.style.minHeight = "279.4mm";
-    copia.style.margin = "0";
-    copia.style.zIndex = "-1";
-    document.body.appendChild(copia);
+    hoja.classList.add("modoPdf");
+    const blob = await window.html2pdf()
+      .set({
+        margin: 0,
+        image: { type: "jpeg", quality: 0.98 },
+        html2canvas: {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: "#ffffff",
+          logging: false,
+          scrollX: 0,
+          scrollY: 0,
+          width: 816,
+          height: 1056
+        },
+        jsPDF: { unit: "mm", format: "letter", orientation: "portrait" },
+        pagebreak: { mode: [] }
+      })
+      .from(hoja)
+      .outputPdf("blob");
 
-    try {
-      await Promise.all(Array.from(copia.querySelectorAll("img")).map(img => {
-        if (img.complete && img.naturalWidth > 0) return Promise.resolve();
-        return new Promise(resolve => {
-          img.onload = resolve;
-          img.onerror = resolve;
-        });
-      }));
+    hoja.classList.remove("modoPdf");
 
-      pdfNotaVentaPreparado = await window.html2pdf()
-        .set(opcionesPdfNotaVenta())
-        .from(copia)
-        .outputPdf("blob");
-      return pdfNotaVentaPreparado;
-    } finally {
-      copia.remove();
-    }
-  } finally {
-    pdfNotaVentaPreparando = false;
-  }
-}
+    const folio = ${JSON.stringify(String(folioTexto).replace(/[^a-zA-Z0-9_-]/g, "_"))};
+    const nombreArchivo = "Nota-de-Venta-" + folio + ".pdf";
+    const archivo = new File([blob], nombreArchivo, { type: "application/pdf" });
 
-function compartirNotaVenta() {
-  const ingles = document.documentElement.lang === "en";
-  const boton = document.querySelector(".btn-compartir");
-  const texto = boton?.querySelector("span");
-  const nombreArchivo = "Nota-de-Venta-" +
-    ${JSON.stringify(String(folioTexto).replace(/[^a-zA-Z0-9_-]/g, "_"))} + ".pdf";
-
-  // No iniciar una operación asíncrona antes de navigator.share: iOS Safari
-  // exige que el menú nativo se invoque directamente desde el toque.
-  if (!pdfNotaVentaPreparado) {
-    if (texto) texto.textContent = ingles ? "Preparing PDF…" : "Preparando PDF…";
-    if (boton) boton.disabled = true;
-
-    prepararPdfNotaVenta().then(() => {
-      if (boton) boton.disabled = false;
-      if (texto) texto.textContent = ingles ? "Share" : "Compartir";
-      if (texto) texto.textContent = ingles
-        ? "PDF ready — tap Share again"
-        : "PDF listo — toca Compartir otra vez";
-    }).catch(error => {
-      console.error("No se pudo preparar el PDF:", error);
-      if (boton) boton.disabled = false;
-      if (texto) texto.textContent = ingles ? "Try again" : "Reintentar";
-      window.alert(ingles
-        ? "The PDF could not be prepared. Please try again."
-        : "No se pudo preparar el PDF. Intenta nuevamente.");
-    });
-    return;
-  }
-
-  const archivo = new File([pdfNotaVentaPreparado], nombreArchivo, {
-    type: "application/pdf"
-  });
-
-  if (typeof navigator.share === "function" &&
-      (typeof navigator.canShare !== "function" ||
-       navigator.canShare({ files: [archivo] }))) {
-    try {
-      const compartir = navigator.share({
+    if (navigator.share && navigator.canShare && navigator.canShare({ files: [archivo] })) {
+      await navigator.share({
         files: [archivo],
         title: nombreArchivo
       });
-      compartir.catch(error => {
-        if (error?.name !== "AbortError") {
-          console.warn("No se pudo abrir el menú nativo para compartir:", error);
-          descargarPdfPreparado();
-        }
-      });
-      return;
-    } catch (error) {
-      console.warn("El navegador rechazó compartir el PDF:", error);
+    } else {
+      const url = URL.createObjectURL(blob);
+      const enlace = document.createElement("a");
+      enlace.href = url;
+      enlace.download = nombreArchivo;
+      document.body.appendChild(enlace);
+      enlace.click();
+      enlace.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 60000);
+      window.alert(ingles
+        ? "Your browser cannot share PDF files directly. The PDF has been downloaded so you can share it."
+        : "Tu navegador no permite compartir archivos PDF directamente. Se descargó el PDF para que puedas compartirlo.");
+    }
+  } catch (error) {
+    hoja.classList.remove("modoPdf");
+    if (error && error.name === "AbortError") return;
+    window.alert(ingles
+      ? "The PDF could not be prepared for sharing. Please use Print to save it as a PDF."
+      : "No se pudo preparar el PDF para compartir. Utiliza Imprimir para guardarlo como PDF.");
+  } finally {
+    if (boton) {
+      boton.disabled = false;
+      boton.style.opacity = "";
+      boton.innerHTML = textoOriginal;
     }
   }
-
-  descargarPdfPreparado();
-
-  function descargarPdfPreparado() {
-    const url = URL.createObjectURL(pdfNotaVentaPreparado);
-    const enlace = document.createElement("a");
-    enlace.href = url;
-    enlace.download = nombreArchivo;
-    enlace.style.display = "none";
-    document.body.appendChild(enlace);
-    enlace.click();
-    enlace.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 60000);
-    window.alert(ingles
-      ? "The PDF was downloaded. Open it and use the Share option to send it."
-      : "El PDF se descargó. Ábrelo y usa la opción Compartir para enviarlo.");
-  }
 }
-
-// Preparar el archivo al abrir la Nota, antes de que el usuario toque Compartir.
-window.addEventListener("load", () => {
-  prepararPdfNotaVenta().catch(error =>
-    console.warn("La preparación previa del PDF no terminó:", error)
-  );
-});
 </script>
 </body>
 </html>`);
@@ -1253,47 +1159,7 @@ async function generarPdfBannerClienteBase64(nombreCliente) {
 
 export default function NotasVenta() {
   const { idioma } = useContext(AppContext);
-
-  // El contexto es la fuente principal. La lectura de localStorage funciona
-  // como respaldo para navegadores móviles cuando el selector de idioma
-  // actualiza la preferencia sin provocar un render de esta página.
-  const [idiomaDetectado, setIdiomaDetectado] = useState(
-    idioma?.nombre === "EN" ? "EN" : "ES"
-  );
-
-  useEffect(() => {
-    const sincronizarIdioma = () => {
-      const desdeContexto = idioma?.nombre === "EN" ? "EN" : "ES";
-      let desdeAlmacenamiento = null;
-
-      try {
-        const guardado = window.localStorage.getItem("idioma");
-        if (guardado === "EN" || guardado === "ES") {
-          desdeAlmacenamiento = guardado;
-        }
-      } catch (_) {}
-
-      setIdiomaDetectado(desdeAlmacenamiento || desdeContexto);
-    };
-
-    sincronizarIdioma();
-
-    // storage cubre cambios desde otra pestaña; el intervalo cubre cambios
-    // del mismo documento en algunos navegadores móviles.
-    window.addEventListener("storage", sincronizarIdioma);
-    window.addEventListener("focus", sincronizarIdioma);
-    window.addEventListener("pageshow", sincronizarIdioma);
-    const intervalo = window.setInterval(sincronizarIdioma, 400);
-
-    return () => {
-      window.removeEventListener("storage", sincronizarIdioma);
-      window.removeEventListener("focus", sincronizarIdioma);
-      window.removeEventListener("pageshow", sincronizarIdioma);
-      window.clearInterval(intervalo);
-    };
-  }, [idioma?.nombre]);
-
-  const idiomaDoc = idiomaDetectado;
+  const idiomaDoc = idioma?.nombre === "EN" ? "EN" : "ES";
   const ingles = idiomaDoc === "EN";
   const t = (texto) => traducir(texto, ingles);
   const [sesion, setSesion] = useState(null);
@@ -1699,94 +1565,47 @@ await cargarNotas();
   }
 
   async function accionesPdf(tipo) {
+    const nombreCliente = String(datos.cliente || "CLIENTE").trim() || "CLIENTE";
     const folioActual = folio || "TMX";
-    const accion = String(tipo || "").toLowerCase().replace("banner", "");
-
     try {
-      // Imprimir usa directamente una sola ventana con la Nota de Venta.
-      // No abre una ventana auxiliar adicional para generar un PDF.
-      if (accion === "imprimir") {
-        if (!datos.cliente.trim()) {
-          setMensaje(ingles
-            ? "Enter the customer name before printing."
-            : "Captura el nombre del cliente antes de imprimir.");
-          return;
-        }
-
-        const ventanaImpresion = abrirImpresion(
-          { ...datos },
-          folioActual,
-          false,
-          idiomaDoc
-        );
-
-        if (!ventanaImpresion) {
-          setMensaje(ingles
-            ? "The browser blocked the print window. Allow pop-ups for this site."
-            : "El navegador bloqueó la ventana de impresión. Permite las ventanas emergentes para este sitio.");
-        }
+      // Abrir ventana inmediatamente desde la acción del usuario para evitar bloqueo de popup.
+      const ventanaAccion = window.open("about:blank", "_blank");
+      if (!ventanaAccion) {
+        setMensaje("El navegador bloqueó la ventana. Permite ventanas emergentes para este sitio.");
         return;
       }
-
-      // Para compartir, generarPdfNotaVentaBase64 abre una sola ventana
-      // temporal, genera el PDF y la cierra antes de abrir la hoja nativa.
-      const base64 = await generarPdfNotaVentaBase64(
-        { ...datos },
-        folioActual,
-        idiomaDoc
-      );
-
-      const bytes = Uint8Array.from(atob(base64), (caracter) =>
-        caracter.charCodeAt(0)
-      );
+      ventanaAccion.document.write("Generando PDF, espera un momento…");
+      let base64;
+      let archivo;
+      const esBanner = String(tipo).toLowerCase().includes("banner");
+      const accion = String(tipo).toLowerCase().replace("banner", "");
+      if (esBanner) {
+        base64 = await generarPdfBannerClienteBase64(nombreCliente);
+        archivo = `Banner-Cliente-${folioActual}.pdf`;
+      } else {
+        base64 = await generarPdfNotaVentaBase64({ ...datos }, folioActual, idiomaDoc);
+        archivo = `Nota-de-Venta-${folioActual}.pdf`;
+      }
+      const bytes = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
       const blob = new Blob([bytes], { type: "application/pdf" });
-      const nombreArchivo = `Nota-de-Venta-${folioActual}.pdf`;
-      const archivo = new File([blob], nombreArchivo, {
-        type: "application/pdf",
-      });
-
-      if (
-        typeof navigator !== "undefined" &&
-        typeof navigator.share === "function" &&
-        typeof navigator.canShare === "function" &&
-        navigator.canShare({ files: [archivo] })
-      ) {
-        try {
-          await navigator.share({
-            files: [archivo],
-            title: nombreArchivo,
-          });
-          setMensaje("");
-          return;
-        } catch (errorCompartir) {
-          // Cerrar la hoja de compartir no debe generar un mensaje de error.
-          if (errorCompartir?.name === "AbortError") return;
-          // Si el navegador rechaza el uso de Web Share, descargar el PDF.
-          console.warn("No se pudo abrir el menú nativo para compartir:", errorCompartir);
+      const url = URL.createObjectURL(blob);
+      if (accion === "imprimir") {
+        ventanaAccion.location.href = url;
+        setTimeout(() => { try { ventanaAccion.focus(); ventanaAccion.print(); } catch (_) {} }, 1200);
+      } else if (accion === "compartir") {
+        ventanaAccion.close();
+        const file = new File([blob], archivo, { type: "application/pdf" });
+        if (navigator.share && navigator.canShare?.({ files: [file] })) {
+          await navigator.share({ files: [file], title: archivo });
+        } else {
+          const link = document.createElement("a");
+          link.href = url; link.download = archivo; link.click();
+          setMensaje("Tu navegador no permite compartir archivos directamente. Se descargó el PDF.");
         }
       }
-
-      const url = URL.createObjectURL(blob);
-      const enlace = document.createElement("a");
-      enlace.href = url;
-      enlace.download = nombreArchivo;
-      enlace.style.display = "none";
-      document.body.appendChild(enlace);
-      enlace.click();
-      enlace.remove();
-      window.setTimeout(() => URL.revokeObjectURL(url), 60000);
-
-      setMensaje(ingles
-        ? "The PDF was downloaded. You can now attach it to WhatsApp or email."
-        : "El PDF se descargó. Ahora puedes adjuntarlo en WhatsApp o por correo.");
+      setTimeout(() => URL.revokeObjectURL(url), 60000);
     } catch (error) {
-      console.error("Error al generar o compartir la Nota de Venta:", error);
-      setMensaje(
-        (ingles
-          ? "The PDF could not be generated: "
-          : "No se pudo generar el PDF: ") +
-        (error?.message || "Error desconocido.")
-      );
+      setMensaje(`No se pudo generar el PDF: ${error?.message || error}`);
     }
   }
 
@@ -2403,15 +2222,15 @@ return notas.filter((nota) =>
           <div className="mt-3 space-y-1.5 break-words text-[14px] sm:mt-4 sm:text-[16px]">
 
             <p>
-              <strong>{ingles ? "Customer:" : "Cliente:"}</strong> {datos.cliente}
+              <strong>${ingles ? "Customer:" : "Cliente:"}</strong> {datos.cliente}
             </p>
 
             <p>
-              <strong>{ingles ? "Phone:" : "Teléfono:"}</strong> {datos.telefono}
+              <strong>${ingles ? "Phone:" : "Teléfono:"}</strong> {datos.telefono}
             </p>
 
             <p>
-              <strong>{ingles ? "Email:" : "Correo:"}</strong> {datos.email}
+              <strong>${ingles ? "Email:" : "Correo:"}</strong> {datos.email}
             </p>
 
           </div>
@@ -2425,7 +2244,7 @@ return notas.filter((nota) =>
           <div className="mt-2 h-[3mm]" aria-hidden="true" />
 
           <div className="bg-black px-2 py-1.5 text-[16px] font-extrabold text-white">
-            {ingles ? "Transfer details:" : "Descripción del traslado:"}
+            ${ingles ? "Transfer details:" : "Descripción del traslado:"}
           </div>
 
           <div className="mt-5 min-w-0 space-y-1.5 break-words text-[13px] sm:mt-[9mm] sm:text-[16px]">
@@ -2459,7 +2278,7 @@ return notas.filter((nota) =>
 
             <span>↩️</span>
 
-            <strong>{ingles ? "Return:" : "Regreso:"}</strong>
+            <strong>${ingles ? "Return:" : "Regreso:"}</strong>
 
             <span>{valorRegreso(datos, idiomaDoc)}</span>
 
