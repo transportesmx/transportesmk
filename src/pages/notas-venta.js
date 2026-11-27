@@ -747,34 +747,41 @@ button{
 async function generarPdfNotaVentaBase64(datos, folio, lang = "es") {
   const ventanaPdf = abrirImpresion(datos, folio, true, lang);
   if (!ventanaPdf || ventanaPdf === true) {
-    throw new Error("No se pudo abrir la ventana temporal para generar el PDF. Permite ventanas emergentes.");
+    throw new Error("No se pudo abrir la ventana temporal para generar el PDF.");
   }
 
   try {
     const doc = ventanaPdf.document;
-    // Cargar html2pdf.js dentro de la ventana de la nota.
-    if (!ventanaPdf.html2pdf) {
-      await new Promise((resolve, reject) => {
-        const script = doc.createElement("script");
-        script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js";
-        script.onload = resolve;
-        script.onerror = () => reject(new Error("No se pudo cargar el generador PDF (html2pdf.js)."));
-        doc.head.appendChild(script);
-      });
+
+    // Cargar html2canvas y jsPDF directamente para construir UNA sola página Carta.
+    const cargarScript = (src) => new Promise((resolve, reject) => {
+      const script = doc.createElement("script");
+      script.src = src;
+      script.onload = resolve;
+      script.onerror = () => reject(new Error(`No se pudo cargar la librería PDF: ${src}`));
+      doc.head.appendChild(script);
+    });
+
+    if (!ventanaPdf.html2canvas) {
+      await cargarScript("https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js");
+    }
+    if (!ventanaPdf.jspdf?.jsPDF) {
+      await cargarScript("https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js");
     }
 
     const hoja = doc.querySelector(".hoja") || doc.querySelector("main");
-    if (!hoja) throw new Error("No se encontró el contenido de la Nota de Venta para convertirlo a PDF.");
+    if (!hoja) {
+      throw new Error("No se encontró el contenido de la Nota de Venta.");
+    }
 
-    // Captura una página Carta exacta y saca los controles fuera del documento PDF.
+    // Ocultar controles; solo se captura el contenido de la nota.
     hoja.classList.add("modoPdf");
     hoja.querySelectorAll(".acciones, button").forEach((elemento) => {
       elemento.style.setProperty("display", "none", "important");
-      elemento.style.setProperty("height", "0", "important");
-      elemento.style.setProperty("margin", "0", "important");
-      elemento.style.setProperty("padding", "0", "important");
     });
-    // Fijar la hoja a Carta y anclarla al origen para evitar desplazamiento/corte lateral.
+
+    // Fijar dimensiones Carta exactas. Esto evita que html2pdf divida el lienzo
+    // en una segunda página por diferencias de redondeo de píxeles.
     hoja.style.setProperty("box-sizing", "border-box", "important");
     hoja.style.setProperty("width", "215.9mm", "important");
     hoja.style.setProperty("max-width", "215.9mm", "important");
@@ -786,37 +793,51 @@ async function generarPdfNotaVentaBase64(datos, folio, lang = "es") {
     hoja.style.setProperty("top", "0", "important");
     hoja.style.setProperty("overflow", "hidden", "important");
 
-    // Esperar imágenes (logo y vehículo) para que aparezcan en el PDF.
-    await Promise.all(Array.from(doc.images || []).map((img) => {
-      if (img.complete) return Promise.resolve();
-      return new Promise((resolve) => {
+    // Esperar a que terminen de cargar el logo y la imagen del vehículo.
+    await Promise.all(Array.from(doc.images || []).map(async (img) => {
+      if (img.complete && img.naturalWidth > 0) return;
+      if (typeof img.decode === "function") {
+        try { await img.decode(); return; } catch (_) {}
+      }
+      await new Promise((resolve) => {
         img.onload = resolve;
         img.onerror = resolve;
       });
     }));
 
-    const blob = await ventanaPdf.html2pdf()
-      .set({
-        margin: 0,
-        filename: `Nota-de-Venta-${folio || "TMX"}.pdf`,
-        image: { type: "jpeg", quality: 0.98 },
-        html2canvas: {
-          scale: 2,
-          useCORS: true,
-          backgroundColor: "#ffffff",
-          logging: false,
-          scrollX: 0,
-          scrollY: 0,
-          width: 816,
-          height: 1056
-        },
-        jsPDF: { unit: "mm", format: "letter", orientation: "portrait" },
-        // Desactivar los saltos CSS/legacy: la captura ya es una página Carta exacta.
-        pagebreak: { mode: [] }
-      })
-      .from(hoja)
-      .outputPdf("blob");
+    const html2canvas = ventanaPdf.html2canvas;
+    const { jsPDF } = ventanaPdf.jspdf;
 
+    const canvas = await html2canvas(hoja, {
+      scale: 2,
+      useCORS: true,
+      allowTaint: false,
+      backgroundColor: "#ffffff",
+      logging: false,
+      width: hoja.scrollWidth,
+      height: hoja.scrollHeight,
+      windowWidth: Math.max(hoja.scrollWidth, 816),
+      windowHeight: Math.max(hoja.scrollHeight, 1056),
+      scrollX: 0,
+      scrollY: 0
+    });
+
+    if (!canvas || !canvas.width || !canvas.height) {
+      throw new Error("La captura de la Nota de Venta quedó vacía.");
+    }
+
+    // Crear el PDF con una sola página Letter y colocar toda la captura en ella.
+    const pdf = new jsPDF({
+      orientation: "portrait",
+      unit: "mm",
+      format: "letter",
+      compress: true
+    });
+
+    const imagen = canvas.toDataURL("image/jpeg", 0.98);
+    pdf.addImage(imagen, "JPEG", 0, 0, 215.9, 279.4, undefined, "FAST");
+
+    const blob = pdf.output("blob");
     const base64 = await new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = () => resolve(String(reader.result).split(",")[1] || "");
@@ -827,7 +848,6 @@ async function generarPdfNotaVentaBase64(datos, folio, lang = "es") {
     if (!base64) throw new Error("El PDF generado está vacío.");
     return base64;
   } finally {
-    // Cerrar la ventana temporal después de la conversión.
     try { ventanaPdf.close(); } catch (_) {}
   }
 }
