@@ -9,6 +9,115 @@ const ADMIN2 = "and-i89@hotmail.com";
 const ZONA = "America/Mexico_City";
 const GOOGLE_MAPS_LIBRARIES = ["places"];
 
+const TEXTOS = {
+  "Sistema de notas de venta": "Sales Notes System",
+  "Cargando sistema de notas de venta…": "Loading sales notes system…",
+  "Inicia sesión con tu cuenta autorizada.": "Sign in with your authorized account.",
+  "Correo electrónico": "Email address",
+  "Contraseña": "Password",
+  "Entrar": "Sign in",
+  "Acceso no autorizado": "Unauthorized access",
+  "Esta cuenta no tiene permisos para las notas de venta.": "This account does not have permission to access sales notes.",
+  "Cerrar sesión": "Sign out",
+  "Nueva nota de venta": "New sales note",
+  "Editar nota": "Edit note",
+  "Folio:": "Folio:",
+  "Se asigna al guardar": "Assigned when saved",
+  "Nueva nota": "New note",
+  "Selecciona el tipo de viaje": "Select trip type",
+  "Sencillo": "One way",
+  "Ida y vuelta": "Round trip",
+  "Selecciona un vehículo": "Select a vehicle",
+  "Escribe aeropuerto, hotel o dirección y selecciona una sugerencia": "Enter an airport, hotel, or address and select a suggestion",
+  "Google Maps no pudo cargar": "Google Maps could not load",
+  "Cargando Google Maps…": "Loading Google Maps…",
+  "💰 Total / estado de pago": "💰 Total / payment status",
+  "Ej. 3500 o Pagado": "e.g. 3500 or Paid",
+  "Observaciones": "Notes",
+  "Escribe las observaciones del servicio": "Enter service notes",
+  "Guardando…": "Saving…",
+  "Guardar cambios": "Save changes",
+  "Guardar nota": "Save note",
+  "Imprimir / PDF": "Print / PDF",
+  "Cancelar edición": "Cancel editing",
+  "Historial de notas": "Notes history",
+  "Buscar por folio, cliente o servicio…": "Search by folio, customer, or service…",
+  "No hay registros que coincidan con la búsqueda.": "No records match your search.",
+  "Sin cliente": "No customer",
+  "Editar": "Edit",
+  "Eliminar": "Delete",
+  "Vista previa de impresión": "Print preview",
+  "Imprimir": "Print",
+  "Compartir": "Share",
+  "Cancelar": "Cancel",
+  "Mostrar Nota de Venta": "Show Sales Note",
+  "La vista previa sigue la distribución del documento impreso.": "The preview follows the layout of the printed document.",
+  "Para generar el PDF, pulsa “Imprimir / PDF”.": "To generate the PDF, click “Print / PDF”.",
+  "Administrador 1": "Administrator 1",
+  "Administrador 2": "Administrator 2",
+  "Seleccionar imagen del vehículo": "Select vehicle image",
+  "Nombre del vehículo (manual)": "Vehicle name (manual)",
+  "Nombre del cliente": "Customer name",
+  "Fecha del servicio": "Service date",
+  "Hora del servicio": "Service time",
+  "Recoger en": "Pickup location",
+  "Aerolínea": "Airline",
+  "Número de pasajeros": "Number of passengers",
+  "Número de maletas": "Number of bags",
+  "Número de teléfono": "Phone number",
+  "Destino": "Destination",
+  "Tipo de viaje": "Trip type",
+  "Duración": "Duration",
+  "Fecha de regreso": "Return date",
+  "Hora de regreso": "Return time",
+  "Correo electrónico principal": "Primary email",
+  "Correo electrónico adicional (opcional)": "Additional email (optional)",
+  "Cliente:": "Customer:",
+  "Teléfono:": "Phone:",
+  "Correo:": "Email:",
+  "Total:": "Total:",
+  "Total:": "Total:",
+  "Descripción del traslado:": "Transfer details:",
+  "Vehículo:": "Vehicle:",
+  "Fecha y hora:": "Date and time:",
+  "Regreso:": "Return:",
+  "Documento Generado:": "Document generated:",
+  "Hora:": "Time:",
+  "Pendiente": "Pending",
+  "Pendiente de guardar": "Pending save",
+  "N/A": "N/A",
+  "Folio pendiente": "Folio pending",
+};
+
+function traducir(texto, ingles) {
+  return ingles ? (TEXTOS[texto] || texto) : texto;
+}
+
+function etiquetaCampo(campo, etiqueta, ingles) {
+  if (!ingles) return etiqueta;
+  const mapa = {
+    imagenUnidad: "🖼️ Select vehicle image",
+    unidad: "✏️ Vehicle name (manual)",
+    cliente: "👤 Customer name",
+    fecha: "📅 Service date",
+    hora: "🕒 Service time",
+    origen: "📍 Pickup location",
+    aerolinea: "✈️ Airline",
+    pasajeros: "👥 Number of passengers",
+    maletas: "🧳 Number of bags",
+    telefono: "☎️ Phone number",
+    destino: "📍 Destination",
+    idaVuelta: "🔄 Trip type",
+    duracion: "⏱️ Duration",
+    regresoFecha: "↩️ Return date",
+    regresoHora: "🕒 Return time",
+    email: "✉️ Primary email",
+    email2: "✉️ Additional email (optional)",
+  };
+  return mapa[campo] || etiqueta;
+}
+
+
 const INICIAL = {
   cliente: "",
   telefono: "",
@@ -111,14 +220,14 @@ function imagenVehiculo(imagenUnidad, nombreManual = "") {
   return "/sprinter.png";
 }
 
-function formatoFecha(valor, locale = "es-MX") {
+function formatoFecha(valor, idioma = "ES") {
   if (!valor) return "";
 
   const fecha = new Date(String(valor).trim() + "T12:00:00");
 
   if (Number.isNaN(fecha.getTime())) return valor;
 
-  const texto = new Intl.DateTimeFormat(locale, {
+  const texto = new Intl.DateTimeFormat(idioma === "EN" ? "en-US" : "es-MX", {
     day: "2-digit",
     month: "long",
     year: "numeric",
@@ -126,11 +235,11 @@ function formatoFecha(valor, locale = "es-MX") {
   }).format(fecha);
 
   return texto.replace(/\b([a-záéíóúñ])/i, (letra) =>
-    letra.toLocaleUpperCase(locale)
+    letra.toLocaleUpperCase("es-MX")
   );
 }
 
-function formatoHora(valor, locale = "es-MX") {
+function formatoHora(valor) {
   if (!valor) return "";
 
   const [hora, minuto] = valor.split(":").map(Number);
@@ -139,8 +248,7 @@ function formatoHora(valor, locale = "es-MX") {
     return valor;
   }
 
-  const periodo = locale === "en-US" ? (hora >= 12 ? "PM" : "AM") : (hora >= 12 ? "P.M." : "A.M.");
-  return `${hora % 12 || 12}:${String(minuto).padStart(2, "0")} ${periodo}`;
+  return `${hora % 12 || 12}:${String(minuto).padStart(2, "0")} ${hora >= 12 ? "P.M." : "A.M."}`;
 }
 
 function moneda(valor) {
@@ -169,63 +277,34 @@ function escapar(valor) {
   })[caracter]);
 }
 
-function fechaHoraActual(locale = "es-MX") {
+function fechaHoraActual(idioma = "ES") {
   const ahora = new Date();
-
-  const partesFecha = new Intl.DateTimeFormat(locale, {
+  const locale = idioma === "EN" ? "en-US" : "es-MX";
+  const fecha = new Intl.DateTimeFormat(locale, {
     day: "2-digit",
     month: "long",
     year: "numeric",
     timeZone: ZONA,
-  }).formatToParts(ahora);
-
-  const dia =
-    partesFecha.find((parte) => parte.type === "day")?.value || "";
-
-  const mesCrudo =
-    partesFecha.find((parte) => parte.type === "month")?.value || "";
-
-  const mes = mesCrudo
-    ? mesCrudo.charAt(0).toLocaleUpperCase(locale) +
-      mesCrudo.slice(1)
-    : "";
-
-  const anio =
-    partesFecha.find((parte) => parte.type === "year")?.value || "";
-
-  const partesHora = new Intl.DateTimeFormat("en-US", {
+  }).format(ahora);
+  const hora = new Intl.DateTimeFormat(locale, {
     hour: "2-digit",
     minute: "2-digit",
     hour12: true,
     timeZone: ZONA,
-  }).formatToParts(ahora);
-
-  const hora =
-    partesHora.find((parte) => parte.type === "hour")?.value || "";
-
-  const minuto =
-    partesHora.find((parte) => parte.type === "minute")?.value || "";
-
-  const periodo = (
-    partesHora.find((parte) => parte.type === "dayPeriod")?.value || "AM"
-  ).toUpperCase();
-
-  return {
-    fecha: locale === "en-US" ? `${mes} ${dia}, ${anio}` : `${dia} de ${mes} de ${anio}`,
-    hora: locale === "en-US" ? `${hora}:${minuto} ${periodo}` : `${hora}:${minuto} ${periodo === "PM" ? "P.M." : "A.M."}`,
-  };
+  }).format(ahora);
+  return { fecha, hora };
 }
 
-function valorFechaHora(datos, locale = "es-MX") {
-  return [formatoFecha(datos.fecha, locale), formatoHora(datos.hora, locale)]
+function valorFechaHora(datos, idioma = "ES") {
+  return [formatoFecha(datos.fecha, idioma), formatoHora(datos.hora)]
     .filter(Boolean)
     .join(" · ");
 }
 
-function valorRegreso(datos, locale = "es-MX") {
+function valorRegreso(datos, idioma = "ES") {
   return [
-    formatoFecha(datos.regresoFecha, locale),
-    formatoHora(datos.regresoHora, locale),
+    formatoFecha(datos.regresoFecha, idioma),
+    formatoHora(datos.regresoHora),
   ]
     .filter(Boolean)
     .join(" · ");
@@ -239,37 +318,35 @@ function htmlFila(etiqueta, valor, clase = "") {
   </div>`;
 }
 
-function abrirImpresion(datos, folio, devolverVentana = false, lang = "es") {
-  const en = lang === "en";
-  const tx = (es, ingles) => (en ? ingles : es);
+function abrirImpresion(datos, folio, devolverVentana = false, idioma = "ES") {
+  const ingles = idioma === "EN";
   const ventana = window.open("", "_blank", "width=1000,height=900");
 
   if (!ventana) return false;
 
-  const locale = en ? "en-US" : "es-MX";
-  const generado = fechaHoraActual(locale);
-  const folioTexto = folio || tx("Pendiente de guardar", "Pending save");
+  const generado = fechaHoraActual(idioma);
+  const folioTexto = folio || (ingles ? "Pending save" : "Pendiente de guardar");
   const origen = window.location.origin;
 
   const filas = [
-    ["🚐 " + tx("Vehículo:", "Vehicle:"), datos.unidad],
-    ["👤 " + tx("Nombre del cliente:", "Customer name:"), datos.cliente],
-    ["📅 " + tx("Fecha y hora:", "Date and time:"), valorFechaHora(datos, locale)],
-    ["📍 " + tx("Recoger en:", "Pickup:"), datos.origen],
-    ["✈️ " + tx("Aerolínea:", "Airline:"), datos.aerolinea || "N/A"],
-    ["👥 " + tx("Número de pasajeros:", "Number of passengers:"), datos.pasajeros],
-    ["🧳 " + tx("Número de maletas:", "Number of bags:"), datos.maletas],
-    ["☎️ " + tx("Número de teléfono:", "Phone number:"), datos.telefono],
-    ["📍 " + tx("Destino:", "Destination:"), datos.destino],
-    ["🔄 " + tx("Tipo de viaje:", "Trip type:"), datos.idaVuelta === "redondo" ? tx("Ida y vuelta", "Round trip") : datos.idaVuelta === "sencillo" ? tx("Sencillo", "One way") : ""],
-    ["⏱️ " + tx("Duración:", "Duration:"), datos.duracion],
+    ["🚐 " + (ingles ? "Vehicle:" : "Vehículo:"), datos.unidad],
+    ["👤 " + (ingles ? "Customer name:" : "Nombre del cliente:"), datos.cliente],
+    ["📅 " + (ingles ? "Date and time:" : "Fecha y hora:"), valorFechaHora(datos, idioma)],
+    ["📍 " + (ingles ? "Pickup location:" : "Recoger en:"), datos.origen],
+    ["✈️ " + (ingles ? "Airline:" : "Aerolínea:"), datos.aerolinea || "N/A"],
+    ["👥 " + (ingles ? "Passengers:" : "Número de pasajeros:"), datos.pasajeros],
+    ["🧳 " + (ingles ? "Number of bags:" : "Número de maletas:"), datos.maletas],
+    ["☎️ " + (ingles ? "Phone number:" : "Número de teléfono:"), datos.telefono],
+    ["📍 " + (ingles ? "Destination:" : "Destino:"), datos.destino],
+    ["🔄 " + (ingles ? "Trip type:" : "Tipo de viaje:"), datos.idaVuelta === "redondo" ? (ingles ? "Round trip" : "Ida y vuelta") : datos.idaVuelta === "sencillo" ? (ingles ? "One way" : "Sencillo") : ""],
+    ["⏱️ " + (ingles ? "Duration:" : "Duración:"), datos.duracion],
   ]
     .map(([etiqueta, valor]) => htmlFila(etiqueta, valor))
     .join("");
 
   const regreso = [
-    formatoFecha(datos.regresoFecha, locale),
-    formatoHora(datos.regresoHora, locale),
+    formatoFecha(datos.regresoFecha, idioma),
+    formatoHora(datos.regresoHora),
   ]
     .filter(Boolean)
     .join(" · ");
@@ -280,7 +357,7 @@ function abrirImpresion(datos, folio, devolverVentana = false, lang = "es") {
   const total = !importeTexto
     ? ""
     : Number.isFinite(importeNumero)
-      ? `$${importeNumero.toLocaleString("es-MX", { minimumFractionDigits: 0, maximumFractionDigits: 2 })} MXN`
+      ? `$${importeNumero.toLocaleString(ingles ? "en-US" : "es-MX", { minimumFractionDigits: 0, maximumFractionDigits: 2 })} MXN`
       : importeTexto;
 
   const imagenSeleccionada = imagenVehiculo(datos.imagenUnidad, datos.unidad);
@@ -288,7 +365,7 @@ function abrirImpresion(datos, folio, devolverVentana = false, lang = "es") {
   ventana.document.open();
 
   ventana.document.write(`<!doctype html>
-<html lang="${en ? "en" : "es"}">
+<html lang="${ingles ? "en" : "es"}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -660,7 +737,7 @@ button{
   <div class="folioCol">
 
 <div class="folio">
-  F- ${escapar(folioTexto)}
+  ${ingles ? "Folio" : "F"}- ${escapar(folioTexto)}
 </div>
 
 <img
@@ -678,27 +755,27 @@ button{
 <section class="cliente">
 
   <div class="clienteItem">
-    <strong>${tx("Cliente:", "Customer:")}</strong> ${escapar(datos.cliente || "")}
+    <strong>${ingles ? "Customer:" : "Cliente:"}</strong> ${escapar(datos.cliente || "")}
   </div>
 
   <div class="clienteItem">
-    <strong>${tx("Teléfono:", "Phone:")}</strong> ${escapar(datos.telefono || "")}
+    <strong>${ingles ? "Phone:" : "Teléfono:"}</strong> ${escapar(datos.telefono || "")}
   </div>
 
   <div class="clienteItem">
-    <strong>${tx("Correo:", "Email:")}</strong> ${escapar(datos.email || "")}
+    <strong>${ingles ? "Email:" : "Correo:"}</strong> ${escapar(datos.email || "")}
   </div>
 
 </section>
 
 <div class="total">
-  ${tx("Total:", "Total:")} ${escapar(total)}
+  ${ingles ? "Total:" : "Total:"} ${escapar(total)}
 </div>
 
 <div class="antesBarra" aria-hidden="true"></div>
 
 <div class="barra">
-  ${tx("Descripción del traslado:", "Transfer details:")}
+  ${ingles ? "Transfer details:" : "Descripción del traslado:"}
 </div>
 
 <section class="datos">
@@ -707,29 +784,29 @@ button{
 
 <div class="regreso">
   <span class="icono">↩️</span>
-  <strong>${tx("Regreso:", "Return:")}</strong>
+  <strong>${ingles ? "Return:" : "Regreso:"}</strong>
   <span class="valor">${escapar(regreso)}</span>
 </div>
 
 <div class="observaciones">
-  <strong>${tx("Observaciones:", "Notes:")}</strong>
+  <strong>${ingles ? "Notes:" : "Observaciones:"}</strong>
   <span>${escapar(datos.observaciones || "")}</span>
 </div>
 
 <footer class="pie">
-  ${tx("San Miguel de Allende, Guanajuato · Documento Generado:", "San Miguel de Allende, Guanajuato · Document generated:")}
-  ${escapar(generado.fecha)} · ${tx("Hora:", "Time:")} ${escapar(generado.hora)}
+  San Miguel de Allende, Guanajuato · ${ingles ? "Document generated:" : "Documento Generado:"}
+  ${escapar(generado.fecha)} · ${ingles ? "Time:" : "Hora:"} ${escapar(generado.hora)}
   <br>
   Grupo Turístico MX S. de R.L. de C.V.
 </footer>
 
 <div class="acciones">
   <button onclick="window.print()">
-    ${tx("Imprimir / Guardar PDF", "Print / Save PDF")}
+    ${ingles ? "Print / Save PDF" : "Imprimir / Guardar PDF"}
   </button>
 
   <button onclick="window.close()">
-    ${tx("Cerrar", "Close")}
+    ${ingles ? "Close" : "Cerrar"}
   </button>
 </div>
 
@@ -744,8 +821,8 @@ button{
 
 
 // Genera el PDF a partir del mismo HTML/CSS que utiliza la Nota de Venta al imprimir.
-async function generarPdfNotaVentaBase64(datos, folio, lang = "es") {
-  const ventanaPdf = abrirImpresion(datos, folio, true, lang);
+async function generarPdfNotaVentaBase64(datos, folio, idioma = "ES") {
+  const ventanaPdf = abrirImpresion(datos, folio, true, idioma);
   if (!ventanaPdf || ventanaPdf === true) {
     throw new Error("No se pudo abrir la ventana temporal para generar el PDF. Permite ventanas emergentes.");
   }
@@ -931,10 +1008,10 @@ async function generarPdfBannerClienteBase64(nombreCliente) {
 }
 
 export default function NotasVenta() {
-  // Usa el mismo idioma global que seleccionan las banderas del Navbar.
-  const { idioma, setIdioma } = useContext(AppContext);
-  const en = idioma?.nombre === "EN";
-  const tx = (es, ingles) => (en ? ingles : es);
+  const { idioma } = useContext(AppContext);
+  const idiomaDoc = idioma?.nombre === "EN" ? "EN" : "ES";
+  const ingles = idiomaDoc === "EN";
+  const t = (texto) => traducir(texto, ingles);
   const [sesion, setSesion] = useState(null);
   const [correo, setCorreo] = useState("");
   const [contrasena, setContrasena] = useState("");
@@ -949,15 +1026,12 @@ export default function NotasVenta() {
   const [mostrarPreviewNota, setMostrarPreviewNota] = useState(true);
   // Carga Google Maps mediante el mismo loader y componente Autocomplete
   // que usa el flujo principal de reservaciones de Transportes MX.
-  // IMPORTANTE: Google Maps se carga con opciones fijas. No cambiar
-  // language/region al alternar ES/EN: el loader no permite reinicializarse
-  // con opciones diferentes dentro de la misma aplicación.
   const { isLoaded: googleMapsLoaded, loadError: googleMapsLoadError } = useJsApiLoader({
     id: "script-loader",
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
     libraries: GOOGLE_MAPS_LIBRARIES,
-    language: "es",
-    region: "MX",
+    language: "en",
+    region: "US",
   });
 
   const origenAutocompleteRef = useRef(null);
@@ -974,7 +1048,7 @@ export default function NotasVenta() {
   const onOrigenChanged = () => {
     const place = origenAutocompleteRef.current?.getPlace();
     if (!place?.geometry?.location) {
-      setMensaje(tx("Selecciona una dirección de las sugerencias de Google Maps para Recoger en.", "Select a Google Maps suggestion for the pickup location."));
+      setMensaje("Selecciona una dirección de las sugerencias de Google Maps para Recoger en.");
       return;
     }
     const location = place.geometry.location;
@@ -988,7 +1062,7 @@ export default function NotasVenta() {
   const onDestinoChanged = () => {
     const place = destinoAutocompleteRef.current?.getPlace();
     if (!place?.geometry?.location) {
-      setMensaje(tx("Selecciona una dirección de las sugerencias de Google Maps para Destino.", "Select a Google Maps suggestion for the destination."));
+      setMensaje("Selecciona una dirección de las sugerencias de Google Maps para Destino.");
       return;
     }
     const location = place.geometry.location;
@@ -1005,7 +1079,7 @@ export default function NotasVenta() {
 
   useEffect(() => {
     if (!supabase) {
-      setMensaje(tx("No está configurada la conexión con Supabase.", "Supabase connection is not configured."));
+      setMensaje("No está configurada la conexión con Supabase.");
       setCargando(false);
       return undefined;
     }
@@ -1015,14 +1089,14 @@ supabase.auth.getSession().then(({ data, error }) => {
   if (!activo) return;
 
   if (error) {
-    setMensaje(tx("No se pudo comprobar la sesión.", "Could not verify the session."));
+    setMensaje("No se pudo comprobar la sesión.");
   }
 
   setSesion(data?.session ?? null);
   setCargando(false);
 }).catch(() => {
   if (activo) {
-    setMensaje(tx("No se pudo comprobar la sesión.", "Could not verify the session."));
+    setMensaje("No se pudo comprobar la sesión.");
     setCargando(false);
   }
 });
@@ -1065,7 +1139,7 @@ setNotas(data || []);
     evento.preventDefault();
     setMensaje("");
 if (!supabase) {
-  setMensaje(tx("No está configurada la conexión con Supabase.", "Supabase connection is not configured."));
+  setMensaje("No está configurada la conexión con Supabase.");
   return;
 }
 
@@ -1111,7 +1185,7 @@ nuevaNota();
 if (!supabase || !autorizado || guardando) return;
 
 if (!datos.cliente.trim()) {
-  setMensaje(tx("Captura el nombre del cliente antes de guardar.", "Enter the customer name before saving."));
+  setMensaje("Captura el nombre del cliente antes de guardar.");
   return;
 }
 
@@ -1133,7 +1207,7 @@ try {
 
     if (error) throw error;
 
-    setMensaje(tx(`La nota ${editando.folio} se actualizó correctamente.`, `Note ${editando.folio} was updated successfully.`));
+    setMensaje(`La nota ${editando.folio} se actualizó correctamente.`);
     setDatos(payload);
     setFolio(editando.folio);
 
@@ -1226,7 +1300,7 @@ try {
           tipoViaje: payload.idaVuelta === "redondo" ? "redondo" : "sencillo",
         },
         nueva.folio,
-        en ? "en" : "es"
+        idiomaDoc
       );
 
       // Generar el banner como PDF separado, con el mismo nombre de cliente.
@@ -1278,10 +1352,8 @@ try {
   }
 } catch (error) {
   setMensaje(
-    tx(
-      "No se pudo guardar la nota: " + (error?.message || "Error desconocido."),
-      "Could not save the note: " + (error?.message || "Unknown error.")
-    )
+    "No se pudo guardar la nota: " +
+    (error?.message || "Error desconocido.")
   );
 } finally {
   setGuardando(false);
@@ -1300,7 +1372,7 @@ setDatos({
 
 setFolio(nota.folio);
 
-setMensaje(tx(`Editando la nota ${nota.folio}.`, `Editing note ${nota.folio}.`));
+setMensaje(`Editando la nota ${nota.folio}.`);
 
 if (typeof window !== "undefined") {
   window.scrollTo({
@@ -1312,7 +1384,7 @@ if (typeof window !== "undefined") {
 
   async function eliminar(nota) {
     if (!admin1) {
-      setMensaje(tx("Solo el Administrador 1 puede eliminar notas.", "Only Administrator 1 can delete notes."));
+      setMensaje("Solo el Administrador 1 puede eliminar notas.");
       return;
     }
 if (
@@ -1333,7 +1405,7 @@ if (error) {
   return;
 }
 
-setMensaje(tx(`La nota ${nota.folio} fue eliminada.`, `Note ${nota.folio} was deleted.`));
+setMensaje(`La nota ${nota.folio} fue eliminada.`);
 
 if (editando?.id === nota.id) {
   nuevaNota();
@@ -1349,7 +1421,7 @@ await cargarNotas();
       // Abrir ventana inmediatamente desde la acción del usuario para evitar bloqueo de popup.
       const ventanaAccion = window.open("about:blank", "_blank");
       if (!ventanaAccion) {
-        setMensaje(tx("El navegador bloqueó la ventana. Permite ventanas emergentes para este sitio.", "Your browser blocked the window. Allow pop-ups for this site."));
+        setMensaje("El navegador bloqueó la ventana. Permite ventanas emergentes para este sitio.");
         return;
       }
       ventanaAccion.document.write("Generando PDF, espera un momento…");
@@ -1361,7 +1433,7 @@ await cargarNotas();
         base64 = await generarPdfBannerClienteBase64(nombreCliente);
         archivo = `Banner-Cliente-${folioActual}.pdf`;
       } else {
-        base64 = await generarPdfNotaVentaBase64({ ...datos }, folioActual, en ? "en" : "es");
+        base64 = await generarPdfNotaVentaBase64({ ...datos }, folioActual, idiomaDoc);
         archivo = `Nota-de-Venta-${folioActual}.pdf`;
       }
       const bytes = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
@@ -1378,12 +1450,12 @@ await cargarNotas();
         } else {
           const link = document.createElement("a");
           link.href = url; link.download = archivo; link.click();
-          setMensaje(tx("Tu navegador no permite compartir archivos directamente. Se descargó el PDF.", "Your browser cannot share files directly. The PDF was downloaded."));
+          setMensaje("Tu navegador no permite compartir archivos directamente. Se descargó el PDF.");
         }
       }
       setTimeout(() => URL.revokeObjectURL(url), 60000);
     } catch (error) {
-      setMensaje(tx(`No se pudo generar el PDF: ${error?.message || error}`, `Could not generate the PDF: ${error?.message || error}`));
+      setMensaje(`No se pudo generar el PDF: ${error?.message || error}`);
     }
   }
 
@@ -1394,11 +1466,11 @@ await cargarNotas();
 const f = nota?.folio || folio;
 
 if (!d.cliente.trim()) {
-  setMensaje(tx("Captura el nombre del cliente antes de imprimir.", "Enter the customer name before printing."));
+  setMensaje("Captura el nombre del cliente antes de imprimir.");
   return;
 }
 
-if (!abrirImpresion(d, f, false, en ? "en" : "es")) {
+if (!abrirImpresion(d, f, false, idiomaDoc)) {
   setMensaje(
     "El navegador bloqueó la ventana de impresión. Permite las ventanas emergentes para este sitio."
   );
@@ -1414,13 +1486,13 @@ return notas.filter((nota) =>
 );
   }, [notas, busqueda]);
 
-  const fechaActual = fechaHoraActual(en ? "en-US" : "es-MX");
-  const folioVisible = folio || tx("Se asigna al guardar", "Assigned when saved");
+  const fechaActual = fechaHoraActual(idiomaDoc);
+  const folioVisible = folio || "Se asigna al guardar";
 
   if (cargando) {
     return (
       <main className="min-h-screen bg-slate-950 p-8 text-white">
-        {tx("Cargando sistema de notas de venta…", "Loading sales notes system…")}
+        {t("Cargando sistema de notas de venta…")}
       </main>
     );
   }
@@ -1437,11 +1509,11 @@ return notas.filter((nota) =>
             className="mb-5 h-16 w-40 object-contain object-left"
           />
       <p className="mt-2 text-sm text-slate-300">
-        {tx("Inicia sesión con tu cuenta autorizada.", "Sign in with your authorized account.")}
+        {t("Inicia sesión con tu cuenta autorizada.")}
       </p>
 
       <label className="mt-6 block text-sm">
-        {tx("Correo electrónico", "Email address")}
+        {t("Correo electrónico")}
 
         <input
           type="email"
@@ -1454,7 +1526,7 @@ return notas.filter((nota) =>
       </label>
 
       <label className="mt-4 block text-sm">
-        {tx("Contraseña", "Password")}
+        {t("Contraseña")}
 
         <input
           type="password"
@@ -1467,7 +1539,7 @@ return notas.filter((nota) =>
       </label>
 
       <button className="mt-5 w-full rounded-lg bg-emerald-600 p-3 font-bold text-white hover:bg-emerald-700">
-        {tx("Entrar", "Sign in")}
+        {t("Entrar")}
       </button>
 
       {mensaje && (
@@ -1487,27 +1559,27 @@ return notas.filter((nota) =>
     return (
       <main className="min-h-screen bg-slate-950 p-8 text-white">
         <h1 className="text-2xl font-bold">
-          {tx("Acceso no autorizado", "Unauthorized access")}
+          {t("Acceso no autorizado")}
         </h1>
     <p className="mt-3">
-      {tx("Esta cuenta no tiene permisos para las notas de venta.", "This account does not have permission to access sales notes.")}
+      {t("Esta cuenta no tiene permisos para las notas de venta.")}
     </p>
 
     <button
       onClick={cerrarSesion}
       className="mt-5 rounded border border-slate-600 p-3"
     >
-      {tx("Cerrar sesión", "Sign out")}
+      {t("Cerrar sesión")}
     </button>
   </main>
 );
   }
 
   return (
-    <main className="min-h-screen w-full min-w-0 overflow-x-hidden bg-slate-950 p-2 text-white sm:p-4 lg:p-6">
+    <main className="min-h-screen bg-slate-950 p-3 text-white sm:p-6">
       <style jsx global>{`\n        .pac-container {\n          z-index: 999999 !important;\n          font-family: Arial, Helvetica, sans-serif !important;\n        }\n        .pac-item {\n          cursor: pointer;\n          padding: 6px 8px;\n        }\n        /* Unificar apariencia de fecha/hora en navegadores móviles (incluido iOS). */\n        input[type="date"],\n        input[type="time"] {\n          box-sizing: border-box !important;\n          display: block !important;\n          width: 100% !important;\n          min-height: 48px !important;\n          height: 48px !important;\n          padding: 12px !important;\n          border: 1px solid #94a3b8 !important;\n          border-radius: 8px !important;\n          background-color: #fff !important;\n          color: #111827 !important;\n          font: inherit;\n          line-height: normal;\n          -webkit-appearance: none;\n          appearance: none;\n        }\n        input[type="date"]::-webkit-date-and-time-value,\n        input[type="time"]::-webkit-date-and-time-value {\n          text-align: left;\n        }\n      `}</style>
-      <div className="mx-auto w-full min-w-0 max-w-7xl">
-    <header className="flex flex-col items-stretch justify-between gap-4 border-b border-slate-700 pb-5 sm:flex-row sm:items-center">
+      <div className="mx-auto max-w-7xl">
+    <header className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-700 pb-5">
 
       <div className="flex items-center gap-4">
         <img
@@ -1523,45 +1595,22 @@ return notas.filter((nota) =>
           </h1>
 
           <p className="text-slate-300">
-            {tx("Sistema de notas de venta", "Sales notes system")}
+            {t("Sistema de notas de venta")}
           </p>
         </div>
       </div>
 
-      <div className="flex w-full flex-wrap items-center justify-between gap-3 sm:w-auto sm:justify-end">
-        {/* Selector de idioma siempre visible también en celular y tablet. */}
-        <div className="flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-900 p-1" aria-label={tx("Seleccionar idioma", "Select language")}>
-          <button
-            type="button"
-            onClick={() => setIdioma({ nombre: "ES", code: "MX" })}
-            aria-pressed={!en}
-            className={`inline-flex min-h-11 items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold transition ${!en ? "bg-white text-slate-950" : "text-slate-200 hover:bg-slate-800"}`}
-          >
-            <img src="/assets/icons/mexico.png" alt="México" className="h-5 w-6 object-contain" />
-            <span>ESP</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setIdioma({ nombre: "EN", code: "US" })}
-            aria-pressed={en}
-            className={`inline-flex min-h-11 items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold transition ${en ? "bg-white text-slate-950" : "text-slate-200 hover:bg-slate-800"}`}
-          >
-            <img src="/assets/icons/eu.png" alt="United States" className="h-5 w-6 object-contain" />
-            <span>EN</span>
-          </button>
-        </div>
+      <div className="flex items-center gap-3">
+        <span className="text-sm text-slate-300">
+          {admin1 ? t("Administrador 1") : t("Administrador 2")}
+        </span>
 
-        <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-          <span className="text-xs text-slate-300 sm:text-sm">
-            {admin1 ? tx("Administrador 1", "Administrator 1") : tx("Administrador 2", "Administrator 2")}
-          </span>
-          <button
-            onClick={cerrarSesion}
-            className="min-h-11 shrink-0 rounded-lg border border-slate-600 px-3 py-2 text-sm hover:bg-slate-800"
-          >
-            {tx("Cerrar sesión", "Sign out")}
-          </button>
-        </div>
+        <button
+          onClick={cerrarSesion}
+          className="rounded-lg border border-slate-600 px-3 py-2 text-sm hover:bg-slate-800"
+        >
+          {t("Cerrar sesión")}
+        </button>
       </div>
 
     </header>
@@ -1585,13 +1634,13 @@ return notas.filter((nota) =>
             <h2 className="text-xl font-semibold">
               {editando
                 ? `Editar nota ${editando.folio}`
-                : tx("Nueva nota de venta", "New sales note")} 
+                : t("Nueva nota de venta")}
             </h2>
 
             <p className="mt-1 text-sm text-slate-400">
-              {tx("Folio:", "Reference:")}{" "}
+              {t("Folio:")}{" "}
               <span className="font-bold text-red-400">
-                {folioVisible}
+                {t(folioVisible)}
               </span>
             </p>
           </div>
@@ -1601,7 +1650,7 @@ return notas.filter((nota) =>
             onClick={nuevaNota}
             className="rounded-lg border border-slate-600 px-3 py-2 text-sm hover:bg-slate-800"
           >
-            {tx("Nueva nota", "New note")}
+            {t("Nueva nota")}
           </button>
 
         </div>
@@ -1611,26 +1660,6 @@ return notas.filter((nota) =>
           <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2">
 
             {CAMPOS.map(([campo, etiqueta, tipo]) => {
-              const etiquetasEN = {
-                imagenUnidad: "🖼️ Select vehicle image",
-                unidad: "✏️ Vehicle name (manual)",
-                cliente: "👤 Customer name",
-                fecha: "📅 Service date",
-                hora: "🕒 Service time",
-                origen: "📍 Pickup location",
-                aerolinea: "✈️ Airline",
-                pasajeros: "👥 Number of passengers",
-                maletas: "🧳 Number of bags",
-                telefono: "☎️ Phone number",
-                destino: "📍 Destination",
-                idaVuelta: "🔄 Trip type",
-                duracion: "⏱️ Duration",
-                regresoFecha: "↩️ Return date",
-                regresoHora: "🕒 Return time",
-                email: "✉️ Primary email address",
-                email2: "✉️ Additional email address (optional)",
-              };
-              const etiquetaVisible = en ? (etiquetasEN[campo] || etiqueta) : etiqueta;
               // Los campos de regreso solo se muestran para viaje redondo.
               if (
                 (campo === "regresoFecha" || campo === "regresoHora") &&
@@ -1643,7 +1672,7 @@ return notas.filter((nota) =>
               <label key={campo} className="block text-sm">
 
                 <span className="font-medium text-slate-200">
-                  {etiquetaVisible}
+                  {etiquetaCampo(campo, etiqueta, ingles)}
                 </span>
 
                 {tipo === "viaje" ? (
@@ -1653,9 +1682,9 @@ return notas.filter((nota) =>
                     onChange={(e) => cambiar(campo, e.target.value)}
                     className="mt-1 w-full rounded-lg border border-slate-400 bg-white p-3 text-slate-900 outline-none focus:border-emerald-500"
                   >
-                    <option value="">{tx("Selecciona el tipo de viaje", "Select trip type")}</option>
-                    <option value="sencillo">{tx("Sencillo", "One way")}</option>
-                    <option value="redondo">{tx("Ida y vuelta", "Round trip")}</option>
+                    <option value="">{t("Selecciona el tipo de viaje")}</option>
+                    <option value="sencillo">{t("Sencillo")}</option>
+                    <option value="redondo">{t("Ida y vuelta")}</option>
                   </select>
                 ) : tipo === "select" ? (
                   <select
@@ -1679,7 +1708,7 @@ return notas.filter((nota) =>
                     className="mt-1 w-full outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
                   >
                     <option value="">
-                      {tx("Selecciona un vehículo", "Select a vehicle")}
+                      {t("Selecciona un vehículo")}
                     </option>
 
                     {VEHICULOS.map((vehiculo) => (
@@ -1705,7 +1734,7 @@ return notas.filter((nota) =>
                           cambiar("origenLat", "");
                           cambiar("origenLng", "");
                         }}
-                        placeholder={tx("Escribe aeropuerto, hotel o dirección y selecciona una sugerencia", "Enter an airport, hotel, or address and select a suggestion")}
+                        placeholder={t("Escribe aeropuerto, hotel o dirección y selecciona una sugerencia")}
                         className="mt-1 w-full rounded-lg border border-slate-400 bg-white p-3 text-slate-900 outline-none focus:border-emerald-500"
                       />
                     </Autocomplete>
@@ -1715,7 +1744,7 @@ return notas.filter((nota) =>
                       required
                       value={datos.origen ?? ""}
                       onChange={(e) => cambiar("origen", e.target.value)}
-                      placeholder={googleMapsLoadError ? tx("Google Maps no pudo cargar", "Google Maps could not load") : tx("Cargando Google Maps…", "Loading Google Maps…")}
+                      placeholder={googleMapsLoadError ? t("Google Maps no pudo cargar") : t("Cargando Google Maps…")}
                       className="mt-1 w-full rounded-lg border border-slate-400 bg-white p-3 text-slate-900 outline-none focus:border-emerald-500"
                     />
                   )
@@ -1736,7 +1765,7 @@ return notas.filter((nota) =>
                           cambiar("destinoLat", "");
                           cambiar("destinoLng", "");
                         }}
-                        placeholder={tx("Escribe aeropuerto, hotel o dirección y selecciona una sugerencia", "Enter an airport, hotel, or address and select a suggestion")}
+                        placeholder={t("Escribe aeropuerto, hotel o dirección y selecciona una sugerencia")}
                         className="mt-1 w-full rounded-lg border border-slate-400 bg-white p-3 text-slate-900 outline-none focus:border-emerald-500"
                       />
                     </Autocomplete>
@@ -1746,7 +1775,7 @@ return notas.filter((nota) =>
                       required
                       value={datos.destino ?? ""}
                       onChange={(e) => cambiar("destino", e.target.value)}
-                      placeholder={googleMapsLoadError ? tx("Google Maps no pudo cargar", "Google Maps could not load") : tx("Cargando Google Maps…", "Loading Google Maps…")}
+                      placeholder={googleMapsLoadError ? t("Google Maps no pudo cargar") : t("Cargando Google Maps…")}
                       className="mt-1 w-full rounded-lg border border-slate-400 bg-white p-3 text-slate-900 outline-none focus:border-emerald-500"
                     />
                   )
@@ -1790,7 +1819,7 @@ return notas.filter((nota) =>
             <label className="block text-sm">
 
               <span className="font-medium text-slate-200">
-                {tx("💰 Total / estado de pago", "💰 Total / payment status")}
+                {t("💰 Total / estado de pago")}
               </span>
 
               <input
@@ -1799,7 +1828,7 @@ return notas.filter((nota) =>
                 autoComplete="off"
                 value={datos.importe}
                 onChange={(e) => cambiar("importe", e.target.value)}
-                placeholder={tx("Ej. 3500 o Pagado", "e.g. 3500 or Paid")}
+                placeholder={t("Ej. 3500 o Pagado")}
                 className="mt-1 w-full rounded-lg border border-slate-400 bg-white p-3 text-slate-900 outline-none focus:border-emerald-500"
               />
 
@@ -1810,14 +1839,14 @@ return notas.filter((nota) =>
           <label className="block text-sm">
 
             <span className="font-medium text-slate-200">
-              {tx("Observaciones", "Notes")}
+              {t("Observaciones")}
             </span>
 
             <textarea
               value={datos.observaciones}
               onChange={(e) => cambiar("observaciones", e.target.value)}
               rows={2}
-              placeholder={tx("Escribe las observaciones del servicio", "Enter service notes")}
+              placeholder={t("Escribe las observaciones del servicio")}
               className="mt-1 w-full rounded-lg border border-slate-400 bg-white p-3 text-slate-900"
             />
 
@@ -1831,10 +1860,10 @@ return notas.filter((nota) =>
               className="rounded-lg bg-emerald-600 px-5 py-3 font-bold text-white disabled:opacity-50"
             >
               {guardando
-                ? tx("Guardando…", "Saving…")
+                ? t("Guardando…")
                 : editando
-                  ? tx("Guardar cambios", "Save changes")
-                  : tx("Guardar nota", "Save note")}
+                  ? t("Guardar cambios")
+                  : t("Guardar nota")}
             </button>
 
             <button
@@ -1842,7 +1871,7 @@ return notas.filter((nota) =>
               onClick={() => imprimir()}
               className="rounded-lg border border-slate-500 px-4 py-3 hover:bg-slate-800"
             >
-              {tx("Imprimir / PDF", "Print / PDF")}
+              {t("Imprimir / PDF")}
             </button>
 
             {editando && (
@@ -1851,7 +1880,7 @@ return notas.filter((nota) =>
                 onClick={nuevaNota}
                 className="rounded-lg border border-slate-500 px-4 py-3 hover:bg-slate-800"
               >
-                {tx("Cancelar edición", "Cancel editing")}
+                {t("Cancelar edición")}
               </button>
             )}
 
@@ -1862,20 +1891,20 @@ return notas.filter((nota) =>
         <div className="mt-7 border-t border-slate-700 pt-5">
 
           <h3 className="mb-3 text-lg font-semibold">
-            {tx("Historial de notas", "Notes history")}
+            {t("Historial de notas")}
           </h3>
 
           <input
             type="search"
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
-            placeholder={tx("Buscar por folio, cliente o servicio…", "Search by reference, customer, or service…")}
+            placeholder={t("Buscar por folio, cliente o servicio…")}
             className="mb-4 w-full rounded-lg border border-slate-600 bg-slate-950 p-3 text-white"
           />
 
           {notasFiltradas.length === 0 ? (
             <p className="text-sm text-slate-400">
-              {tx("No hay registros que coincidan con la búsqueda.", "No records match your search.")}
+              {t("No hay registros que coincidan con la búsqueda.")}
             </p>
           ) : (
             <div className="max-h-[520px] space-y-3 overflow-y-auto pr-1">
@@ -1895,7 +1924,7 @@ return notas.filter((nota) =>
                       </p>
 
                       <p className="break-words">
-                        {nota.datos?.cliente || tx("Sin cliente", "No customer")}
+                        {nota.datos?.cliente || t("Sin cliente")}
                       </p>
 
                       <p className="break-words text-sm text-slate-400">
@@ -1927,7 +1956,7 @@ return notas.filter((nota) =>
                         onClick={() => editar(nota)}
                         className="rounded border border-slate-600 px-3 py-2 text-sm"
                       >
-                        {tx("Editar", "Edit")}
+                        {t("Editar")}
                       </button>
 
                       {admin1 && (
@@ -1936,7 +1965,7 @@ return notas.filter((nota) =>
                           onClick={() => eliminar(nota)}
                           className="rounded border border-red-800 px-3 py-2 text-sm text-red-300"
                         >
-                          {tx("Eliminar", "Delete")}
+                          {t("Eliminar")}
                         </button>
                       )}
 
@@ -1959,13 +1988,13 @@ return notas.filter((nota) =>
         <div className="mb-3 flex flex-col items-stretch gap-2 px-1">
 
           <h2 className="font-semibold text-slate-800">
-            {tx("Vista previa de impresión", "Print preview")}
+            {t("Vista previa de impresión")}
           </h2>
 
           {mostrarPreviewNota && <div className="grid w-full grid-cols-3 gap-1.5 sm:gap-2">
-            <button type="button" onClick={() => accionesPdf("imprimir")} className="min-w-0 rounded-lg bg-green-600 px-2 py-2 text-center text-xs font-bold text-white sm:px-3 sm:text-sm">{tx("Imprimir", "Print")}</button>
-            <button type="button" onClick={() => accionesPdf("compartir")} className="min-w-0 rounded-lg bg-blue-600 px-2 py-2 text-center text-xs font-bold text-white sm:px-3 sm:text-sm">{tx("Compartir", "Share")}</button>
-            <button type="button" onClick={() => setMostrarPreviewNota(false)} className="min-w-0 rounded-lg bg-red-600 px-2 py-2 text-center text-xs font-bold text-white sm:px-3 sm:text-sm">{tx("Cancelar", "Cancel")}</button>
+            <button type="button" onClick={() => accionesPdf("imprimir")} className="min-w-0 rounded-lg bg-green-600 px-2 py-2 text-center text-xs font-bold text-white sm:px-3 sm:text-sm">{t("Imprimir")}</button>
+            <button type="button" onClick={() => accionesPdf("compartir")} className="min-w-0 rounded-lg bg-blue-600 px-2 py-2 text-center text-xs font-bold text-white sm:px-3 sm:text-sm">{t("Compartir")}</button>
+            <button type="button" onClick={() => setMostrarPreviewNota(false)} className="min-w-0 rounded-lg bg-red-600 px-2 py-2 text-center text-xs font-bold text-white sm:px-3 sm:text-sm">{t("Cancelar")}</button>
           </div>}
 
         </div>
@@ -2043,15 +2072,15 @@ return notas.filter((nota) =>
           <div className="mt-3 space-y-1.5 break-words text-[14px] sm:mt-4 sm:text-[16px]">
 
             <p>
-              <strong>{tx("Cliente:", "Customer:")}</strong> {datos.cliente}
+              <strong>${ingles ? "Customer:" : "Cliente:"}</strong> {datos.cliente}
             </p>
 
             <p>
-              <strong>{tx("Teléfono:", "Phone:")}</strong> {datos.telefono}
+              <strong>${ingles ? "Phone:" : "Teléfono:"}</strong> {datos.telefono}
             </p>
 
             <p>
-              <strong>{tx("Correo:", "Email:")}</strong> {datos.email}
+              <strong>${ingles ? "Email:" : "Correo:"}</strong> {datos.email}
             </p>
 
           </div>
@@ -2059,36 +2088,36 @@ return notas.filter((nota) =>
           <div className="my-3 h-1.5 w-full bg-black" />
 
           <div className="mt-2 inline-block max-w-full bg-green-600 px-3 py-1 text-[16px] font-extrabold text-white">
-            {tx("Total:", "Total:")} {moneda(datos.importe)}
+            {t("Total:")} {moneda(datos.importe)}
           </div>
 
           <div className="mt-2 h-[3mm]" aria-hidden="true" />
 
           <div className="bg-black px-2 py-1.5 text-[16px] font-extrabold text-white">
-            {tx("Descripción del traslado:", "Transfer details:")}
+            ${ingles ? "Transfer details:" : "Descripción del traslado:"}
           </div>
 
           <div className="mt-5 min-w-0 space-y-1.5 break-words text-[13px] sm:mt-[9mm] sm:text-[16px]">
 
             {[
-              ["🚐", tx("Vehículo:", "Vehicle:"), datos.unidad],
-              ["👤", tx("Nombre del cliente:", "Customer name:"), datos.cliente],
-              ["📅", tx("Fecha y hora:", "Date and time:"), valorFechaHora(datos, en ? "en-US" : "es-MX")],
-              ["📍", tx("Recoger en:", "Pickup:"), datos.origen],
-              ["✈️", tx("Aerolínea:", "Airline:"), datos.aerolinea || "N/A"],
-              ["👥", tx("Número de pasajeros:", "Number of passengers:"), datos.pasajeros],
-              ["🧳", tx("Número de maletas:", "Number of bags:"), datos.maletas],
-              ["☎️", tx("Número de teléfono:", "Phone number:"), datos.telefono],
-              ["📍", tx("Destino:", "Destination:"), datos.destino],
-              ["🔄", tx("Tipo de viaje:", "Trip type:"), datos.idaVuelta === "redondo" ? tx("Ida y vuelta", "Round trip") : datos.idaVuelta === "sencillo" ? tx("Sencillo", "One way") : ""],
-              ["⏱️", tx("Duración:", "Duration:"), datos.duracion],
+              ["🚐", ingles ? "Vehicle:" : "Vehículo:", datos.unidad],
+              ["👤", ingles ? "Customer name:" : "Nombre del cliente:", datos.cliente],
+              ["📅", ingles ? "Date and time:" : "Fecha y hora:", valorFechaHora(datos, idiomaDoc)],
+              ["📍", ingles ? "Pickup location:" : "Recoger en:", datos.origen],
+              ["✈️", ingles ? "Airline:" : "Aerolínea:", datos.aerolinea || "N/A"],
+              ["👥", ingles ? "Number of passengers:" : "Número de pasajeros:", datos.pasajeros],
+              ["🧳", ingles ? "Number of bags:" : "Número de maletas:", datos.maletas],
+              ["☎️", ingles ? "Phone number:" : "Número de teléfono:", datos.telefono],
+              ["📍", ingles ? "Destination:" : "Destino:", datos.destino],
+              ["🔄", ingles ? "Trip type:" : "Tipo de viaje:", datos.idaVuelta === "redondo" ? (ingles ? "Round trip" : "Ida y vuelta") : datos.idaVuelta === "sencillo" ? (ingles ? "One way" : "Sencillo") : ""],
+              ["⏱️", ingles ? "Duration:" : "Duración:", datos.duracion],
             ].map(([icono, etiqueta, valor]) => (
               <p
                 key={etiqueta}
                 className="flex flex-wrap items-start gap-x-1"
               >
                 <span>{icono}</span>
-                <strong>{etiqueta}</strong>
+                <strong>{t(etiqueta)}</strong>
                 <span className="break-words">{valor || ""}</span>
               </p>
             ))}
@@ -2099,16 +2128,16 @@ return notas.filter((nota) =>
 
             <span>↩️</span>
 
-            <strong>{tx("Regreso:", "Return:")}</strong>
+            <strong>${ingles ? "Return:" : "Regreso:"}</strong>
 
-            <span>{valorRegreso(datos, en ? "en-US" : "es-MX")}</span>
+            <span>{valorRegreso(datos, idiomaDoc)}</span>
 
           </div>
 
           <div className="mt-4 min-h-16 min-w-0 break-words rounded-[20px] border-2 border-black px-3 py-3 text-[13px] sm:mt-5 sm:rounded-[24px] sm:px-4 sm:text-[14px]">
 
             <strong className="mb-1 block">
-              {tx("Observaciones", "Notes")}:
+              {t("Observaciones")}:
             </strong>
 
             <span>{datos.observaciones || ""}</span>
@@ -2118,8 +2147,8 @@ return notas.filter((nota) =>
           <footer className="mt-3 border-t-2 border-black pt-3 text-center text-[10px] leading-4 text-slate-600 sm:mt-4 sm:text-[11px]">
 
             <p>
-              {tx("San Miguel de Allende, Guanajuato · Documento Generado:", "San Miguel de Allende, Guanajuato · Document generated:")} {" "}
-              {fechaActual.fecha} · {tx("Hora:", "Time:")} {fechaActual.hora}
+              San Miguel de Allende, Guanajuato · ${ingles ? "Document generated:" : "Documento Generado:"}{" "}
+              {fechaActual.fecha} · {ingles ? "Time:" : "Hora:"} {fechaActual.hora}
             </p>
 
             <p>
@@ -2132,13 +2161,13 @@ return notas.filter((nota) =>
 
 
         {!mostrarPreviewNota && <div className="mb-3 flex flex-wrap gap-2">
-          <button type="button" onClick={() => setMostrarPreviewNota(true)} className="rounded-lg bg-slate-700 px-3 py-2 text-sm font-bold text-white">{tx("Mostrar Nota de Venta", "Show Sales Note")}</button>
+          <button type="button" onClick={() => setMostrarPreviewNota(true)} className="rounded-lg bg-slate-700 px-3 py-2 text-sm font-bold text-white">{t("Mostrar Nota de Venta")}</button>
         </div>}
         </div>
 
         <p className="mx-auto mt-3 max-w-[760px] text-sm text-slate-600">
-          {tx("La vista previa sigue la distribución del documento impreso.", "The preview follows the layout of the printed document.")}
-          {tx("Para generar el PDF, pulsa “Imprimir / PDF”.", "To generate the PDF, select “Print / PDF”.")}
+          {t("La vista previa sigue la distribución del documento impreso.")}
+          {t("Para generar el PDF, pulsa “Imprimir / PDF”.")}
         </p>
 
       </section>
