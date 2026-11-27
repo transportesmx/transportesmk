@@ -1572,7 +1572,7 @@ return notas.filter((nota) =>
       </p>
     )}
 
-    <div className="grid w-full min-w-0 grid-cols-1 items-start gap-4 py-4 xl:grid-cols-2 xl:gap-5">
+    <div className="grid min-w-0 items-start gap-3 py-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:gap-3 xl:gap-5">
 
       <section className="min-w-0 rounded-2xl border border-slate-700 bg-slate-900 p-3 sm:p-4 xl:p-5">
 
@@ -1960,9 +1960,9 @@ return notas.filter((nota) =>
           </h2>
 
           {mostrarPreviewNota && <div className="grid w-full grid-cols-3 gap-1.5 sm:gap-2">
-            <button type="button" onClick={() => accionesPdf("imprimir")} className="min-h-11 min-w-0 rounded-lg bg-green-600 px-2 py-2 text-center text-xs font-bold text-white sm:px-3 sm:text-sm">{tx("Imprimir", "Print")}</button>
-            <button type="button" onClick={() => accionesPdf("compartir")} className="min-h-11 min-w-0 rounded-lg bg-blue-600 px-2 py-2 text-center text-xs font-bold text-white sm:px-3 sm:text-sm">{tx("Compartir", "Share")}</button>
-            <button type="button" onClick={() => setMostrarPreviewNota(false)} className="min-h-11 min-w-0 rounded-lg bg-red-600 px-2 py-2 text-center text-xs font-bold text-white sm:px-3 sm:text-sm">{tx("Cancelar", "Cancel")}</button>
+            <button type="button" onClick={() => accionesPdf("imprimir")} className="min-w-0 rounded-lg bg-green-600 px-2 py-2 text-center text-xs font-bold text-white sm:px-3 sm:text-sm">{tx("Imprimir", "Print")}</button>
+            <button type="button" onClick={() => accionesPdf("compartir")} className="min-w-0 rounded-lg bg-blue-600 px-2 py-2 text-center text-xs font-bold text-white sm:px-3 sm:text-sm">{tx("Compartir", "Share")}</button>
+            <button type="button" onClick={() => setMostrarPreviewNota(false)} className="min-w-0 rounded-lg bg-red-600 px-2 py-2 text-center text-xs font-bold text-white sm:px-3 sm:text-sm">{tx("Cancelar", "Cancel")}</button>
           </div>}
 
         </div>
