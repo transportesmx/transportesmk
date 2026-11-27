@@ -239,10 +239,39 @@ function htmlFila(etiqueta, valor, clase = "") {
   </div>`;
 }
 
+// Marco oculto para generar adjuntos PDF sin abrir pestañas ni ventanas.
+function crearMarcoPdfOculto() {
+  const iframe = document.createElement("iframe");
+  iframe.setAttribute("aria-hidden", "true");
+  iframe.tabIndex = -1;
+  iframe.style.position = "fixed";
+  iframe.style.left = "-12000px";
+  iframe.style.top = "0";
+  iframe.style.width = "816px";
+  iframe.style.height = "1056px";
+  iframe.style.border = "0";
+  iframe.style.opacity = "0";
+  iframe.style.pointerEvents = "none";
+  document.body.appendChild(iframe);
+
+  const ventana = iframe.contentWindow;
+  if (!ventana) {
+    iframe.remove();
+    throw new Error("No se pudo preparar el área interna para generar el PDF.");
+  }
+
+  return {
+    ventana,
+    limpiar: () => {
+      try { iframe.remove(); } catch (_) {}
+    },
+  };
+}
+
 function abrirImpresion(datos, folio, devolverVentana = false, lang = "es", ventanaExistente = null) {
   const en = lang === "en";
   const tx = (es, ingles) => (en ? ingles : es);
-  const ventana = ventanaExistente || window.open("", "_blank", "width=1000,height=900");
+  const ventana = ventanaExistente;
 
   if (!ventana) return false;
 
@@ -745,7 +774,9 @@ button{
 
 // Genera el PDF a partir del mismo HTML/CSS que utiliza la Nota de Venta al imprimir.
 async function generarPdfNotaVentaBase64(datos, folio, lang = "es", ventanaExistente = null) {
-  const ventanaPdf = abrirImpresion(datos, folio, true, lang, ventanaExistente);
+  const marcoOculto = ventanaExistente ? null : crearMarcoPdfOculto();
+  const ventanaTrabajo = ventanaExistente || marcoOculto.ventana;
+  const ventanaPdf = abrirImpresion(datos, folio, true, lang, ventanaTrabajo);
   if (!ventanaPdf || ventanaPdf === true) {
     throw new Error("No se pudo abrir la ventana temporal para generar el PDF.");
   }
@@ -850,17 +881,15 @@ async function generarPdfNotaVentaBase64(datos, folio, lang = "es", ventanaExist
   } finally {
     // Si se reutiliza la ventana about:blank principal, se mantiene abierta
     // para mostrar ahí mismo la barra de acciones y el PDF final.
-    if (!ventanaExistente) {
-      try { ventanaPdf.close(); } catch (_) {}
-    }
+    if (marcoOculto) marcoOculto.limpiar();
   }
 }
 
 // Genera el banner directamente con jsPDF para evitar capturas html2canvas
 // que producen páginas vacías o una segunda hoja. Página media carta horizontal.
 async function generarPdfBannerClienteBase64(nombreCliente, ventanaExistente = null) {
-  const ventana = ventanaExistente || window.open("about:blank", "_blank", "width=900,height=650");
-  if (!ventana) throw new Error("No se pudo abrir la ventana temporal del banner. Permite ventanas emergentes.");
+  const marcoOculto = ventanaExistente ? null : crearMarcoPdfOculto();
+  const ventana = ventanaExistente || marcoOculto.ventana;
 
   try {
     const nombre = String(nombreCliente || "CLIENTE").trim() || "CLIENTE";
@@ -950,9 +979,7 @@ async function generarPdfBannerClienteBase64(nombreCliente, ventanaExistente = n
     if (!base64) throw new Error("El PDF del banner está vacío.");
     return base64;
   } finally {
-    if (!ventanaExistente) {
-      try { ventana.close(); } catch (_) {}
-    }
+    if (marcoOculto) marcoOculto.limpiar();
   }
 }
 
@@ -1427,27 +1454,28 @@ ${en ? "Generating your PDF. Please wait…" : "Generando tu PDF. Espera un mome
 <style>
 *{box-sizing:border-box}
 html,body{margin:0;width:100%;height:100%;font-family:Arial,Helvetica,sans-serif;background:#e9edf3;color:#111}
-.toolbar{position:sticky;top:0;z-index:10;display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;padding:14px;background:#111827;box-shadow:0 2px 10px #0003}
-.toolbar button{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:44px;padding:10px 18px;border:0;border-radius:9px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 2px 5px #0003;transition:filter .15s,transform .15s}
+.toolbar{position:sticky;top:0;z-index:10;display:grid;grid-template-columns:repeat(3,minmax(150px,190px));justify-content:center;align-items:center;gap:16px;padding:16px 20px;background:#111827;box-shadow:0 3px 12px #0004}
+.toolbar button{display:inline-flex;align-items:center;justify-content:center;gap:11px;width:100%;min-height:56px;padding:13px 20px;border:0;border-radius:11px;color:#fff;font-size:16px;font-weight:800;letter-spacing:.2px;cursor:pointer;box-shadow:0 3px 8px #0004;transition:filter .15s,transform .15s}
 .toolbar button:hover{filter:brightness(1.1);transform:translateY(-1px)}
 .toolbar button:focus-visible{outline:3px solid #fff;outline-offset:3px}
 .btn-print{background:#159447}
 .btn-share{background:#1769d2}
 .btn-cancel{background:#c73535}
-.btn-icon{font-size:18px;line-height:1}
-.caption{width:100%;text-align:center;color:#e5e7eb;font-size:12px;margin-top:1px}
-.viewer{height:calc(100% - 91px);padding:12px}
+.btn-icon{font-size:23px;line-height:1}
+.caption{grid-column:1/-1;width:100%;text-align:center;color:#e5e7eb;font-size:13px;margin-top:0}
+.viewer{height:calc(100% - 112px);padding:12px}
 iframe{display:block;width:100%;height:100%;border:0;border-radius:6px;background:#fff;box-shadow:0 2px 12px #0002}
 button:disabled{opacity:.55;cursor:wait}
-@media(max-width:520px){.toolbar{gap:7px;padding:10px 6px}.toolbar button{flex:1;min-width:0;padding:10px 7px;font-size:12px}.btn-icon{font-size:16px}.viewer{height:calc(100% - 92px);padding:6px}.caption{font-size:11px}}
+@media(max-width:640px){.toolbar{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:12px 8px}.toolbar button{min-width:0;min-height:52px;padding:10px 5px;gap:5px;font-size:13px}.btn-icon{font-size:20px}.viewer{height:calc(100% - 104px);padding:6px}.caption{font-size:11px}}
+@media(max-width:360px){.toolbar{gap:5px;padding:10px 5px}.toolbar button{font-size:11px;padding:8px 3px}.btn-icon{font-size:17px}}
 @media print{.toolbar{display:none!important}.viewer{height:100%;padding:0}iframe{height:100%;box-shadow:none}}
 </style>
 </head>
 <body>
   <div class="toolbar">
-    <button class="btn-print" id="printBtn" type="button"><span class="btn-icon" aria-hidden="true">🖨️</span>${en ? "Print" : "Imprimir"}</button>
-    <button class="btn-share" id="shareBtn" type="button"><span class="btn-icon" aria-hidden="true">📤</span>${en ? "Share" : "Compartir"}</button>
-    <button class="btn-cancel" id="cancelBtn" type="button"><span class="btn-icon" aria-hidden="true">✕</span>${en ? "Cancel" : "Cancelar"}</button>
+    <button class="btn-print" id="printBtn" type="button" aria-label="${en ? "Print PDF" : "Imprimir PDF"}"><span class="btn-icon" aria-hidden="true">🖨️</span><span>${en ? "Print" : "Imprimir"}</span></button>
+    <button class="btn-share" id="shareBtn" type="button" aria-label="${en ? "Share PDF" : "Compartir PDF"}"><span class="btn-icon" aria-hidden="true">📤</span><span>${en ? "Share" : "Compartir"}</span></button>
+    <button class="btn-cancel" id="cancelBtn" type="button" aria-label="${en ? "Close window" : "Cerrar ventana"}"><span class="btn-icon" aria-hidden="true">✕</span><span>${en ? "Cancel" : "Cancelar"}</span></button>
     <div class="caption">${en ? "Sales note preview · " : "Vista previa de Nota de Venta · "}${folioActual}</div>
   </div>
   <div class="viewer"><iframe id="pdfFrame" title="${en ? "Sales note PDF" : "PDF de Nota de Venta"}" src="${urlPdf}"></iframe></div>
@@ -2096,11 +2124,7 @@ return notas.filter((nota) =>
             {tx("Vista previa de impresión", "Print preview")}
           </h2>
 
-          {mostrarPreviewNota && <div className="grid w-full grid-cols-3 gap-1.5 sm:gap-2">
-            <button type="button" onClick={() => accionesPdf("imprimir")} className="min-w-0 rounded-lg bg-green-600 px-2 py-2 text-center text-xs font-bold text-white sm:px-3 sm:text-sm">{tx("Imprimir", "Print")}</button>
-            <button type="button" onClick={() => accionesPdf("compartir")} className="min-w-0 rounded-lg bg-blue-600 px-2 py-2 text-center text-xs font-bold text-white sm:px-3 sm:text-sm">{tx("Compartir", "Share")}</button>
-            <button type="button" onClick={() => setMostrarPreviewNota(false)} className="min-w-0 rounded-lg bg-red-600 px-2 py-2 text-center text-xs font-bold text-white sm:px-3 sm:text-sm">{tx("Cancelar", "Cancel")}</button>
-          </div>}
+
 
         </div>
 
