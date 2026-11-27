@@ -239,10 +239,10 @@ function htmlFila(etiqueta, valor, clase = "") {
   </div>`;
 }
 
-function abrirImpresion(datos, folio, devolverVentana = false, lang = "es") {
+function abrirImpresion(datos, folio, devolverVentana = false, lang = "es", ventanaExistente = null) {
   const en = lang === "en";
   const tx = (es, ingles) => (en ? ingles : es);
-  const ventana = window.open("", "_blank", "width=1000,height=900");
+  const ventana = ventanaExistente || window.open("", "_blank", "width=1000,height=900");
 
   if (!ventana) return false;
 
@@ -744,8 +744,8 @@ button{
 
 
 // Genera el PDF a partir del mismo HTML/CSS que utiliza la Nota de Venta al imprimir.
-async function generarPdfNotaVentaBase64(datos, folio, lang = "es") {
-  const ventanaPdf = abrirImpresion(datos, folio, true, lang);
+async function generarPdfNotaVentaBase64(datos, folio, lang = "es", ventanaExistente = null) {
+  const ventanaPdf = abrirImpresion(datos, folio, true, lang, ventanaExistente);
   if (!ventanaPdf || ventanaPdf === true) {
     throw new Error("No se pudo abrir la ventana temporal para generar el PDF.");
   }
@@ -848,14 +848,18 @@ async function generarPdfNotaVentaBase64(datos, folio, lang = "es") {
     if (!base64) throw new Error("El PDF generado está vacío.");
     return base64;
   } finally {
-    try { ventanaPdf.close(); } catch (_) {}
+    // Si se reutiliza la ventana about:blank principal, se mantiene abierta
+    // para mostrar ahí mismo la barra de acciones y el PDF final.
+    if (!ventanaExistente) {
+      try { ventanaPdf.close(); } catch (_) {}
+    }
   }
 }
 
 // Genera el banner directamente con jsPDF para evitar capturas html2canvas
 // que producen páginas vacías o una segunda hoja. Página media carta horizontal.
-async function generarPdfBannerClienteBase64(nombreCliente) {
-  const ventana = window.open("about:blank", "_blank", "width=900,height=650");
+async function generarPdfBannerClienteBase64(nombreCliente, ventanaExistente = null) {
+  const ventana = ventanaExistente || window.open("about:blank", "_blank", "width=900,height=650");
   if (!ventana) throw new Error("No se pudo abrir la ventana temporal del banner. Permite ventanas emergentes.");
 
   try {
@@ -946,7 +950,9 @@ async function generarPdfBannerClienteBase64(nombreCliente) {
     if (!base64) throw new Error("El PDF del banner está vacío.");
     return base64;
   } finally {
-    try { ventana.close(); } catch (_) {}
+    if (!ventanaExistente) {
+      try { ventana.close(); } catch (_) {}
+    }
   }
 }
 
@@ -1363,11 +1369,12 @@ await cargarNotas();
     const datosAccion = datosOverride ? { ...INICIAL, ...datosOverride } : datos;
     const nombreCliente = String(datosAccion.cliente || "CLIENTE").trim() || "CLIENTE";
     const folioActual = folioOverride || folio || "TMX";
+    const esBanner = String(tipo).toLowerCase().includes("banner");
     let ventanaAccion = null;
     let urlPdf = null;
 
     try {
-      // Abrir la ventana en el gesto del usuario para evitar el bloqueo de pop-ups.
+      // ÚNICA ventana emergente. Se reutiliza durante la generación y visualización.
       ventanaAccion = window.open("about:blank", "_blank");
       if (!ventanaAccion) {
         setMensaje(tx(
@@ -1377,6 +1384,39 @@ await cargarNotas();
         return;
       }
 
+      ventanaAccion.document.open();
+      ventanaAccion.document.write(`<!doctype html>
+<html lang="${en ? "en" : "es"}">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${en ? "Preparing PDF" : "Preparando PDF"}</title></head>
+<body style="margin:0;padding:32px;font:600 16px Arial;background:#eef1f5;color:#111827">
+${en ? "Generating your PDF. Please wait…" : "Generando tu PDF. Espera un momento…"}
+</body></html>`);
+      ventanaAccion.document.close();
+
+      let base64;
+      let archivo;
+
+      if (esBanner) {
+        base64 = await generarPdfBannerClienteBase64(nombreCliente, ventanaAccion);
+        archivo = `Banner-Cliente-${folioActual}.pdf`;
+      } else {
+        // IMPORTANTE: pasar la ventana ya abierta evita que abrirImpresion
+        // ejecute un segundo window.open().
+        base64 = await generarPdfNotaVentaBase64(
+          { ...datosAccion },
+          folioActual,
+          en ? "en" : "es",
+          ventanaAccion
+        );
+        archivo = `Nota-de-Venta-${folioActual}.pdf`;
+      }
+
+      const bytes = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
+      const blob = new Blob([bytes], { type: "application/pdf" });
+      urlPdf = URL.createObjectURL(blob);
+
+      // La misma about:blank se transforma en el visor con tres botones.
       ventanaAccion.document.open();
       ventanaAccion.document.write(`<!doctype html>
 <html lang="${en ? "en" : "es"}">
@@ -1398,6 +1438,7 @@ html,body{margin:0;width:100%;height:100%;font-family:Arial,Helvetica,sans-serif
 .caption{width:100%;text-align:center;color:#e5e7eb;font-size:12px;margin-top:1px}
 .viewer{height:calc(100% - 91px);padding:12px}
 iframe{display:block;width:100%;height:100%;border:0;border-radius:6px;background:#fff;box-shadow:0 2px 12px #0002}
+button:disabled{opacity:.55;cursor:wait}
 @media(max-width:520px){.toolbar{gap:7px;padding:10px 6px}.toolbar button{flex:1;min-width:0;padding:10px 7px;font-size:12px}.btn-icon{font-size:16px}.viewer{height:calc(100% - 92px);padding:6px}.caption{font-size:11px}}
 @media print{.toolbar{display:none!important}.viewer{height:100%;padding:0}iframe{height:100%;box-shadow:none}}
 </style>
@@ -1409,40 +1450,22 @@ iframe{display:block;width:100%;height:100%;border:0;border-radius:6px;backgroun
     <button class="btn-cancel" id="cancelBtn" type="button"><span class="btn-icon" aria-hidden="true">✕</span>${en ? "Cancel" : "Cancelar"}</button>
     <div class="caption">${en ? "Sales note preview · " : "Vista previa de Nota de Venta · "}${folioActual}</div>
   </div>
-  <div class="viewer"><iframe id="pdfFrame" title="${en ? "Sales note PDF" : "PDF de Nota de Venta"}"></iframe></div>
+  <div class="viewer"><iframe id="pdfFrame" title="${en ? "Sales note PDF" : "PDF de Nota de Venta"}" src="${urlPdf}"></iframe></div>
 </body>
 </html>`);
       ventanaAccion.document.close();
-      ventanaAccion.document.getElementById("printBtn").disabled = true;
-      ventanaAccion.document.getElementById("shareBtn").disabled = true;
-
-      const esBanner = String(tipo).toLowerCase().includes("banner");
-      let base64;
-      let archivo;
-
-      if (esBanner) {
-        base64 = await generarPdfBannerClienteBase64(nombreCliente);
-        archivo = `Banner-Cliente-${folioActual}.pdf`;
-      } else {
-        base64 = await generarPdfNotaVentaBase64({ ...datosAccion }, folioActual, en ? "en" : "es");
-        archivo = `Nota-de-Venta-${folioActual}.pdf`;
-      }
-
-      const bytes = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
-      const blob = new Blob([bytes], { type: "application/pdf" });
-      urlPdf = URL.createObjectURL(blob);
 
       const frame = ventanaAccion.document.getElementById("pdfFrame");
-      frame.src = urlPdf;
-      ventanaAccion.document.getElementById("printBtn").disabled = false;
-      ventanaAccion.document.getElementById("shareBtn").disabled = false;
 
       ventanaAccion.document.getElementById("printBtn").addEventListener("click", () => {
         try {
           frame.contentWindow.focus();
           frame.contentWindow.print();
         } catch (_) {
-          ventanaAccion.open(urlPdf, "_blank");
+          setMensaje(tx(
+            "No se pudo abrir la impresión del PDF.",
+            "Could not open PDF printing."
+          ));
         }
       });
 
@@ -1478,11 +1501,19 @@ iframe{display:block;width:100%;height:100%;border:0;border-radius:6px;backgroun
       });
 
       ventanaAccion.focus();
+      // Mantener el Object URL vivo mientras el visor está abierto; se revoca al cerrar.
+      ventanaAccion.addEventListener("beforeunload", () => {
+        try { URL.revokeObjectURL(urlPdf); } catch (_) {}
+      }, { once: true });
+
     } catch (error) {
       try {
         if (ventanaAccion && !ventanaAccion.closed) {
-          ventanaAccion.document.body.innerHTML =
-            `<p style="font-family:Arial;padding:24px;color:#b91c1c">${en ? "Could not generate the PDF: " : "No se pudo generar el PDF: "}${String(error?.message || error)}</p>`;
+          ventanaAccion.document.open();
+          ventanaAccion.document.write(
+            `<p style="font-family:Arial;padding:24px;color:#b91c1c">${en ? "Could not generate the PDF: " : "No se pudo generar el PDF: "}${String(error?.message || error)}</p>`
+          );
+          ventanaAccion.document.close();
         }
       } catch (_) {}
       setMensaje(tx(
