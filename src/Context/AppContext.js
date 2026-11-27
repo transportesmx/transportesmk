@@ -1,73 +1,50 @@
-
-import React, {
-  createContext,
-  useState,
-  useEffect,
-  useCallback,
-} from "react";
-
-import ES from "../Traduccion/ES.json";
-import EN from "../Traduccion/EN.json";
+import React, { createContext, useState, useEffect } from 'react';
+import ES from '../Traduccion/ES.json';
+import EN from '../Traduccion/EN.json';
 
 export const AppContext = createContext();
 
-const IDIOMA_ES = { nombre: "ES", code: "MX" };
-const IDIOMA_EN = { nombre: "EN", code: "US" };
-
-// Normaliza cualquier valor recibido desde el selector de idioma.
-const normalizarIdioma = (valor) => {
-  const nombre =
-    typeof valor === "string"
-      ? valor
-      : valor?.nombre;
-
-  return nombre === "EN" ? IDIOMA_EN : IDIOMA_ES;
-};
-
 export const AppProvider = ({ children }) => {
-  // Siempre inicia en español para mantener el mismo primer render
-  // en el servidor y en el navegador.
-  const [idioma, setIdiomaInterno] = useState(IDIOMA_ES);
+  const [hydrated, setHydrated] = useState(false); // nuevo estado
+  const [idioma, setIdioma] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const savedLang = localStorage.getItem("idioma");
+      return savedLang === "EN" ? { nombre: 'EN', code: 'US' } : { nombre: 'ES', code: 'MX' };
+    } else {
+      return { nombre: 'EN', code: 'US' };
+    }
+  });
+  const [traduccion, setTraduccion] = useState(idioma.nombre === "EN" ? EN : ES);
 
-  // Carga el idioma guardado cuando el navegador está disponible.
   useEffect(() => {
-    try {
-      const idiomaGuardado = localStorage.getItem("idioma");
-
-      if (idiomaGuardado) {
-        setIdiomaInterno(normalizarIdioma(idiomaGuardado));
+    if (typeof window !== 'undefined') {
+      const savedLang = localStorage.getItem("idioma");
+      if (savedLang === "EN") {
+        setIdioma({ nombre: 'EN', code: 'US' });
+      } else {
+        setIdioma({ nombre: 'ES', code: 'MX' });
       }
-    } catch (error) {
-      console.warn("No se pudo recuperar el idioma guardado:", error);
+      setHydrated(true); // Ya estamos en el cliente
     }
   }, []);
 
-  // Función compatible con el selector actual del Navbar.
-  const setIdioma = useCallback((nuevoIdioma) => {
-    const idiomaNormalizado = normalizarIdioma(nuevoIdioma);
-
-    setIdiomaInterno(idiomaNormalizado);
-
-    try {
-      localStorage.setItem("idioma", idiomaNormalizado.nombre);
-    } catch (error) {
-      console.warn("No se pudo guardar el idioma:", error);
+  useEffect(() => {
+    if (idioma.nombre === "EN") {
+      setTraduccion(EN);
+      if (typeof window !== 'undefined') localStorage.setItem("idioma", "EN");
+    } else {
+      setTraduccion(ES);
+      if (typeof window !== 'undefined') localStorage.setItem("idioma", "ES");
     }
-  }, []);
+  }, [idioma]);
 
-  // Las traducciones siempre corresponden al idioma seleccionado.
-  const traduccion = idioma.nombre === "EN" ? EN : ES;
+  if (!hydrated) {
+    // No renderizamos hasta que se hidrate, evitando discrepancias
+    return null;
+  }
 
   return (
-    <AppContext.Provider
-      value={{
-        data: [],
-        idioma,
-        traduccion,
-        setIdioma,
-        setData: () => {},
-      }}
-    >
+    <AppContext.Provider value={{ data: [], idioma, traduccion, setIdioma, setData: () => {} }}>
       {children}
     </AppContext.Provider>
   );
