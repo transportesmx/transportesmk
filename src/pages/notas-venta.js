@@ -637,24 +637,69 @@ body{
 .acciones{
   display:flex;
   justify-content:center;
-  gap:3mm;
-  margin:7mm 0 2mm
+  align-items:center;
+  flex-wrap:wrap;
+  gap:4mm;
+  margin:3mm 0 0;
+  padding:0;
 }
 
- .hoja.modoPdf .acciones{
+.acciones button{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:2mm;
+  min-width:34mm;
+  min-height:11mm;
+  padding:2.5mm 5mm;
+  border:0;
+  border-radius:2.5mm;
+  color:#fff;
+  font-family:Arial,Helvetica,sans-serif;
+  font-size:11pt;
+  font-weight:800;
+  line-height:1;
+  cursor:pointer;
+  box-shadow:0 1.2mm 2.5mm rgba(0,0,0,.18);
+  transition:filter .15s ease,transform .15s ease;
+}
+
+.acciones button:hover{
+  filter:brightness(.93);
+  transform:translateY(-.4mm);
+}
+
+.acciones button:focus-visible{
+  outline:1mm solid #111;
+  outline-offset:1mm;
+}
+
+.acciones .btn-imprimir{background:#16834a;}
+.acciones .btn-compartir{background:#1769c2;}
+.acciones .btn-cancelar{background:#c93636;}
+
+.acciones svg{
+  display:block;
+  width:5mm;
+  height:5mm;
+  flex:none;
+}
+
+.hoja.modoPdf .acciones{
   display:none!important;
   height:0!important;
   margin:0!important;
   padding:0!important;
 }
 
-button{
-  font-size:13pt;
-  padding:3mm 5mm;
-  border:1px solid #777;
-  border-radius:2mm;
-  background:#f4f4f4;
-  cursor:pointer
+@media(max-width:600px){
+  .acciones{gap:2mm;margin-top:3mm;}
+  .acciones button{
+    min-width:0;
+    flex:1 1 28%;
+    padding:2.5mm 2mm;
+    font-size:9pt;
+  }
 }
 
 @media print{
@@ -800,17 +845,122 @@ button{
   Grupo Turístico MX S. de R.L. de C.V.
 </footer>
 
-<div class="acciones">
-  <button onclick="window.print()">
-    ${ingles ? "Print / Save PDF" : "Imprimir / Guardar PDF"}
+<div class="acciones" aria-label="${ingles ? "Document actions" : "Acciones del documento"}">
+  <button type="button" class="btn-imprimir" onclick="window.print()" aria-label="${ingles ? "Print document" : "Imprimir documento"}">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M6 9V2h12v7"/>
+      <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+      <path d="M6 14h12v8H6z"/>
+      <path d="M18 12h.01"/>
+    </svg>
+    <span>${ingles ? "Print" : "Imprimir"}</span>
   </button>
 
-  <button onclick="window.close()">
-    ${ingles ? "Close" : "Cerrar"}
+  <button type="button" class="btn-compartir" onclick="compartirNotaVenta()" aria-label="${ingles ? "Share PDF" : "Compartir PDF"}">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="18" cy="5" r="3"/>
+      <circle cx="6" cy="12" r="3"/>
+      <circle cx="18" cy="19" r="3"/>
+      <path d="m8.7 10.7 6.6-4.4M8.7 13.3l6.6 4.4"/>
+    </svg>
+    <span>${ingles ? "Share" : "Compartir"}</span>
+  </button>
+
+  <button type="button" class="btn-cancelar" onclick="window.close()" aria-label="${ingles ? "Cancel and close" : "Cancelar y cerrar"}">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="9"/>
+      <path d="m15 9-6 6m0-6 6 6"/>
+    </svg>
+    <span>${ingles ? "Cancel" : "Cancelar"}</span>
   </button>
 </div>
 
 </main>
+<script>
+async function compartirNotaVenta(){
+  const ingles = document.documentElement.lang === "en";
+  const boton = document.querySelector(".btn-compartir");
+  const textoOriginal = boton ? boton.innerHTML : "";
+  const hoja = document.querySelector(".hoja");
+  if (!hoja) return;
+
+  try {
+    if (boton) {
+      boton.disabled = true;
+      boton.style.opacity = ".7";
+      boton.querySelector("span").textContent = ingles ? "Preparing…" : "Preparando…";
+    }
+
+    if (!window.html2pdf) {
+      await new Promise((resolve, reject) => {
+        const script = document.createElement("script");
+        script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js";
+        script.onload = resolve;
+        script.onerror = () => reject(new Error("PDF_LIBRARY"));
+        document.head.appendChild(script);
+      });
+    }
+
+    hoja.classList.add("modoPdf");
+    const blob = await window.html2pdf()
+      .set({
+        margin: 0,
+        image: { type: "jpeg", quality: 0.98 },
+        html2canvas: {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: "#ffffff",
+          logging: false,
+          scrollX: 0,
+          scrollY: 0,
+          width: 816,
+          height: 1056
+        },
+        jsPDF: { unit: "mm", format: "letter", orientation: "portrait" },
+        pagebreak: { mode: [] }
+      })
+      .from(hoja)
+      .outputPdf("blob");
+
+    hoja.classList.remove("modoPdf");
+
+    const folio = ${JSON.stringify(String(folioTexto).replace(/[^a-zA-Z0-9_-]/g, "_"))};
+    const nombreArchivo = "Nota-de-Venta-" + folio + ".pdf";
+    const archivo = new File([blob], nombreArchivo, { type: "application/pdf" });
+
+    if (navigator.share && navigator.canShare && navigator.canShare({ files: [archivo] })) {
+      await navigator.share({
+        files: [archivo],
+        title: nombreArchivo
+      });
+    } else {
+      const url = URL.createObjectURL(blob);
+      const enlace = document.createElement("a");
+      enlace.href = url;
+      enlace.download = nombreArchivo;
+      document.body.appendChild(enlace);
+      enlace.click();
+      enlace.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 60000);
+      window.alert(ingles
+        ? "Your browser cannot share PDF files directly. The PDF has been downloaded so you can share it."
+        : "Tu navegador no permite compartir archivos PDF directamente. Se descargó el PDF para que puedas compartirlo.");
+    }
+  } catch (error) {
+    hoja.classList.remove("modoPdf");
+    if (error && error.name === "AbortError") return;
+    window.alert(ingles
+      ? "The PDF could not be prepared for sharing. Please use Print to save it as a PDF."
+      : "No se pudo preparar el PDF para compartir. Utiliza Imprimir para guardarlo como PDF.");
+  } finally {
+    if (boton) {
+      boton.disabled = false;
+      boton.style.opacity = "";
+      boton.innerHTML = textoOriginal;
+    }
+  }
+}
+</script>
 </body>
 </html>`);
 
