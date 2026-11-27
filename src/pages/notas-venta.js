@@ -1342,18 +1342,63 @@ await cargarNotas();
   async function accionesPdf(tipo) {
     const nombreCliente = String(datos.cliente || "CLIENTE").trim() || "CLIENTE";
     const folioActual = folio || "TMX";
+    let ventanaAccion = null;
+    let urlPdf = null;
+
     try {
-      // Abrir ventana inmediatamente desde la acción del usuario para evitar bloqueo de popup.
-      const ventanaAccion = window.open("about:blank", "_blank");
+      // Abrir la ventana en el gesto del usuario para evitar el bloqueo de pop-ups.
+      ventanaAccion = window.open("about:blank", "_blank");
       if (!ventanaAccion) {
-        setMensaje(tx("El navegador bloqueó la ventana. Permite ventanas emergentes para este sitio.", "Your browser blocked the window. Allow pop-ups for this site."));
+        setMensaje(tx(
+          "El navegador bloqueó la ventana. Permite ventanas emergentes para este sitio.",
+          "Your browser blocked the window. Allow pop-ups for this site."
+        ));
         return;
       }
-      ventanaAccion.document.write("Generando PDF, espera un momento…");
+
+      ventanaAccion.document.open();
+      ventanaAccion.document.write(`<!doctype html>
+<html lang="${en ? "en" : "es"}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${en ? "Sales note PDF" : "PDF de Nota de Venta"}</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;font-family:Arial,Helvetica,sans-serif;background:#e9edf3;color:#111}
+.toolbar{position:sticky;top:0;z-index:10;display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;padding:14px;background:#111827;box-shadow:0 2px 10px #0003}
+.toolbar button{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:44px;padding:10px 18px;border:0;border-radius:9px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 2px 5px #0003;transition:filter .15s,transform .15s}
+.toolbar button:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.toolbar button:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.btn-print{background:#159447}
+.btn-share{background:#1769d2}
+.btn-cancel{background:#c73535}
+.btn-icon{font-size:18px;line-height:1}
+.caption{width:100%;text-align:center;color:#e5e7eb;font-size:12px;margin-top:1px}
+.viewer{height:calc(100% - 91px);padding:12px}
+iframe{display:block;width:100%;height:100%;border:0;border-radius:6px;background:#fff;box-shadow:0 2px 12px #0002}
+@media(max-width:520px){.toolbar{gap:7px;padding:10px 6px}.toolbar button{flex:1;min-width:0;padding:10px 7px;font-size:12px}.btn-icon{font-size:16px}.viewer{height:calc(100% - 92px);padding:6px}.caption{font-size:11px}}
+@media print{.toolbar{display:none!important}.viewer{height:100%;padding:0}iframe{height:100%;box-shadow:none}}
+</style>
+</head>
+<body>
+  <div class="toolbar">
+    <button class="btn-print" id="printBtn" type="button"><span class="btn-icon" aria-hidden="true">🖨️</span>${en ? "Print" : "Imprimir"}</button>
+    <button class="btn-share" id="shareBtn" type="button"><span class="btn-icon" aria-hidden="true">📤</span>${en ? "Share" : "Compartir"}</button>
+    <button class="btn-cancel" id="cancelBtn" type="button"><span class="btn-icon" aria-hidden="true">✕</span>${en ? "Cancel" : "Cancelar"}</button>
+    <div class="caption">${en ? "Sales note preview · " : "Vista previa de Nota de Venta · "}${folioActual}</div>
+  </div>
+  <div class="viewer"><iframe id="pdfFrame" title="${en ? "Sales note PDF" : "PDF de Nota de Venta"}"></iframe></div>
+</body>
+</html>`);
+      ventanaAccion.document.close();
+      ventanaAccion.document.getElementById("printBtn").disabled = true;
+      ventanaAccion.document.getElementById("shareBtn").disabled = true;
+
+      const esBanner = String(tipo).toLowerCase().includes("banner");
       let base64;
       let archivo;
-      const esBanner = String(tipo).toLowerCase().includes("banner");
-      const accion = String(tipo).toLowerCase().replace("banner", "");
+
       if (esBanner) {
         base64 = await generarPdfBannerClienteBase64(nombreCliente);
         archivo = `Banner-Cliente-${folioActual}.pdf`;
@@ -1361,26 +1406,68 @@ await cargarNotas();
         base64 = await generarPdfNotaVentaBase64({ ...datos }, folioActual, en ? "en" : "es");
         archivo = `Nota-de-Venta-${folioActual}.pdf`;
       }
+
       const bytes = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
       const blob = new Blob([bytes], { type: "application/pdf" });
-      const url = URL.createObjectURL(blob);
-      if (accion === "imprimir") {
-        ventanaAccion.location.href = url;
-        setTimeout(() => { try { ventanaAccion.focus(); ventanaAccion.print(); } catch (_) {} }, 1200);
-      } else if (accion === "compartir") {
-        ventanaAccion.close();
-        const file = new File([blob], archivo, { type: "application/pdf" });
-        if (navigator.share && navigator.canShare?.({ files: [file] })) {
-          await navigator.share({ files: [file], title: archivo });
-        } else {
-          const link = document.createElement("a");
-          link.href = url; link.download = archivo; link.click();
-          setMensaje(tx("Tu navegador no permite compartir archivos directamente. Se descargó el PDF.", "Your browser cannot share files directly. The PDF was downloaded."));
+      urlPdf = URL.createObjectURL(blob);
+
+      const frame = ventanaAccion.document.getElementById("pdfFrame");
+      frame.src = urlPdf;
+      ventanaAccion.document.getElementById("printBtn").disabled = false;
+      ventanaAccion.document.getElementById("shareBtn").disabled = false;
+
+      ventanaAccion.document.getElementById("printBtn").addEventListener("click", () => {
+        try {
+          frame.contentWindow.focus();
+          frame.contentWindow.print();
+        } catch (_) {
+          ventanaAccion.open(urlPdf, "_blank");
         }
-      }
-      setTimeout(() => URL.revokeObjectURL(url), 60000);
+      });
+
+      ventanaAccion.document.getElementById("shareBtn").addEventListener("click", async () => {
+        try {
+          const file = new File([blob], archivo, { type: "application/pdf" });
+          if (navigator.share && navigator.canShare?.({ files: [file] })) {
+            await navigator.share({ files: [file], title: archivo });
+          } else {
+            const link = ventanaAccion.document.createElement("a");
+            link.href = urlPdf;
+            link.download = archivo;
+            ventanaAccion.document.body.appendChild(link);
+            link.click();
+            link.remove();
+            setMensaje(tx(
+              "Tu navegador no permite compartir archivos directamente. Se descargó el PDF.",
+              "Your browser cannot share files directly. The PDF was downloaded."
+            ));
+          }
+        } catch (error) {
+          if (error?.name !== "AbortError") {
+            setMensaje(tx(
+              `No se pudo compartir el PDF: ${error?.message || error}`,
+              `Could not share the PDF: ${error?.message || error}`
+            ));
+          }
+        }
+      });
+
+      ventanaAccion.document.getElementById("cancelBtn").addEventListener("click", () => {
+        try { ventanaAccion.close(); } catch (_) {}
+      });
+
+      ventanaAccion.focus();
     } catch (error) {
-      setMensaje(tx(`No se pudo generar el PDF: ${error?.message || error}`, `Could not generate the PDF: ${error?.message || error}`));
+      try {
+        if (ventanaAccion && !ventanaAccion.closed) {
+          ventanaAccion.document.body.innerHTML =
+            `<p style="font-family:Arial;padding:24px;color:#b91c1c">${en ? "Could not generate the PDF: " : "No se pudo generar el PDF: "}${String(error?.message || error)}</p>`;
+        }
+      } catch (_) {}
+      setMensaje(tx(
+        `No se pudo generar el PDF: ${error?.message || error}`,
+        `Could not generate the PDF: ${error?.message || error}`
+      ));
     }
   }
 
