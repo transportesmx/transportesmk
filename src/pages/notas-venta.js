@@ -640,12 +640,12 @@ body{
   align-items:center;
   flex-wrap:wrap;
   gap:4mm;
-  margin:0 0 4mm;
-  padding:2mm 0;
-  position:sticky;
-  top:env(safe-area-inset-top, 0px);
-  z-index:999;
+  margin:4mm 0 0;
+  padding:2mm 0 3mm;
+  position:static;
+  z-index:1;
   background:#fff;
+  width:100%;
 }
 
 .acciones button{
@@ -699,18 +699,19 @@ body{
 @media(max-width:600px){
   .acciones{
     gap:2mm;
-    margin:0 0 3mm;
-    padding:2mm 0;
-    position:sticky;
-    top:env(safe-area-inset-top, 0px);
-    z-index:999;
+    margin:3mm 0 0;
+    padding:2mm 0 max(3mm, env(safe-area-inset-bottom, 0px));
+    position:static;
+    z-index:1;
+    width:100%;
   }
   .acciones button{
     min-width:0;
-    min-height:12mm;
-    flex:1 1 28%;
-    padding:3mm 2mm;
+    min-height:13mm;
+    flex:1 1 0;
+    padding:3mm 1mm;
     font-size:9pt;
+    white-space:nowrap;
     touch-action:manipulation;
     -webkit-tap-highlight-color:transparent;
   }
@@ -765,35 +766,6 @@ body{
 <body>
 <main class="hoja">
 
-<div class="acciones" aria-label="${ingles ? "Document actions" : "Acciones del documento"}">
-  <button type="button" class="btn-imprimir" onclick="window.print()" aria-label="${ingles ? "Print document" : "Imprimir documento"}">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <path d="M6 9V2h12v7"/>
-      <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
-      <path d="M6 14h12v8H6z"/>
-      <path d="M18 12h.01"/>
-    </svg>
-    <span>${ingles ? "Print" : "Imprimir"}</span>
-  </button>
-
-  <button type="button" class="btn-compartir" onclick="compartirNotaVenta()" aria-label="${ingles ? "Share PDF" : "Compartir PDF"}">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <circle cx="18" cy="5" r="3"/>
-      <circle cx="6" cy="12" r="3"/>
-      <circle cx="18" cy="19" r="3"/>
-      <path d="m8.7 10.7 6.6-4.4M8.7 13.3l6.6 4.4"/>
-    </svg>
-    <span>${ingles ? "Share" : "Compartir"}</span>
-  </button>
-
-  <button type="button" class="btn-cancelar" onclick="window.close()" aria-label="${ingles ? "Cancel and close" : "Cancelar y cerrar"}">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <circle cx="12" cy="12" r="9"/>
-      <path d="m15 9-6 6m0-6 6 6"/>
-    </svg>
-    <span>${ingles ? "Cancel" : "Cancelar"}</span>
-  </button>
-</div>
 
 <header class="encabezado">
 
@@ -889,7 +861,35 @@ body{
   Grupo Turístico MX S. de R.L. de C.V.
 </footer>
 
+<div class="acciones" aria-label="${ingles ? "Document actions" : "Acciones del documento"}">
+  <button type="button" class="btn-imprimir" onclick="window.print()" aria-label="${ingles ? "Print document" : "Imprimir documento"}">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M6 9V2h12v7"/>
+      <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+      <path d="M6 14h12v8H6z"/>
+      <path d="M18 12h.01"/>
+    </svg>
+    <span>${ingles ? "Print" : "Imprimir"}</span>
+  </button>
 
+  <button type="button" class="btn-compartir" onclick="compartirNotaVenta()" aria-label="${ingles ? "Share PDF" : "Compartir PDF"}">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="18" cy="5" r="3"/>
+      <circle cx="6" cy="12" r="3"/>
+      <circle cx="18" cy="19" r="3"/>
+      <path d="m8.7 10.7 6.6-4.4M8.7 13.3l6.6 4.4"/>
+    </svg>
+    <span>${ingles ? "Share" : "Compartir"}</span>
+  </button>
+
+  <button type="button" class="btn-cancelar" onclick="window.close()" aria-label="${ingles ? "Cancel and close" : "Cancelar y cerrar"}">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="9"/>
+      <path d="m15 9-6 6m0-6 6 6"/>
+    </svg>
+    <span>${ingles ? "Cancel" : "Cancelar"}</span>
+  </button>
+</div>
 
 </main>
 <script>
