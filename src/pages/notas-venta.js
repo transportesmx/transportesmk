@@ -239,39 +239,10 @@ function htmlFila(etiqueta, valor, clase = "") {
   </div>`;
 }
 
-// Marco oculto para generar adjuntos PDF sin abrir pestañas ni ventanas.
-function crearMarcoPdfOculto() {
-  const iframe = document.createElement("iframe");
-  iframe.setAttribute("aria-hidden", "true");
-  iframe.tabIndex = -1;
-  iframe.style.position = "fixed";
-  iframe.style.left = "-12000px";
-  iframe.style.top = "0";
-  iframe.style.width = "816px";
-  iframe.style.height = "1056px";
-  iframe.style.border = "0";
-  iframe.style.opacity = "0";
-  iframe.style.pointerEvents = "none";
-  document.body.appendChild(iframe);
-
-  const ventana = iframe.contentWindow;
-  if (!ventana) {
-    iframe.remove();
-    throw new Error("No se pudo preparar el área interna para generar el PDF.");
-  }
-
-  return {
-    ventana,
-    limpiar: () => {
-      try { iframe.remove(); } catch (_) {}
-    },
-  };
-}
-
-function abrirImpresion(datos, folio, devolverVentana = false, lang = "es", ventanaExistente = null) {
+function abrirImpresion(datos, folio, devolverVentana = false, lang = "es") {
   const en = lang === "en";
   const tx = (es, ingles) => (en ? ingles : es);
-  const ventana = ventanaExistente || window.open("", "_blank", "width=1000,height=900");
+  const ventana = window.open("", "_blank", "width=1000,height=900");
 
   if (!ventana) return false;
 
@@ -773,46 +744,37 @@ button{
 
 
 // Genera el PDF a partir del mismo HTML/CSS que utiliza la Nota de Venta al imprimir.
-async function generarPdfNotaVentaBase64(datos, folio, lang = "es", ventanaExistente = null) {
-  const marcoOculto = ventanaExistente ? null : crearMarcoPdfOculto();
-  const ventanaTrabajo = ventanaExistente || marcoOculto.ventana;
-  const ventanaPdf = abrirImpresion(datos, folio, true, lang, ventanaTrabajo);
+async function generarPdfNotaVentaBase64(datos, folio, lang = "es") {
+  const ventanaPdf = abrirImpresion(datos, folio, true, lang);
   if (!ventanaPdf || ventanaPdf === true) {
-    throw new Error("No se pudo abrir la ventana temporal para generar el PDF.");
+    throw new Error("No se pudo abrir la ventana temporal para generar el PDF. Permite ventanas emergentes.");
   }
 
   try {
     const doc = ventanaPdf.document;
-
-    // Cargar html2canvas y jsPDF directamente para construir UNA sola página Carta.
-    const cargarScript = (src) => new Promise((resolve, reject) => {
-      const script = doc.createElement("script");
-      script.src = src;
-      script.onload = resolve;
-      script.onerror = () => reject(new Error(`No se pudo cargar la librería PDF: ${src}`));
-      doc.head.appendChild(script);
-    });
-
-    if (!ventanaPdf.html2canvas) {
-      await cargarScript("https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js");
-    }
-    if (!ventanaPdf.jspdf?.jsPDF) {
-      await cargarScript("https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js");
+    // Cargar html2pdf.js dentro de la ventana de la nota.
+    if (!ventanaPdf.html2pdf) {
+      await new Promise((resolve, reject) => {
+        const script = doc.createElement("script");
+        script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js";
+        script.onload = resolve;
+        script.onerror = () => reject(new Error("No se pudo cargar el generador PDF (html2pdf.js)."));
+        doc.head.appendChild(script);
+      });
     }
 
     const hoja = doc.querySelector(".hoja") || doc.querySelector("main");
-    if (!hoja) {
-      throw new Error("No se encontró el contenido de la Nota de Venta.");
-    }
+    if (!hoja) throw new Error("No se encontró el contenido de la Nota de Venta para convertirlo a PDF.");
 
-    // Ocultar controles; solo se captura el contenido de la nota.
+    // Captura una página Carta exacta y saca los controles fuera del documento PDF.
     hoja.classList.add("modoPdf");
     hoja.querySelectorAll(".acciones, button").forEach((elemento) => {
       elemento.style.setProperty("display", "none", "important");
+      elemento.style.setProperty("height", "0", "important");
+      elemento.style.setProperty("margin", "0", "important");
+      elemento.style.setProperty("padding", "0", "important");
     });
-
-    // Fijar dimensiones Carta exactas. Esto evita que html2pdf divida el lienzo
-    // en una segunda página por diferencias de redondeo de píxeles.
+    // Fijar la hoja a Carta y anclarla al origen para evitar desplazamiento/corte lateral.
     hoja.style.setProperty("box-sizing", "border-box", "important");
     hoja.style.setProperty("width", "215.9mm", "important");
     hoja.style.setProperty("max-width", "215.9mm", "important");
@@ -824,51 +786,37 @@ async function generarPdfNotaVentaBase64(datos, folio, lang = "es", ventanaExist
     hoja.style.setProperty("top", "0", "important");
     hoja.style.setProperty("overflow", "hidden", "important");
 
-    // Esperar a que terminen de cargar el logo y la imagen del vehículo.
-    await Promise.all(Array.from(doc.images || []).map(async (img) => {
-      if (img.complete && img.naturalWidth > 0) return;
-      if (typeof img.decode === "function") {
-        try { await img.decode(); return; } catch (_) {}
-      }
-      await new Promise((resolve) => {
+    // Esperar imágenes (logo y vehículo) para que aparezcan en el PDF.
+    await Promise.all(Array.from(doc.images || []).map((img) => {
+      if (img.complete) return Promise.resolve();
+      return new Promise((resolve) => {
         img.onload = resolve;
         img.onerror = resolve;
       });
     }));
 
-    const html2canvas = ventanaPdf.html2canvas;
-    const { jsPDF } = ventanaPdf.jspdf;
+    const blob = await ventanaPdf.html2pdf()
+      .set({
+        margin: 0,
+        filename: `Nota-de-Venta-${folio || "TMX"}.pdf`,
+        image: { type: "jpeg", quality: 0.98 },
+        html2canvas: {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: "#ffffff",
+          logging: false,
+          scrollX: 0,
+          scrollY: 0,
+          width: 816,
+          height: 1056
+        },
+        jsPDF: { unit: "mm", format: "letter", orientation: "portrait" },
+        // Desactivar los saltos CSS/legacy: la captura ya es una página Carta exacta.
+        pagebreak: { mode: [] }
+      })
+      .from(hoja)
+      .outputPdf("blob");
 
-    const canvas = await html2canvas(hoja, {
-      scale: 2,
-      useCORS: true,
-      allowTaint: false,
-      backgroundColor: "#ffffff",
-      logging: false,
-      width: hoja.scrollWidth,
-      height: hoja.scrollHeight,
-      windowWidth: Math.max(hoja.scrollWidth, 816),
-      windowHeight: Math.max(hoja.scrollHeight, 1056),
-      scrollX: 0,
-      scrollY: 0
-    });
-
-    if (!canvas || !canvas.width || !canvas.height) {
-      throw new Error("La captura de la Nota de Venta quedó vacía.");
-    }
-
-    // Crear el PDF con una sola página Letter y colocar toda la captura en ella.
-    const pdf = new jsPDF({
-      orientation: "portrait",
-      unit: "mm",
-      format: "letter",
-      compress: true
-    });
-
-    const imagen = canvas.toDataURL("image/jpeg", 0.98);
-    pdf.addImage(imagen, "JPEG", 0, 0, 215.9, 279.4, undefined, "FAST");
-
-    const blob = pdf.output("blob");
     const base64 = await new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = () => resolve(String(reader.result).split(",")[1] || "");
@@ -879,17 +827,16 @@ async function generarPdfNotaVentaBase64(datos, folio, lang = "es", ventanaExist
     if (!base64) throw new Error("El PDF generado está vacío.");
     return base64;
   } finally {
-    // Si se reutiliza la ventana about:blank principal, se mantiene abierta
-    // para mostrar ahí mismo la barra de acciones y el PDF final.
-    if (marcoOculto) marcoOculto.limpiar();
+    // Cerrar la ventana temporal después de la conversión.
+    try { ventanaPdf.close(); } catch (_) {}
   }
 }
 
 // Genera el banner directamente con jsPDF para evitar capturas html2canvas
 // que producen páginas vacías o una segunda hoja. Página media carta horizontal.
-async function generarPdfBannerClienteBase64(nombreCliente, ventanaExistente = null) {
-  const marcoOculto = ventanaExistente ? null : crearMarcoPdfOculto();
-  const ventana = ventanaExistente || marcoOculto.ventana;
+async function generarPdfBannerClienteBase64(nombreCliente) {
+  const ventana = window.open("about:blank", "_blank", "width=900,height=650");
+  if (!ventana) throw new Error("No se pudo abrir la ventana temporal del banner. Permite ventanas emergentes.");
 
   try {
     const nombre = String(nombreCliente || "CLIENTE").trim() || "CLIENTE";
@@ -979,7 +926,7 @@ async function generarPdfBannerClienteBase64(nombreCliente, ventanaExistente = n
     if (!base64) throw new Error("El PDF del banner está vacío.");
     return base64;
   } finally {
-    if (marcoOculto) marcoOculto.limpiar();
+    try { ventana.close(); } catch (_) {}
   }
 }
 
@@ -1002,12 +949,15 @@ export default function NotasVenta() {
   const [mostrarPreviewNota, setMostrarPreviewNota] = useState(true);
   // Carga Google Maps mediante el mismo loader y componente Autocomplete
   // que usa el flujo principal de reservaciones de Transportes MX.
+  // IMPORTANTE: Google Maps se carga con opciones fijas. No cambiar
+  // language/region al alternar ES/EN: el loader no permite reinicializarse
+  // con opciones diferentes dentro de la misma aplicación.
   const { isLoaded: googleMapsLoaded, loadError: googleMapsLoadError } = useJsApiLoader({
     id: "script-loader",
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
     libraries: GOOGLE_MAPS_LIBRARIES,
-    language: en ? "en" : "es",
-    region: en ? "US" : "MX",
+    language: "es",
+    region: "MX",
   });
 
   const origenAutocompleteRef = useRef(null);
@@ -1392,26 +1342,67 @@ if (editando?.id === nota.id) {
 await cargarNotas();
   }
 
+  async function accionesPdf(tipo) {
+    const nombreCliente = String(datos.cliente || "CLIENTE").trim() || "CLIENTE";
+    const folioActual = folio || "TMX";
+    try {
+      // Abrir ventana inmediatamente desde la acción del usuario para evitar bloqueo de popup.
+      const ventanaAccion = window.open("about:blank", "_blank");
+      if (!ventanaAccion) {
+        setMensaje(tx("El navegador bloqueó la ventana. Permite ventanas emergentes para este sitio.", "Your browser blocked the window. Allow pop-ups for this site."));
+        return;
+      }
+      ventanaAccion.document.write("Generando PDF, espera un momento…");
+      let base64;
+      let archivo;
+      const esBanner = String(tipo).toLowerCase().includes("banner");
+      const accion = String(tipo).toLowerCase().replace("banner", "");
+      if (esBanner) {
+        base64 = await generarPdfBannerClienteBase64(nombreCliente);
+        archivo = `Banner-Cliente-${folioActual}.pdf`;
+      } else {
+        base64 = await generarPdfNotaVentaBase64({ ...datos }, folioActual, en ? "en" : "es");
+        archivo = `Nota-de-Venta-${folioActual}.pdf`;
+      }
+      const bytes = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
+      const blob = new Blob([bytes], { type: "application/pdf" });
+      const url = URL.createObjectURL(blob);
+      if (accion === "imprimir") {
+        ventanaAccion.location.href = url;
+        setTimeout(() => { try { ventanaAccion.focus(); ventanaAccion.print(); } catch (_) {} }, 1200);
+      } else if (accion === "compartir") {
+        ventanaAccion.close();
+        const file = new File([blob], archivo, { type: "application/pdf" });
+        if (navigator.share && navigator.canShare?.({ files: [file] })) {
+          await navigator.share({ files: [file], title: archivo });
+        } else {
+          const link = document.createElement("a");
+          link.href = url; link.download = archivo; link.click();
+          setMensaje(tx("Tu navegador no permite compartir archivos directamente. Se descargó el PDF.", "Your browser cannot share files directly. The PDF was downloaded."));
+        }
+      }
+      setTimeout(() => URL.revokeObjectURL(url), 60000);
+    } catch (error) {
+      setMensaje(tx(`No se pudo generar el PDF: ${error?.message || error}`, `Could not generate the PDF: ${error?.message || error}`));
+    }
+  }
 
   function imprimir(nota = null) {
     const d = nota?.datos
       ? { ...INICIAL, ...nota.datos }
       : datos;
-    const f = nota?.folio || folio;
+const f = nota?.folio || folio;
 
-    if (!String(d.cliente || "").trim()) {
-      setMensaje(tx("Captura el nombre del cliente antes de imprimir.", "Enter the customer name before printing."));
-      return;
-    }
+if (!d.cliente.trim()) {
+  setMensaje(tx("Captura el nombre del cliente antes de imprimir.", "Enter the customer name before printing."));
+  return;
+}
 
-    // Comportamiento original: abrir únicamente la nota imprimible con
-    // sus controles “Imprimir / Guardar PDF” y “Cerrar”.
-    if (!abrirImpresion(d, f, false, en ? "en" : "es")) {
-      setMensaje(tx(
-        "El navegador bloqueó la ventana de impresión. Permite las ventanas emergentes para este sitio.",
-        "Your browser blocked the print window. Allow pop-ups for this site."
-      ));
-    }
+if (!abrirImpresion(d, f, false, en ? "en" : "es")) {
+  setMensaje(
+    "El navegador bloqueó la ventana de impresión. Permite las ventanas emergentes para este sitio."
+  );
+}
   }
 
   const notasFiltradas = useMemo(() => {
@@ -1971,7 +1962,11 @@ return notas.filter((nota) =>
             {tx("Vista previa de impresión", "Print preview")}
           </h2>
 
-
+          {mostrarPreviewNota && <div className="grid w-full grid-cols-3 gap-1.5 sm:gap-2">
+            <button type="button" onClick={() => accionesPdf("imprimir")} className="min-w-0 rounded-lg bg-green-600 px-2 py-2 text-center text-xs font-bold text-white sm:px-3 sm:text-sm">{tx("Imprimir", "Print")}</button>
+            <button type="button" onClick={() => accionesPdf("compartir")} className="min-w-0 rounded-lg bg-blue-600 px-2 py-2 text-center text-xs font-bold text-white sm:px-3 sm:text-sm">{tx("Compartir", "Share")}</button>
+            <button type="button" onClick={() => setMostrarPreviewNota(false)} className="min-w-0 rounded-lg bg-red-600 px-2 py-2 text-center text-xs font-bold text-white sm:px-3 sm:text-sm">{tx("Cancelar", "Cancel")}</button>
+          </div>}
 
         </div>
 
