@@ -1402,7 +1402,7 @@ await cargarNotas();
 
     try {
       // ÚNICA ventana emergente. Se reutiliza durante la generación y visualización.
-      ventanaAccion = window.open("about:blank", "_blank");
+      ventanaAccion = window.open("about:blank", "TMX_NOTA_VENTA_PDF");
       if (!ventanaAccion) {
         setMensaje(tx(
           "El navegador bloqueó la ventana. Permite ventanas emergentes para este sitio.",
