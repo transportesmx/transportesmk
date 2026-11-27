@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo, useRef, useState } from "react";
+Eimport { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { AppContext } from "@/Context/AppContext";
 import { Autocomplete, useJsApiLoader } from "@react-google-maps/api";
 import { autocompleteOptions } from "@/lib/google-maps";
@@ -1339,9 +1339,10 @@ if (editando?.id === nota.id) {
 await cargarNotas();
   }
 
-  async function accionesPdf(tipo) {
-    const nombreCliente = String(datos.cliente || "CLIENTE").trim() || "CLIENTE";
-    const folioActual = folio || "TMX";
+  async function accionesPdf(tipo, datosOverride = null, folioOverride = null) {
+    const datosAccion = datosOverride ? { ...INICIAL, ...datosOverride } : datos;
+    const nombreCliente = String(datosAccion.cliente || "CLIENTE").trim() || "CLIENTE";
+    const folioActual = folioOverride || folio || "TMX";
     let ventanaAccion = null;
     let urlPdf = null;
 
@@ -1403,7 +1404,7 @@ iframe{display:block;width:100%;height:100%;border:0;border-radius:6px;backgroun
         base64 = await generarPdfBannerClienteBase64(nombreCliente);
         archivo = `Banner-Cliente-${folioActual}.pdf`;
       } else {
-        base64 = await generarPdfNotaVentaBase64({ ...datos }, folioActual, en ? "en" : "es");
+        base64 = await generarPdfNotaVentaBase64({ ...datosAccion }, folioActual, en ? "en" : "es");
         archivo = `Nota-de-Venta-${folioActual}.pdf`;
       }
 
@@ -1475,18 +1476,16 @@ iframe{display:block;width:100%;height:100%;border:0;border-radius:6px;backgroun
     const d = nota?.datos
       ? { ...INICIAL, ...nota.datos }
       : datos;
-const f = nota?.folio || folio;
+    const f = nota?.folio || folio;
 
-if (!d.cliente.trim()) {
-  setMensaje(tx("Captura el nombre del cliente antes de imprimir.", "Enter the customer name before printing."));
-  return;
-}
+    if (!String(d.cliente || "").trim()) {
+      setMensaje(tx("Captura el nombre del cliente antes de imprimir.", "Enter the customer name before printing."));
+      return;
+    }
 
-if (!abrirImpresion(d, f, false, en ? "en" : "es")) {
-  setMensaje(
-    "El navegador bloqueó la ventana de impresión. Permite las ventanas emergentes para este sitio."
-  );
-}
+    // Usar el mismo flujo de PDF con barra superior: Imprimir, Compartir y Cancelar.
+    // Así no se abre la ventana antigua que solo mostraba “Imprimir / Guardar PDF” y “Cerrar”.
+    accionesPdf("imprimir", d, f);
   }
 
   const notasFiltradas = useMemo(() => {
