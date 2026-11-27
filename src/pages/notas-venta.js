@@ -271,7 +271,7 @@ function crearMarcoPdfOculto() {
 function abrirImpresion(datos, folio, devolverVentana = false, lang = "es", ventanaExistente = null) {
   const en = lang === "en";
   const tx = (es, ingles) => (en ? ingles : es);
-  const ventana = ventanaExistente;
+  const ventana = ventanaExistente || window.open("", "_blank", "width=1000,height=900");
 
   if (!ventana) return false;
 
@@ -1392,164 +1392,6 @@ if (editando?.id === nota.id) {
 await cargarNotas();
   }
 
-  async function accionesPdf(tipo, datosOverride = null, folioOverride = null) {
-    const datosAccion = datosOverride ? { ...INICIAL, ...datosOverride } : datos;
-    const nombreCliente = String(datosAccion.cliente || "CLIENTE").trim() || "CLIENTE";
-    const folioActual = folioOverride || folio || "TMX";
-    const esBanner = String(tipo).toLowerCase().includes("banner");
-    let ventanaAccion = null;
-    let urlPdf = null;
-
-    try {
-      // ÚNICA ventana emergente. Se reutiliza durante la generación y visualización.
-      ventanaAccion = window.open("about:blank", "TMX_NOTA_VENTA_PDF");
-      if (!ventanaAccion) {
-        setMensaje(tx(
-          "El navegador bloqueó la ventana. Permite ventanas emergentes para este sitio.",
-          "Your browser blocked the window. Allow pop-ups for this site."
-        ));
-        return;
-      }
-
-      ventanaAccion.document.open();
-      ventanaAccion.document.write(`<!doctype html>
-<html lang="${en ? "en" : "es"}">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>${en ? "Preparing PDF" : "Preparando PDF"}</title></head>
-<body style="margin:0;padding:32px;font:600 16px Arial;background:#eef1f5;color:#111827">
-${en ? "Generating your PDF. Please wait…" : "Generando tu PDF. Espera un momento…"}
-</body></html>`);
-      ventanaAccion.document.close();
-
-      let base64;
-      let archivo;
-
-      if (esBanner) {
-        base64 = await generarPdfBannerClienteBase64(nombreCliente, ventanaAccion);
-        archivo = `Banner-Cliente-${folioActual}.pdf`;
-      } else {
-        // IMPORTANTE: pasar la ventana ya abierta evita que abrirImpresion
-        // ejecute un segundo window.open().
-        base64 = await generarPdfNotaVentaBase64(
-          { ...datosAccion },
-          folioActual,
-          en ? "en" : "es",
-          ventanaAccion
-        );
-        archivo = `Nota-de-Venta-${folioActual}.pdf`;
-      }
-
-      const bytes = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
-      const blob = new Blob([bytes], { type: "application/pdf" });
-      urlPdf = URL.createObjectURL(blob);
-
-      // La misma about:blank se transforma en el visor con tres botones.
-      ventanaAccion.document.open();
-      ventanaAccion.document.write(`<!doctype html>
-<html lang="${en ? "en" : "es"}">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>${en ? "Sales note PDF" : "PDF de Nota de Venta"}</title>
-<style>
-*{box-sizing:border-box}
-html,body{margin:0;width:100%;height:100%;font-family:Arial,Helvetica,sans-serif;background:#e9edf3;color:#111}
-.toolbar{position:sticky;top:0;z-index:10;display:grid;grid-template-columns:repeat(3,minmax(150px,190px));justify-content:center;align-items:center;gap:16px;padding:16px 20px;background:#111827;box-shadow:0 3px 12px #0004}
-.toolbar button{display:inline-flex;align-items:center;justify-content:center;gap:11px;width:100%;min-height:56px;padding:13px 20px;border:0;border-radius:11px;color:#fff;font-size:16px;font-weight:800;letter-spacing:.2px;cursor:pointer;box-shadow:0 3px 8px #0004;transition:filter .15s,transform .15s}
-.toolbar button:hover{filter:brightness(1.1);transform:translateY(-1px)}
-.toolbar button:focus-visible{outline:3px solid #fff;outline-offset:3px}
-.btn-print{background:#159447}
-.btn-share{background:#1769d2}
-.btn-cancel{background:#c73535}
-.btn-icon{font-size:23px;line-height:1}
-.caption{grid-column:1/-1;width:100%;text-align:center;color:#e5e7eb;font-size:13px;margin-top:0}
-.viewer{height:calc(100% - 112px);padding:12px}
-iframe{display:block;width:100%;height:100%;border:0;border-radius:6px;background:#fff;box-shadow:0 2px 12px #0002}
-button:disabled{opacity:.55;cursor:wait}
-@media(max-width:640px){.toolbar{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:12px 8px}.toolbar button{min-width:0;min-height:52px;padding:10px 5px;gap:5px;font-size:13px}.btn-icon{font-size:20px}.viewer{height:calc(100% - 104px);padding:6px}.caption{font-size:11px}}
-@media(max-width:360px){.toolbar{gap:5px;padding:10px 5px}.toolbar button{font-size:11px;padding:8px 3px}.btn-icon{font-size:17px}}
-@media print{.toolbar{display:none!important}.viewer{height:100%;padding:0}iframe{height:100%;box-shadow:none}}
-</style>
-</head>
-<body>
-  <div class="toolbar">
-    <button class="btn-print" id="printBtn" type="button" aria-label="${en ? "Print PDF" : "Imprimir PDF"}"><span class="btn-icon" aria-hidden="true">🖨️</span><span>${en ? "Print" : "Imprimir"}</span></button>
-    <button class="btn-share" id="shareBtn" type="button" aria-label="${en ? "Share PDF" : "Compartir PDF"}"><span class="btn-icon" aria-hidden="true">📤</span><span>${en ? "Share" : "Compartir"}</span></button>
-    <button class="btn-cancel" id="cancelBtn" type="button" aria-label="${en ? "Close window" : "Cerrar ventana"}"><span class="btn-icon" aria-hidden="true">✕</span><span>${en ? "Cancel" : "Cancelar"}</span></button>
-    <div class="caption">${en ? "Sales note preview · " : "Vista previa de Nota de Venta · "}${folioActual}</div>
-  </div>
-  <div class="viewer"><iframe id="pdfFrame" title="${en ? "Sales note PDF" : "PDF de Nota de Venta"}" src="${urlPdf}"></iframe></div>
-</body>
-</html>`);
-      ventanaAccion.document.close();
-
-      const frame = ventanaAccion.document.getElementById("pdfFrame");
-
-      ventanaAccion.document.getElementById("printBtn").addEventListener("click", () => {
-        try {
-          frame.contentWindow.focus();
-          frame.contentWindow.print();
-        } catch (_) {
-          setMensaje(tx(
-            "No se pudo abrir la impresión del PDF.",
-            "Could not open PDF printing."
-          ));
-        }
-      });
-
-      ventanaAccion.document.getElementById("shareBtn").addEventListener("click", async () => {
-        try {
-          const file = new File([blob], archivo, { type: "application/pdf" });
-          if (navigator.share && navigator.canShare?.({ files: [file] })) {
-            await navigator.share({ files: [file], title: archivo });
-          } else {
-            const link = ventanaAccion.document.createElement("a");
-            link.href = urlPdf;
-            link.download = archivo;
-            ventanaAccion.document.body.appendChild(link);
-            link.click();
-            link.remove();
-            setMensaje(tx(
-              "Tu navegador no permite compartir archivos directamente. Se descargó el PDF.",
-              "Your browser cannot share files directly. The PDF was downloaded."
-            ));
-          }
-        } catch (error) {
-          if (error?.name !== "AbortError") {
-            setMensaje(tx(
-              `No se pudo compartir el PDF: ${error?.message || error}`,
-              `Could not share the PDF: ${error?.message || error}`
-            ));
-          }
-        }
-      });
-
-      ventanaAccion.document.getElementById("cancelBtn").addEventListener("click", () => {
-        try { ventanaAccion.close(); } catch (_) {}
-      });
-
-      ventanaAccion.focus();
-      // Mantener el Object URL vivo mientras el visor está abierto; se revoca al cerrar.
-      ventanaAccion.addEventListener("beforeunload", () => {
-        try { URL.revokeObjectURL(urlPdf); } catch (_) {}
-      }, { once: true });
-
-    } catch (error) {
-      try {
-        if (ventanaAccion && !ventanaAccion.closed) {
-          ventanaAccion.document.open();
-          ventanaAccion.document.write(
-            `<p style="font-family:Arial;padding:24px;color:#b91c1c">${en ? "Could not generate the PDF: " : "No se pudo generar el PDF: "}${String(error?.message || error)}</p>`
-          );
-          ventanaAccion.document.close();
-        }
-      } catch (_) {}
-      setMensaje(tx(
-        `No se pudo generar el PDF: ${error?.message || error}`,
-        `Could not generate the PDF: ${error?.message || error}`
-      ));
-    }
-  }
 
   function imprimir(nota = null) {
     const d = nota?.datos
@@ -1562,9 +1404,14 @@ button:disabled{opacity:.55;cursor:wait}
       return;
     }
 
-    // Usar el mismo flujo de PDF con barra superior: Imprimir, Compartir y Cancelar.
-    // Así no se abre la ventana antigua que solo mostraba “Imprimir / Guardar PDF” y “Cerrar”.
-    accionesPdf("imprimir", d, f);
+    // Comportamiento original: abrir únicamente la nota imprimible con
+    // sus controles “Imprimir / Guardar PDF” y “Cerrar”.
+    if (!abrirImpresion(d, f, false, en ? "en" : "es")) {
+      setMensaje(tx(
+        "El navegador bloqueó la ventana de impresión. Permite las ventanas emergentes para este sitio.",
+        "Your browser blocked the print window. Allow pop-ups for this site."
+      ));
+    }
   }
 
   const notasFiltradas = useMemo(() => {
