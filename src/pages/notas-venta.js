@@ -642,6 +642,8 @@ body{
   gap:4mm;
   margin:3mm 0 0;
   padding:0;
+  position:relative;
+  top:-4mm;
 }
 
 .acciones button{
